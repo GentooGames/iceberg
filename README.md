@@ -1,5 +1,5 @@
 # iceberg
-foundational gamemaker project for all other games to be spun off of so that base functionality does not have to be re-implemented costantly.
+foundational gamemaker project for all other games to be spun off of so that base functionality does not have to be re-implemented constantly.
 
 # version
 0.0.0 (in-progress)
