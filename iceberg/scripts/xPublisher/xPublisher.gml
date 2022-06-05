@@ -41,6 +41,13 @@ function Publisher() constructor {
 		return self;
 	}
 	
+	/// @function has_channel(channel)
+	/// @param {string} channel The channell identifier used for registration.
+	/// @returns {boolean}
+	static has_channel = function(_eventName) {
+		return variable_struct_exists(__channels, _eventName);
+	}
+	
 	/// @function publish(channel, params)
 	/// @param {identifier} channel The the channel to be published into.
 	/// @param {*} [params=undefined] The parameters to be passed into the callback function.
