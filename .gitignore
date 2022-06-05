@@ -1,6 +1,5 @@
 *GMLive*
 GMLive/
 *obj_gmlive*
-extensions/window_frame/
-extensions/window_set_cursor/
-datafiles/GMLive/
+window_frame/
+window_set_cursor/
