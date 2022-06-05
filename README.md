@@ -29,10 +29,10 @@ paid assets excluded from this repository through the .gitignore file are:
 - YAL's gmlive (https://yellowafterlife.itch.io/gamemaker-live)
 - YAL's native cursors (https://yellowafterlife.itch.io/gamemaker-native-cursors)
 - YAL's window freeze fix (https://yellowafterlife.itch.io/window-freeze-fix)
-- xdstudio's xpublisher (https://xdstudios.itch.io/xpublisher)
 
 open source/free assets included in this repository are:
 - sahaun's snowstate (https://github.com/sohomsahaun/SnowState)
+- xdstudio's xpublisher (https://xdstudios.itch.io/xpublisher)
 - juju's iota (https://github.com/JujuAdams/iota)
 - bfrymire's crispy (https://github.com/bfrymire/crispy)
 
