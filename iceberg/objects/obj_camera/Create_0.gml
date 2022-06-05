@@ -1,0 +1,90 @@
+/// @desc obj_camera
+log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(id));
+global._camera = id;
+#macro CAMERA global._camera
+event_user(METHODS);
+//////////////////////////////////////////
+// .---- .---. .    . .---- .---. .---. //
+// |     r---j | V  | r--   r---J r---J //
+// L---- |   | |    | .---- |  \  |   | //
+//////////////////////////////////////////
+
+cam	    = camera_create();
+viewmat = null;
+projmat = null;
+
+preset = {
+    zoom: {
+        intro: 1.0,
+        base:  0.3,
+        focus: 0.2,
+        min:   0.0,
+        max:   1.0,
+        speed: {
+            base:   0.15,
+            battle: 0.05,
+        },
+    },
+    move: {
+        speed: {
+            base: 0.1,  
+        },
+    },
+};
+
+// Dimensions
+width   = BASE_W; 
+height  = BASE_H;
+left    = null; // set in _update_edges()
+right   = null; // set in _update_edges()
+top     = null; // set in _update_edges()
+bottom  = null; // set in _update_edges()
+
+// Move & Positions
+x_to         = 0;
+y_to         = 0;
+focus_target = null;
+focus_point  = null;
+move_speed   = preset.move.speed.base;
+
+// Zoom
+zoom		  = preset.zoom.base;
+zoom_to		  = zoom;
+zoom_speed	  = preset.zoom.speed.base;
+zoom_complete = false;
+
+// Shake
+shakers		= {
+	rand:	{
+		x: new Shaker(),
+		y: new Shaker(),
+	},
+	spring: {
+		x:		new Spring(0.15, 0.25),
+		y:		new Spring(0.15, 0.25),
+		zoom:	new Spring(0.10, 0.20),
+	}
+}
+
+// Panning
+panning	    = false;
+pan_start_x = null;
+pan_start_y = null;
+middle_mouse_down		= false;
+middle_mouse_pressed	= false;
+middle_mouse_released	= false;
+middle_mouse_wheel_down = false;
+middle_mouse_wheel_up	= false;
+
+// iota
+pos_x	  = x;		// interpolate pos
+pos_y	  = y;		// interpolate pos
+zoom_draw = zoom;	// interpolate zoom
+CLOCK_STABLE.add_cycle_method(function() {
+	_update_pos();
+	_update_zoom();
+	_update_shakes(); 
+});
+CLOCK_STABLE.variable_interpolate("pos_x",	   "iota_pos_x");
+CLOCK_STABLE.variable_interpolate("pos_y",	   "iota_pos_y");
+CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );

@@ -1,0 +1,24 @@
+enum DIR { 
+	LEFT  = -1, 
+	RIGHT =  1, 
+	UP, 
+	DOWN, 
+	NONE,
+}
+enum FACE { 
+	FRONT =  1, 
+	BACK  = -1,
+}
+enum ANCHOR	{ 
+	TOP_LEFT, 
+	TOP_CENTER, 
+	TOP_RIGHT, 
+	CENTER_LEFT, 
+	CENTER, 
+	CENTER_RIGHT, 
+	BOTTOM_LEFT, 
+	BOTTOM_CENTER, 
+	BOTTOM_RIGHT, 
+	NONE, 
+}
+

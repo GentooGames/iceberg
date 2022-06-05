@@ -1,0 +1,3 @@
+if (!initialized) return;
+////////////////////////
+update();
