@@ -2,8 +2,8 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "_______",
-    "path": "folders/scripts/_______.yy",
+    "name": "scripts",
+    "path": "folders/scripts.yy",
   },
   "resourceVersion": "1.0",
   "name": "MACROS",

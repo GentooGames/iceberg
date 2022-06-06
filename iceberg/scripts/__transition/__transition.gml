@@ -7,17 +7,16 @@ TRANSITION = {
     initialized:  false,
 	
 	/// Methods
-    setup:  function() {
+    setup: function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
-		/// @tested false
         ///
         if (initialized) return;
         log("<TRANSITION> setup()");
         initialized = true;
     },
-    room:  {
+    room: {
         goto:          function(_room) {
             /// @func   goto(room)
             /// @param  room -> {room}
