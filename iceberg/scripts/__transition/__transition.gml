@@ -14,6 +14,9 @@ TRANSITION = {
         ///
         if (initialized) return;
         log("<TRANSITION> setup()");
+		
+		
+		
         initialized = true;
     },
     room: {
@@ -74,3 +77,4 @@ TRANSITION = {
         }  
     },
 };
+

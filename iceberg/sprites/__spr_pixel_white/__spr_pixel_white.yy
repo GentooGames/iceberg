@@ -70,8 +70,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "sprites",
-    "path": "folders/sprites.yy",
+    "name": "__",
+    "path": "folders/sprites/__.yy",
   },
   "resourceVersion": "1.0",
   "tags": [],
