@@ -1,7 +1,7 @@
 /// @desc obj_camera
 log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(id));
 global._camera = id;
-#macro CAMERA global._camera
+//#macro CAMERA global._camera
 event_user(METHODS);
 //////////////////////////////////////////
 // .---- .---. .    . .---- .---. .---. //

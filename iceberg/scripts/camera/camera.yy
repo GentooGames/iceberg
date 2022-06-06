@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "xPublisher",
-    "path": "folders/scripts/libraries/xdstudios/xPublisher.yy",
+    "name": "xCamera",
+    "path": "folders/scripts/libraries/xdstudios/xCamera.yy",
   },
   "resourceVersion": "1.0",
-  "name": "xPublisher",
+  "name": "Camera",
   "tags": [],
   "resourceType": "GMScript",
 }

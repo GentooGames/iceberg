@@ -17,13 +17,13 @@ function state_controller_game_init() {
 			if (!LOGGING) show_debug_message("LOGGING Disabled. Good-bye...");
 			log("<LOGGING> initialized.");
 
-			#region Global Data Files
+			#region Data Files
 			
 			log("<OBJC_GAME> Setting Up Data Files...");
 			//global_..._data_init();
 			
 			#endregion
-			#region Core Systems
+			#region Systems
 
 			log("<OBJC_GAME> Setting Up Core Systems...");
 			AUDIO.setup();
@@ -49,10 +49,12 @@ function state_controller_game_init() {
 			log("################## Game Started ##################");
 			log("##################################################");
 			
-			#region Spawn Persistent Instances
+			#region Instances
 			
 			log("<OBJC_GAME> Spawning Game Controllers");
-			camera_create_instance();
+			//camera_create_instance();
+			global._camera = new Camera(0, 0, 0, false);
+			#macro CAMERA global._camera
 			instance_create_layer(0, 0, "Controllers", objc_world).setup();
 			
 			#endregion
