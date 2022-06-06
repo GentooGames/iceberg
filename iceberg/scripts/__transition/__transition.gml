@@ -1,5 +1,4 @@
 /*
-	- allow for different renders in and out in the same transition
 	- define custom sprites to draw for transitions
 */
 enum TRANSITION_STATE {
@@ -15,7 +14,7 @@ enum TRANSITION_TYPE  {
 	FADE,	
 	LINEAR_WIPE_RIGHT,
 	LINEAR_WIPE_LEFT,		
-	CIRCLE_SHRINK_CENTER,	//
+	CIRCLE_SHRINK_CENTER,
 	CIRCLE_SHRINK_TARGET,	//
 	BORDER_SHRINK_CENTER,	//
 	BORDER_SHRINK_TARGET,	//
@@ -24,7 +23,8 @@ enum TRANSITION_TYPE  {
 
 global._transition					= {};
 #macro TRANSITION					global._transition
-#macro TRANSITION_DEFAULT_TYPE		TRANSITION_TYPE.CIRCLE_SHRINK_CENTER
+#macro TRANSITION_DEFAULT_TYPE_IN	TRANSITION_TYPE.FADE
+#macro TRANSITION_DEFAULT_TYPE_OUT	TRANSITION_TYPE.FADE
 #macro TRANSITION_DEFAULT_COLOR		c_black
 #macro TRANSITION_DEFAULT_ALPHA		1.0
 #macro TRANSITION_DEFAULT_SPEED_IN	0.1
@@ -46,7 +46,9 @@ TRANSITION = {
 		
 		#region Customizable
 		
-		type		= TRANSITION_DEFAULT_TYPE;
+		type_in		= TRANSITION_DEFAULT_TYPE_IN;
+		type_out	= TRANSITION_DEFAULT_TYPE_OUT;
+		type		= type_in;
 		color		= TRANSITION_DEFAULT_COLOR;
 		alpha		= TRANSITION_DEFAULT_ALPHA;
 		speed_in	= TRANSITION_DEFAULT_SPEED_IN;
@@ -164,15 +166,20 @@ TRANSITION = {
 	#endregion
 	#region Private
 	
-	__transition_start:	 function(_type) {
+	__transition_start:	 function(_type_in, _type_out = _type_in) {
 		/// Handle Consistent on_start Callback
 		if (__callbacks.on_start.callback != undefined) {
 			__callbacks.on_start.callback(__callbacks.on_start.data);		
 		}
-		type    = _type;
-		__state = TRANSITION_STATE.START;
+		type_in  = _type_in;
+		type_out = _type_out;
+		type	 =  type_in;
+		__state  =  TRANSITION_STATE.START;
 	},
 	__transition_change: function() {
+		
+		type = type_out;
+		
 		/// Handle One-Time on_change Callback
 		if (__on_change.callback != undefined) {
 			__on_change.callback(__on_change.data);	
@@ -192,8 +199,10 @@ TRANSITION = {
 		if (__callbacks.on_end.callback != undefined) {
 			__callbacks.on_end.callback(__callbacks.on_end.data);		
 		}
-		type    = TRANSITION_DEFAULT_TYPE;
-		__state = TRANSITION_STATE.HIDDEN;
+		type_in  = TRANSITION_DEFAULT_TYPE_IN;
+		type_out = TRANSITION_DEFAULT_TYPE_OUT;
+		type     = type_in;
+		__state  = TRANSITION_STATE.HIDDEN;
 	},
 		
 	__render_transition_fade:					function() {
@@ -229,10 +238,11 @@ TRANSITION = {
 	#endregion
 	#region Public
 	
-    goto:				function(_room, _type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   goto(room, type*, callback*, data*)
+    goto:				function(_room, _type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+        /// @func   goto(room, type_in*, type_out*, callback*, data*)
         /// @param  {room}			  room
-		/// @param	{TRANSITION_TYPE} type
+		/// @param	{TRANSITION_TYPE} type_in
+		/// @param	{TRANSITION_TYPE} type_out
 		/// @param	{method}		  callback=undefined
 		/// @param	{any}			  data=undefined
 		/// @desc	...
@@ -247,31 +257,34 @@ TRANSITION = {
 		};
 		__on_end.data		 = _data;
 		__on_end.callback	 = _callback;
-		__transition_start(_type);
+		__transition_start(_type_in, _type_out);
     },
-    goto_next:			function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   goto_next(callback*, data*)
-		/// @param	{TRANSITION_TYPE} type
+    goto_next:			function(_type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+        /// @func   goto_next(type_in*, type_out*, callback*, data*)
+		/// @param	{TRANSITION_TYPE} type_in
+		/// @param	{TRANSITION_TYPE} type_out
 		/// @param	{method}		  callback=undefined
 		/// @param	{any}			  data=undefined
 		/// @desc	...
         /// @return NA
         ///
-        goto(get_room_next(), _type, _callback, _data);
+        goto(get_room_next(), _type_in, _type_out, _callback, _data);
     },
-    goto_previous:		function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   goto_previous(callback*, data*)
-		/// @param	{TRANSITION_TYPE} type
+    goto_previous:		function(_type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+        /// @func   goto_previous(type_in*, type_out*, callback*, data*)
+		/// @param	{TRANSITION_TYPE} type_in
+		/// @param	{TRANSITION_TYPE} type_out
 		/// @param	{method}		  callback=undefined
 		/// @param	{any}			  data=undefined
 		/// @desc	...
         /// @return NA
         ///
-        goto(get_room_previous(), _type, _callback, _data);
+        goto(get_room_previous(), _type_in, _type_out, _callback, _data);
     },
-    restart:			function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   restart(callback*, data*)
-		/// @param	{TRANSITION_TYPE} type
+    restart:			function(_type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+        /// @func   restart(type_in*, type_out*, callback*, data*)
+		/// @param	{TRANSITION_TYPE} type_in
+		/// @param	{TRANSITION_TYPE} type_out
 		/// @param	{method}		  callback=undefined
 		/// @param	{any}			  data=undefined
 		/// @desc	...
@@ -286,7 +299,7 @@ TRANSITION = {
 		};
 		__on_end.data		 = _data;
 		__on_end.callback	 = _callback;
-		__transition_start(_type);
+		__transition_start(_type_in, _type_out);
     },
     get_room_next:		function(_room = room) {
         /// @func   get_room_next(room*<room>)
