@@ -1,5 +1,6 @@
 /*
 	- handle on_end callbacks
+	- setup consistent callbacks?
 	- transition modes
 		- tiles
 		- circle growth
@@ -10,6 +11,7 @@ enum TRANSITION_STATE {
 	HIDDEN,
 	START,
 	IN,
+	CHANGE,
 	HOLD,
 	OUT,
 	END,
@@ -57,19 +59,33 @@ TRANSITION = {
 		__progress	 = 0.0;	// from 0 to 1
 		__target	 = 1.0;
 		__thresholds = [
-			0.010,		// FADE
-			0.001,		// LINEAR_WIPE_RIGHT
-			0.001,		// LINEAR_WIPE_LEFT
+			0.010,			// FADE
+			0.001,			// LINEAR_WIPE_RIGHT
+			0.001,			// LINEAR_WIPE_LEFT
 		];
-		__on_hold	 = {
+		__on_change	 = {	// internal callback used to manage room changes
 			callback: undefined,
 			data:	  undefined,
 		};
-		__on_end	 = {
+		__on_end	 = {	// internal callback passed in from user on each room change invokation, will change frequently
 			callback: undefined,
 			data:	  undefined,
 		};
-		
+		__callbacks  = {	// more "static" callbacks set to execute every iteration
+			on_start:  {
+				callback: undefined,
+				data:	  undefined,
+			},
+			on_change: {
+				callback: undefined,
+				data:	  undefined,
+			},
+			on_end:    {
+				callback: undefined,
+				data:	  undefined,
+			},
+		};
+							// see set_on_start(), set_on_change(), set_on_end(),
 		#endregion
 		
         initialized = true;
@@ -82,29 +98,30 @@ TRANSITION = {
         if (!initialized) exit;
 		////////////////////////
 		switch (__state) {
-			case TRANSITION_STATE.START: {
+			case TRANSITION_STATE.START:  {
 				__progress = 0;
 				__state	   = TRANSITION_STATE.IN;
 				break;	
 			}
-			case TRANSITION_STATE.IN:	 {
+			case TRANSITION_STATE.IN:	  {
 				__target   = 1.0;
 				__progress = lerp(__progress, __target, speed_in);
 				
 				if (abs(__progress - __target) <= __thresholds[type]) {
 					__progress = __target;
-					__state	   = TRANSITION_STATE.HOLD;
+					__state	   = TRANSITION_STATE.CHANGE;
 				}
 				break;	
 			}
-			case TRANSITION_STATE.HOLD:  {
-				if (__on_hold.callback != undefined) {
-					__on_hold.callback(__on_hold.data);	
-				}
+			case TRANSITION_STATE.CHANGE: {
+				__transition_change();
+				break;	
+			}
+			case TRANSITION_STATE.HOLD:   {
 				__state = TRANSITION_STATE.OUT;
 				break;	
 			}
-			case TRANSITION_STATE.OUT:	 {
+			case TRANSITION_STATE.OUT:	  {
 				__target   = 0.0;
 				__progress = lerp(__progress, __target, speed_out);
 				
@@ -114,7 +131,7 @@ TRANSITION = {
 				}
 				break;	
 			}
-			case TRANSITION_STATE.END:	 {
+			case TRANSITION_STATE.END:	  {
 				__transition_end();
 				break;	
 			}
@@ -138,12 +155,32 @@ TRANSITION = {
 	#region Private
 	
 	__transition_start:						function(_type) {
+		/// Handle Consistent on_start Callback
+		if (__callbacks.on_start.callback != undefined) {
+			__callbacks.on_start.callback(__callbacks.on_start.data);		
+		}
 		type    = _type;
 		__state = TRANSITION_STATE.START;
 	},
+	__transition_change:					function() {
+		/// Handle One-Time on_change Callback
+		if (__on_change.callback != undefined) {
+			__on_change.callback(__on_change.data);	
+		}
+		/// Handle Consistent on_end Callback
+		if (__callbacks.on_change.callback != undefined) {
+			__callbacks.on_change.callback(__callbacks.on_change.data);		
+		}
+		__state = TRANSITION_STATE.HOLD;
+	},
 	__transition_end:						function() {
+		/// Handle One-Time on_end Callback
 		if (__on_end.callback != undefined) {
 			__on_end.callback(__on_end.data);	
+		}
+		/// Handle Consistent on_end Callback
+		if (__callbacks.on_end.callback != undefined) {
+			__callbacks.on_end.callback(__callbacks.on_end.data);		
 		}
 		type    = TRANSITION_DEFAULT_TYPE;
 		__state = TRANSITION_STATE.HIDDEN;
@@ -165,54 +202,62 @@ TRANSITION = {
 	#region Public
 	
     goto:				function(_room, _type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   goto(room, type*)
+        /// @func   goto(room, type*, callback*, data*)
         /// @param  {room}			  room
 		/// @param	{TRANSITION_TYPE} type
+		/// @param	{method}		  callback=undefined
+		/// @param	{any}			  data=undefined
 		/// @desc	...
         /// @return NA
         //
 		if (is_transitioning()) exit;
 		
-		__on_hold.data	   = _room;
-		__on_hold.callback = function(_room) {
+		__on_change.data	 = _room;
+		__on_change.callback = function(_room) {
 			PUBLISH("transition_room_changed", { room: _room });	
 			room_goto(_room);
 		};
-		__on_end.data	   = _data;
-		__on_end.callback  = _callback;
+		__on_end.data		 = _data;
+		__on_end.callback	 = _callback;
 		__transition_start(_type);
     },
     goto_next:			function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   goto_next()
+        /// @func   goto_next(callback*, data*)
 		/// @param	{TRANSITION_TYPE} type
+		/// @param	{method}		  callback=undefined
+		/// @param	{any}			  data=undefined
 		/// @desc	...
         /// @return NA
         ///
         goto(get_room_next(), _type, _callback, _data);
     },
     goto_previous:		function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   goto_previous()
+        /// @func   goto_previous(callback*, data*)
 		/// @param	{TRANSITION_TYPE} type
+		/// @param	{method}		  callback=undefined
+		/// @param	{any}			  data=undefined
 		/// @desc	...
         /// @return NA
         ///
         goto(get_room_previous(), _type, _callback, _data);
     },
     restart:			function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
-        /// @func   restart()
+        /// @func   restart(callback*, data*)
 		/// @param	{TRANSITION_TYPE} type
+		/// @param	{method}		  callback=undefined
+		/// @param	{any}			  data=undefined
 		/// @desc	...
         /// @return NA
         ///
 		if (is_transitioning()) exit;
 		
-		__on_hold.data	   = undefined;
-		__on_hold.callback = function() {
+		__on_change.data	 = undefined;
+		__on_change.callback = function() {
 			PUBLISH("transition_room_restarted");
 			room_restart();
 		};
-		__on_end.data	   = _data;
-		__on_end.callback  = _callback;
+		__on_end.data		 = _data;
+		__on_end.callback	 = _callback;
 		__transition_start(_type);
     },
     get_room_next:		function(_room = room) {
@@ -244,6 +289,39 @@ TRANSITION = {
 		/// @return {bool} is_transitioning
 		/// 
 		return __progress != 0;
+	},
+	set_on_start:		function(_callback, _data) {
+		/// @func	set_on_start(callback, data*)
+		/// @param	{method} callback
+		/// @param	{any}	 data=undefined
+		/// @return NA
+		///
+		with (__callbacks.on_start) {
+			callback = _callback;	
+			data	 = _data;	
+		}
+	},
+	set_on_change:		function(_callback, _data) {
+		/// @func	set_on_change(callback, data*)
+		/// @param	{method} callback
+		/// @param	{any}	 data=undefined
+		/// @return NA
+		///
+		with (__callbacks.on_change) {
+			callback = _callback;	
+			data	 = _data;	
+		}
+	},
+	set_on_end:			function(_callback, _data) {
+		/// @func	set_on_end(callback, data*)
+		/// @param	{method} callback
+		/// @param	{any}	 data=undefined
+		/// @return NA
+		///
+		with (__callbacks.on_end) {
+			callback = _callback;	
+			data	 = _data;	
+		}
 	},
 		
 	#endregion

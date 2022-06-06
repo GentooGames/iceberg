@@ -17,8 +17,7 @@ DEBUG = {
 		////////////////////////////////////
         log("<DEBUG> setup()");
 		instance_create_depth(0, 0, 0, obj_gmlive);
-		instance_create_depth(200, 200, 0, obj_test);
-		initialized = true;
+		initialized = true;	
     },
     update: function() {
         /// @func   update()
