@@ -29,14 +29,24 @@ DEBUG = {
 		////////////////////////////////////
 		//INPUT.keyboard.switch_check({
 		//	R: function() {
-		//		TRANSITION.room.restart();
+		//		TRANSITION.restart();
 		//	},
 		//	E: function() {
 		//		game_end();	
 		//	},
 		//});	
-	
-        //if (INPUT.keyboard.button_pressed(ord("R"))) TRANSITION.room.restart();
+		
+		if (INPUT.keyboard.button_pressed(ord("R"))) {
+			TRANSITION.restart();
+		}
+		if (INPUT.keyboard.button_pressed(ord("O"))) {
+			TRANSITION.goto_previous();
+		}
+		if (INPUT.keyboard.button_pressed(ord("P"))) {
+			TRANSITION.goto_next();
+		}
+		
+        
         //if (INPUT.keyboard.button_pressed(vk_f11))   WINDOW.set_fullscreen(!WINDOW.get_fullscreen());
     },
     render: function() {

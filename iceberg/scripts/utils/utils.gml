@@ -916,7 +916,7 @@ function draw_rectangle_alt(_x, _y, _width, _height, _rot, _col, _alpha) {
 	/// @return NA
 	/// @tested false
 	///
-	draw_sprite_ext(spr_white, 0, _x, _y, _width, _height, _rot, _col, _alpha);	
+	draw_sprite_ext(__spr_pixel_white, 0, _x, _y, _width, _height, _rot, _col, _alpha);	
 };
 function surface_ensure(_surface, _width, _height) {
 	/// @func   surface_ensure(surface, width, height)

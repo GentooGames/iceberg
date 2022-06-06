@@ -55,7 +55,7 @@ function state_controller_game_init() {
 			//camera_create_instance();
 			global._camera = new Camera(0, 0, 0, false);
 			#macro CAMERA global._camera
-			instance_create_layer(0, 0, "Controllers", objc_world).setup();
+			//instance_create_layer(0, 0, "Controllers", objc_world).setup();
 			
 			#endregion
 			
@@ -63,7 +63,7 @@ function state_controller_game_init() {
 		},
 		leave: function() {
 			/// Exit __rm_init
-			TRANSITION.room.goto(ROOM_FIRST);	
+			TRANSITION.goto(ROOM_FIRST);	
 		},
 	};
 };
@@ -86,6 +86,7 @@ function state_controller_game_main() {
 			WINDOW.update();
 		},
 		draw: function() {
+			TRANSITION.render();
 			DEBUG.render();	
 		},
 	};

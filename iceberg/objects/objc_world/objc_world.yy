@@ -2,8 +2,9 @@
   "spriteId": null,
   "solid": false,
   "visible": true,
+  "managed": true,
   "spriteMaskId": null,
-  "persistent": false,
+  "persistent": true,
   "parentObjectId": {
     "name": "objp_controller",
     "path": "objects/objp_controller/objp_controller.yy",
