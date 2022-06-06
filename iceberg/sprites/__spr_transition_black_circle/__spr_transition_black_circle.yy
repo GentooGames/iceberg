@@ -102,8 +102,8 @@
   ],
   "nineSlice": null,
   "parent": {
-    "name": "__transition",
-    "path": "folders/sprites/__/__transition.yy",
+    "name": "Transition",
+    "path": "folders/sprites/__/Transition.yy",
   },
   "resourceVersion": "1.0",
   "tags": [],

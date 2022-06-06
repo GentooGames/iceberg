@@ -11,8 +11,7 @@ global._gui = {};
 #macro FONT_SCRIBBLE -1 // font_scribbles
 
 GUI = {
-	/// Properties & Associations
-    initialized:  false,
+    initialized: false,
     surface: {
         application: {
             width:  surface_get_width(application_surface),
@@ -29,8 +28,7 @@ GUI = {
         color: c_white,
     },
 	
-	/// Methods
-    setup:          function() {
+    setup:  function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
@@ -40,6 +38,15 @@ GUI = {
         log("<GUI> setup()");
         initialized = true;
     },    
+	update:	function() {
+		/// @func   update()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
+		
     world_to_gui_x: function(_x) {
     	/// @func	world_to_gui_x(x)
     	/// @param	x_world {real}
@@ -61,4 +68,3 @@ GUI = {
     gui_to_world_x: function() { /* need to implement... */ },
     gui_to_world_y: function() { /* need to implement... */ },
 };
-

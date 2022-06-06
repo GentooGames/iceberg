@@ -7,12 +7,10 @@ global._event = {};
 #macro UNSUB     PUBLISHER.unsubscribe
 
 EVENT = {
-	/// Properties & Associations
     initialized: false,
     publisher: new Publisher(),
 	
-	/// Methods
-    setup: function() {
+    setup:  function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
@@ -20,6 +18,7 @@ EVENT = {
         if (initialized) exit;
 		////////////////////////
         log("<EVENT> setup()");
+		#region Static Events //////
 		
 		static_events = [
 			"mouse_left_button_pressed",
@@ -33,7 +32,6 @@ EVENT = {
 	        "mouse_middle_button_released",  
 			"destroyed",
 		];
-		#region Static /////////////
 		
 		for (var _i = 0, _n_ids = array_length(OBJECTS_INDEXES); _i < _n_ids; _i++) {
 			var _object_index = OBJECTS_INDEXES[_i];
@@ -50,6 +48,7 @@ EVENT = {
 		}
 		
 		#endregion
+		
         publisher.register_channel(
 			/// Input 
             "input_mouse_button_pressed",
@@ -70,5 +69,13 @@ EVENT = {
         );
         initialized = true;
     },
+	update:	function() {
+		/// @func   update()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
 }
 

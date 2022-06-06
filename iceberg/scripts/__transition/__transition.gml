@@ -3,11 +3,9 @@ global._transition = {};
 ////////////////////////////////////////
 
 TRANSITION = { 
-	/// Properties & Associations
-    initialized:  false,
+    initialized: false,
 	
-	/// Methods
-    setup: function() {
+    setup:  function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
@@ -19,6 +17,23 @@ TRANSITION = {
 		
         initialized = true;
     },
+	update:	function() {
+		/// @func   update()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
+	render: function() {
+		/// @func   render()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
+	
     room: {
         goto:          function(_room) {
             /// @func   goto(room)

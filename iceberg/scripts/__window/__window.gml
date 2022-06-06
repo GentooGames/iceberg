@@ -3,11 +3,9 @@ global._window = {}
 ////////////////////////////////
 
 WINDOW = {
-	/// Properties & Associations
-    initialized:  false,
+    initialized: false,
 	
-	/// Methods
-    setup:			function() {
+    setup:  function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
@@ -17,6 +15,15 @@ WINDOW = {
         log("<WINDOW> setup()");
         initialized = true;
     },
+	update: function() {
+		/// @func   update()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
+	
     get_width:		function() {
         /// @func   get_width()
 		/// @desc	...

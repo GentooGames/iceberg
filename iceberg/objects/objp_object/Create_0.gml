@@ -34,6 +34,7 @@ setup_object	= function() {
 	
 	subscriptions	= [];
 	n_subscriptions = 0;
+	
 	subscribe("input_mouse_button_pressed",	 on_mouse_button_pressed);
 	subscribe("input_mouse_button",			 on_mouse_button);
 	subscribe("input_mouse_button_released", on_mouse_button_released);

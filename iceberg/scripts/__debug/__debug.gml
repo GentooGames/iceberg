@@ -5,10 +5,8 @@ global._debug = {};
 #macro LOGGING   1
 
 DEBUG = {
-	/// Properties & Associations
 	initialized:  false,
 	
-	/// Methods
     setup:  function() {
         /// @func   setup()
 		/// @desc	...

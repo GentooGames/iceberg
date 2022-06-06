@@ -3,7 +3,6 @@ global._clocks	= {};
 ////////////////////////////////
 
 CLOCKS = {
-	/// Properties & Associations
 	initialized:	false,
     clock_stable:	new iota_clock(), // core system
     clock_camera:	new iota_clock(), // camera
@@ -11,7 +10,6 @@ CLOCKS = {
     clock_ui:		new iota_clock(), // ui overlays and action frames
     clock_tutorial: new iota_clock(), // tutorial entities
 	
-	/// Methods
     setup:  function() {
         /// @func   setup()
 		/// @desc	...

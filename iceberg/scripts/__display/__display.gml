@@ -3,11 +3,9 @@ global._display = {};
 ////////////////////////////////////
 
 DISPLAY = {
-	/// Properties & Associations
     initialized:  false,
 	
-	/// Methods
-    setup:          function() {
+    setup:  function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
@@ -17,14 +15,23 @@ DISPLAY = {
         log("<DISPLAY> setup()");
         initialized = true;
     },
-    get_width:      function() {
+	update:	function() {
+		/// @func   update()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
+	
+    get_width:  function() {
         /// @func   get_width()
 		/// @desc	...
         /// @return width {real}
         ///
         return display_get_width();
     },
-    get_height:     function() {
+    get_height: function() {
         /// @func   get_height()
 		/// @desc	...
         /// @return height {real}
@@ -32,4 +39,3 @@ DISPLAY = {
         return display_get_height();
     },
 };
-

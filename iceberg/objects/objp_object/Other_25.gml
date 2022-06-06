@@ -82,7 +82,7 @@ clear_subscriptions = function() {
 	subscriptions   = [];
 	n_subscriptions = 0;
 };
-	
+
 #endregion
 #region Util ///////////
 

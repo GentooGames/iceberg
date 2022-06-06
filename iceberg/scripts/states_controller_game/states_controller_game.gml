@@ -26,16 +26,16 @@ function state_controller_game_init() {
 			#region Core Systems
 
 			log("<OBJC_GAME> Setting Up Core Systems...");
-			EVENT.setup();
+			AUDIO.setup();
 			CLOCKS.setup();
 			DEBUG.setup();
-			INPUT.setup();
-			AUDIO.setup();
 			DISPLAY.setup();
-			WINDOW.setup();
+			EVENT.setup();
 			GUI.setup();
-			TRANSITION.setup();
+			INPUT.setup();
 			PARTICLES.setup();
+			TRANSITION.setup();
+			WINDOW.setup();
 			
 			#endregion
 			#region Unit Tests
@@ -72,7 +72,16 @@ function state_controller_game_main() {
 	///
 	return {
 		step: function() {
-			
+			AUDIO.update();
+			CLOCKS.update();
+			DEBUG.update();
+			DISPLAY.update();
+			EVENT.update();
+			GUI.update();
+			INPUT.update();
+			PARTICLES.update();
+			TRANSITION.update();
+			WINDOW.update();
 		},
 		draw: function() {
 			DEBUG.render();	

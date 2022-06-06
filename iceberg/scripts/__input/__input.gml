@@ -5,10 +5,8 @@ global._input = {};
 #macro mouse_y_gui INPUT.mouse.get_y_gui()
 
 INPUT = {
-	/// Properties & Associations
     initialized: false,
 	
-	/// Methods
     setup:  function() {
         /// @func   setup()
 		/// @desc	...
@@ -69,6 +67,7 @@ INPUT = {
 			});
 		}
     },
+		
     mouse: {
         device: 0,
         

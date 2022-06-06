@@ -3,12 +3,10 @@ global._particles = {}
 ////////////////////////////////////////
 
 PARTICLES = {
-	/// Properties & Associations
-    initialized:  false,
+    initialized: false,
     system: part_system_create(),
 	
-	/// Methods
-    setup:      function() {
+    setup:  function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
@@ -19,6 +17,15 @@ PARTICLES = {
         part_system_depth(system, -1000);  
         initialized = true;
     },
+	update:	function() {
+		/// @func   update()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
+	
     get_system: function() {
         /// @func   get_system()
 		/// @desc	...

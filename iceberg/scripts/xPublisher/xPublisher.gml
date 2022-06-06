@@ -41,10 +41,10 @@ function Publisher() constructor {
 		return self;
 	}
 	
-	/// @function has_channel(channel)
-	/// @param {string} channel The channell identifier used for registration.
+	/// @function has_registered_channel(channel)
+	/// @param {string} channel The channel identifier used for registration.
 	/// @returns {boolean}
-	static has_channel = function(_eventName) {
+	static has_registered_channel = function(_eventName) {
 		return variable_struct_exists(__channels, _eventName);
 	}
 	

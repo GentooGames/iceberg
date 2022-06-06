@@ -6,7 +6,7 @@
     "path": "folders/scripts/libraries/glebtsereteli.yy",
   },
   "resourceVersion": "1.0",
-  "name": "spring",
+  "name": "tweeners",
   "tags": [],
   "resourceType": "GMScript",
 }

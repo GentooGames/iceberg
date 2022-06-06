@@ -3,7 +3,6 @@ global._audio = {};
 ////////////////////////////////
 
 AUDIO = {
-	/// Properties & Associations
     initialized: false,
     emitter: {
         sfx:     audio_emitter_create(),
@@ -12,8 +11,7 @@ AUDIO = {
         voice:   audio_emitter_create(),
     },
 	
-	/// Methods
-    setup:    function() {
+    setup:  function() {
         /// @func   setup()
 		/// @desc	...
         /// @return NA
@@ -26,6 +24,15 @@ AUDIO = {
         audio_listener_orientation(0, 1, 0, 0, 0, 1);      
         initialized = true;
     },
+	update:	function() {
+		/// @func   update()
+		/// @desc	...
+        /// @return NA
+        ///
+        if (!initialized) exit;
+		////////////////////////
+	},
+		
     play:     function(_emitter_id, _sound_id, _loops) {
         /// @func   play(emitter_id, sound_id, loops)
         /// @param  emitter_id {emitter}
