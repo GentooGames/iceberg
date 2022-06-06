@@ -1,15 +1,11 @@
-global._transition = {};
-#macro TRANSITION	global._transition
 /*
 	- restrict transitions to only be allowed if a transition is not already in progress
-	- add ability to define which transition is executed on each method invokation
 	- transition modes
 		- tiles
 		- circle growth
 		- edges lerp to center
 		- pixelated (screenshot of surface, save, pixelate, etc)
 */
-
 enum TRANSITION_STATE {
 	HIDDEN,
 	START,
@@ -20,9 +16,13 @@ enum TRANSITION_STATE {
 };
 enum TRANSITION_TYPE  {
 	FADE,	
+	LINEAR_WIPE_RIGHT,
+	LINEAR_WIPE_LEFT,
 };
 
-#macro TRANSITION_DEFAULT_TYPE		TRANSITION_TYPE.FADE
+global._transition					= {};
+#macro TRANSITION					global._transition
+#macro TRANSITION_DEFAULT_TYPE		TRANSITION_TYPE.LINEAR_WIPE_LEFT
 #macro TRANSITION_DEFAULT_COLOR		c_black
 #macro TRANSITION_DEFAULT_ALPHA		1.0
 #macro TRANSITION_DEFAULT_SPEED_IN	0.1
@@ -48,19 +48,23 @@ TRANSITION = {
 		alpha		= TRANSITION_DEFAULT_ALPHA;
 		speed_in	= TRANSITION_DEFAULT_SPEED_IN;
 		speed_out	= TRANSITION_DEFAULT_SPEED_OUT;
-		threshold	= 0.01;
 		
 		#endregion
 		#region Private
 		
-		__state		= TRANSITION_STATE.HIDDEN;
-		__progress	= 0.0;	// from 0 to 1
-		__target	= 1.0;
-		__on_hold	= {
+		__state		 = TRANSITION_STATE.HIDDEN;
+		__progress	 = 0.0;	// from 0 to 1
+		__target	 = 1.0;
+		__thresholds = [
+			0.010,		// FADE
+			0.001,		// LINEAR_WIPE_RIGHT
+			0.001,		// LINEAR_WIPE_LEFT
+		];
+		__on_hold	 = {
 			callback: undefined,
 			data:	  undefined,
 		};
-		__on_end	= {
+		__on_end	 = {
 			callback: undefined,
 			data:	  undefined,
 		};
@@ -86,7 +90,7 @@ TRANSITION = {
 				__target   = 1.0;
 				__progress = lerp(__progress, __target, speed_in);
 				
-				if (abs(__progress - __target) <= threshold) {
+				if (abs(__progress - __target) <= __thresholds[type]) {
 					__progress = __target;
 					__state	   = TRANSITION_STATE.HOLD;
 				}
@@ -103,17 +107,14 @@ TRANSITION = {
 				__target   = 0.0;
 				__progress = lerp(__progress, __target, speed_out);
 				
-				if (abs(__progress - __target) <= threshold) {
+				if (abs(__progress - __target) <= __thresholds[type]) {
 					__progress = __target;
 					__state	   = TRANSITION_STATE.END;
 				}
 				break;	
 			}
 			case TRANSITION_STATE.END: {
-				if (__on_end.callback != undefined) {
-					__on_end.callback(__on_end.data);	
-				}
-				__state = TRANSITION_STATE.HIDDEN;
+				__transition_end();
 				break;	
 			}
 		};
@@ -126,22 +127,54 @@ TRANSITION = {
         if (!initialized) exit;
 		////////////////////////
 		switch (type) {
-			case TRANSITION_TYPE.FADE: {
-				var _alpha = alpha * __progress;
-				draw_rectangle_alt(0, 0, SW, SH, 0, color, _alpha);
-				break;	
-			}
+			case TRANSITION_TYPE.FADE:				__render_transition_fade();				 break;
+			case TRANSITION_TYPE.LINEAR_WIPE_RIGHT:	__render_transition_linear_wipe_right(); break;
+			case TRANSITION_TYPE.LINEAR_WIPE_LEFT:	__render_transition_linear_wipe_left();	 break;
 		};
 	},
 	
 	/// Private
-	__transition_start: function(_type) {
+	__transition_start:						function(_type) {
 		/// @func	__transition_start(type)
 		/// @param	{TRANSITION_TYPE} type
 		/// @return NA
 		///
 		type    = _type;
 		__state = TRANSITION_STATE.START;
+	},
+	__transition_end:						function() {
+		/// @func	__transition_end()
+		/// @return NA
+		///
+		if (__on_end.callback != undefined) {
+			__on_end.callback(__on_end.data);	
+		}
+		type    = TRANSITION_DEFAULT_TYPE;
+		__state = TRANSITION_STATE.HIDDEN;
+	},
+	__render_transition_fade:				function() {
+		/// @func	__render_transition_fade()
+		/// @desc	...
+		/// @return NA
+		///
+		var _alpha = alpha * __progress;
+		draw_rectangle_alt(0, 0, SW, SH, 0, color, _alpha);
+	},
+	__render_transition_linear_wipe_right:	function() {
+		/// @func	__render_transition_linear_wipe_right()
+		/// @desc	...
+		/// @return NA
+		///
+		var _x = -SW + (SW * __progress);
+		draw_rectangle_alt(_x, 0, SW, SH, 0, color, alpha);
+	},
+	__render_transition_linear_wipe_left:	function() {
+		/// @func	__render_transition_linear_wipe_left()
+		/// @desc	...
+		/// @return NA
+		///
+		var _x = SW - (SW * __progress);
+		draw_rectangle_alt(_x, 0, SW, SH, 0, color, alpha);
 	},
 	
 	/// Public
