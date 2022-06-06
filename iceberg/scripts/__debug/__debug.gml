@@ -37,13 +37,13 @@ DEBUG = {
 		//});	
 		
 		if (INPUT.keyboard.button_pressed(ord("R"))) {
-			TRANSITION.restart(TRANSITION_TYPE.FADE);
+			TRANSITION.restart();
 		}
 		if (INPUT.keyboard.button_pressed(ord("O"))) {
-			TRANSITION.goto_previous(TRANSITION_TYPE.LINEAR_WIPE_LEFT);
+			TRANSITION.goto_previous();
 		}
 		if (INPUT.keyboard.button_pressed(ord("P"))) {
-			TRANSITION.goto_next(TRANSITION_TYPE.LINEAR_WIPE_RIGHT);
+			TRANSITION.goto_next();
 		}
 		
         

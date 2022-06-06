@@ -1,11 +1,6 @@
 /*
-	- handle on_end callbacks
-	- setup consistent callbacks?
-	- transition modes
-		- tiles
-		- circle growth
-		- edges lerp to center
-		- pixelated (screenshot of surface, save, pixelate, etc)
+	- allow for different renders in and out in the same transition
+	- define custom sprites to draw for transitions
 */
 enum TRANSITION_STATE {
 	HIDDEN,
@@ -19,12 +14,17 @@ enum TRANSITION_STATE {
 enum TRANSITION_TYPE  {
 	FADE,	
 	LINEAR_WIPE_RIGHT,
-	LINEAR_WIPE_LEFT,
+	LINEAR_WIPE_LEFT,		
+	CIRCLE_SHRINK_CENTER,	//
+	CIRCLE_SHRINK_TARGET,	//
+	BORDER_SHRINK_CENTER,	//
+	BORDER_SHRINK_TARGET,	//
+	TILES,					//
 };
 
 global._transition					= {};
 #macro TRANSITION					global._transition
-#macro TRANSITION_DEFAULT_TYPE		TRANSITION_TYPE.LINEAR_WIPE_LEFT
+#macro TRANSITION_DEFAULT_TYPE		TRANSITION_TYPE.CIRCLE_SHRINK_CENTER
 #macro TRANSITION_DEFAULT_COLOR		c_black
 #macro TRANSITION_DEFAULT_ALPHA		1.0
 #macro TRANSITION_DEFAULT_SPEED_IN	0.1
@@ -55,6 +55,7 @@ TRANSITION = {
 		#endregion
 		#region Private
 		
+		__surface	 = surface_create(SW, SH);
 		__state		 = TRANSITION_STATE.HIDDEN;
 		__progress	 = 0.0;	// from 0 to 1
 		__target	 = 1.0;
@@ -62,6 +63,7 @@ TRANSITION = {
 			0.010,			// FADE
 			0.001,			// LINEAR_WIPE_RIGHT
 			0.001,			// LINEAR_WIPE_LEFT
+			0.005,			// CIRCLE_SHRINK_CENTER
 		];
 		__on_change	 = {	// internal callback used to manage room changes
 			callback: undefined,
@@ -144,17 +146,25 @@ TRANSITION = {
         ///
         if (!initialized) exit;
 		////////////////////////
+		surface_set_target(__surface);
+		draw_clear_alpha(c_black, 0.0);
 		switch (type) {
-			case TRANSITION_TYPE.FADE:				__render_transition_fade();				 break;
-			case TRANSITION_TYPE.LINEAR_WIPE_RIGHT:	__render_transition_linear_wipe_right(); break;
-			case TRANSITION_TYPE.LINEAR_WIPE_LEFT:	__render_transition_linear_wipe_left();	 break;
+			case TRANSITION_TYPE.FADE:					__render_transition_fade();					break;
+			case TRANSITION_TYPE.LINEAR_WIPE_RIGHT:		__render_transition_linear_wipe_right();	break;
+			case TRANSITION_TYPE.LINEAR_WIPE_LEFT:		__render_transition_linear_wipe_left();		break;
+			case TRANSITION_TYPE.CIRCLE_SHRINK_CENTER:	__render_transition_circle_shrink_center();	break;
+			case TRANSITION_TYPE.CIRCLE_SHRINK_TARGET:	__render_transition_circle_shrink_target();	break;
+			case TRANSITION_TYPE.BORDER_SHRINK_CENTER:	__render_transition_border_shrink_center();	break;
+			case TRANSITION_TYPE.BORDER_SHRINK_TARGET:	__render_transition_border_shrink_target();	break;
 		};
+		surface_reset_target();
+		draw_surface(__surface, 0, 0);
 	},
 	
 	#endregion
 	#region Private
 	
-	__transition_start:						function(_type) {
+	__transition_start:	 function(_type) {
 		/// Handle Consistent on_start Callback
 		if (__callbacks.on_start.callback != undefined) {
 			__callbacks.on_start.callback(__callbacks.on_start.data);		
@@ -162,7 +172,7 @@ TRANSITION = {
 		type    = _type;
 		__state = TRANSITION_STATE.START;
 	},
-	__transition_change:					function() {
+	__transition_change: function() {
 		/// Handle One-Time on_change Callback
 		if (__on_change.callback != undefined) {
 			__on_change.callback(__on_change.data);	
@@ -173,7 +183,7 @@ TRANSITION = {
 		}
 		__state = TRANSITION_STATE.HOLD;
 	},
-	__transition_end:						function() {
+	__transition_end:	 function() {
 		/// Handle One-Time on_end Callback
 		if (__on_end.callback != undefined) {
 			__on_end.callback(__on_end.data);	
@@ -185,17 +195,35 @@ TRANSITION = {
 		type    = TRANSITION_DEFAULT_TYPE;
 		__state = TRANSITION_STATE.HIDDEN;
 	},
-	__render_transition_fade:				function() {
+		
+	__render_transition_fade:					function() {
 		var _alpha = alpha * __progress;
 		draw_rectangle_alt(0, 0, SW, SH, 0, color, _alpha);
 	},
-	__render_transition_linear_wipe_right:	function() {
+	__render_transition_linear_wipe_right:		function() {
 		var _x = -SW + (SW * __progress);
 		draw_rectangle_alt(_x, 0, SW, SH, 0, color, alpha);
 	},
-	__render_transition_linear_wipe_left:	function() {
+	__render_transition_linear_wipe_left:		function() {
 		var _x = SW - (SW * __progress);
 		draw_rectangle_alt(_x, 0, SW, SH, 0, color, alpha);
+	},
+	__render_transition_circle_shrink_center:	function() {
+		draw_rectangle_alt(0, 0, SW, SH, 0, color, alpha);
+		gpu_set_blendmode(bm_subtract);
+		var _base   = SH;
+		var _radius = _base - (_base * __progress);
+		draw_circle_color(SW * 0.5, SH * 0.5, _radius, c_white, c_white, false);
+		gpu_set_blendmode(bm_normal);
+	},
+	__render_transition_circle_shrink_target:	function() {
+	
+	},
+	__render_transition_border_shrink_center:	function() {
+	
+	},
+	__render_transition_border_shrink_target:	function() {
+	
 	},
 	
 	#endregion
