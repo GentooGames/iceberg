@@ -1,5 +1,5 @@
 /*
-	- restrict transitions to only be allowed if a transition is not already in progress
+	- handle on_end callbacks
 	- transition modes
 		- tiles
 		- circle growth
@@ -31,7 +31,8 @@ global._transition					= {};
 TRANSITION = { 
     initialized: false,
 	
-	/// Internal
+	#region Internal 
+	
     setup:  function() {
         /// @func   setup()
 		/// @desc	...
@@ -86,7 +87,7 @@ TRANSITION = {
 				__state	   = TRANSITION_STATE.IN;
 				break;	
 			}
-			case TRANSITION_STATE.IN: {
+			case TRANSITION_STATE.IN:	 {
 				__target   = 1.0;
 				__progress = lerp(__progress, __target, speed_in);
 				
@@ -96,14 +97,14 @@ TRANSITION = {
 				}
 				break;	
 			}
-			case TRANSITION_STATE.HOLD: {
+			case TRANSITION_STATE.HOLD:  {
 				if (__on_hold.callback != undefined) {
 					__on_hold.callback(__on_hold.data);	
 				}
 				__state = TRANSITION_STATE.OUT;
 				break;	
 			}
-			case TRANSITION_STATE.OUT: {
+			case TRANSITION_STATE.OUT:	 {
 				__target   = 0.0;
 				__progress = lerp(__progress, __target, speed_out);
 				
@@ -113,7 +114,7 @@ TRANSITION = {
 				}
 				break;	
 			}
-			case TRANSITION_STATE.END: {
+			case TRANSITION_STATE.END:	 {
 				__transition_end();
 				break;	
 			}
@@ -133,19 +134,14 @@ TRANSITION = {
 		};
 	},
 	
-	/// Private
+	#endregion
+	#region Private
+	
 	__transition_start:						function(_type) {
-		/// @func	__transition_start(type)
-		/// @param	{TRANSITION_TYPE} type
-		/// @return NA
-		///
 		type    = _type;
 		__state = TRANSITION_STATE.START;
 	},
 	__transition_end:						function() {
-		/// @func	__transition_end()
-		/// @return NA
-		///
 		if (__on_end.callback != undefined) {
 			__on_end.callback(__on_end.data);	
 		}
@@ -153,72 +149,70 @@ TRANSITION = {
 		__state = TRANSITION_STATE.HIDDEN;
 	},
 	__render_transition_fade:				function() {
-		/// @func	__render_transition_fade()
-		/// @desc	...
-		/// @return NA
-		///
 		var _alpha = alpha * __progress;
 		draw_rectangle_alt(0, 0, SW, SH, 0, color, _alpha);
 	},
 	__render_transition_linear_wipe_right:	function() {
-		/// @func	__render_transition_linear_wipe_right()
-		/// @desc	...
-		/// @return NA
-		///
 		var _x = -SW + (SW * __progress);
 		draw_rectangle_alt(_x, 0, SW, SH, 0, color, alpha);
 	},
 	__render_transition_linear_wipe_left:	function() {
-		/// @func	__render_transition_linear_wipe_left()
-		/// @desc	...
-		/// @return NA
-		///
 		var _x = SW - (SW * __progress);
 		draw_rectangle_alt(_x, 0, SW, SH, 0, color, alpha);
 	},
 	
-	/// Public
-    goto:				function(_room, _type = TRANSITION_DEFAULT_TYPE) {
+	#endregion
+	#region Public
+	
+    goto:				function(_room, _type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
         /// @func   goto(room, type*)
         /// @param  {room}			  room
 		/// @param	{TRANSITION_TYPE} type
 		/// @desc	...
         /// @return NA
         //
+		if (is_transitioning()) exit;
+		
 		__on_hold.data	   = _room;
 		__on_hold.callback = function(_room) {
 			PUBLISH("transition_room_changed", { room: _room });	
 			room_goto(_room);
 		};
+		__on_end.data	   = _data;
+		__on_end.callback  = _callback;
 		__transition_start(_type);
     },
-    goto_next:			function(_type = TRANSITION_DEFAULT_TYPE) {
+    goto_next:			function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
         /// @func   goto_next()
 		/// @param	{TRANSITION_TYPE} type
 		/// @desc	...
         /// @return NA
         ///
-        goto(get_room_next(), _type);
+        goto(get_room_next(), _type, _callback, _data);
     },
-    goto_previous:		function(_type = TRANSITION_DEFAULT_TYPE) {
+    goto_previous:		function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
         /// @func   goto_previous()
 		/// @param	{TRANSITION_TYPE} type
 		/// @desc	...
         /// @return NA
         ///
-        goto(get_room_previous(), _type);
+        goto(get_room_previous(), _type, _callback, _data);
     },
-    restart:			function(_type = TRANSITION_DEFAULT_TYPE) {
+    restart:			function(_type = TRANSITION_DEFAULT_TYPE, _callback, _data) {
         /// @func   restart()
 		/// @param	{TRANSITION_TYPE} type
 		/// @desc	...
         /// @return NA
         ///
+		if (is_transitioning()) exit;
+		
 		__on_hold.data	   = undefined;
 		__on_hold.callback = function() {
 			PUBLISH("transition_room_restarted");
 			room_restart();
 		};
+		__on_end.data	   = _data;
+		__on_end.callback  = _callback;
 		__transition_start(_type);
     },
     get_room_next:		function(_room = room) {
@@ -245,22 +239,12 @@ TRANSITION = {
         }
         throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
     },
+	is_transitioning:	function() {
+		/// @func	is_transitioning()
+		/// @return {bool} is_transitioning
+		/// 
+		return __progress != 0;
+	},
+		
+	#endregion
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
