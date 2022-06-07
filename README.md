@@ -41,5 +41,6 @@ custom systems written by __gentoo__ and included in this repository are:
 - orderly (https://github.com/GentooGames/orderly)
 - weestate (https://github.com/GentooGames/weestate)
 - gstat (https://github.com/GentooGames/gstat)
+- floe (https://github.com/GentooGames/floe)
 
 please support these awesome developers financially with donations when possible.
