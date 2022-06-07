@@ -55,10 +55,13 @@ global._transition = {
         /// @return NA
         ///
         if (!initialized) exit;
+		#region FloeEffects ////
 		
 		if (effect != undefined) {
 			effect.update();
 		}
+		
+		#endregion
 	},
 	render: function() {
 		/// @func   render()
@@ -66,10 +69,13 @@ global._transition = {
         /// @return NA
         ///
         if (!initialized) exit;
+		#region FloeEffects ////
 		
 		if (effect != undefined) {
 			effect.render();	
 		}
+		
+		#endregion
 	},
 	
 	#endregion
