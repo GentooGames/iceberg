@@ -28,10 +28,9 @@
 #region upcoming features
 /*
 	- define custom sprites to draw for transitions
-	- optimize performance through not drawing the surface every frame
 	- transition hold time
-	- make sure to garbage collect surfaces on FloeEffects()
 	- different interpolation types/methods
+	- optimize performance through not drawing the surface every frame
 	- transitions to do
 		- "old school tv shutdown"
 		- cross-fade
@@ -42,9 +41,11 @@
 
 enum FLOE_STATE {
 	HIDDEN,
+	ENTER_PREP,
 	ENTER,
 	CHANGE,
 	HOLD,
+	LEAVE_PREP,
 	LEAVE,
 	END,
 };
@@ -62,6 +63,8 @@ enum FLOE_STATE {
 #macro __FLOE_EFFECT_DEFAULT_ALPHA		1.0
 #macro __FLOE_EFFECT_DEFAULT_SPEED		0.1
 #macro __FLOE_EFFECT_DEFAULT_THRESHOLD	0.1
+#macro __FLOE_EFFECT_DEFAULT_HOLD_TIME	-1
+#macro __FLOE_EFFECT_DEFAULT_PADDING	20
 
 function FloeEffect() constructor {
 	/// @func FloeEffect()
@@ -70,6 +73,7 @@ function FloeEffect() constructor {
 	alpha		= __FLOE_EFFECT_DEFAULT_ALPHA;
 	speed		= __FLOE_EFFECT_DEFAULT_SPEED;
 	threshold	= __FLOE_EFFECT_DEFAULT_THRESHOLD;
+	hold_time	= __FLOE_EFFECT_DEFAULT_HOLD_TIME;
 	on_enter	= {
 		callback: undefined,
 		data:	  undefined,
@@ -92,11 +96,19 @@ function FloeEffect() constructor {
 	surface		= undefined;
 	state		= FLOE_STATE.HIDDEN;
 	is_reversed	= false;
+	hold_timer  = 0;
 		
 	static update  = function() {
 		/// @func update()
 		///
 		switch (state) {
+			case FLOE_STATE.ENTER_PREP: {
+				if (on_enter.callback != undefined) {
+					on_enter.callback(on_enter.data);		
+				}
+				state = FLOE_STATE.ENTER;
+				break;	
+			}
 			case FLOE_STATE.ENTER:	{
 				progress = lerp(progress, target, speed);
 				
@@ -110,10 +122,23 @@ function FloeEffect() constructor {
 				if (on_change.callback != undefined) {
 					on_change.callback(on_change.data);	
 				}
+				hold_timer = hold_time;
 				state = FLOE_STATE.HOLD;
 				break;	
 			}
 			case FLOE_STATE.HOLD:	{
+				if (hold_timer > 0) {
+					hold_timer--;	
+				}
+				else {
+					state = FLOE_STATE.LEAVE_PREP;
+				}
+				break;	
+			}
+			case FLOE_STATE.LEAVE_PREP: {
+				if (on_leave.callback != undefined) {
+					on_leave.callback(on_leave.data);		
+				}	
 				state = FLOE_STATE.LEAVE;
 				break;	
 			}
@@ -134,7 +159,6 @@ function FloeEffect() constructor {
 				break;	
 			}
 		};
-		//show_debug_message("effect_surface: " + string(surface_exists(surface)));
 	};
 	static cleanup = function() {
 		/// @func cleanup()
@@ -149,19 +173,13 @@ function FloeEffect() constructor {
 	static enter   = function() {
 		/// @func enter()
 		///
-		if (on_enter.callback != undefined) {
-			on_enter.callback(on_enter.data);		
-		}
-		state  = FLOE_STATE.ENTER;
+		state  = FLOE_STATE.ENTER_PREP;
 		target = is_reversed ? 0 : 1;
 	};
 	static leave   = function() {
 		/// @func leave()
 		///
-		if (on_leave.callback != undefined) {
-			on_leave.callback(on_leave.data);		
-		}
-		state  = FLOE_STATE.LEAVE;
+		state  = FLOE_STATE.LEAVE_PREP;
 		target = is_reversed ? 1 : 0;
 	};
 	static reverse = function(_reverse_progress = true) {
@@ -262,7 +280,7 @@ function FloeEffectWipeLeft() : FloeEffect() constructor {
 	static render = function() {
 		/// @func render()
 		///
-		var _pad	= 50;
+		var _pad	= __FLOE_EFFECT_DEFAULT_PADDING;
 		var _width	= SW + _pad;
 		var _x		= _width - (_width * progress) - (_pad * 0.5);
 		draw_rectangle_alt(_x, 0, _width, SH, 0, color, alpha);
@@ -276,7 +294,7 @@ function FloeEffectWipeRight() : FloeEffect() constructor {
 	static render = function() {
 		/// @func render()
 		///
-		var _pad	= 50;
+		var _pad	= __FLOE_EFFECT_DEFAULT_PADDING;
 		var _width	= SW + _pad;
 		var _x		= -_width + (_width * progress) - (_pad * 0.5);
 		draw_rectangle_alt(_x, 0, _width, SH, 0, color, alpha);
@@ -329,10 +347,13 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 		draw_rectangle_alt(0, 0, SW, SH, 0, color, alpha);
 		gpu_set_blendmode(bm_subtract);
 		
-		var _width  =  SW - (SW * progress);
-		var _height =  SH - (SH * progress);
-		var _x		= (SW - _width ) * 0.5;
-		var _y		= (SH - _height) * 0.5;
+		var _pad	=  __FLOE_EFFECT_DEFAULT_PADDING;
+		var _base_w =  SW + _pad;
+		var _base_h =  SH + _pad;
+		var _width	= _base_w - (_base_w * progress);
+		var _height = _base_h - (_base_h * progress);
+		var _x		= (_base_w - _width ) * 0.5 - (_pad * 0.5);
+		var _y		= (_base_h - _height) * 0.5 - (_pad * 0.5);
 		draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
 		
 		gpu_set_blendmode(bm_normal);

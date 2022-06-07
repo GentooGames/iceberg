@@ -1,5 +1,5 @@
 #macro __FLOE_DEFAULT_EFFECT_IN  FloeEffectBorderCenter
-#macro __FLOE_DEFAULT_EFFECT_OUT __FLOE_DEFAULT_EFFECT_IN
+#macro __FLOE_DEFAULT_EFFECT_OUT FloeEffectWipeLeft
 
 global._transition = { 
     initialized: false,
@@ -75,7 +75,7 @@ global._transition = {
 		///
 		/// Instantiate Effect_In()
 		effect_in = new _effect_in();
-		effect_in.set_on_change(function() {
+		effect_in.set_on_leave(function() {
 			effect_in.cleanup();
 			effect = effect_out;
 			effect.reverse();
