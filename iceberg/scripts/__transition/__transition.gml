@@ -1,7 +1,44 @@
+global._floe = {};
+#macro FLOE global._floe
+/////////////////////////////
+// r---. .     .---. r---. //
+// r--   |     |   | r--   //
+// L     L---- L---J L---J //
+#region //////////////$(*)>//
+
+#region about
+/*
+	written_by:__gentoo______
+	version:_____0.1.0_______
+*/ 
+#endregion
+#region change log
+
+#region version 0.1.0
+/*	
+	Date: 06/06/2022
+	1. Released first version.
+*/
+#endregion
+
+#endregion
+#region docs & help
+
+/// ...
+
+#endregion
+#region upcoming features
 /*
 	- define custom sprites to draw for transitions
+	- transitions to do
+		- "old school tv shutdown"
+		- cross-fade
+		- pixelation
 */
-enum TRANSITION_STATE {
+#endregion
+#region enums
+
+enum FLOE_STATE {
 	HIDDEN,
 	START,
 	IN,
@@ -10,7 +47,8 @@ enum TRANSITION_STATE {
 	OUT,
 	END,
 };
-enum TRANSITION_TYPE  {
+enum FLOE_TYPE  {
+	NONE,
 	FADE,	
 	LINEAR_WIPE_RIGHT,
 	LINEAR_WIPE_LEFT,		
@@ -21,16 +59,20 @@ enum TRANSITION_TYPE  {
 	TILES,					//
 };
 
-global._transition					= {};
-#macro TRANSITION					global._transition
-#macro TRANSITION_DEFAULT_TYPE_IN	TRANSITION_TYPE.BORDER_SHRINK_CENTER
-#macro TRANSITION_DEFAULT_TYPE_OUT	TRANSITION_DEFAULT_TYPE_IN
-#macro TRANSITION_DEFAULT_COLOR		c_black
-#macro TRANSITION_DEFAULT_ALPHA		1.0
-#macro TRANSITION_DEFAULT_SPEED_IN	0.1
-#macro TRANSITION_DEFAULT_SPEED_OUT	0.1
+#endregion
+#region default config values
 
-TRANSITION = { 
+#macro FLOE_DEFAULT_TYPE_IN		FLOE_TYPE.FADE
+#macro FLOE_DEFAULT_TYPE_OUT	FLOE_DEFAULT_TYPE_IN
+#macro FLOE_DEFAULT_COLOR		c_black
+#macro FLOE_DEFAULT_ALPHA		1.0
+#macro FLOE_DEFAULT_SPEED_IN	0.1
+#macro FLOE_DEFAULT_SPEED_OUT	0.1
+
+#endregion
+
+#endregion
+FLOE = { 
     initialized: false,
 	
 	#region Internal 
@@ -42,26 +84,27 @@ TRANSITION = {
         ///
         if (initialized) return;
 		////////////////////////////
-        log("<TRANSITION> setup()");
+        log("<FLOE> setup()");
 		
 		#region Customizable
 		
-		type_in		= TRANSITION_DEFAULT_TYPE_IN;
-		type_out	= TRANSITION_DEFAULT_TYPE_OUT;
+		type_in		= FLOE_DEFAULT_TYPE_IN;
+		type_out	= FLOE_DEFAULT_TYPE_OUT;
 		type		= type_in;
-		color		= TRANSITION_DEFAULT_COLOR;
-		alpha		= TRANSITION_DEFAULT_ALPHA;
-		speed_in	= TRANSITION_DEFAULT_SPEED_IN;
-		speed_out	= TRANSITION_DEFAULT_SPEED_OUT;
+		color		= FLOE_DEFAULT_COLOR;
+		alpha		= FLOE_DEFAULT_ALPHA;
+		speed_in	= FLOE_DEFAULT_SPEED_IN;
+		speed_out	= FLOE_DEFAULT_SPEED_OUT;
 		
 		#endregion
 		#region Private
 		
 		__surface	 = surface_create(SW, SH);
-		__state		 = TRANSITION_STATE.HIDDEN;
+		__state		 = FLOE_STATE.HIDDEN;
 		__progress	 = 0.0;	// from 0 to 1
 		__target	 = 1.0;
 		__thresholds = [
+			1.000,			// NONE
 			0.010,			// FADE
 			0.001,			// LINEAR_WIPE_RIGHT
 			0.001,			// LINEAR_WIPE_LEFT
@@ -105,40 +148,40 @@ TRANSITION = {
         if (!initialized) exit;
 		////////////////////////
 		switch (__state) {
-			case TRANSITION_STATE.START:  {
+			case FLOE_STATE.START:  {
 				__progress = 0;
-				__state	   = TRANSITION_STATE.IN;
+				__state	   = FLOE_STATE.IN;
 				break;	
 			}
-			case TRANSITION_STATE.IN:	  {
+			case FLOE_STATE.IN:	  {
 				__target   = 1.0;
 				__progress = lerp(__progress, __target, speed_in);
 				
 				if (abs(__progress - __target) <= __thresholds[type]) {
 					__progress = __target;
-					__state	   = TRANSITION_STATE.CHANGE;
+					__state	   = FLOE_STATE.CHANGE;
 				}
 				break;	
 			}
-			case TRANSITION_STATE.CHANGE: {
+			case FLOE_STATE.CHANGE: {
 				__transition_change();
 				break;	
 			}
-			case TRANSITION_STATE.HOLD:   {
-				__state = TRANSITION_STATE.OUT;
+			case FLOE_STATE.HOLD:   {
+				__state = FLOE_STATE.OUT;
 				break;	
 			}
-			case TRANSITION_STATE.OUT:	  {
+			case FLOE_STATE.OUT:	  {
 				__target   = 0.0;
 				__progress = lerp(__progress, __target, speed_out);
 				
 				if (abs(__progress - __target) <= __thresholds[type]) {
 					__progress = __target;
-					__state	   = TRANSITION_STATE.END;
+					__state	   = FLOE_STATE.END;
 				}
 				break;	
 			}
-			case TRANSITION_STATE.END:	  {
+			case FLOE_STATE.END:	  {
 				__transition_end();
 				break;	
 			}
@@ -154,13 +197,13 @@ TRANSITION = {
 		surface_set_target(__surface);
 		draw_clear_alpha(c_black, 0.0);
 		switch (type) {
-			case TRANSITION_TYPE.FADE:					__render_transition_fade();					break;
-			case TRANSITION_TYPE.LINEAR_WIPE_RIGHT:		__render_transition_linear_wipe_right();	break;
-			case TRANSITION_TYPE.LINEAR_WIPE_LEFT:		__render_transition_linear_wipe_left();		break;
-			case TRANSITION_TYPE.CIRCLE_SHRINK_CENTER:	__render_transition_circle_shrink_center();	break;
-			case TRANSITION_TYPE.CIRCLE_SHRINK_TARGET:	__render_transition_circle_shrink_target();	break;
-			case TRANSITION_TYPE.BORDER_SHRINK_CENTER:	__render_transition_border_shrink_center();	break;
-			case TRANSITION_TYPE.BORDER_SHRINK_TARGET:	__render_transition_border_shrink_target();	break;
+			case FLOE_TYPE.FADE:					__render_transition_fade();					break;
+			case FLOE_TYPE.LINEAR_WIPE_RIGHT:		__render_transition_linear_wipe_right();	break;
+			case FLOE_TYPE.LINEAR_WIPE_LEFT:		__render_transition_linear_wipe_left();		break;
+			case FLOE_TYPE.CIRCLE_SHRINK_CENTER:	__render_transition_circle_shrink_center();	break;
+			case FLOE_TYPE.CIRCLE_SHRINK_TARGET:	__render_transition_circle_shrink_target();	break;
+			case FLOE_TYPE.BORDER_SHRINK_CENTER:	__render_transition_border_shrink_center();	break;
+			case FLOE_TYPE.BORDER_SHRINK_TARGET:	__render_transition_border_shrink_target();	break;
 		};
 		surface_reset_target();
 		draw_surface(__surface, 0, 0);
@@ -177,7 +220,7 @@ TRANSITION = {
 		type_in  = _type_in;
 		type_out = _type_out;
 		type	 =  type_in;
-		__state  =  TRANSITION_STATE.START;
+		__state  =  FLOE_STATE.START;
 	},
 	__transition_change: function() {
 		
@@ -191,7 +234,7 @@ TRANSITION = {
 		if (__callbacks.on_change.callback != undefined) {
 			__callbacks.on_change.callback(__callbacks.on_change.data);		
 		}
-		__state = TRANSITION_STATE.HOLD;
+		__state = FLOE_STATE.HOLD;
 	},
 	__transition_end:	 function() {
 		/// Handle One-Time on_end Callback
@@ -202,10 +245,10 @@ TRANSITION = {
 		if (__callbacks.on_end.callback != undefined) {
 			__callbacks.on_end.callback(__callbacks.on_end.data);		
 		}
-		type_in  = TRANSITION_DEFAULT_TYPE_IN;
-		type_out = TRANSITION_DEFAULT_TYPE_OUT;
+		type_in  = FLOE_DEFAULT_TYPE_IN;
+		type_out = FLOE_DEFAULT_TYPE_OUT;
 		type     = type_in;
-		__state  = TRANSITION_STATE.HIDDEN;
+		__state  = FLOE_STATE.HIDDEN;
 	},
 		
 	__render_transition_fade:					function() {
@@ -229,7 +272,7 @@ TRANSITION = {
 		gpu_set_blendmode(bm_normal);
 	},
 	__render_transition_circle_shrink_target:	function() {
-	
+		/// ...
 	},
 	__render_transition_border_shrink_center:	function() {
 		draw_rectangle_alt(0, 0, SW, SH, 0, color, alpha);
@@ -242,19 +285,19 @@ TRANSITION = {
 		gpu_set_blendmode(bm_normal);
 	},
 	__render_transition_border_shrink_target:	function() {
-	
+		/// ...
 	},
 	
 	#endregion
 	#region Public
 	
-    goto:				function(_room, _type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+    goto:				function(_room, _type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   goto(room, type_in*, type_out*, callback*, data*)
-        /// @param  {room}			  room
-		/// @param	{TRANSITION_TYPE} type_in
-		/// @param	{TRANSITION_TYPE} type_out
-		/// @param	{method}		  callback=undefined
-		/// @param	{any}			  data=undefined
+        /// @param  {room}		room
+		/// @param	{FLOE_TYPE} type_in
+		/// @param	{FLOE_TYPE} type_out
+		/// @param	{method}	callback=undefined
+		/// @param	{any}		data=undefined
 		/// @desc	...
         /// @return NA
         //
@@ -269,34 +312,34 @@ TRANSITION = {
 		__on_end.callback	 = _callback;
 		__transition_start(_type_in, _type_out);
     },
-    goto_next:			function(_type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+    goto_next:			function(_type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   goto_next(type_in*, type_out*, callback*, data*)
-		/// @param	{TRANSITION_TYPE} type_in
-		/// @param	{TRANSITION_TYPE} type_out
-		/// @param	{method}		  callback=undefined
-		/// @param	{any}			  data=undefined
+		/// @param	{FLOE_TYPE} type_in
+		/// @param	{FLOE_TYPE} type_out
+		/// @param	{method}	callback=undefined
+		/// @param	{any}		data=undefined
 		/// @desc	...
         /// @return NA
         ///
         goto(get_room_next(), _type_in, _type_out, _callback, _data);
     },
-    goto_previous:		function(_type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+    goto_previous:		function(_type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   goto_previous(type_in*, type_out*, callback*, data*)
-		/// @param	{TRANSITION_TYPE} type_in
-		/// @param	{TRANSITION_TYPE} type_out
-		/// @param	{method}		  callback=undefined
-		/// @param	{any}			  data=undefined
+		/// @param	{FLOE_TYPE} type_in
+		/// @param	{FLOE_TYPE} type_out
+		/// @param	{method}	callback=undefined
+		/// @param	{any}		data=undefined
 		/// @desc	...
         /// @return NA
         ///
         goto(get_room_previous(), _type_in, _type_out, _callback, _data);
     },
-    restart:			function(_type_in = TRANSITION_DEFAULT_TYPE_IN, _type_out = TRANSITION_DEFAULT_TYPE_OUT, _callback, _data) {
+    restart:			function(_type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   restart(type_in*, type_out*, callback*, data*)
-		/// @param	{TRANSITION_TYPE} type_in
-		/// @param	{TRANSITION_TYPE} type_out
-		/// @param	{method}		  callback=undefined
-		/// @param	{any}			  data=undefined
+		/// @param	{FLOE_TYPE} type_in
+		/// @param	{FLOE_TYPE} type_out
+		/// @param	{method}	callback=undefined
+		/// @param	{any}		data=undefined
 		/// @desc	...
         /// @return NA
         ///
@@ -321,7 +364,7 @@ TRANSITION = {
         if (room_exists(_next_room)) {
             return _next_room;
         }
-        throw("<ERROR in TRANSITION.get_room_next()>:room with index " + string(_next_room) + " does not exist.");
+        throw("<ERROR in FLOE.get_room_next()>:room with index " + string(_next_room) + " does not exist.");
     },
     get_room_previous:	function(_room = room) {
         /// @func   get_room_previous(room*<room>)
@@ -333,7 +376,7 @@ TRANSITION = {
         if (room_exists(_previous_room)) {
             return _previous_room;
         }
-        throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
+        throw("<ERROR in FLOE.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
     },
 	is_transitioning:	function() {
 		/// @func	is_transitioning()
@@ -377,3 +420,4 @@ TRANSITION = {
 		
 	#endregion
 };
+#macro TRANSITION FLOE
