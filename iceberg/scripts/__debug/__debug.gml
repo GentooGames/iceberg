@@ -63,12 +63,14 @@ DEBUG = {
 			TRANSITION.goto_previous();
 		}
 		if (INPUT.keyboard.button_pressed(ord("P"))) {
-			//TRANSITION.goto_next({
-			//	on_change: new_callback(function() {
-			//		TRANSITION.complete();	
-			//	})
-			//});
-			TRANSITION.goto_next();
+			TRANSITION.goto_next({
+				wait:		true,
+				on_change:	new_callback(function() {
+					SAVE.save_game(,, function() {
+						TRANSITION.complete();
+					});
+				})
+			});
 		}
 		
         

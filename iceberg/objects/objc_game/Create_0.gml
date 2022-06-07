@@ -150,5 +150,3 @@ render	 = function() {
 };
 	
 #endregion
-
-setup();

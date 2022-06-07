@@ -1,7 +1,4 @@
-/*
-	- import save controller and save_object, serializer classes
-*/
-
+#macro __TRANSITION_LOG					LOGGING
 #macro __TRANSITION_DEFAULT_EFFECT_IN	__FLOE_DEFAULT_EFFECT_IN
 #macro __TRANSITION_DEFAULT_EFFECT_OUT	__FLOE_DEFAULT_EFFECT_OUT
 #macro __TRANSITION_DEFAULT_WAIT		false	// if true, then TRANSITION.complete() must be manually invoked
@@ -83,6 +80,9 @@ global._transition = {
 		/// @param	{FloeEffect} effect_in
 		/// @param	{FloeEffect} effect_out
 		///
+		if (__TRANSITION_LOG) {
+			show_debug_message("TRANSITION.begin_transition()");	
+		}
 		/// Instantiate Effect_In()
 		effect_in = new _effect_in();
 		effect_in.set_on_leave(function() {
@@ -114,6 +114,9 @@ global._transition = {
 		/// @desc	sometimes we may want transitions to wait for a certain condition to be met, before completing
 		///			the transition. this method is abstracted so that we can bind it to a conditional check.
 		///
+		if (__TRANSITION_LOG) {
+			show_debug_message("TRANSITION.end_transition()");	
+		}
 		effect_out.enter();
 	},
 	__is_transitioning:	function() {
@@ -160,7 +163,10 @@ global._transition = {
 		/// @return	NA
 		///
 		if (on_start.callback != undefined) {
-			on_start.callback(on_start.data);	
+			if (__TRANSITION_LOG) {
+				show_debug_message("executing TRANSITION.on_start()");	
+			}
+			on_start.callback(on_start.data);
 		}
 	},
 	__run_on_change:	function() {
@@ -168,6 +174,9 @@ global._transition = {
 		/// @return	NA
 		///
 		if (on_change.callback != undefined) {
+			if (__TRANSITION_LOG) {
+				show_debug_message("executing TRANSITION.on_change()");	
+			}
 			on_change.callback(on_change.data);	
 		}
 	},
@@ -176,6 +185,9 @@ global._transition = {
 		/// @return	NA
 		///
 		if (on_end.callback != undefined) {
+			if (__TRANSITION_LOG) {
+				show_debug_message("executing TRANSITION.on_end()");	
+			}
 			on_end.callback(on_end.data);	
 		}
 	},
@@ -196,6 +208,10 @@ global._transition = {
         /// @return NA
         ///
 		if (__is_transitioning()) exit;
+		
+		if (__TRANSITION_LOG) {
+			show_debug_message("TRANSITION.goto()");	
+		}
 		
 		var _room		= _data[$ "room"	  ] 
 		var _effect_in	= _data[$ "effect_in" ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
@@ -246,6 +262,9 @@ global._transition = {
 		/// @desc	...
         /// @return NA
         ///
+		if (__TRANSITION_LOG) {
+			show_debug_message("TRANSITION.goto_next()");	
+		}
 		_data[$ "room"] = get_room_next();
 		goto(_data);
     },
@@ -260,6 +279,9 @@ global._transition = {
 		/// @desc	...
         /// @return NA
         ///
+		if (__TRANSITION_LOG) {
+			show_debug_message("TRANSITION.goto_previous()");	
+		}
         _data[$ "room"] = get_room_previous();
 		goto(_data);
     },
@@ -275,6 +297,10 @@ global._transition = {
         /// @return NA
         ///
 		if (__is_transitioning()) exit;
+		
+		if (__TRANSITION_LOG) {
+			show_debug_message("TRANSITION.restart()");	
+		}
 		
 		var _effect_in	= _data[$ "effect_in" ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
 		var _effect_out	= _data[$ "effect_out"] ?? __TRANSITION_DEFAULT_EFFECT_OUT;

@@ -53,9 +53,10 @@ function state_controller_game_init() {
 			
 			log("<OBJC_GAME> Spawning Game Controllers");
 			//camera_create_instance();
-			global._camera = new Camera(0, 0, 0, false);
-			#macro CAMERA global._camera
+			//global._camera = new Camera(0, 0, 0, false);
+			//#macro CAMERA global._camera
 			//instance_create_layer(0, 0, "Controllers", objc_world).setup();
+			instance_create_layer(0, 0, "Controllers", objc_save).setup();
 			
 			#endregion
 			
@@ -63,12 +64,7 @@ function state_controller_game_init() {
 		},
 		leave: function() {
 			/// Exit __rm_init
-			TRANSITION.goto({ 
-				room: ROOM_FIRST,
-				on_change: new_callback(function() {
-					TRANSITION.complete();	
-				})
-			});	
+			TRANSITION.goto({ room: ROOM_FIRST });
 		},
 	};
 };

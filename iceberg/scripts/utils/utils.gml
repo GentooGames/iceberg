@@ -1,3 +1,48 @@
+#region system
+
+function log(_format) {
+	/// @func	log(_format, params, ...)
+	/// @desc	Logs to console using string format and arguments (allows 19 different arguments)
+	/// @param	{string} format The string format.
+	/// @param	{*...} params The values to append
+	/// @return NA
+	/// @tested false
+	/// @usage
+	/*
+	log("{0} this is my {1}", "Hello", "World");
+	log("Print numbers: {0} and strings '{1}'", 124, "World");
+	log("Arrays {0} and structs {1}", [1, 2, 3], { hello: "world" });
+	*/
+	if (!LOGGING) return;
+	///
+	var _params = array_create(argument_count);
+	for (var i = 0; i < argument_count; i++) {
+		_params[i] = argument[i];
+	}
+	var _output = script_execute_ext(string_build, _params);
+	show_debug_message(_output);
+};
+function string_build(_format) {
+	/// @func	string_build(_format, params, ...)
+	/// @desc	Builds a string using string format and arguments (allows 19 different arguments)
+	/// @param	{string} format The string format.
+	/// @param	{*...} params The values to append
+	/// @return	output -> {string}
+	/// @tested false
+	///
+	static _paramIDs = ["{0}",	"{1}",	"{2}",	"{3}",	"{4}",	"{5}",	"{6}",	"{7}",	"{8}",	"{9}",
+						"{10}", "{11}", "{12}", "{13}", "{14}", "{15}", "{16}", "{17}", "{18}", "{19}"];
+						
+	var _output = _format, _count = argument_count - 1;
+	repeat (_count) {
+		var _argument = argument[_count];
+		var _argumentString = is_string(_argument) ? _argument : string(_argument);
+		_output = string_replace_all(_output, _paramIDs[--_count], _argumentString);
+	}
+	return _output;
+};
+
+#endregion
 #region unit tests
 
 function compile_objects_indexes() {
@@ -76,51 +121,6 @@ function log_objects_number(_prefix_msg = "") {
 		_output += " " + _substring;
 	}
 	log("<NUMBER_OF_OBJECTS> " + _prefix_msg + "- " + _output);
-};
-
-#endregion
-#region systems
-
-function log(_format) {
-	/// @func	log(_format, params, ...)
-	/// @desc	Logs to console using string format and arguments (allows 19 different arguments)
-	/// @param	{string} format The string format.
-	/// @param	{*...} params The values to append
-	/// @return NA
-	/// @tested false
-	/// @usage
-	/*
-	log("{0} this is my {1}", "Hello", "World");
-	log("Print numbers: {0} and strings '{1}'", 124, "World");
-	log("Arrays {0} and structs {1}", [1, 2, 3], { hello: "world" });
-	*/
-	if (!LOGGING) return;
-	///
-	var _params = array_create(argument_count);
-	for (var i = 0; i < argument_count; i++) {
-		_params[i] = argument[i];
-	}
-	var _output = script_execute_ext(string_build, _params);
-	show_debug_message(_output);
-};
-function string_build(_format) {
-	/// @func	string_build(_format, params, ...)
-	/// @desc	Builds a string using string format and arguments (allows 19 different arguments)
-	/// @param	{string} format The string format.
-	/// @param	{*...} params The values to append
-	/// @return	output -> {string}
-	/// @tested false
-	///
-	static _paramIDs = ["{0}",	"{1}",	"{2}",	"{3}",	"{4}",	"{5}",	"{6}",	"{7}",	"{8}",	"{9}",
-						"{10}", "{11}", "{12}", "{13}", "{14}", "{15}", "{16}", "{17}", "{18}", "{19}"];
-						
-	var _output = _format, _count = argument_count - 1;
-	repeat (_count) {
-		var _argument = argument[_count];
-		var _argumentString = is_string(_argument) ? _argument : string(_argument);
-		_output = string_replace_all(_output, _paramIDs[--_count], _argumentString);
-	}
-	return _output;
 };
 
 #endregion
@@ -577,207 +577,266 @@ function struct_has(_struct, _var_name) {
 	///
 	return variable_struct_exists(_struct, _var_name);
 }
+function structs_have_same_names(_struct_1, _struct_2) {
+	/// @func	structs_have_same_names(struct_1, struct_2)
+	/// @param	{struct}  struct_1
+	/// @param	{struct}  struct_2
+	/// @return {boolean} same_names?
+	///
+	var _struct_1_vars	 = variable_struct_get_names(_struct_1);
+	var _struct_2_vars	 = variable_struct_get_names(_struct_2);
+	var _n_struct_2_vars = array_length(_struct_2_vars);
+	
+	for (var _i = 0, _len = array_length(_struct_1_vars); _i < _len; _i++) {
+		var _struct_1_var = _struct_1_vars[_i];	
+		
+		var _found_match =  false;
+		for (var _j = 0; _j < _n_struct_2_vars; _j++) {
+			var _struct_2_var  = _struct_2_vars[_j];
+			if (_struct_2_var == _struct_1_var) {
+				_found_match = true;
+				break;
+			}
+		}
+		if (!_found_match) return false;
+	}
+	return true;	
+};
 
 #endregion
-#region maths
+#region buffers
 
-function percent(_percent) {
-	/// @func   percent(percent)
-	/// @param  percent -> {real}
-	/// @desc   check if a given percentage rolls true.
-	/// @return rolled_true -> {bool}
-	/// @tested false
+function struct_to_buffer_encoded_compressed(_struct) {
+	/// @func   struct_to_buffer_encoded_compressed(struct)
+	/// @param  {struct} struct
+	/// @return {buffer} buffer_encoded_compressed
 	///
-	return (random(100) < _percent);
-};
-function avg() {
-	/// @func   avg(element*, ...*)
-	/// @param  element_1 -> {real}
-	/// @param  element_n -> {real}
-	/// @desc   given n elements, compute the average value of them.
-	/// @return avg -> {real}
-	/// @tested false
-	///
-	var _n   = argument_count;
-	var _avg = 0;
+	var _json_string    = json_stringify(_struct);
+	var _encoded_string = base64_encode(_json_string);
+	var _buffer_size    = string_length(_encoded_string);
+	var _buffer		    = buffer_create(_buffer_size, buffer_fixed, 1);
+	buffer_write(_buffer, buffer_text, _encoded_string);
+
+	/// Compress Buffer
+	var _buffer_compressed = buffer_compress(_buffer, 0, _buffer_size);
+
+	/// Cleanup
+	buffer_delete(_buffer);
 	
-	for (var _i = 0; _i < _n; _i++) {
-		_avg += argument[_i];
-	}
-	return (_avg / _n);
+	return _buffer_compressed;
 };
-function logarithm(_base, _shift, _percent, _invert = false) {
-	/// @func   logarithm(base, shift, percent, invert?*<f>)
-	/// @param  base	-> {real}
-	/// @param  shift   -> {real}
-	/// @param  percent -> {real}
-	/// @param  invert  -> {bool}
-	/// @desc   compute a pretty jank logarithm calculation.
-	/// @return log -> {real}
-	/// @tested false
+function struct_save_to_buffer(_struct, _filename) {
+	/// @func   struct_save_to_buffer(struct, filename)
+	/// @param  {struct} struct
+	/// @param  {string} filename
+	/// @return NA
 	///
-	var _log = logn(_base, (1 + (_base - 1) * _percent) + _shift);	
-	return clamp(_invert ? 1 - _log : _log, 0, 1);
-};
-function wrap(_val, _min, _max) {
-	/// @func   wrap(val, min, max)
-	/// @param  val -> {real}
-	/// @param  min -> {real}
-	/// @param  max -> {real}
-	/// @desc   given a value, return it's wrapped value confined to given min & max.
-	/// @return val -> {real}
-	/// @tested false
-	///
-	return ((_val > _max) ? _min : (_val < _min ? _max : _val));
-};
-function plot_line(_i1, _j1, _i2, _j2) {
-	/// @func   plot_line(i1, j1, i2, j2)
-	/// @param  i1	   -> {real}
-	/// @param  j1	   -> {real}
-	/// @param  i2	   -> {real}
-	/// @param  j2	   -> {real}
-	/// @desc   using Bresenham's Line Algorithm (https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
-	///			get the grid coordinates that fall within that plotted line.
-	/// @return coords -> {array}
-	/// @tested false
-	///
-	var _di  = abs(_i2 - _i1);
-	var _si  = _i1 < _i2 ? 1 : -1;
-	var _dj  = -abs(_j2 - _j1);
-	var _sj  = _j1 < _j2 ? 1 : -1;
-	var _err = _di + _dj;
-	var _coords = [];
+	var _buffer_compressed = struct_to_buffer_encoded_compressed(_struct);
+	var _compressed_size   = buffer_get_size(_buffer_compressed);
+	buffer_save(_buffer_compressed, _filename);
 
-	while (true) {
-		array_push(_coords, { i: _i1, j: _j1 });
-		if (_i1 == _i2 && _j1 == _j2) break;
+	/// Cleanup
+	buffer_delete(_buffer_compressed);
+};
+function struct_load_from_buffer(_filename) {
+	/// @func  struct_load_from_buffer(filename)
+	/// @param filename
+	///
+	if (!file_exists(_filename)) {
+		throw("filename: " + string(_filename) + " does not exist!");	
+	}
+	var _buffer_compressed = buffer_load(_filename);
+
+	/// Decompress Buffer
+	var _buffer_encoded = buffer_decompress(_buffer_compressed);
+	var _string_encoded = buffer_read(_buffer_encoded, buffer_text);
+
+	/// Decode Buffer
+	var _buffer_decoded = buffer_base64_decode(_string_encoded);
+	var _data_string	= buffer_read(_buffer_decoded, buffer_text);
+	var _data_struct	= json_parse(_data_string);
+
+	/// Cleanup
+	buffer_delete(_buffer_decoded);
+	buffer_delete(_buffer_compressed);
+	buffer_delete(_buffer_encoded);
+	
+	return _data_struct;
+};
+function buffer_compressed_encoded_to_struct(_buffer, _destroy_buffer = true) {
+	/// @func   buffer_compressed_encoded_to_struct(buffer, destroy_buffer?*)
+	/// @param  {buffer} buffer
+	/// @param  {bool}   destroy_buffer?=true
+	/// @return {struct} struct
+	///
+	/// Decompress Buffer
+	var _buffer_encoded = buffer_decompress(_buffer);
+	var _string_encoded = buffer_read(_buffer_encoded, buffer_text);
+
+	/// Decode Buffer
+	var _buffer_decoded = buffer_base64_decode(_string_encoded);
+	var _data_string	= buffer_read(_buffer_decoded, buffer_text);
+	var _data_struct	= json_parse(_data_string);
+
+	/// Cleanup
+	buffer_delete(_buffer_decoded);
+	buffer_delete(_buffer_encoded);
+	if (_destroy_buffer) {
+		buffer_delete(_buffer);	
+	}
+	return _data_struct;
+};
+
+#endregion
+#region gamemaker objects
+
+#region paths
+
+function path_sprite_index_to_image_index(_path_index) {
+	/// @func   path_sprite_index_to_image_index(path_index)
+	/// @param  path_index -> {real}
+	/// @desc   used with directional moving cursor sprite to get the proper index based off dir
+	/// @return image_index -> {real}
+	/// @tested false
+	///
+	if (player.entity_selected == null) return 8;
+	if (_path_index == null) return 7;
+	if (_path_index == 0) return 7;
+	
+	var _path_cells	= player.entity_selected.get_path_cells();
+	var _n_cells	= array_length(_path_cells);
+	var _cell		= _path_cells[_path_index];
+	
+	var _cell_next	= (_path_index + 1 < _n_cells) 
+		? _path_cells[_path_index + 1
+		] : null;
 		
-		var _e2  = _err * 2;
-		if (_e2 >= _dj) {
-			_err += _dj;
-			_i1  += _si;
-		}
-		if (_e2 <= _di) {
-			_err += _di;
-			_j1  += _sj;
-		}
-	}
-	return _coords;
+	var _cell_prev	= (_path_index - 1 >= 0) 
+		? _path_cells[_path_index - 1] 
+		: get_cell(player.entity_selected.i, player.entity_selected.j);
+		
+	if (_cell_next == null) return 0;
+	
+	var _dir_prev = board.get_cells_dir_relative(_cell_prev, _cell);
+	var _dir_next = board.get_cells_dir_relative(_cell, _cell_next);
+	
+	if (_dir_prev == DIR.UP	   && _dir_next == DIR.UP)	  return 1;
+	if (_dir_prev == DIR.DOWN  && _dir_next == DIR.DOWN)  return 1;
+	if (_dir_prev == DIR.RIGHT && _dir_next == DIR.RIGHT) return 2;
+	if (_dir_prev == DIR.LEFT  && _dir_next == DIR.LEFT)  return 2;
+	if (_dir_prev == DIR.RIGHT && _dir_next == DIR.DOWN)  return 3;
+	if (_dir_prev == DIR.UP	   && _dir_next == DIR.LEFT)  return 3;
+	if (_dir_prev == DIR.UP	   && _dir_next == DIR.RIGHT) return 4;
+	if (_dir_prev == DIR.LEFT  && _dir_next == DIR.DOWN)  return 4;
+	if (_dir_prev == DIR.LEFT  && _dir_next == DIR.UP)	  return 5;
+	if (_dir_prev == DIR.DOWN  && _dir_next == DIR.RIGHT) return 5;
+	if (_dir_prev == DIR.DOWN  && _dir_next == DIR.LEFT)  return 6;
+	if (_dir_prev == DIR.RIGHT && _dir_next == DIR.UP)	  return 6;
+	return 7;
 };
-function ilerp(_min, _max, _value) {
-	/// @func	ilerp(min, max, value)
-	/// @param	min   -> {real}
-	/// @param	max   -> {real}
-	/// @param	value -> {real}
-	/// @desc	pass a value in that exists between min and max, and get a mapped value between 0 - 1.
-	/// @return t -> {real}
-	/// @tested false
-	///
-	return (_value - _min) / (_max - _min);
-};
-function remap(_input_min, _input_max, _output_min, _output_max, _value) {
-	/// @func	remap(input_min, input_max, output_min, output_max, value)
-	/// @param	input_min  -> {real}
-	/// @param	input_max  -> {real}
-	/// @param	output_min -> {real}
-	/// @param	output_max -> {real}
-	/// @param	value	   -> {real}
-	/// @desc	...
-	/// @return value -> {real}
-	/// @tested false
-	/// 
-	var _t = ilerp(_input_min, _input_max, _value);
-	return lerp(_output_min, _output_max, _t);
-};
-function rotate_around(_rot, _amount, _max) {
-	/// @func	rotate_around(rot, amount, max)
-	/// @param	rot    -> {angle}
-	/// @param	amount -> {angle}
-	/// @param	max    -> {angle}
-	/// @desc	...
-	/// @return rot -> {angle}
-	/// @tested false
-	///
-	var _target = _rot + _amount;
-	while (_target < 0) {
-		_target += 360;
-	}
-	return _target % _max;
-};
-function bresenham_line(_i1, _j1, _i2, _j2, _cb, _cb_data) {
-	/// @func	bresenham_line()
-	/// @param	i1			  -> {int}
-	/// @param	j1			  -> {int}
-	/// @param	i2			  -> {int}
-	/// @param	j2			  -> {int}
-	/// @param	callback	  -> {func}
-	/// @param	callback_data -> {any}
-	/// @desc	...
+function path_end_all(_instance = id) {	 	
+	/// @func   path_end_all(instance)
+	/// @param  instance -> {instance} | optional<id>
+	/// @desc   wipe and end all path motion.
 	/// @return NA
 	/// @tested false
 	///
-    var _dist_x		= _i2 - _i1; 
-	var _dist_y		= _j2 - _j1; 
-    var _step_x		= sign(_dist_x);
-    var _step_y		= sign(_dist_y);
-    _dist_x			= abs(_dist_x);
-    _dist_y			= abs(_dist_y);
-    var _dist		= max(_dist_x, _dist_y);
-    var _remainder	= _dist / 2;
-	
-    if (_dist_x > _dist_y) {
-        for (var _i = 0; _i <= _dist; _i++) {
-            _cb(_i1, _j1, _cb_data);
-            
-			_i1 += _step_x;
-            _remainder += _dist_y;
-			
-            if (_remainder >= _dist_x) {
-                _j1 += _step_y;
-                _remainder -= _dist_x;
-            }
-        }
-    }
-    else for (var _i = 0; _i <= _dist; _i++) {
-        _cb(_i1, _j1, _cb_data);
-		
-        _j1 += _step_y;
-        _remainder += _dist_x;
-		
-        if (_remainder >= _dist_y) {
-            _i1 += _step_x;
-            _remainder -= _dist_y;
-        }
-    }
+	with (_id) {
+		path_end();
+		path_clear_points(path);
+		path_position = 0;
+	}
+};
+function path_set_smooth(_path, _smooth) {
+	/// @func   path_set_smooth(path, smooth)
+	/// @param  path   -> {path}
+	/// @param  smooth -> {bool}
+	/// @desc   container function for better wording on path_set_kind()
+	/// @return NA
+	/// @tested false
+	///
+	path_set_kind(_path, _smooth);	
+};
+function path_start_default(_move_speed) {
+	/// @func   path_start_default(move_speed)
+	/// @param  move_speed -> {real}
+	/// @desc   shorthand container function for path_start(...).
+	/// @return NA
+	/// @tested false
+	///
+	path_start(path, _move_speed, path_action_stop, false);	
 };
 
 #endregion
-#region tweens
+#region collisions
 
-function lerp_angle(_angle_from, _angle_to, _amount) {
-	/// @func   lerp_angle(angle_from, angle_to, amount)
-	/// @param  angle_from -> {real}
-	/// @param  angle_to   -> {real}
-	/// @param  amount	   -> {real}
-	/// @desc   apply a simulated lerp effect to an angle, accounting for the 360->0 angle wrap.
-	/// @return angle -> {real}
+function collision_rectangle_bbox(_object, _precise, _notme, _padding = 0) {	 
+	/// @func   collision_rectangle_bbox(object, precise?, notme?, padding*<0>)
+	/// @param  object   -> {object}
+	/// @param  precise  -> {bool}
+	/// @param  notme    -> {bool}
+	/// @param  padding  -> {real} | optional<0>
+	/// @desc   containerized function for default collision_rectangle check based off bbox.
+	/// @return instance -> {instance}
 	/// @tested false
 	///
-    return _angle_from - angle_difference(_angle_from, _angle_to) * _amount;
+	return collision_rectangle(
+		bbox_left  - _padding, bbox_top	   - _padding, 
+		bbox_right + _padding, bbox_bottom + _padding, 
+		_object, _precise, _notme
+	);
 };
-function wave(_from, _to, _duration, _offset) { 
-	/// @func   wave(from, to, duration, offset)
-	/// @param  from	 -> {real}
-	/// @param  to		 -> {real} 
-	/// @param  duration -> {real} 
-	/// @param  offset   -> {real}
-	/// @desc   simulate sin wave motion between two points over a given duration.
-	/// @return value -> {real}
+function collision_rectangle_list_bbox(_object, _precise, _notme, _list, _ordered, _padding = 0) {
+	/// @func   collision_rectangle_list_bbox(object, precise?, notme?, list, ordered?, padding*<0>)
+	/// @param  object   -> {object}
+	/// @param  precise  -> {bool}
+	/// @param  notme    -> {bool}
+	/// @param  list     -> {ds_list}
+	/// @param  ordered  -> {bool}
+	/// @param  padding  -> {real} | optional<0>
+	/// @desc   containerized function for default collision_rectangle_list check based off bbox.
+	/// @return instance -> {instance}
 	/// @tested false
 	///
-	var _a4 = (_to - _from) * 0.5;
-	return _from + _a4 + sin((((current_time * 0.001) + _duration * _offset) / _duration) * (pi * 2)) * _a4;
+	return collision_rectangle_list(
+		bbox_left  - _padding, bbox_top	   - _padding, 
+		bbox_right + _padding, bbox_bottom + _padding, 
+		_object, 
+		_precise, 
+		_notme, 
+		_list, 
+		_ordered
+	);
 };
+function do_every_frame(_interval) {
+	/// @func   do_every_frame(interval)
+	/// @param  interval -> {real}
+	/// @desc   conditional check for if the current frame interval has been triggered.
+	/// @return do_this_frame -> {bool}
+	/// @tested false
+	///
+	return (CURRENT_FRAME % _interval == 0);
+}
+function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
+	/// @func   instance_nth_nearest(x, y, obj, n, priority_list)
+	/// @param  x	-> {real}
+	/// @param  y	-> {real}
+	/// @param  obj -> {object}
+	/// @param  n	-> {real}
+	/// @param  priority_list -> {ds_priority}
+	/// @desc   find the nth instance nearest a given point. this utilized a ds_priority.
+	/// @return instance -> {instance}
+	/// @tested false
+	///
+	var _count	 = min(max(1, _n), instance_number(_obj));
+	var _nearest = null;
+	ds_priority_clear(_priority);
+	with (_obj) ds_priority_add(_priority, id, distance_to_point(_x, _y)); 
+	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
+	return _nearest;
+};
+
+#endregion
 
 #endregion
 #region sprites
@@ -997,84 +1056,6 @@ function draw_sprite_alt(_spr = sprite_index, _subimg = image_index, _x = x, _y 
 };
 
 #endregion
-#region paths
-
-function path_sprite_index_to_image_index(_path_index) {
-	/// @func   path_sprite_index_to_image_index(path_index)
-	/// @param  path_index -> {real}
-	/// @desc   used with directional moving cursor sprite to get the proper index based off dir
-	/// @return image_index -> {real}
-	/// @tested false
-	///
-	if (player.entity_selected == null) return 8;
-	if (_path_index == null) return 7;
-	if (_path_index == 0) return 7;
-	
-	var _path_cells	= player.entity_selected.get_path_cells();
-	var _n_cells	= array_length(_path_cells);
-	var _cell		= _path_cells[_path_index];
-	
-	var _cell_next	= (_path_index + 1 < _n_cells) 
-		? _path_cells[_path_index + 1
-		] : null;
-		
-	var _cell_prev	= (_path_index - 1 >= 0) 
-		? _path_cells[_path_index - 1] 
-		: get_cell(player.entity_selected.i, player.entity_selected.j);
-		
-	if (_cell_next == null) return 0;
-	
-	var _dir_prev = board.get_cells_dir_relative(_cell_prev, _cell);
-	var _dir_next = board.get_cells_dir_relative(_cell, _cell_next);
-	
-	if (_dir_prev == DIR.UP	   && _dir_next == DIR.UP)	  return 1;
-	if (_dir_prev == DIR.DOWN  && _dir_next == DIR.DOWN)  return 1;
-	if (_dir_prev == DIR.RIGHT && _dir_next == DIR.RIGHT) return 2;
-	if (_dir_prev == DIR.LEFT  && _dir_next == DIR.LEFT)  return 2;
-	if (_dir_prev == DIR.RIGHT && _dir_next == DIR.DOWN)  return 3;
-	if (_dir_prev == DIR.UP	   && _dir_next == DIR.LEFT)  return 3;
-	if (_dir_prev == DIR.UP	   && _dir_next == DIR.RIGHT) return 4;
-	if (_dir_prev == DIR.LEFT  && _dir_next == DIR.DOWN)  return 4;
-	if (_dir_prev == DIR.LEFT  && _dir_next == DIR.UP)	  return 5;
-	if (_dir_prev == DIR.DOWN  && _dir_next == DIR.RIGHT) return 5;
-	if (_dir_prev == DIR.DOWN  && _dir_next == DIR.LEFT)  return 6;
-	if (_dir_prev == DIR.RIGHT && _dir_next == DIR.UP)	  return 6;
-	return 7;
-};
-function path_end_all(_instance = id) {	 	
-	/// @func   path_end_all(instance)
-	/// @param  instance -> {instance} | optional<id>
-	/// @desc   wipe and end all path motion.
-	/// @return NA
-	/// @tested false
-	///
-	with (_id) {
-		path_end();
-		path_clear_points(path);
-		path_position = 0;
-	}
-};
-function path_set_smooth(_path, _smooth) {
-	/// @func   path_set_smooth(path, smooth)
-	/// @param  path   -> {path}
-	/// @param  smooth -> {bool}
-	/// @desc   container function for better wording on path_set_kind()
-	/// @return NA
-	/// @tested false
-	///
-	path_set_kind(_path, _smooth);	
-};
-function path_start_default(_move_speed) {
-	/// @func   path_start_default(move_speed)
-	/// @param  move_speed -> {real}
-	/// @desc   shorthand container function for path_start(...).
-	/// @return NA
-	/// @tested false
-	///
-	path_start(path, _move_speed, path_action_stop, false);	
-};
-
-#endregion
 #region strings
 
 function string_contains(_string, _sub) {	 
@@ -1102,74 +1083,30 @@ function string_key() {
 	};
 	return _string;
 };
-
-#endregion
-#region collisions
-
-function collision_rectangle_bbox(_object, _precise, _notme, _padding = 0) {	 
-	/// @func   collision_rectangle_bbox(object, precise?, notme?, padding*<0>)
-	/// @param  object   -> {object}
-	/// @param  precise  -> {bool}
-	/// @param  notme    -> {bool}
-	/// @param  padding  -> {real} | optional<0>
-	/// @desc   containerized function for default collision_rectangle check based off bbox.
-	/// @return instance -> {instance}
-	/// @tested false
+function string_parse_into_struct(_string, _substrings, _delineator) {
+	/// @func	string_parse_into_struct(string, substrings, delineator)
+	/// @param	{string} string
+	/// @param	{array}	 substrings
+	/// @param	{string} delineator
 	///
-	return collision_rectangle(
-		bbox_left  - _padding, bbox_top	   - _padding, 
-		bbox_right + _padding, bbox_bottom + _padding, 
-		_object, _precise, _notme
-	);
-};
-function collision_rectangle_list_bbox(_object, _precise, _notme, _list, _ordered, _padding = 0) {
-	/// @func   collision_rectangle_list_bbox(object, precise?, notme?, list, ordered?, padding*<0>)
-	/// @param  object   -> {object}
-	/// @param  precise  -> {bool}
-	/// @param  notme    -> {bool}
-	/// @param  list     -> {ds_list}
-	/// @param  ordered  -> {bool}
-	/// @param  padding  -> {real} | optional<0>
-	/// @desc   containerized function for default collision_rectangle_list check based off bbox.
-	/// @return instance -> {instance}
-	/// @tested false
-	///
-	return collision_rectangle_list(
-		bbox_left  - _padding, bbox_top	   - _padding, 
-		bbox_right + _padding, bbox_bottom + _padding, 
-		_object, 
-		_precise, 
-		_notme, 
-		_list, 
-		_ordered
-	);
-};
-function do_every_frame(_interval) {
-	/// @func   do_every_frame(interval)
-	/// @param  interval -> {real}
-	/// @desc   conditional check for if the current frame interval has been triggered.
-	/// @return do_this_frame -> {bool}
-	/// @tested false
-	///
-	return (CURRENT_FRAME % _interval == 0);
-}
-function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
-	/// @func   instance_nth_nearest(x, y, obj, n, priority_list)
-	/// @param  x	-> {real}
-	/// @param  y	-> {real}
-	/// @param  obj -> {object}
-	/// @param  n	-> {real}
-	/// @param  priority_list -> {ds_priority}
-	/// @desc   find the nth instance nearest a given point. this utilized a ds_priority.
-	/// @return instance -> {instance}
-	/// @tested false
-	///
-	var _count	 = min(max(1, _n), instance_number(_obj));
-	var _nearest = null;
-	ds_priority_clear(_priority);
-	with (_obj) ds_priority_add(_priority, id, distance_to_point(_x, _y)); 
-	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
-	return _nearest;
+	var _char;
+	var _data  = {};
+	var _value = "";
+	var _index = 0;
+		
+	for (var _i = 1, _len = string_length(_string) + 1; _i <= _len; _i++) {
+		_char = string_char_at(_string, _i);
+			
+		if (_char == _delineator || _i == _len) {
+			_data[$ _substrings[_index]] = _value;
+			_value = "";
+			_index++;
+		}
+		else {
+			_value += _char;
+		}
+	}
+	return _data;		
 };
 
 #endregion
@@ -1193,6 +1130,231 @@ function surface_catch(_surf, _w, _h, _cb = function() {}, _cb_data) {
 	return _surf;
 };
 	
+#endregion
+#region maths
+
+function percent(_percent) {
+	/// @func   percent(percent)
+	/// @param  percent -> {real}
+	/// @desc   check if a given percentage rolls true.
+	/// @return rolled_true -> {bool}
+	/// @tested false
+	///
+	return (random(100) < _percent);
+};
+function avg() {
+	/// @func   avg(element*, ...*)
+	/// @param  element_1 -> {real}
+	/// @param  element_n -> {real}
+	/// @desc   given n elements, compute the average value of them.
+	/// @return avg -> {real}
+	/// @tested false
+	///
+	var _n   = argument_count;
+	var _avg = 0;
+	
+	for (var _i = 0; _i < _n; _i++) {
+		_avg += argument[_i];
+	}
+	return (_avg / _n);
+};
+function logarithm(_base, _shift, _percent, _invert = false) {
+	/// @func   logarithm(base, shift, percent, invert?*<f>)
+	/// @param  base	-> {real}
+	/// @param  shift   -> {real}
+	/// @param  percent -> {real}
+	/// @param  invert  -> {bool}
+	/// @desc   compute a pretty jank logarithm calculation.
+	/// @return log -> {real}
+	/// @tested false
+	///
+	var _log = logn(_base, (1 + (_base - 1) * _percent) + _shift);	
+	return clamp(_invert ? 1 - _log : _log, 0, 1);
+};
+function wrap(_val, _min, _max) {
+	/// @func   wrap(val, min, max)
+	/// @param  val -> {real}
+	/// @param  min -> {real}
+	/// @param  max -> {real}
+	/// @desc   given a value, return it's wrapped value confined to given min & max.
+	/// @return val -> {real}
+	/// @tested false
+	///
+	return ((_val > _max) ? _min : (_val < _min ? _max : _val));
+};
+function plot_line(_i1, _j1, _i2, _j2) {
+	/// @func   plot_line(i1, j1, i2, j2)
+	/// @param  i1	   -> {real}
+	/// @param  j1	   -> {real}
+	/// @param  i2	   -> {real}
+	/// @param  j2	   -> {real}
+	/// @desc   using Bresenham's Line Algorithm (https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
+	///			get the grid coordinates that fall within that plotted line.
+	/// @return coords -> {array}
+	/// @tested false
+	///
+	var _di  = abs(_i2 - _i1);
+	var _si  = _i1 < _i2 ? 1 : -1;
+	var _dj  = -abs(_j2 - _j1);
+	var _sj  = _j1 < _j2 ? 1 : -1;
+	var _err = _di + _dj;
+	var _coords = [];
+
+	while (true) {
+		array_push(_coords, { i: _i1, j: _j1 });
+		if (_i1 == _i2 && _j1 == _j2) break;
+		
+		var _e2  = _err * 2;
+		if (_e2 >= _dj) {
+			_err += _dj;
+			_i1  += _si;
+		}
+		if (_e2 <= _di) {
+			_err += _di;
+			_j1  += _sj;
+		}
+	}
+	return _coords;
+};
+function ilerp(_min, _max, _value) {
+	/// @func	ilerp(min, max, value)
+	/// @param	min   -> {real}
+	/// @param	max   -> {real}
+	/// @param	value -> {real}
+	/// @desc	pass a value in that exists between min and max, and get a mapped value between 0 - 1.
+	/// @return t -> {real}
+	/// @tested false
+	///
+	return (_value - _min) / (_max - _min);
+};
+function remap(_input_min, _input_max, _output_min, _output_max, _value) {
+	/// @func	remap(input_min, input_max, output_min, output_max, value)
+	/// @param	input_min  -> {real}
+	/// @param	input_max  -> {real}
+	/// @param	output_min -> {real}
+	/// @param	output_max -> {real}
+	/// @param	value	   -> {real}
+	/// @desc	...
+	/// @return value -> {real}
+	/// @tested false
+	/// 
+	var _t = ilerp(_input_min, _input_max, _value);
+	return lerp(_output_min, _output_max, _t);
+};
+function rotate_around(_rot, _amount, _max) {
+	/// @func	rotate_around(rot, amount, max)
+	/// @param	rot    -> {angle}
+	/// @param	amount -> {angle}
+	/// @param	max    -> {angle}
+	/// @desc	...
+	/// @return rot -> {angle}
+	/// @tested false
+	///
+	var _target = _rot + _amount;
+	while (_target < 0) {
+		_target += 360;
+	}
+	return _target % _max;
+};
+function bresenham_line(_i1, _j1, _i2, _j2, _cb, _cb_data) {
+	/// @func	bresenham_line()
+	/// @param	i1			  -> {int}
+	/// @param	j1			  -> {int}
+	/// @param	i2			  -> {int}
+	/// @param	j2			  -> {int}
+	/// @param	callback	  -> {func}
+	/// @param	callback_data -> {any}
+	/// @desc	...
+	/// @return NA
+	/// @tested false
+	///
+    var _dist_x		= _i2 - _i1; 
+	var _dist_y		= _j2 - _j1; 
+    var _step_x		= sign(_dist_x);
+    var _step_y		= sign(_dist_y);
+    _dist_x			= abs(_dist_x);
+    _dist_y			= abs(_dist_y);
+    var _dist		= max(_dist_x, _dist_y);
+    var _remainder	= _dist / 2;
+	
+    if (_dist_x > _dist_y) {
+        for (var _i = 0; _i <= _dist; _i++) {
+            _cb(_i1, _j1, _cb_data);
+            
+			_i1 += _step_x;
+            _remainder += _dist_y;
+			
+            if (_remainder >= _dist_x) {
+                _j1 += _step_y;
+                _remainder -= _dist_x;
+            }
+        }
+    }
+    else for (var _i = 0; _i <= _dist; _i++) {
+        _cb(_i1, _j1, _cb_data);
+		
+        _j1 += _step_y;
+        _remainder += _dist_x;
+		
+        if (_remainder >= _dist_y) {
+            _i1 += _step_x;
+            _remainder -= _dist_y;
+        }
+    }
+};
+function lerp_angle(_angle_from, _angle_to, _amount) {
+	/// @func   lerp_angle(angle_from, angle_to, amount)
+	/// @param  angle_from -> {real}
+	/// @param  angle_to   -> {real}
+	/// @param  amount	   -> {real}
+	/// @desc   apply a simulated lerp effect to an angle, accounting for the 360->0 angle wrap.
+	/// @return angle -> {real}
+	/// @tested false
+	///
+    return _angle_from - angle_difference(_angle_from, _angle_to) * _amount;
+};
+function wave(_from, _to, _duration, _offset) { 
+	/// @func   wave(from, to, duration, offset)
+	/// @param  from	 -> {real}
+	/// @param  to		 -> {real} 
+	/// @param  duration -> {real} 
+	/// @param  offset   -> {real}
+	/// @desc   simulate sin wave motion between two points over a given duration.
+	/// @return value -> {real}
+	/// @tested false
+	///
+	var _a4 = (_to - _from) * 0.5;
+	return _from + _a4 + sin((((current_time * 0.001) + _duration * _offset) / _duration) * (pi * 2)) * _a4;
+};
+
+#endregion
+#region async
+
+function async_get_id() {
+	/// @func   async_get_id()
+	/// @return {real} id
+	///
+	return async_load[? "id"];
+};
+function async_get_status() {
+	/// @func   async_get_status()
+	/// @return {real} status
+	///
+	return async_load[? "status"];
+};
+function async_status_success() {
+	/// @func   async_status_success()
+	/// @return {bool} success?
+	///
+	return async_get_status();
+};
+function async_status_fail() {
+	/// @func   async_status_fail()
+	/// @return {bool} fail?
+	///
+	return !async_get_status();
+};
+
 #endregion
 #region enum
 
@@ -1223,19 +1385,6 @@ function dir_enum_to_real(_DIR) {
 		case DIR.UP:	return 90;
 		case DIR.DOWN:	return 270;
 	}
-};
-
-#endregion
-#region entities
-
-function i_am(_id) {
-	/// @func	i_am(id)
-	/// @param	id -> {real}
-	/// @desc	...
-	/// @return i_am? -> {bool}
-	/// @tested false
-	///
-	return _id == id;
 };
 
 #endregion
@@ -1292,4 +1441,3 @@ function new_callback(_callback, _data = undefined) {
 };
 
 #endregion
-
