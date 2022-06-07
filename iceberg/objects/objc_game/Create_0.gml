@@ -20,8 +20,11 @@ setup_game	  = function() {
 	/// @tested false
 	///
 	if (initialized) exit;
+	#region ----------------
+	
 	setup_controller();
-	////////////////////////
+	
+	#endregion
 	#region Rooms //////////
 	
 	#macro ROOM_FIRST rm_test
@@ -46,9 +49,16 @@ teardown_game = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
-	////////////////////////
+	#region States /////////
+	
 	fsm = null;
+	
+	#endregion
+	#region ----------------
+	
 	teardown_controller();
+	
+	#endregion
 };
 rebuild_game  = function() {
 	/// @func	rebuild_game()
@@ -66,9 +76,16 @@ update_game	  = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	update_controller();
-	////////////////////////
+	
+	#endregion
+	#region States /////////
+	
 	fsm.step();		
+	
+	#endregion
 };
 render_game	  = function() {
 	/// @func	render_game()
@@ -77,9 +94,16 @@ render_game	  = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	render_controller();
-	////////////////////////
+	
+	#endregion
+	#region States /////////
+	
 	fsm.draw();
+	
+	#endregion
 };
 
 #region @OVERRIDE 
@@ -126,5 +150,5 @@ render	 = function() {
 };
 	
 #endregion
-////////////////
+
 setup();

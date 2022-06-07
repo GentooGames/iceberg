@@ -12,10 +12,13 @@ PARTICLES = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region ----------------
+		
         log("<PARTICLE> setup()");
-        part_system_depth(system, -1000);  
         initialized = true;
+		
+		#endregion
+		part_system_depth(system, -1000);  
     },
 	update:	function() {
 		/// @func   update()
@@ -23,7 +26,6 @@ PARTICLES = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
 	},
 	
     get_system: function() {

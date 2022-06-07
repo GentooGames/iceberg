@@ -15,8 +15,11 @@ setup_world	   = function() {
 	/// @tested false
 	///
 	if (initialized) exit;
+	#region ----------------
+	
 	setup_controller();
-	////////////////////////
+	
+	#endregion
 };
 teardown_world = function() {
 	/// @func	teardown_world()
@@ -25,8 +28,11 @@ teardown_world = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	teardown_controller();
-	////////////////////////
+	
+	#endregion
 };
 rebuild_world  = function() {
 	/// @func	rebuild_world()
@@ -44,8 +50,11 @@ update_world   = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	update_controller();
-	////////////////////////
+	
+	#endregion
 };
 render_world   = function() {
 	/// @func	render_world()
@@ -54,8 +63,11 @@ render_world   = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	render_controller();
-	////////////////////////
+	
+	#endregion
 	render_bg();
 };
 

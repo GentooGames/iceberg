@@ -17,12 +17,16 @@ AUDIO = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region ----------------
+		
         log("<AUDIO> setup()");
-        audio_falloff_set_model(audio_falloff_linear_distance);
+		initialized = true;
+		
+		audio_falloff_set_model(audio_falloff_linear_distance);
         audio_master_gain(0);
-        audio_listener_orientation(0, 1, 0, 0, 0, 1);      
-        initialized = true;
+        audio_listener_orientation(0, 1, 0, 0, 0, 1);  
+		
+		#endregion
     },
 	update:	function() {
 		/// @func   update()
@@ -30,7 +34,6 @@ AUDIO = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
 	},
 		
     play:     function(_emitter_id, _sound_id, _loops) {

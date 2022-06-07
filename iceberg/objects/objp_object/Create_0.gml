@@ -21,7 +21,6 @@ setup_object	= function() {
 	/// @tested true
 	///
 	if (initialized) exit;
-	////////////////////////
 	#region ----------------
 	
 	initialized	= true;
@@ -50,7 +49,6 @@ teardown_object = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
-	////////////////////////
 	#region Events /////////
 	
 	clear_subscriptions();
@@ -81,7 +79,6 @@ update_object   = function() {
 	/// @tested false
 	/// 
 	if (!initialized) exit;
-	////////////////////////
 };
 render_object   = function() {
 	/// @func	render_object()
@@ -90,7 +87,6 @@ render_object   = function() {
 	/// @tested false
 	/// 
 	if (!initialized) exit;
-	////////////////////////
 };
 	
 #region @OVERRIDE

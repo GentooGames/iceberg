@@ -16,8 +16,12 @@ CLOCKS = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region ----------------
+		
         log("<CLOCKS> setup()");
+		initialized = true;
+		
+		#endregion
         
         static _frequency = 60;
         clock_stable.set_update_frequency(_frequency);
@@ -31,8 +35,6 @@ CLOCKS = {
         #macro CLOCK_ACTION   CLOCKS.clock_action
         #macro CLOCK_UI 	  CLOCKS.clock_ui
         #macro CLOCK_TUTORIAL CLOCKS.clock_tutorial
-        
-        initialized = true;
     },
     update: function() {
         /// @func   update()
@@ -40,7 +42,7 @@ CLOCKS = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
+		
         CLOCK_STABLE.tick();
         CLOCK_CAMERA.tick();
         CLOCK_ACTION.tick();

@@ -13,11 +13,19 @@ DEBUG = {
         /// @return NA
 		/// @tested false
         /// 
-        if (!DEBUGGING || initialized) exit;
-		////////////////////////////////////
+        if (!DEBUGGING)  exit;
+		if (initialized) exit;
+		#region ----------------
+		
         log("<DEBUG> setup()");
-		instance_create_depth(0, 0, 0, obj_gmlive);
 		initialized = true;	
+		
+		#endregion
+		#region gm_live ////////
+		
+		instance_create_depth(0, 0, 0, obj_gmlive);
+		
+		#endregion
     },
     update: function() {
         /// @func   update()
@@ -25,8 +33,9 @@ DEBUG = {
         /// @return NA
 		/// @tested false
         ///
-        if (!DEBUGGING || !initialized) exit;
-		////////////////////////////////////
+        if (!DEBUGGING)   exit
+		if (!initialized) exit;
+		
 		//INPUT.keyboard.switch_check({
 		//	R: function() {
 		//		TRANSITION.restart();
@@ -55,8 +64,9 @@ DEBUG = {
         /// @return NA
 		/// @tested false
         ///
-        if (!DEBUGGING || !initialized) exit;
-		////////////////////////////////////
+        if (!DEBUGGING)   exit
+		if (!initialized) exit;
+		
 		draw_text(10, GUI_H - 30, room_get_name(room));
     },
 };

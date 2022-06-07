@@ -1,5 +1,3 @@
-global._floe = {};
-#macro FLOE global._floe
 /////////////////////////////
 // r---. .     .---. r---. //
 // r--   |     |   | r--   //
@@ -74,7 +72,7 @@ enum FLOE_TYPE  {
 
 #endregion
 
-FLOE = { 
+global._floe = { 
     initialized: false,
 	
 	#region Internal 
@@ -85,10 +83,13 @@ FLOE = {
         /// @return NA
         ///
         if (initialized) return;
-		////////////////////////////
-        log("<FLOE> setup()");
+		#region ----------------
 		
-		#region Customizable
+        log("<FLOE> setup()");
+		initialized = true;
+		
+		#endregion
+		#region Customizable ///
 		
 		type_in		= __FLOE_DEFAULT_TYPE_IN;
 		type_out	= __FLOE_DEFAULT_TYPE_OUT;
@@ -99,7 +100,7 @@ FLOE = {
 		speed_out	= __FLOE_DEFAULT_SPEED_OUT;
 		
 		#endregion
-		#region Private
+		#region Private ////////
 		
 		__surface	 = surface_create(SW, SH);
 		__state		 = FLOE_STATE.HIDDEN;
@@ -139,8 +140,6 @@ FLOE = {
 		};
 							// see set_on_start(), set_on_change(), set_on_end(),
 		#endregion
-		
-        initialized = true;
     },
 	update:	function() {
 		/// @func   update()
@@ -148,7 +147,8 @@ FLOE = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
+		#region State //////////
+		
 		switch (__state) {
 			case FLOE_STATE.START:  {
 				__progress = 0;
@@ -188,6 +188,8 @@ FLOE = {
 				break;	
 			}
 		};
+		
+		#endregion
 	},
 	render: function() {
 		/// @func   render()
@@ -195,9 +197,11 @@ FLOE = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
+		#region Main Surface ///
+		
 		surface_set_target(__surface);
 		draw_clear_alpha(c_black, 0.0);
+		
 		switch (type) {
 			case FLOE_TYPE.FADE:					__render_transition_fade();					break;
 			case FLOE_TYPE.LINEAR_WIPE_RIGHT:		__render_transition_linear_wipe_right();	break;
@@ -207,8 +211,11 @@ FLOE = {
 			case FLOE_TYPE.BORDER_SHRINK_CENTER:	__render_transition_border_shrink_center();	break;
 			case FLOE_TYPE.BORDER_SHRINK_TARGET:	__render_transition_border_shrink_target();	break;
 		};
+		
 		surface_reset_target();
 		draw_surface(__surface, 0, 0);
+		
+		#endregion
 	},
 	
 	#endregion
@@ -422,4 +429,6 @@ FLOE = {
 		
 	#endregion
 };
-#macro TRANSITION FLOE
+#macro TRANSITION global._floe
+
+

@@ -16,8 +16,12 @@ EVENT = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region --------------------
+		
         log("<EVENT> setup()");
+		initialized = true;
+		
+		#endregion
 		#region Static Events //////
 		
 		static_events = [
@@ -48,6 +52,7 @@ EVENT = {
 		}
 		
 		#endregion
+		#region Instance Events ////
 		
         publisher.register_channel(
 			/// Input 
@@ -67,7 +72,8 @@ EVENT = {
 			
 			/// ...
         );
-        initialized = true;
+		
+		#endregion
     },
 	update:	function() {
 		/// @func   update()
@@ -75,7 +81,6 @@ EVENT = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
 	},
 }
 

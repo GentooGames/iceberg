@@ -18,8 +18,11 @@ setup_player    = function() {
 	/// @tested false
 	///
 	if (initialized) exit;
+	#region ----------------
+	
 	setup_object();
-	////////////////////////
+	
+	#endregion
 	#region Interactions ///
 	
 	has_camera_control = true;  // can interact with camera
@@ -44,13 +47,16 @@ teardown_player = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
-	////////////////////////
 	#region States /////////
 	
 	fsm = null;
 	
 	#endregion
+	#region ----------------
+	
 	teardown_object();
+	
+	#endregion
 };
 rebuild_player  = function() {
 	/// @func	rebuild_player()
@@ -68,9 +74,16 @@ update_player	= function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	update_object();
-	////////////////////////
+	
+	#endregion
+	#region States /////////
+	
 	fsm.step();	
+	
+	#endregion
 };
 render_player	= function() {
 	/// @func	render_player()
@@ -79,9 +92,16 @@ render_player	= function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	render_object();
-	////////////////////////
+	
+	#endregion
+	#region States /////////
+	
 	fsm.draw();	
+	
+	#endregion
 };
 
 #region @OVERRIDE

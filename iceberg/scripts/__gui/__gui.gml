@@ -34,9 +34,12 @@ GUI = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region ----------------
+		
         log("<GUI> setup()");
         initialized = true;
+		
+		#endregion
     },    
 	update:	function() {
 		/// @func   update()
@@ -44,7 +47,6 @@ GUI = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
 	},
 		
     world_to_gui_x: function(_x) {

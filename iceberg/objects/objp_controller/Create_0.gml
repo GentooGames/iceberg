@@ -16,8 +16,11 @@ setup_controller	= function() {
 	/// @tested false
 	///
 	if (initialized) exit;
+	#region ----------------
+	
 	setup_object();
-	////////////////////////
+	
+	#endregion
 };
 teardown_controller = function() {
 	/// @func	teardown_controller()
@@ -26,8 +29,11 @@ teardown_controller = function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	teardown_object();
-	////////////////////////
+	
+	#endregion
 };
 rebuild_controller  = function() {
 	/// @func	rebuild_controller()
@@ -45,8 +51,11 @@ update_controller	= function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	update_object();
-	////////////////////////
+	
+	#endregion
 };
 render_controller	= function() {
 	/// @func	render_controller()
@@ -55,8 +64,11 @@ render_controller	= function() {
 	/// @tested false
 	///
 	if (!initialized) exit;
+	#region ----------------
+	
 	render_object();
-	////////////////////////
+	
+	#endregion
 };
 	
 #region @OVERRIDE 

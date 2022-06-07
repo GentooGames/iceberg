@@ -11,9 +11,12 @@ WINDOW = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region ----------------
+		
         log("<WINDOW> setup()");
         initialized = true;
+		
+		#endregion
     },
 	update: function() {
 		/// @func   update()
@@ -21,7 +24,6 @@ WINDOW = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
 	},
 	
     get_width:		function() {

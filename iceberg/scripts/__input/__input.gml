@@ -13,9 +13,12 @@ INPUT = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region ----------------
+		
         log("<INPUT> setup()");
         initialized = true;
+		
+		#endregion
     },
     update: function() {
         /// @func   update()
@@ -23,7 +26,7 @@ INPUT = {
         /// @return NA
         /// 
 		if (!initialized) exit;
-		////////////////////////
+		
         if (mouse.button_pressed(mb_any)) {
 			PUBLISH("input_mouse_button_pressed", {
 				button: mouse_button,

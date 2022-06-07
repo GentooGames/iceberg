@@ -11,9 +11,12 @@ DISPLAY = {
         /// @return NA
         ///
         if (initialized) exit;
-		////////////////////////
+		#region ----------------
+		
         log("<DISPLAY> setup()");
         initialized = true;
+		
+		#endregion
     },
 	update:	function() {
 		/// @func   update()
@@ -21,7 +24,6 @@ DISPLAY = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////////
 	},
 	
     get_width:  function() {
