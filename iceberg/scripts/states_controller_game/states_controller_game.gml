@@ -63,7 +63,12 @@ function state_controller_game_init() {
 		},
 		leave: function() {
 			/// Exit __rm_init
-			TRANSITION.goto(ROOM_FIRST);	
+			TRANSITION.goto({ 
+				room: ROOM_FIRST,
+				on_change: new_callback(function() {
+					TRANSITION.complete();	
+				})
+			});	
 		},
 	};
 };

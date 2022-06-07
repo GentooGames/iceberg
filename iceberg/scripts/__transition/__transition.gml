@@ -1,5 +1,10 @@
-#macro __FLOE_DEFAULT_EFFECT_IN  FloeEffectBorderCenter
-#macro __FLOE_DEFAULT_EFFECT_OUT FloeEffectWipeLeft
+/*
+	- import save controller and save_object, serializer classes
+*/
+
+#macro __TRANSITION_DEFAULT_EFFECT_IN	__FLOE_DEFAULT_EFFECT_IN
+#macro __TRANSITION_DEFAULT_EFFECT_OUT	__FLOE_DEFAULT_EFFECT_OUT
+#macro __TRANSITION_DEFAULT_WAIT		false	// if true, then TRANSITION.complete() must be manually invoked
 
 global._transition = { 
     initialized: false,
@@ -41,6 +46,11 @@ global._transition = {
 		};
 			
 		#endregion
+		#region Other //////////
+		
+		is_waiting = false;
+		
+		#endregion
     },
 	update:	function() {
 		/// @func   update()
@@ -79,8 +89,11 @@ global._transition = {
 			effect_in.cleanup();
 			effect = effect_out;
 			effect.reverse();
-			effect.enter();
 			__run_on_change();
+			
+			if (!is_waiting) {
+				__end_transition();	
+			}
 		});
 		
 		/// Instantiate Effect_Out()
@@ -95,6 +108,13 @@ global._transition = {
 		effect = effect_in;
 		effect.enter();
 		__run_on_start();
+	},
+	__end_transition:	function() {
+		/// @func	__end_transition()
+		/// @desc	sometimes we may want transitions to wait for a certain condition to be met, before completing
+		///			the transition. this method is abstracted so that we can bind it to a conditional check.
+		///
+		effect_out.enter();
 	},
 	__is_transitioning:	function() {
 		/// @func	__is_transitioning()
@@ -163,63 +183,133 @@ global._transition = {
 	#endregion
 	#region Public /////////
 	
-    goto:				function(_room, _effect_in = __FLOE_DEFAULT_EFFECT_IN, _effect_out = __FLOE_DEFAULT_EFFECT_OUT, _callback, _data) {
-        /// @func   goto(room, effect_in*, effect_out*, callback*, data*)
-        /// @param  {room}		 room
-		/// @param	{FloeEffect} effect_in
-		/// @param	{FloeEffect} effect_out
-		/// @param	{method}	 callback=undefined
-		/// @param	{any}		 data=undefined
+	goto:				function(_data) {
+		/// @func   goto({room, effect_in*, effect_out*, on_start*, on_change*, on_end*, wait?*})
+        /// @param  {room}		 data.room
+        /// @param  {FloeEffect} data.effect_in=__TRANSITION_DEFAULT_EFFECT_IN
+        /// @param  {FloeEffect} data.effect_out=__TRANSITION_DEFAULT_EFFECT_OUT
+        /// @param  {callback}	 data.on_start=undefined
+        /// @param  {callback}	 data.on_change=undefined
+        /// @param  {callback}	 data.on_end=undefined
+		/// @param	{boolean}	 data.wait=__TRANSITION_DEFAULT_WAIT
 		/// @desc	...
         /// @return NA
-        //
+        ///
 		if (__is_transitioning()) exit;
 		
-		__set_on_change(function(_room) {
-			PUBLISH("transition_room_changed", { room: _room });	
-			room_goto(_room);
-		}, _room);
-		__set_on_end(_callback, _data);
+		var _room		= _data[$ "room"	  ] 
+		var _effect_in	= _data[$ "effect_in" ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
+		var _effect_out	= _data[$ "effect_out"] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
+		var _on_start	= _data[$ "on_start"  ] ?? undefined;
+		var _on_change	= _data[$ "on_change" ] ?? undefined;
+		var _on_end		= _data[$ "on_end"	  ] ?? undefined;
+		var _wait		= _data[$ "wait"	  ]	?? __TRANSITION_DEFAULT_WAIT;
+		
+		/// Wire on_start Callback
+		if (_on_start != undefined) {
+			__set_on_start(_on_start.callback, _on_start.data);
+		}
+		
+		/// Wire on_change Callback
+		__set_on_change(
+			function(_data) {
+				/// Do Room Transition on_change
+				var _room = _data.room;
+				PUBLISH("transition_room_changed", { room: _room });	
+				room_goto(_room);
+				
+				/// Handle Custom on_change Callback
+				var _on_change  = _data.on_change;
+				if (_on_change != undefined) {
+					_on_change.callback(_on_change.data);
+				}
+			}, 
+			{ room:	_room, on_change: _on_change }
+		);
+		
+		/// Wire on_end Callback
+		if (_on_end != undefined) {
+			__set_on_end(_on_end.callback, _on_end.data);
+		}
+			
+		is_waiting = _wait;
 		__begin_transition(_effect_in, _effect_out);
-    },
-    goto_next:			function(_effect_in = __FLOE_DEFAULT_EFFECT_IN, _effect_out = __FLOE_DEFAULT_EFFECT_OUT, _callback, _data) {
-        /// @func   goto_next(effect_in*, effect_out*, callback*, data*)
-		/// @param	{FloeEffect} effect_in
-		/// @param	{FloeEffect} effect_out
-		/// @param	{method}	 callback=undefined
-		/// @param	{any}		 data=undefined
+	},
+    goto_next:			function(_data = {}) {
+        /// @func   goto_next({effect_in*, effect_out*, on_start*, on_change*, on_end*, wait?*})
+		/// @param  {FloeEffect} data.effect_in=__FLOE_DEFAULT_EFFECT_IN
+        /// @param  {FloeEffect} data.effect_out=__FLOE_DEFAULT_EFFECT_OUT
+        /// @param  {callback}	 data.on_start=undefined
+        /// @param  {callback}	 data.on_change=undefined
+        /// @param  {callback}	 data.on_end=undefined
+		/// @param	{boolean}	 data.wait=__TRANSITION_DEFAULT_WAIT
 		/// @desc	...
         /// @return NA
         ///
-        goto(get_room_next(), _effect_in, _effect_out, _callback, _data);
+		_data[$ "room"] = get_room_next();
+		goto(_data);
     },
-    goto_previous:		function(_effect_in = __FLOE_DEFAULT_EFFECT_IN, _effect_out = __FLOE_DEFAULT_EFFECT_OUT, _callback, _data) {
-        /// @func   goto_previous(effect_in*, effect_out*, callback*, data*)
-		/// @param	{FloeEffect} effect_in
-		/// @param	{FloeEffect} effect_out
-		/// @param	{method}	 callback=undefined
-		/// @param	{any}		 data=undefined
+    goto_previous:		function(_data = {}) {
+        /// @func   goto_previous({effect_in*, effect_out*, on_start*, on_change*, on_end*, wait?*})
+		/// @param  {FloeEffect} data.effect_in=__FLOE_DEFAULT_EFFECT_IN
+        /// @param  {FloeEffect} data.effect_out=__FLOE_DEFAULT_EFFECT_OUT
+        /// @param  {callback}	 data.on_start=undefined
+        /// @param  {callback}	 data.on_change=undefined
+        /// @param  {callback}	 data.on_end=undefined
+		/// @param	{boolean}	 data.wait=__TRANSITION_DEFAULT_WAIT
 		/// @desc	...
         /// @return NA
         ///
-        goto(get_room_previous(), _effect_in, _effect_out, _callback, _data);
+        _data[$ "room"] = get_room_previous();
+		goto(_data);
     },
-    restart:			function(_effect_in = __FLOE_DEFAULT_EFFECT_IN, _effect_out = __FLOE_DEFAULT_EFFECT_OUT, _callback, _data) {
-        /// @func   restart(effect_in*, effect_out*, callback*, data*)
-		/// @param	{FloeEffect} effect_in
-		/// @param	{FloeEffect} effect_out
-		/// @param	{method}	 callback=undefined
-		/// @param	{any}		 data=undefined
+    restart:			function(_data) {
+        /// @func   restart({effect_in*, effect_out*, on_start*, on_change*, on_end*, wait?*})
+		/// @param	{FloeEffect} effect_in=__TRANSITION_DEFAULT_EFFECT_IN
+		/// @param	{FloeEffect} effect_out=__TRANSITION_DEFAULT_EFFECT_OUT
+		/// @param  {callback}	 data.on_start=undefined
+        /// @param  {callback}	 data.on_change=undefined
+        /// @param  {callback}	 data.on_end=undefined
+		/// @param	{boolean}	 data.wait=__TRANSITION_DEFAULT_WAIT
 		/// @desc	...
         /// @return NA
         ///
 		if (__is_transitioning()) exit;
 		
-		__set_on_change(function() {
-			PUBLISH("transition_room_restarted");
-			room_restart();
-		});
-		__set_on_end(_callback, _data);
+		var _effect_in	= _data[$ "effect_in" ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
+		var _effect_out	= _data[$ "effect_out"] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
+		var _on_start	= _data[$ "on_start"  ] ?? undefined;
+		var _on_change	= _data[$ "on_change" ] ?? undefined;
+		var _on_end		= _data[$ "on_end"	  ] ?? undefined;
+		var _wait		= _data[$ "wait"	  ]	?? __TRANSITION_DEFAULT_WAIT;
+		
+		/// Wire on_start Callback
+		if (_on_start != undefined) {
+			__set_on_start(_on_start.callback, _on_start.data);
+		}
+		
+		/// Wire on_change Callback
+		__set_on_change(
+			function(_data) {
+				/// Do Room Restart on_change
+				PUBLISH("transition_room_restarted");	
+				room_restart();
+			
+				/// Handle Custom on_change Callback
+				var _on_change  = _data.on_change;
+				if (_on_change != undefined) {
+					_on_change.callback(_on_change.data);
+				}
+			}, 
+			{ on_change: _on_change }
+		);
+		
+		/// Wire on_end Callback
+		if (_on_end != undefined) {
+			__set_on_end(_on_end.callback, _on_end.data);
+		}
+			
+		is_waiting = _wait;
 		__begin_transition(_effect_in, _effect_out);
     },
     get_room_next:		function(_room = room) {
@@ -246,6 +336,12 @@ global._transition = {
         }
         throw("<ERROR in FLOE.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
     },
+	complete:			function() {
+		/// @func	complete()
+		/// @return NA
+		///
+		__end_transition();	
+	},
 		
 	#endregion
 };

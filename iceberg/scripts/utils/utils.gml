@@ -1279,6 +1279,17 @@ function dist_thresh(_val1, _val2, _thresh, _abs = true) {
 	}
 	return (_val1 - _val2) <= _thresh;
 };
+function new_callback(_callback, _data = undefined) {
+	/// @func	new_callback(callback, data*)
+	/// @param	{method} callback
+	/// @param	{any} data=undefined
+	/// @return {struct} callback
+	///
+	return {
+		callback: _callback,
+		data: _data,
+	};
+};
 
 #endregion
 

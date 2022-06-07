@@ -28,7 +28,6 @@
 #region upcoming features
 /*
 	- define custom sprites to draw for transitions
-	- transition hold time
 	- different interpolation types/methods
 	- optimize performance through not drawing the surface every frame
 	- transitions to do
@@ -58,6 +57,9 @@ enum FLOE_STATE {
 #endregion
 
 #endregion
+
+#macro __FLOE_DEFAULT_EFFECT_IN			FloeEffectBorderCenter
+#macro __FLOE_DEFAULT_EFFECT_OUT		__FLOE_DEFAULT_EFFECT_IN
 
 #macro __FLOE_EFFECT_DEFAULT_COLOR		c_black
 #macro __FLOE_EFFECT_DEFAULT_ALPHA		1.0

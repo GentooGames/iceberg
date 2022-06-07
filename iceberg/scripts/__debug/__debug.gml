@@ -46,12 +46,28 @@ DEBUG = {
 		//});	
 		
 		if (INPUT.keyboard.button_pressed(ord("R"))) {
+			//TRANSITION.restart({
+			//	on_change_hold: true,
+			//	on_change: new_callback(function() {
+			//		TRANSITION.complete();	
+			//	})
+			//});
 			TRANSITION.restart();
 		}
 		if (INPUT.keyboard.button_pressed(ord("O"))) {
+			//TRANSITION.goto_previous({
+			//	on_change: new_callback(function() {
+			//		TRANSITION.complete();	
+			//	})
+			//});
 			TRANSITION.goto_previous();
 		}
 		if (INPUT.keyboard.button_pressed(ord("P"))) {
+			//TRANSITION.goto_next({
+			//	on_change: new_callback(function() {
+			//		TRANSITION.complete();	
+			//	})
+			//});
 			TRANSITION.goto_next();
 		}
 		
@@ -67,7 +83,12 @@ DEBUG = {
         if (!DEBUGGING)   exit
 		if (!initialized) exit;
 		
-		draw_text(10, GUI_H - 30, room_get_name(room));
+		var _y = GUI_H - 30;
+		draw_text(10, _y, room_get_name(room));
+		
+		if (TRANSITION.effect != undefined) {
+			draw_text(10, _y - 20, TRANSITION.effect.state);
+		}
     },
 };
 
