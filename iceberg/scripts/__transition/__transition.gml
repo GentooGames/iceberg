@@ -30,6 +30,7 @@ global._floe = {};
 #region upcoming features
 /*
 	- define custom sprites to draw for transitions
+	- optimize performance through not drawing the surface every frame
 	- transitions to do
 		- "old school tv shutdown"
 		- cross-fade
@@ -62,16 +63,17 @@ enum FLOE_TYPE  {
 #endregion
 #region default config values
 
-#macro FLOE_DEFAULT_TYPE_IN		FLOE_TYPE.FADE
-#macro FLOE_DEFAULT_TYPE_OUT	FLOE_DEFAULT_TYPE_IN
-#macro FLOE_DEFAULT_COLOR		c_black
-#macro FLOE_DEFAULT_ALPHA		1.0
-#macro FLOE_DEFAULT_SPEED_IN	0.1
-#macro FLOE_DEFAULT_SPEED_OUT	0.1
+#macro __FLOE_DEFAULT_TYPE_IN	FLOE_TYPE.BORDER_SHRINK_CENTER
+#macro __FLOE_DEFAULT_TYPE_OUT	__FLOE_DEFAULT_TYPE_IN
+#macro __FLOE_DEFAULT_COLOR		c_black
+#macro __FLOE_DEFAULT_ALPHA		1.0
+#macro __FLOE_DEFAULT_SPEED_IN	0.1
+#macro __FLOE_DEFAULT_SPEED_OUT	0.1
 
 #endregion
 
 #endregion
+
 FLOE = { 
     initialized: false,
 	
@@ -88,13 +90,13 @@ FLOE = {
 		
 		#region Customizable
 		
-		type_in		= FLOE_DEFAULT_TYPE_IN;
-		type_out	= FLOE_DEFAULT_TYPE_OUT;
+		type_in		= __FLOE_DEFAULT_TYPE_IN;
+		type_out	= __FLOE_DEFAULT_TYPE_OUT;
 		type		= type_in;
-		color		= FLOE_DEFAULT_COLOR;
-		alpha		= FLOE_DEFAULT_ALPHA;
-		speed_in	= FLOE_DEFAULT_SPEED_IN;
-		speed_out	= FLOE_DEFAULT_SPEED_OUT;
+		color		= __FLOE_DEFAULT_COLOR;
+		alpha		= __FLOE_DEFAULT_ALPHA;
+		speed_in	= __FLOE_DEFAULT_SPEED_IN;
+		speed_out	= __FLOE_DEFAULT_SPEED_OUT;
 		
 		#endregion
 		#region Private
@@ -245,8 +247,8 @@ FLOE = {
 		if (__callbacks.on_end.callback != undefined) {
 			__callbacks.on_end.callback(__callbacks.on_end.data);		
 		}
-		type_in  = FLOE_DEFAULT_TYPE_IN;
-		type_out = FLOE_DEFAULT_TYPE_OUT;
+		type_in  = __FLOE_DEFAULT_TYPE_IN;
+		type_out = __FLOE_DEFAULT_TYPE_OUT;
 		type     = type_in;
 		__state  = FLOE_STATE.HIDDEN;
 	},
@@ -291,7 +293,7 @@ FLOE = {
 	#endregion
 	#region Public
 	
-    goto:				function(_room, _type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
+    goto:				function(_room, _type_in = __FLOE_DEFAULT_TYPE_IN, _type_out = __FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   goto(room, type_in*, type_out*, callback*, data*)
         /// @param  {room}		room
 		/// @param	{FLOE_TYPE} type_in
@@ -312,7 +314,7 @@ FLOE = {
 		__on_end.callback	 = _callback;
 		__transition_start(_type_in, _type_out);
     },
-    goto_next:			function(_type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
+    goto_next:			function(_type_in = __FLOE_DEFAULT_TYPE_IN, _type_out = __FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   goto_next(type_in*, type_out*, callback*, data*)
 		/// @param	{FLOE_TYPE} type_in
 		/// @param	{FLOE_TYPE} type_out
@@ -323,7 +325,7 @@ FLOE = {
         ///
         goto(get_room_next(), _type_in, _type_out, _callback, _data);
     },
-    goto_previous:		function(_type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
+    goto_previous:		function(_type_in = __FLOE_DEFAULT_TYPE_IN, _type_out = __FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   goto_previous(type_in*, type_out*, callback*, data*)
 		/// @param	{FLOE_TYPE} type_in
 		/// @param	{FLOE_TYPE} type_out
@@ -334,7 +336,7 @@ FLOE = {
         ///
         goto(get_room_previous(), _type_in, _type_out, _callback, _data);
     },
-    restart:			function(_type_in = FLOE_DEFAULT_TYPE_IN, _type_out = FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
+    restart:			function(_type_in = __FLOE_DEFAULT_TYPE_IN, _type_out = __FLOE_DEFAULT_TYPE_OUT, _callback, _data) {
         /// @func   restart(type_in*, type_out*, callback*, data*)
 		/// @param	{FLOE_TYPE} type_in
 		/// @param	{FLOE_TYPE} type_out
