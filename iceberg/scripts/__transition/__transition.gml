@@ -16,15 +16,15 @@ enum TRANSITION_TYPE  {
 	LINEAR_WIPE_LEFT,		
 	CIRCLE_SHRINK_CENTER,
 	CIRCLE_SHRINK_TARGET,	//
-	BORDER_SHRINK_CENTER,	//
+	BORDER_SHRINK_CENTER,	
 	BORDER_SHRINK_TARGET,	//
 	TILES,					//
 };
 
 global._transition					= {};
 #macro TRANSITION					global._transition
-#macro TRANSITION_DEFAULT_TYPE_IN	TRANSITION_TYPE.FADE
-#macro TRANSITION_DEFAULT_TYPE_OUT	TRANSITION_TYPE.FADE
+#macro TRANSITION_DEFAULT_TYPE_IN	TRANSITION_TYPE.BORDER_SHRINK_CENTER
+#macro TRANSITION_DEFAULT_TYPE_OUT	TRANSITION_DEFAULT_TYPE_IN
 #macro TRANSITION_DEFAULT_COLOR		c_black
 #macro TRANSITION_DEFAULT_ALPHA		1.0
 #macro TRANSITION_DEFAULT_SPEED_IN	0.1
@@ -66,6 +66,9 @@ TRANSITION = {
 			0.001,			// LINEAR_WIPE_RIGHT
 			0.001,			// LINEAR_WIPE_LEFT
 			0.005,			// CIRCLE_SHRINK_CENTER
+			0.005,			// CIRCLE_SHRINK_TARGET
+			0.005,			// BORDER_SHRINK_CENTER
+			0.005,			// BORDER_SHRINK_TARGET
 		];
 		__on_change	 = {	// internal callback used to manage room changes
 			callback: undefined,
@@ -229,7 +232,14 @@ TRANSITION = {
 	
 	},
 	__render_transition_border_shrink_center:	function() {
-	
+		draw_rectangle_alt(0, 0, SW, SH, 0, color, alpha);
+		gpu_set_blendmode(bm_subtract);
+		var _width  =  SW - (SW * __progress);
+		var _height =  SH - (SH * __progress);
+		var _x		= (SW - _width ) * 0.5;
+		var _y		= (SH - _height) * 0.5;
+		draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
+		gpu_set_blendmode(bm_normal);
 	},
 	__render_transition_border_shrink_target:	function() {
 	
