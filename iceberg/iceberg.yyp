@@ -45,6 +45,7 @@
     {"id":{"name":"GMLive_seekSetOp","path":"scripts/GMLive_seekSetOp/GMLive_seekSetOp.yy",},"order":6,},
     {"id":{"name":"weestate","path":"scripts/weestate/weestate.yy",},"order":3,},
     {"id":{"name":"GMLive_seekEval","path":"scripts/GMLive_seekEval/GMLive_seekEval.yy",},"order":5,},
+    {"id":{"name":"floe","path":"scripts/floe/floe.yy",},"order":5,},
     {"id":{"name":"Camera","path":"scripts/Camera/Camera.yy",},"order":0,},
     {"id":{"name":"states_controller_game","path":"scripts/states_controller_game/states_controller_game.yy",},"order":0,},
     {"id":{"name":"CONFIG","path":"scripts/CONFIG/CONFIG.yy",},"order":0,},
@@ -149,7 +150,7 @@
     {"CopyToMask":0,"filePath":"datafiles/GMLive","resourceVersion":"1.0","name":"std.ndll","resourceType":"GMIncludedFile",},
   ],
   "MetaData": {
-    "IDEVersion": "2022.3.0.624",
+    "IDEVersion": "2022.5.1.14",
   },
   "resourceVersion": "1.5",
   "name": "iceberg",
