@@ -1,3 +1,4 @@
 - convert objc_save into global._save = {}
 - have SURF_W & SURF_H get global._gui.surface.application.width
 	- and make sure this is updating whenever changes are made. (listen for surface_change event)
+- add particle_emitter and sfx_emitter to Border() construct

@@ -977,20 +977,6 @@ function draw_rectangle_alt(_x, _y, _width, _height, _rot, _col, _alpha) {
 	///
 	draw_sprite_ext(__spr_pixel_white, 0, _x, _y, _width, _height, _rot, _col, _alpha);	
 };
-function surface_ensure(_surface, _width, _height) {
-	/// @func   surface_ensure(surface, width, height)
-	/// @param  surface	-> {surface}
-	/// @param  width	-> {real}
-	/// @param  height	-> {real}
-	/// @desc   containerized functionality to handle ensuring a surface exists before drawing to it
-	/// @return surface -> {surface}
-	/// @tested false
-	///
-	if (_surface == null || !surface_exists(_surface)) {
-		_surface = surface_create(_width, _height);	
-	}
-	return _surface;
-};
 function animation_end_sys(_sprite_index = sprite_index, _image_index = image_index, _image_speed = image_speed, _image_number = image_number) {
 	/// @func   animation_end_sys(sprite_index*, image_index*, image_speed*, image_number*)
 	/// @param	sprite_index -> {sprite_index}
@@ -1112,6 +1098,20 @@ function string_parse_into_struct(_string, _substrings, _delineator) {
 #endregion
 #region surfaces
 
+function surface_ensure(_surface, _width, _height) {
+	/// @func   surface_ensure(surface, width, height)
+	/// @param  surface	-> {surface}
+	/// @param  width	-> {real}
+	/// @param  height	-> {real}
+	/// @desc   containerized functionality to handle ensuring a surface exists before drawing to it
+	/// @return surface -> {surface}
+	/// @tested false
+	///
+	if (_surface == null || !surface_exists(_surface)) {
+		_surface = surface_create(_width, _height);	
+	}
+	return _surface;
+};
 function surface_catch(_surf, _w, _h, _cb = function() {}, _cb_data) {
 	/// @func	surface_catch(surface, width, height, callback, callback_data)
 	/// @param	surface		  -> {surface}

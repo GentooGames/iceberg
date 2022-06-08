@@ -87,6 +87,7 @@ function state_controller_game_main() {
 			DEBUG.update();
 		},
 		draw: function() {
+			GUI.render();
 			TRANSITION.render();
 			DEBUG.render();	
 		},
