@@ -1,7 +1,9 @@
-#macro __TRANSITION_LOG					LOGGING
-#macro __TRANSITION_DEFAULT_EFFECT_IN	__FLOE_DEFAULT_EFFECT_IN
-#macro __TRANSITION_DEFAULT_EFFECT_OUT	__FLOE_DEFAULT_EFFECT_OUT
-#macro __TRANSITION_DEFAULT_WAIT		false	// if true, then TRANSITION.complete() must be manually invoked
+#macro __TRANSITION_LOG						LOGGING
+#macro __TRANSITION_DEFAULT_EFFECT_IN		__FLOE_DEFAULT_EFFECT_IN
+#macro __TRANSITION_DEFAULT_EFFECT_IN_DATA	__FLOE_DEFAULT_EFFECT_IN_DATA
+#macro __TRANSITION_DEFAULT_EFFECT_OUT		__FLOE_DEFAULT_EFFECT_OUT
+#macro __TRANSITION_DEFAULT_EFFECT_OUT_DATA	__FLOE_DEFAULT_EFFECT_OUT_DATA
+#macro __TRANSITION_DEFAULT_WAIT			false	// if true, then TRANSITION.complete() must be manually invoked
 
 global._transition = { 
     initialized: false,
@@ -48,6 +50,20 @@ global._transition = {
 		is_waiting = false;
 		
 		#endregion
+		
+		{	/// DEBUG
+			alpha		= 0.8;
+			color_index = 0;
+			colors		= variable_struct_get_names(CONFIG.color);
+			color		= CONFIG.color.orange;
+			
+			surface	  = surface_create(SW, SH);
+			shader	  = shdr_sine_wave;
+			u_time	  = shader_get_uniform(shader, "u_time");
+			u_texel	  = shader_get_uniform(shader, "u_texel");
+			u_x_props = shader_get_uniform(shader, "u_x_props");
+			u_y_props = shader_get_uniform(shader, "u_y_props");
+		}
     },
 	update:	function() {
 		/// @func   update()
@@ -62,6 +78,35 @@ global._transition = {
 		}
 		
 		#endregion
+		
+		{ /// DEBUG
+			if (INPUT.keyboard.button(vk_lcontrol)) {
+				if (INPUT.mouse.wheel_down()) {
+					if (color_index > 0) {
+						color_index--;	
+					}
+					else color_index = array_length(colors) - 1;
+			
+					color = CONFIG.color[$ colors[color_index]];
+				}
+				if (INPUT.mouse.wheel_up()) {
+					if (color_index < array_length(colors) - 1) {
+						color_index++;	
+					}
+					else color_index = 0;
+			
+					color = CONFIG.color[$ colors[color_index]];
+				}
+			}
+			else {
+				if (INPUT.mouse.wheel_down()) {
+					alpha -= 0.05;
+				}
+				if (INPUT.mouse.wheel_up()) {
+					alpha += 0.05;
+				}
+			}
+		}
 	},
 	render: function() {
 		/// @func   render()
@@ -69,6 +114,48 @@ global._transition = {
         /// @return NA
         ///
         if (!initialized) exit;
+		
+		{	/// DEBUG
+			var _sprite = __spr_transition_border_silhouette_trees;
+			var _offset = 60;
+			var _x		= -_offset;
+			var _y		= -_offset;
+			var _width	= SW + (_offset * 2);
+			var _height = SH + (_offset * 2) + 5;
+		
+			/// Leaves Shadow
+			shader_set(shdr_alpha_dither);
+			var _offset = 15;
+			draw_sprite_stretched_ext(_sprite, 0, _x + _offset, _y + _offset, _width - (_offset * 2), _height - (_offset * 2), c_white, alpha);
+			shader_reset();
+		
+			if (!surface_exists(surface)) {
+				surface = surface_create(SW, SH);
+			}
+			surface_set_target(surface);
+			draw_clear_alpha(c_black, 0.0);
+		
+			/// Leaves
+			draw_sprite_stretched_ext(_sprite, 1, _x, _y, _width, _height, color, 1);
+			
+			surface_reset_target();
+			
+			shader_set(shader);
+			shader_set_uniform_f(u_time, current_time);
+			var _texel_min    = 0.003;
+			var _texel_max    = 0.03;
+			var _texel_ratio  = 1;
+			var _texel_width  = (_texel_max - _texel_min) * _texel_ratio;
+			var _texel_height = (_texel_max - _texel_min) * _texel_ratio;
+			shader_set_uniform_f(u_texel, _texel_width, _texel_height);
+			shader_set_uniform_f_array(u_x_props, [0.005, 20.0, 0.05]);
+			shader_set_uniform_f_array(u_y_props, [0.005, 20.0, 0.05]);
+			
+			draw_surface(surface, 0, 0);
+			
+			shader_reset();
+		}
+		
 		#region FloeEffects ////
 		
 		if (effect != undefined) {
@@ -81,16 +168,19 @@ global._transition = {
 	#endregion
 	#region Private ////////
 	
-	__begin_transition: function(_effect_in, _effect_out) {
-		/// @func	__begin_transition(effect_in, effect_out) 
+	__begin_transition: function(_effect_in, _effect_in_data, _effect_out, _effect_out_data) {
+		/// @func	__begin_transition(effect_in, effect_in_data, effect_out, effect_out_data) 
 		/// @param	{FloeEffect} effect_in
+		/// @param	{struct}	 effect_in_data
 		/// @param	{FloeEffect} effect_out
+		/// @param	{struct}	 effect_out_data
 		///
 		if (__TRANSITION_LOG) {
 			show_debug_message("TRANSITION.begin_transition()");	
 		}
+		
 		/// Instantiate Effect_In()
-		effect_in = new _effect_in();
+		effect_in = new _effect_in(_effect_in_data);
 		effect_in.set_on_leave(function() {
 			effect_in.cleanup();
 			effect = effect_out;
@@ -103,7 +193,7 @@ global._transition = {
 		});
 		
 		/// Instantiate Effect_Out()
-		effect_out = new _effect_out();
+		effect_out = new _effect_out(_effect_out_data);
 		effect_out.set_on_end(function() {
 			effect_out.cleanup();
 			effect = undefined;
@@ -219,13 +309,15 @@ global._transition = {
 			show_debug_message("TRANSITION.goto()");	
 		}
 		
-		var _room		= _data[$ "room"	  ] 
-		var _effect_in	= _data[$ "effect_in" ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
-		var _effect_out	= _data[$ "effect_out"] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
-		var _on_start	= _data[$ "on_start"  ] ?? undefined;
-		var _on_change	= _data[$ "on_change" ] ?? undefined;
-		var _on_end		= _data[$ "on_end"	  ] ?? undefined;
-		var _wait		= _data[$ "wait"	  ]	?? __TRANSITION_DEFAULT_WAIT;
+		var _room				= _data[$ "room"			] 
+		var _effect_in			= _data[$ "effect_in"		] ?? __TRANSITION_DEFAULT_EFFECT_IN;
+		var _effect_in_data		= _data[$ "effect_in_data"	] ?? __TRANSITION_DEFAULT_EFFECT_IN_DATA;
+		var _effect_out			= _data[$ "effect_out"		] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
+		var _effect_out_data	= _data[$ "effect_out_data"	] ?? __TRANSITION_DEFAULT_EFFECT_OUT_DATA;
+		var _on_start			= _data[$ "on_start"		] ?? undefined;
+		var _on_change			= _data[$ "on_change"		] ?? undefined;
+		var _on_end				= _data[$ "on_end"			] ?? undefined;
+		var _wait				= _data[$ "wait"			] ?? __TRANSITION_DEFAULT_WAIT;
 		
 		/// Wire on_start Callback
 		if (_on_start != undefined) {
@@ -255,7 +347,7 @@ global._transition = {
 		}
 			
 		is_waiting = _wait;
-		__begin_transition(_effect_in, _effect_out);
+		__begin_transition(_effect_in, _effect_in_data, _effect_out, _effect_out_data);
 	},
     goto_next:			function(_data = {}) {
         /// @func   goto_next({effect_in*, effect_out*, on_start*, on_change*, on_end*, wait?*})
@@ -308,12 +400,14 @@ global._transition = {
 			show_debug_message("TRANSITION.restart()");	
 		}
 		
-		var _effect_in	= _data[$ "effect_in" ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
-		var _effect_out	= _data[$ "effect_out"] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
-		var _on_start	= _data[$ "on_start"  ] ?? undefined;
-		var _on_change	= _data[$ "on_change" ] ?? undefined;
-		var _on_end		= _data[$ "on_end"	  ] ?? undefined;
-		var _wait		= _data[$ "wait"	  ]	?? __TRANSITION_DEFAULT_WAIT;
+		var _effect_in			= _data[$ "effect_in"		] ?? __TRANSITION_DEFAULT_EFFECT_IN;
+		var _effect_in_data		= _data[$ "effect_in_data"	] ?? __TRANSITION_DEFAULT_EFFECT_IN_DATA;
+		var _effect_out			= _data[$ "effect_out"		] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
+		var _effect_out_data	= _data[$ "effect_out_data"	] ?? __TRANSITION_DEFAULT_EFFECT_OUT_DATA;
+		var _on_start			= _data[$ "on_start"		] ?? undefined;
+		var _on_change			= _data[$ "on_change"		] ?? undefined;
+		var _on_end				= _data[$ "on_end"			] ?? undefined;
+		var _wait				= _data[$ "wait"			] ?? __TRANSITION_DEFAULT_WAIT;
 		
 		/// Wire on_start Callback
 		if (_on_start != undefined) {
@@ -342,7 +436,7 @@ global._transition = {
 		}
 			
 		is_waiting = _wait;
-		__begin_transition(_effect_in, _effect_out);
+		__begin_transition(_effect_in, _effect_in_data, _effect_out, _effect_out_data);
     },
     get_room_next:		function(_room = room) {
         /// @func   get_room_next(room*<room>)

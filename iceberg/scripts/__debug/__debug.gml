@@ -67,9 +67,9 @@ DEBUG = {
 			});
 		}
 		
-        //if (INPUT.keyboard.button_pressed(vk_f11))   {
-		//	WINDOW.set_fullscreen(!WINDOW.get_fullscreen());
-		//}
+        if (INPUT.keyboard.button_pressed(vk_f11))   {
+			WINDOW.toggle_fullscreen();
+		}
     },
     render: function() {
         /// @func   render()
@@ -82,10 +82,7 @@ DEBUG = {
 		
 		var _y = GUI_H - 30;
 		draw_text(10, _y, room_get_name(room));
-		
-		if (TRANSITION.effect != undefined) {
-			draw_text(10, _y - 20, TRANSITION.effect.state);
-		}
+		//draw_text(10, _y - 20, TRANSITION.alpha);
     },
 };
 

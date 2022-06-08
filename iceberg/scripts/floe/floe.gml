@@ -27,7 +27,11 @@
 #endregion
 #region upcoming features
 /*
-	- define custom sprites to draw for transitions
+	- Canopy Trees
+		- define custom sprites to draw for transitions using nine-slice
+		- draw canopy trees onto surface w/sine-wave shader for subtle animations
+		- canopy trees particle leaves
+	
 	- different interpolation types/methods
 	- optimize performance through not drawing the surface every frame
 	- transitions to do
@@ -58,8 +62,10 @@ enum FLOE_STATE {
 
 #endregion
 
-#macro __FLOE_DEFAULT_EFFECT_IN			FloeEffectBorderCenter
+#macro __FLOE_DEFAULT_EFFECT_IN			FloeEffectBorderSprite
+#macro __FLOE_DEFAULT_EFFECT_IN_DATA	{ sprite: __spr_transition_border_silhouette_trees, image: 1 }
 #macro __FLOE_DEFAULT_EFFECT_OUT		__FLOE_DEFAULT_EFFECT_IN
+#macro __FLOE_DEFAULT_EFFECT_OUT_DATA	__FLOE_DEFAULT_EFFECT_IN_DATA
 #macro __FLOE_EFFECT_DEFAULT_COLOR		c_black
 #macro __FLOE_EFFECT_DEFAULT_ALPHA		1.0
 #macro __FLOE_EFFECT_DEFAULT_SPEED		0.1
@@ -254,11 +260,20 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		surface_set_target(surface); 
 		draw_clear_alpha(c_black, 0.0);
 	};
-	static render_end   = function() {
-		/// @func render_end()
+	static render_end   = function(_shader_method) {
+		/// @func	render_end(shader_method*)
+		/// @param	{shader} shader_method
 		///
 		surface_reset_target();	
+		
+		if (_shader_method != undefined) {
+			_shader_method();	
+		}
 		draw_surface(surface, 0, 0);
+		
+		if (_shader_method != undefined) {
+			shader_reset();	
+		}
 	};
 };
 function FloeEffectFade() : FloeEffect() constructor {
@@ -376,3 +391,88 @@ function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
 		render_end();
 	};	
 };
+function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
+	/// @func FloeEffectBorderSprite(data)
+	///
+	threshold = 0.005;
+	sprite	  = _data.sprite;
+	image	  = _data.image;
+	color	  = CONFIG.color.orange;//_data.color;
+	shader	  = shdr_sine_wave;
+	u_time	  = shader_get_uniform(shader, "u_time");
+	u_texel	  = shader_get_uniform(shader, "u_texel");
+	u_x_props = shader_get_uniform(shader, "u_x_props");
+	u_y_props = shader_get_uniform(shader, "u_y_props");
+	
+	static render = function() {
+		/// @func render()
+		///
+		color = TRANSITION.color;
+		
+		var _offset = 60;
+		var _x		= -_offset;
+		var _y		= -_offset;
+		var _width	= SW + (_offset * 2) - (SW * progress);
+		var _height = SH + (_offset * 2) - (SH * progress) + 5;
+		_x += SW * (0.5 * progress);
+		_y += SH * (0.5 * progress);
+		
+		shader_set(shdr_alpha_dither);
+		var _pad = 15;
+		draw_sprite_stretched_ext(sprite, 0, _x + _pad, _y + _pad, _width - (_pad * 2), _height - (_pad * 2), color, 0.8);
+		shader_reset();
+		
+		draw_sprite_stretched_ext(sprite, image, _x, _y, _width, _height, color, 1);
+		
+		/// Surface Rendering
+		render_begin();
+		draw_rectangle_alt(0, 0, SW, SH, 0, color, 1);
+		gpu_set_blendmode(bm_subtract);
+		draw_rectangle_alt(
+			_x +  _offset,
+			_y +  _offset,
+			_width  - (_offset * 2), 
+			_height - (_offset * 2), 
+			0, 
+			c_white, 
+			1
+		);
+		gpu_set_blendmode(bm_normal);
+		render_end();
+		//render_end(function() {
+		//	shader_set(shader);
+		//	shader_set_uniform_f(u_time, current_time);
+		//	var _texel_min    = 0.003;
+		//	var _texel_max    = 0.03;
+		//	var _texel_ratio  = 1;
+		//	var _texel_width  = (_texel_max - _texel_min) * _texel_ratio;
+		//	var _texel_height = (_texel_max - _texel_min) * _texel_ratio;
+		//	shader_set_uniform_f(u_texel, _texel_width, _texel_height);
+		//	shader_set_uniform_f_array(u_x_props, [0.005, 20.0, 0.2]);
+		//	shader_set_uniform_f_array(u_y_props, [0.005, 20.0, 0.2]);
+		//});
+	};
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
