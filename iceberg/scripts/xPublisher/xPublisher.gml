@@ -6,6 +6,7 @@ function Publisher() constructor {
 	
 	__channels = {};
 	__lookup = {};
+	__autoRegister = true;
 	
 	#endregion
 	#region Private Methods
@@ -72,9 +73,12 @@ function Publisher() constructor {
 	/// @returns {Subscriber}
 	static subscribe = function(_channel, _callback, _releaseRef = true) {
 		
-		// Ignore if there is no event registered under 'eventName'
 		if (!variable_struct_exists(__channels, _channel)) {
-			return undefined;
+			// Ignore if there is no event registered under 'eventName'
+			if (!__autoRegister) {
+				return undefined;
+			}
+			register_channel(_channel);
 		}
 		
 		// Check if parameter 'callback' is callable

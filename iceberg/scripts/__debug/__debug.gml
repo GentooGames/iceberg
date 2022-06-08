@@ -63,7 +63,7 @@ DEBUG = {
 					SAVE.save_game(,, function() {
 						TRANSITION.complete();
 					});
-				})
+				}),
 			});
 		}
 		

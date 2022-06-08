@@ -1,4 +1,9 @@
+- add spring to gprop()
 - convert objc_save into global._save = {}
 - have SURF_W & SURF_H get global._gui.surface.application.width
 	- and make sure this is updating whenever changes are made. (listen for surface_change event)
-- add particle_emitter and sfx_emitter to Border() construct
+- add particle_emitter and sfx_emitter to Border() & FloeEffect()
+- add PUBSUB to EVERYTHING!!!! make all new systems easily exposable through our global pubsub system
+- add macro pointers so that uniquely named libraries can be accessed through intuitively named references
+- reevaluate if we can remove manual event registration now that auto_register is setup in the publisher
+- "do we really need a macro for that?" if a value is only used once, maybe we shouldnt have it as a MACRO

@@ -26,12 +26,7 @@
 
 #endregion
 #region upcoming features
-/*
-	- Canopy Trees
-		- define custom sprites to draw for transitions using nine-slice
-		- draw canopy trees onto surface w/sine-wave shader for subtle animations
-		- canopy trees particle leaves
-	
+/*	
 	- different interpolation types/methods
 	- optimize performance through not drawing the surface every frame
 	- transitions to do
@@ -62,34 +57,27 @@ enum FLOE_STATE {
 
 #endregion
 
-#macro __FLOE_EFFECT_DEFAULT_COLOR		c_black
-#macro __FLOE_EFFECT_DEFAULT_ALPHA		1.0
-#macro __FLOE_EFFECT_DEFAULT_SPEED		0.1
-#macro __FLOE_EFFECT_DEFAULT_THRESHOLD	0.1
-#macro __FLOE_EFFECT_DEFAULT_HOLD_TIME	-1
-#macro __FLOE_EFFECT_DEFAULT_PADDING	20
-
 function FloeEffect() constructor {
 	/// @func FloeEffect()
 	///
-	color		= __FLOE_EFFECT_DEFAULT_COLOR;
-	alpha		= __FLOE_EFFECT_DEFAULT_ALPHA;
-	speed		= __FLOE_EFFECT_DEFAULT_SPEED;
-	threshold	= __FLOE_EFFECT_DEFAULT_THRESHOLD;
-	hold_time	= __FLOE_EFFECT_DEFAULT_HOLD_TIME;
-	on_enter	= {
+	color		=  c_black;
+	alpha		=  1.0;
+	speed		=  0.1;
+	threshold	=  0.1;
+	hold_time	= -1;
+	on_enter	=  {
 		callback: undefined,
 		data:	  undefined,
 	};
-	on_change	= {
+	on_change	=  {
 		callback: undefined,
 		data:	  undefined,
 	};
-	on_leave	= {
+	on_leave	=  {
 		callback: undefined,
 		data:	  undefined,
 	};
-	on_end		= {
+	on_end		=  {
 		callback: undefined,
 		data:	  undefined,
 	};
@@ -99,6 +87,8 @@ function FloeEffect() constructor {
 	state		= FLOE_STATE.HIDDEN;
 	is_reversed	= false;
 	hold_timer  = 0;
+	
+	__padding	= 20;	// offset to move effects offscreen for smoother animations
 		
 	static update  = function() {
 		/// @func update()
@@ -291,9 +281,8 @@ function FloeEffectWipeLeft() : FloeEffect() constructor {
 	static render = function() {
 		/// @func render()
 		///
-		var _pad	= __FLOE_EFFECT_DEFAULT_PADDING;
-		var _width	= SURF_W + _pad;
-		var _x		= _width - (_width * progress) - (_pad * 0.5);
+		var _width = SURF_W + __padding;
+		var _x	   = _width - (_width * progress) - (__padding * 0.5);
 		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, color, alpha);
 	};	
 };
@@ -305,9 +294,8 @@ function FloeEffectWipeRight() : FloeEffect() constructor {
 	static render = function() {
 		/// @func render()
 		///
-		var _pad	= __FLOE_EFFECT_DEFAULT_PADDING;
-		var _width	= SURF_W + _pad;
-		var _x		= -_width + (_width * progress) - (_pad * 0.5);
+		var _width = SURF_W + __padding;
+		var _x	   = -_width + (_width * progress) - (__padding * 0.5);
 		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, color, alpha);
 	};	
 };
@@ -355,13 +343,12 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 		render_begin(); {
 			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, alpha);
 			gpu_set_blendmode(bm_subtract); {
-				var _pad	=  __FLOE_EFFECT_DEFAULT_PADDING;
-				var _base_w =  SURF_W + _pad;
-				var _base_h =  SURF_H + _pad;
+				var _base_w =  SURF_W + __padding;
+				var _base_h =  SURF_H + __padding;
 				var _width	= _base_w - (_base_w * progress);
 				var _height = _base_h - (_base_h * progress);
-				var _x		= (_base_w - _width ) * 0.5 - (_pad * 0.5);
-				var _y		= (_base_h - _height) * 0.5 - (_pad * 0.5);
+				var _x		= (_base_w - _width ) * 0.5 - (__padding * 0.5);
+				var _y		= (_base_h - _height) * 0.5 - (__padding * 0.5);
 				draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
 			} gpu_set_blendmode(bm_normal);
 		} render_end();

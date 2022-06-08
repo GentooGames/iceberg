@@ -37,8 +37,11 @@ EVENT = {
 			"destroyed",
 		];
 		
+		static _exclude = obj_gmlive;
 		for (var _i = 0, _n_ids = array_length(OBJECTS_INDEXES); _i < _n_ids; _i++) {
-			var _object_index = OBJECTS_INDEXES[_i];
+			var _object_index  =  OBJECTS_INDEXES[_i];
+			if (_object_index == _exclude) continue;
+			
 			var _object_name  = object_get_name(_object_index);
 			var _prefix_index = string_pos("_", _object_name);
 			var _event_name   = string_delete(_object_name, 1, _prefix_index);

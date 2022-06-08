@@ -1,7 +1,7 @@
 global._unit_test = {};
 #macro UNIT_TEST   global._unit_test
 ////////////////////////////////////////
-#macro RUN_TESTS   1 
+#macro RUN_TESTS   0 
 
 UNIT_TEST = {
     test_suites: {
