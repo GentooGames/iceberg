@@ -392,25 +392,24 @@ function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 	sprite		 = _data.sprite;
 	image		 = _data.image;
 	threshold	 =  0.005;
-	sprite_w	 =  sprite_get_width (sprite);
-	sprite_h	 =  sprite_get_height(sprite);
-	offset_x	 =  0;//-sprite_w *  0.5;
-	offset_y	 =  0;//-sprite_h *  0.5;
-	inset_x		 =  sprite_w * (1 / 6);	// amount that overlay surface will inset into the sprite
-	inset_y		 =  sprite_h * (1 / 6);	// amount that overlay surface will inset into the sprite
-	overlay_edge =  true;				// is_connected to the side of the screen via an overlayed rectangle
+	overlay_edge =  true;						// is_connected to the side of the screen via an overlayed rectangle1
 	
-	color = CONFIG.color.blue_teal;
+	__sprite_w	= sprite_get_width (sprite);
+	__sprite_h	= sprite_get_height(sprite);
+	__offset_x	= 0;//-__sprite_w *  0.5;		// amount sprite will be offset from origin
+	__offset_y	= 0;//-__sprite_h *  0.5;		// amount sprite will be offset from origin
+	__inset_x	= __sprite_w * (1 / 6);			// amount that overlay surface will inset into the sprite
+	__inset_y	= __sprite_h * (1 / 6);			// amount that overlay surface will inset into the sprite
 	
 	static render = function() {
 		/// @func render()
 		///
 		var _max_w	 =  SURF_W;
 		var _max_h	 =  SURF_H;
-		var _start_w = _max_w + (-offset_x * 2);
-		var _start_h = _max_h + (-offset_y * 2);
-		var _start_x = (SURF_W - _max_w) + offset_x;
-		var _start_y = (SURF_H - _max_h) + offset_y;
+		var _start_w = _max_w + (-__offset_x * 2);
+		var _start_h = _max_h + (-__offset_y * 2);
+		var _start_x = (SURF_W - _max_w) + __offset_x;
+		var _start_y = (SURF_H - _max_h) + __offset_y;
 		
 		var _x = _start_x + (_start_w * (0.5 * progress));
 		var _y = _start_y + (_start_h * (0.5 * progress));
@@ -423,10 +422,10 @@ function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
 				gpu_set_blendmode(bm_subtract); {
 					draw_rectangle_alt(
-						_x +  inset_x,
-						_y +  inset_y,
-						max(0, _w - (inset_x * 2)), 
-						max(0, _h - (inset_y * 2)), 
+						_x +  __inset_x,
+						_y +  __inset_y,
+						max(0, _w - (__inset_x * 2)), 
+						max(0, _h - (__inset_y * 2)), 
 						0, 
 						c_white, 
 						1,
