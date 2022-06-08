@@ -3,19 +3,19 @@ function Border(_sprite, _image = 0) constructor {
 	/// @param	{sprite_index} sprite
 	/// @param	{image_index } image=0
 	///
-	sprite  = _sprite;
-	image   = _image;
-	scale   = 1;
-	yscale  = 1 * scale;
-	xscale  = 1 * scale;
-	width   = SURF_W;
-	height  = SURF_H;
-	color   = c_white;
-	alpha   = 1;
-	x	    = 0;
-	y	    = 0;
-	xoffset = 0;
-	yoffset = 0;
+	sprite   = _sprite;
+	image    = _image;
+	scale    = 1;
+	yscale   = 1 * scale;
+	xscale   = 1 * scale;
+	width    = SURF_W;
+	height   = SURF_H;
+	color    = c_white;
+	alpha    = 1;
+	x	     = 0;
+	y	     = 0;
+	x_offset = 0;
+	y_offset = 0;
 	
 	/// Shadow
 	shadow_visible = true;
@@ -86,6 +86,8 @@ function Border(_sprite, _image = 0) constructor {
 	#endregion
 	#region Private 
 	
+	/// ...
+	
 	#endregion
 	#region Public
 	
@@ -113,37 +115,37 @@ function Border(_sprite, _image = 0) constructor {
 		/// @func	get_x()
 		/// @return	{real} x
 		///
-		return x + get_xoffset();
+		return x + get_x_offset();
 	};
 	static get_y		= function() {
 		/// @func	get_y()
 		/// @return	{real} y
 		///
-		return y + get_yoffset();
+		return y + get_y_offset();
 	};
-	static get_xoffset	= function() {
-		/// @func	get_xoffset()
-		/// @return	{real} xoffset
+	static get_x_offset	= function() {
+		/// @func	get_x_offset()
+		/// @return	{real} x_offset
 		///
-		return xoffset * get_xscale();
+		return x_offset * get_xscale();
 	};
-	static get_yoffset	= function() {
-		/// @func	get_yoffset()
-		/// @return	{real} yoffset
+	static get_y_offset	= function() {
+		/// @func	get_y_offset()
+		/// @return	{real} y_offset
 		///
-		return yoffset * get_yscale();
+		return y_offset * get_yscale();
 	};
 	static get_width	= function() {
 		/// @func	get_width()
 		/// @return	{real} width
 		///
-		return (width * get_xscale()) - (get_xoffset() * 2);
+		return (width * get_xscale()) - (get_x_offset() * 2);
 	};
 	static get_height	= function() {
 		/// @func	get_height()
 		/// @return	{real} height
 		///
-		return (height * get_yscale()) - (get_yoffset() * 2);	
+		return (height * get_yscale()) - (get_y_offset() * 2);	
 	};
 	static get_color	= function() {
 		/// @func	get_color()
@@ -179,7 +181,7 @@ function Border(_sprite, _image = 0) constructor {
 	#endregion
 	#region Setters
 	
-	static set_pos	   = function(_x = x, _y = y) {
+	static set_pos		= function(_x = x, _y = y) {
 		/// @func	set_pos(x*, y*)
 		/// @param	{real} x=x
 		/// @param	{real} y=y
@@ -188,42 +190,42 @@ function Border(_sprite, _image = 0) constructor {
 		y = _y;
 		return self;
 	};
-	static set_x	   = function(_x) {
+	static set_x		= function(_x) {
 		/// @func	set_pos(x)
 		/// @param	{real} x=x
 		///
 		return set_pos(_x,);
 	};
-	static set_y	   = function(_y) {
+	static set_y		= function(_y) {
 		/// @func	set_pos(y)
 		/// @param	{real} y=y
 		///
 		return set_pos(,_y);
 	};
-	static set_offset  = function(_xoffset = xoffset, _yoffset = yoffset) {
-		/// @func	set_offset(xoffset*, yoffset*)
-		/// @param	{real} xoffset=xoffset
-		/// @param	{real} yoffset=yoffset
+	static set_offset	= function(_x_offset = x_offset, _y_offset = y_offset) {
+		/// @func	set_offset(x_offset*, y_offset*)
+		/// @param	{real} x_offset=x_offset
+		/// @param	{real} y_offset=y_offset
 		///
-		xoffset = _xoffset;
-		yoffset = _yoffset;
+		x_offset = _x_offset;
+		y_offset = _y_offset;
 		set_size();
 		set_pos();
 		return self;
 	};
-	static set_xoffset = function(_xoffset) {
-		/// @func	set_xoffset(xoffset)
-		/// @param	{real} xoffset
+	static set_x_offset = function(_x_offset) {
+		/// @func	set_x_offset(x_offset)
+		/// @param	{real} x_offset
 		///
-		return set_offset(_xoffset,);
+		return set_offset(_x_offset,);
 	};
-	static set_yoffset = function(_yoffset) {
-		/// @func	set_yoffset(yoffset)
-		/// @param	{real} yoffset
+	static set_y_offset = function(_y_offset) {
+		/// @func	set_y_offset(y_offset)
+		/// @param	{real} y_offset
 		///
-		return set_offset(,_yoffset);
+		return set_offset(,_y_offset);
 	};
-	static set_size    = function(_width = width, _height = height) {
+	static set_size		= function(_width = width, _height = height) {
 		/// @func	set_size(width*, height*)
 		/// @param	{real} width=width
 		/// @param	{real} height=height
@@ -232,26 +234,26 @@ function Border(_sprite, _image = 0) constructor {
 		height = _height;
 		return self;
 	};
-	static set_width   = function(_width) {
+	static set_width	= function(_width) {
 		/// @func	set_height(width)
 		/// @param	{real} width
 		///
 		return set_size(_width,);
 	};
-	static set_height  = function(_height) {
+	static set_height	= function(_height) {
 		/// @func	set_height(height)
 		/// @param	{real} height
 		///
 		return set_size(,_height);
 	};
-	static set_color   = function(_color) {
+	static set_color	= function(_color) {
 		/// @func	set_color(color)
 		/// @param	{real} color
 		///
 		color = _color;
 		return self;
 	};
-	static set_alpha   = function(_alpha) {
+	static set_alpha	= function(_alpha) {
 		/// @func	set_alpha(alpha)
 		/// @param	{real} alpha
 		///
@@ -266,8 +268,8 @@ function Border(_sprite, _image = 0) constructor {
 function BorderTrees() : Border(__spr_transition_border_silhouette_trees, 1) constructor {
 	/// @func BorderTrees()
 	/// 	
-	set_xoffset(-40);
-	set_yoffset(get_xoffset());
+	set_x_offset(-50);
+	set_y_offset(-60);
 	set_color(CONFIG.color.orange);
 	
 	#region Sine Wave 
@@ -290,9 +292,11 @@ function BorderTrees() : Border(__spr_transition_border_silhouette_trees, 1) con
 	static render = function() {
 		/// @func render()
 		///
-		render_shadow();
+		if (shadow_visible) {
+			render_shadow();
+		}
 		render_border(false);
-	
+		
 		/// Render Surface With Sine Wave Shader
 		shader_set(shader); {
 			shader_set_uniform_f(u_time,  current_time);

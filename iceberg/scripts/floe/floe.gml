@@ -387,47 +387,43 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	/// @param	{sprite_index} sprite
 	/// @param	{image_index } image=0
 	///
-	sprite		 = _sprite;
-	image		 = _image;
-	threshold	 = 0.005;
-	overlay_edge = true;						// is_connected to the side of the screen via an overlayed rectangle1
-	draw_shadow  = false;
-	shadow_alpha = 1.0;
-	shadow_color = c_black;
-	shadow_inset = 0;
+	sprite		  = _sprite;
+	image		  = _image;
+	threshold	  = 0.005;
+	overlay_edge  = true;
+	draw_shadow   = false;
+	shadow_alpha  = 1.0;
+	shadow_color  = c_black;
+	shadow_inset  = 0;	
 	
-	__sprite_w	 = sprite_get_width (sprite);
-	__sprite_h	 = sprite_get_height(sprite);
-	__offset_x	 =-__sprite_w *  0.5;		// amount sprite will be offset from origin
-	__offset_y	 =-__sprite_h *  0.5;		// amount sprite will be offset from origin
-	__inset_x	 = __sprite_w * (1 / 6);		// amount that overlay surface will inset into the sprite
-	__inset_y	 = __sprite_h * (1 / 6);		// amount that overlay surface will inset into the sprite
-	__validated  = false;
+	/// Assign Specific Offset For Sprite Position
+	var _sprite_w = get_sprite_width();
+	var _sprite_h = get_sprite_height();
+	x_offset	  = -_sprite_w *  0.5;		// amount sprite will be offset from origin
+	y_offset	  = -_sprite_h *  0.5;		// amount sprite will be offset from origin
+	x_inset		  =  _sprite_w * (1 / 6);	// amount that overlay surface will inset into the sprite
+	y_inset		  =  _sprite_h * (1 / 6);	// amount that overlay surface will inset into the sprite
 	
+	/// Private
+	__validated	  = false;
+	
+	/// Internal
 	static render = function() {
 		/// @func render()
 		///
-		if (!__validated) {
-			if (sprite == undefined) {
-				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
-			}
-			if (!sprite_get_nineslice(sprite).enabled) {
-				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
-			}
-			__validated = true;
-		}
+		__validate_sprite();
 		
 		var _max_w	 =  SURF_W;
 		var _max_h	 =  SURF_H;
-		var _start_w = _max_w + (-__offset_x * 2);
-		var _start_h = _max_h + (-__offset_y * 2);
-		var _start_x = (SURF_W - _max_w) + __offset_x;
-		var _start_y = (SURF_H - _max_h) + __offset_y;
+		var _start_w = _max_w + (-x_offset * 2);
+		var _start_h = _max_h + (-y_offset * 2);
+		var _start_x = (SURF_W - _max_w) + x_offset;
+		var _start_y = (SURF_H - _max_h) + y_offset;
 		
-		var _x = _start_x + ((_max_w - __offset_x)* (0.5 * progress));
-		var _y = _start_y + ((_max_h - __offset_y)* (0.5 * progress));
-		var _w = _start_w - ((_max_w - __offset_x)* progress);
-		var _h = _start_h - ((_max_h - __offset_y)* progress);
+		var _x = _start_x + ((_max_w - x_offset) * (0.5 * progress));
+		var _y = _start_y + ((_max_h - y_offset) * (0.5 * progress));
+		var _w = _start_w - ((_max_w - x_offset) * progress);
+		var _h = _start_h - ((_max_h - y_offset) * progress);
 		
 		/// Sprite Shadow
 		if (draw_shadow) {
@@ -449,10 +445,10 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
 				gpu_set_blendmode(bm_subtract); {
 					draw_rectangle_alt(
-						_x +  __inset_x,
-						_y +  __inset_y,
-						max(0, _w - (__inset_x * 2)), 
-						max(0, _h - (__inset_y * 2)), 
+						_x +  x_inset,
+						_y +  y_inset,
+						max(0, _w - (x_inset * 2)), 
+						max(0, _h - (y_inset * 2)), 
 						0, 
 						c_white, 
 						1,
@@ -461,11 +457,44 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 			} render_end();
 		}
 	};
+		
+	/// Public
+	static get_sprite_width  = function() {
+		/// @func	get_sprite_width()
+		/// @return {real} sprite_width
+		///
+		return sprite_get_width(sprite);	
+	};
+	static get_sprite_height = function() {
+		/// @func	get_sprite_height()
+		/// @return {real} sprite_height
+		///
+		return sprite_get_height(sprite);	
+	};
+		
+	/// Private
+	static __validate_sprite = function() {
+		/// @func __validate_sprite()
+		///
+		if (!__validated) {
+			if (sprite == undefined) {
+				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
+			}
+			if (!sprite_get_nineslice(sprite).enabled) {
+				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
+			}
+			__validated = true;
+		}
+	};
 };
 ////////////////////////////////////////////////////////////////////////////
 function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {
 	image		 = 1;
+	overlay_edge = true;
 	draw_shadow  = true;
 	shadow_alpha = 0.8;
 	shadow_inset = 20;
+	color		 = CONFIG.color.orange;
+	x_offset	 = -50;
+	y_offset	 = -60;
 };
