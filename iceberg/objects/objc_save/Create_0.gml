@@ -30,7 +30,6 @@ event_id = "save";
 		- also allows us to methodically handle edge cases and error throwing through an implicit
 			type checker, etc.
 */
-#macro __SC_LOG					LOGGING
 #macro __SC_CONTROLLER			SAVE
 #macro __SC_SAVE_FILE_GROUP		"default"
 #macro __SC_SAVE_FILE_PREFIX	"save_data"

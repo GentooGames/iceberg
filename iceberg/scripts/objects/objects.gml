@@ -59,7 +59,7 @@ function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) cons
 				_load_data  = _room_data[$ _save_id];
 				
 			if (_load_data == undefined) {
-				show_debug_message("ERROR loading for instance " 
+				log("ERROR loading for instance " 
 					+ object_get_name(__save_object_owner.object_index) 
 					+ ", unable to find associated load_data for save_id: " 
 					+ string(__save_object_save_id)

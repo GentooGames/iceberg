@@ -20,7 +20,7 @@ function log(_format) {
 		_params[i] = argument[i];
 	}
 	var _output = script_execute_ext(string_build, _params);
-	show_debug_message(_output);
+	show_debug_message("[" + string(current_time) + "]: " + _output);
 };
 function string_build(_format) {
 	/// @func	string_build(_format, params, ...)

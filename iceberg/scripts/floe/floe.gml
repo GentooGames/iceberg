@@ -100,7 +100,6 @@ function FloeEffect() constructor {
 	
 	progress	= 0.0;
 	target		= 1.0;
-	surface		= undefined;
 	state		= FLOE_STATE.HIDDEN;
 	is_reversed	= false;
 	hold_timer  = 0;
@@ -167,16 +166,7 @@ function FloeEffect() constructor {
 			}
 		};
 	};
-	static cleanup = function() {
-		/// @func cleanup()
-		///
-		if (surface != undefined) {
-			if (surface_exists(surface)) {
-				surface_free(surface);
-			}
-			surface = undefined;
-		}
-	};
+	static cleanup = function() {};
 	static enter   = function() {
 		/// @func enter()
 		///
@@ -249,13 +239,21 @@ function FloeEffect() constructor {
 function FloeEffectSurface() : FloeEffect() constructor {
 	/// @func FloeEffectSurface()
 	///
-	surface = surface_create(SW, SH);
+	surface = surface_create(SURF_W, SURF_H);
 	
+	static cleanup		= function() {
+		/// @func cleanup()
+		///
+		if (surface_exists(surface)) {
+			surface_free(surface);
+		}
+		surface = undefined;
+	};
 	static render_begin = function() {
 		/// @func render_begin()
 		///
 		if (!surface_exists(surface)) {
-			surface = surface_create(SW, SH);
+			surface = surface_create(SURF_W, SURF_H);
 		}
 		surface_set_target(surface); 
 		draw_clear_alpha(c_black, 0.0);
@@ -286,7 +284,7 @@ function FloeEffectFade() : FloeEffect() constructor {
 		/// @func render()
 		///
 		var _alpha = alpha * progress;
-		draw_rectangle_alt(0, 0, SW, SH, 0, color, _alpha);
+		draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, _alpha);
 	};	
 };
 function FloeEffectWipeLeft() : FloeEffect() constructor {
@@ -298,9 +296,9 @@ function FloeEffectWipeLeft() : FloeEffect() constructor {
 		/// @func render()
 		///
 		var _pad	= __FLOE_EFFECT_DEFAULT_PADDING;
-		var _width	= SW + _pad;
+		var _width	= SURF_W + _pad;
 		var _x		= _width - (_width * progress) - (_pad * 0.5);
-		draw_rectangle_alt(_x, 0, _width, SH, 0, color, alpha);
+		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, color, alpha);
 	};	
 };
 function FloeEffectWipeRight() : FloeEffect() constructor {
@@ -312,9 +310,9 @@ function FloeEffectWipeRight() : FloeEffect() constructor {
 		/// @func render()
 		///
 		var _pad	= __FLOE_EFFECT_DEFAULT_PADDING;
-		var _width	= SW + _pad;
+		var _width	= SURF_W + _pad;
 		var _x		= -_width + (_width * progress) - (_pad * 0.5);
-		draw_rectangle_alt(_x, 0, _width, SH, 0, color, alpha);
+		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, color, alpha);
 	};	
 };
 function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
@@ -325,16 +323,14 @@ function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
 	static render = function() {
 		/// @func render()
 		///
-		render_begin();
-		draw_rectangle_alt(0, 0, SW, SH, 0, color, alpha);
-		gpu_set_blendmode(bm_subtract);
-		
-		var _base   = SH;
-		var _radius = _base - (_base * progress);
-		draw_circle_color(SW * 0.5, SH * 0.5, _radius, c_white, c_white, false);
-		
-		gpu_set_blendmode(bm_normal);
-		render_end();
+		render_begin(); {
+			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, alpha);
+			gpu_set_blendmode(bm_subtract); {
+				var _base   = SURF_H;
+				var _radius = _base - (_base * progress);
+				draw_circle_color(SURF_W * 0.5, SURF_H * 0.5, _radius, c_white, c_white, false);
+			} gpu_set_blendmode(bm_normal);
+		} render_end();
 	};	
 };
 function FloeEffectCircleTarget() : FloeEffectSurface() constructor {
@@ -360,21 +356,19 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 	static render = function() {
 		/// @func render()
 		///
-		render_begin();
-		draw_rectangle_alt(0, 0, SW, SH, 0, color, alpha);
-		gpu_set_blendmode(bm_subtract);
-		
-		var _pad	=  __FLOE_EFFECT_DEFAULT_PADDING;
-		var _base_w =  SW + _pad;
-		var _base_h =  SH + _pad;
-		var _width	= _base_w - (_base_w * progress);
-		var _height = _base_h - (_base_h * progress);
-		var _x		= (_base_w - _width ) * 0.5 - (_pad * 0.5);
-		var _y		= (_base_h - _height) * 0.5 - (_pad * 0.5);
-		draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
-		
-		gpu_set_blendmode(bm_normal);
-		render_end();
+		render_begin(); {
+			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, alpha);
+			gpu_set_blendmode(bm_subtract); {
+				var _pad	=  __FLOE_EFFECT_DEFAULT_PADDING;
+				var _base_w =  SURF_W + _pad;
+				var _base_h =  SURF_H + _pad;
+				var _width	= _base_w - (_base_w * progress);
+				var _height = _base_h - (_base_h * progress);
+				var _x		= (_base_w - _width ) * 0.5 - (_pad * 0.5);
+				var _y		= (_base_h - _height) * 0.5 - (_pad * 0.5);
+				draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
+			} gpu_set_blendmode(bm_normal);
+		} render_end();
 	};	
 };
 function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
@@ -395,28 +389,79 @@ function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
 function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 	/// @func FloeEffectBorderSprite(data)
 	///
-	threshold = 0.005;
-	sprite	  = _data.sprite;
-	image	  = _data.image;
-	color	  = CONFIG.color.orange;//_data.color;
-	shader	  = shdr_sine_wave;
-	u_time	  = shader_get_uniform(shader, "u_time");
-	u_texel	  = shader_get_uniform(shader, "u_texel");
-	u_x_props = shader_get_uniform(shader, "u_x_props");
-	u_y_props = shader_get_uniform(shader, "u_y_props");
+	sprite		 = _data.sprite;
+	image		 = _data.image;
+	threshold	 =  0.005;
+	sprite_w	 =  sprite_get_width (sprite);
+	sprite_h	 =  sprite_get_height(sprite);
+	offset_x	 =  0;//-sprite_w *  0.5;
+	offset_y	 =  0;//-sprite_h *  0.5;
+	inset_x		 =  sprite_w * (1 / 6);	// amount that overlay surface will inset into the sprite
+	inset_y		 =  sprite_h * (1 / 6);	// amount that overlay surface will inset into the sprite
+	overlay_edge =  true;				// is_connected to the side of the screen via an overlayed rectangle
+	
+	color = CONFIG.color.blue_teal;
 	
 	static render = function() {
 		/// @func render()
 		///
+		var _max_w	 =  SURF_W;
+		var _max_h	 =  SURF_H;
+		var _start_w = _max_w + (-offset_x * 2);
+		var _start_h = _max_h + (-offset_y * 2);
+		var _start_x = (SURF_W - _max_w) + offset_x;
+		var _start_y = (SURF_H - _max_h) + offset_y;
+		
+		var _x = _start_x + (_start_w * (0.5 * progress));
+		var _y = _start_y + (_start_h * (0.5 * progress));
+		var _w = _start_w - (_start_w * progress);
+		var _h = _start_h - (_start_h * progress);
+		draw_sprite_stretched_ext(sprite, image, _x, _y, _w, _h, color, alpha);
+		
+		if (overlay_edge) {
+			render_begin(); {
+				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
+				gpu_set_blendmode(bm_subtract); {
+					draw_rectangle_alt(
+						_x +  inset_x,
+						_y +  inset_y,
+						max(0, _w - (inset_x * 2)), 
+						max(0, _h - (inset_y * 2)), 
+						0, 
+						c_white, 
+						1,
+					);
+				} gpu_set_blendmode(bm_normal);
+			} render_end();
+		}
+	};
+};
+function FloeEffectBorderTrees(_data) : FloeEffectSurface() constructor {
+	/// @func FloeEffectBorderSprite(data)
+	///
+	//threshold = 0.005;
+	//sprite	  = _data.sprite;
+	//image	  = _data.image;
+	//color	  = CONFIG.color.orange;//_data.color;
+	//shader	  = shdr_sine_wave;
+	//u_time	  = shader_get_uniform(shader, "u_time");
+	//u_texel	  = shader_get_uniform(shader, "u_texel");
+	//u_x_props = shader_get_uniform(shader, "u_x_props");
+	//u_y_props = shader_get_uniform(shader, "u_y_props");
+	/*
+	static render = function() {
+		/// @func render()
+		///
+		exit;
 		color = TRANSITION.color;
 		
 		var _offset = 60;
 		var _x		= -_offset;
 		var _y		= -_offset;
-		var _width	= SW + (_offset * 2) - (SW * progress);
-		var _height = SH + (_offset * 2) - (SH * progress) + 5;
-		_x += SW * (0.5 * progress);
-		_y += SH * (0.5 * progress);
+		var _width	= SURF_W + (_offset * 2) - (SURF_W * progress);
+		var _height = SURF_H + (_offset * 2) - (SURF_H * progress) + 5;
+		_x += SURF_W * (0.5 * progress);
+		_y += SURF_H * (0.5 * progress);
 		
 		shader_set(shdr_alpha_dither);
 		var _pad = 15;
@@ -427,7 +472,7 @@ function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 		
 		/// Surface Rendering
 		render_begin();
-		draw_rectangle_alt(0, 0, SW, SH, 0, color, 1);
+		draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
 		gpu_set_blendmode(bm_subtract);
 		draw_rectangle_alt(
 			_x +  _offset,
@@ -441,27 +486,5 @@ function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 		gpu_set_blendmode(bm_normal);
 		render_end();
 	};
+	*/
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

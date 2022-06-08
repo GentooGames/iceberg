@@ -1,4 +1,3 @@
-#macro __TRANSITION_LOG						LOGGING
 #macro __TRANSITION_DEFAULT_EFFECT_IN		__FLOE_DEFAULT_EFFECT_IN
 #macro __TRANSITION_DEFAULT_EFFECT_IN_DATA	__FLOE_DEFAULT_EFFECT_IN_DATA
 #macro __TRANSITION_DEFAULT_EFFECT_OUT		__FLOE_DEFAULT_EFFECT_OUT
@@ -50,20 +49,6 @@ global._transition = {
 		is_waiting = false;
 		
 		#endregion
-		
-		{	/// DEBUG
-			alpha		= 0.8;
-			color_index = 0;
-			colors		= variable_struct_get_names(CONFIG.color);
-			color		= CONFIG.color.orange;
-			
-			surface	  = surface_create(SW, SH);
-			shader	  = shdr_sine_wave;
-			u_time	  = shader_get_uniform(shader, "u_time");
-			u_texel	  = shader_get_uniform(shader, "u_texel");
-			u_x_props = shader_get_uniform(shader, "u_x_props");
-			u_y_props = shader_get_uniform(shader, "u_y_props");
-		}
     },
 	update:	function() {
 		/// @func   update()
@@ -78,35 +63,6 @@ global._transition = {
 		}
 		
 		#endregion
-		
-		{ /// DEBUG
-			if (INPUT.keyboard.button(vk_lcontrol)) {
-				if (INPUT.mouse.wheel_down()) {
-					if (color_index > 0) {
-						color_index--;	
-					}
-					else color_index = array_length(colors) - 1;
-			
-					color = CONFIG.color[$ colors[color_index]];
-				}
-				if (INPUT.mouse.wheel_up()) {
-					if (color_index < array_length(colors) - 1) {
-						color_index++;	
-					}
-					else color_index = 0;
-			
-					color = CONFIG.color[$ colors[color_index]];
-				}
-			}
-			else {
-				if (INPUT.mouse.wheel_down()) {
-					alpha -= 0.05;
-				}
-				if (INPUT.mouse.wheel_up()) {
-					alpha += 0.05;
-				}
-			}
-		}
 	},
 	render: function() {
 		/// @func   render()
@@ -114,48 +70,6 @@ global._transition = {
         /// @return NA
         ///
         if (!initialized) exit;
-		
-		{	/// DEBUG
-			var _sprite = __spr_transition_border_silhouette_trees;
-			var _offset = 60;
-			var _x		= -_offset;
-			var _y		= -_offset;
-			var _width	= SW + (_offset * 2);
-			var _height = SH + (_offset * 2) + 5;
-		
-			/// Leaves Shadow
-			shader_set(shdr_alpha_dither);
-			var _offset = 15;
-			draw_sprite_stretched_ext(_sprite, 0, _x + _offset, _y + _offset, _width - (_offset * 2), _height - (_offset * 2), c_white, alpha);
-			shader_reset();
-		
-			if (!surface_exists(surface)) {
-				surface = surface_create(SW, SH);
-			}
-			surface_set_target(surface);
-			draw_clear_alpha(c_black, 0.0);
-		
-			/// Leaves
-			draw_sprite_stretched_ext(_sprite, 1, _x, _y, _width, _height, color, 1);
-			
-			surface_reset_target();
-			
-			shader_set(shader);
-			shader_set_uniform_f(u_time, current_time);
-			var _texel_min    = 0.003;
-			var _texel_max    = 0.03;
-			var _texel_ratio  = 1;
-			var _texel_width  = (_texel_max - _texel_min) * _texel_ratio;
-			var _texel_height = (_texel_max - _texel_min) * _texel_ratio;
-			shader_set_uniform_f(u_texel, _texel_width, _texel_height);
-			shader_set_uniform_f_array(u_x_props, [0.005, 20.0, 0.05]);
-			shader_set_uniform_f_array(u_y_props, [0.005, 20.0, 0.05]);
-			
-			draw_surface(surface, 0, 0);
-			
-			shader_reset();
-		}
-		
 		#region FloeEffects ////
 		
 		if (effect != undefined) {
@@ -175,9 +89,7 @@ global._transition = {
 		/// @param	{FloeEffect} effect_out
 		/// @param	{struct}	 effect_out_data
 		///
-		if (__TRANSITION_LOG) {
-			show_debug_message("TRANSITION.begin_transition()");	
-		}
+		log("TRANSITION.begin_transition()");	
 		
 		/// Instantiate Effect_In()
 		effect_in = new _effect_in(_effect_in_data);
@@ -210,9 +122,7 @@ global._transition = {
 		/// @desc	sometimes we may want transitions to wait for a certain condition to be met, before completing
 		///			the transition. this method is abstracted so that we can bind it to a conditional check.
 		///
-		if (__TRANSITION_LOG) {
-			show_debug_message("TRANSITION.end_transition()");	
-		}
+		log("TRANSITION.end_transition()");	
 		effect_out.enter();
 	},
 	__is_transitioning:	function() {
@@ -259,9 +169,7 @@ global._transition = {
 		/// @return	NA
 		///
 		if (on_start.callback != undefined) {
-			if (__TRANSITION_LOG) {
-				show_debug_message("executing TRANSITION.on_start()");	
-			}
+			log("executing TRANSITION.on_start()");	
 			on_start.callback(on_start.data);
 		}
 	},
@@ -270,9 +178,7 @@ global._transition = {
 		/// @return	NA
 		///
 		if (on_change.callback != undefined) {
-			if (__TRANSITION_LOG) {
-				show_debug_message("executing TRANSITION.on_change()");	
-			}
+			log("executing TRANSITION.on_change()");	
 			on_change.callback(on_change.data);	
 		}
 	},
@@ -281,9 +187,7 @@ global._transition = {
 		/// @return	NA
 		///
 		if (on_end.callback != undefined) {
-			if (__TRANSITION_LOG) {
-				show_debug_message("executing TRANSITION.on_end()");	
-			}
+			log("executing TRANSITION.on_end()");	
 			on_end.callback(on_end.data);	
 		}
 	},
@@ -305,10 +209,7 @@ global._transition = {
         ///
 		if (__is_transitioning()) exit;
 		
-		if (__TRANSITION_LOG) {
-			show_debug_message("TRANSITION.goto()");	
-		}
-		
+		log("TRANSITION.goto()");	
 		var _room				= _data[$ "room"			] 
 		var _effect_in			= _data[$ "effect_in"		] ?? __TRANSITION_DEFAULT_EFFECT_IN;
 		var _effect_in_data		= _data[$ "effect_in_data"	] ?? __TRANSITION_DEFAULT_EFFECT_IN_DATA;
@@ -360,9 +261,7 @@ global._transition = {
 		/// @desc	...
         /// @return NA
         ///
-		if (__TRANSITION_LOG) {
-			show_debug_message("TRANSITION.goto_next()");	
-		}
+		log("TRANSITION.goto_next()");	
 		_data[$ "room"] = get_room_next();
 		goto(_data);
     },
@@ -377,9 +276,7 @@ global._transition = {
 		/// @desc	...
         /// @return NA
         ///
-		if (__TRANSITION_LOG) {
-			show_debug_message("TRANSITION.goto_previous()");	
-		}
+		log("TRANSITION.goto_previous()");	
         _data[$ "room"] = get_room_previous();
 		goto(_data);
     },
@@ -396,10 +293,7 @@ global._transition = {
         ///
 		if (__is_transitioning()) exit;
 		
-		if (__TRANSITION_LOG) {
-			show_debug_message("TRANSITION.restart()");	
-		}
-		
+		log("TRANSITION.restart()");	
 		var _effect_in			= _data[$ "effect_in"		] ?? __TRANSITION_DEFAULT_EFFECT_IN;
 		var _effect_in_data		= _data[$ "effect_in_data"	] ?? __TRANSITION_DEFAULT_EFFECT_IN_DATA;
 		var _effect_out			= _data[$ "effect_out"		] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
