@@ -62,10 +62,6 @@ enum FLOE_STATE {
 
 #endregion
 
-#macro __FLOE_DEFAULT_EFFECT_IN			FloeEffectBorderSprite
-#macro __FLOE_DEFAULT_EFFECT_IN_DATA	{ sprite: __spr_transition_border_silhouette_trees, image: 1 }
-#macro __FLOE_DEFAULT_EFFECT_OUT		__FLOE_DEFAULT_EFFECT_IN
-#macro __FLOE_DEFAULT_EFFECT_OUT_DATA	__FLOE_DEFAULT_EFFECT_IN_DATA
 #macro __FLOE_EFFECT_DEFAULT_COLOR		c_black
 #macro __FLOE_EFFECT_DEFAULT_ALPHA		1.0
 #macro __FLOE_EFFECT_DEFAULT_SPEED		0.1
@@ -386,24 +382,41 @@ function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
 		render_end();
 	};	
 };
-function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
-	/// @func FloeEffectBorderSprite(data)
+function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() constructor {
+	/// @func	FloeEffectBorderSprite(sprite, image*)
+	/// @param	{sprite_index} sprite
+	/// @param	{image_index } image=0
 	///
-	sprite		 = _data.sprite;
-	image		 = _data.image;
-	threshold	 =  0.005;
-	overlay_edge =  true;						// is_connected to the side of the screen via an overlayed rectangle1
+	sprite		 = _sprite;
+	image		 = _image;
+	threshold	 = 0.005;
+	overlay_edge = true;						// is_connected to the side of the screen via an overlayed rectangle1
+	draw_shadow  = false;
+	shadow_alpha = 1.0;
+	shadow_color = c_black;
+	shadow_inset = 0;
 	
-	__sprite_w	= sprite_get_width (sprite);
-	__sprite_h	= sprite_get_height(sprite);
-	__offset_x	= 0;//-__sprite_w *  0.5;		// amount sprite will be offset from origin
-	__offset_y	= 0;//-__sprite_h *  0.5;		// amount sprite will be offset from origin
-	__inset_x	= __sprite_w * (1 / 6);			// amount that overlay surface will inset into the sprite
-	__inset_y	= __sprite_h * (1 / 6);			// amount that overlay surface will inset into the sprite
+	__sprite_w	 = sprite_get_width (sprite);
+	__sprite_h	 = sprite_get_height(sprite);
+	__offset_x	 =-__sprite_w *  0.5;		// amount sprite will be offset from origin
+	__offset_y	 =-__sprite_h *  0.5;		// amount sprite will be offset from origin
+	__inset_x	 = __sprite_w * (1 / 6);		// amount that overlay surface will inset into the sprite
+	__inset_y	 = __sprite_h * (1 / 6);		// amount that overlay surface will inset into the sprite
+	__validated  = false;
 	
 	static render = function() {
 		/// @func render()
 		///
+		if (!__validated) {
+			if (sprite == undefined) {
+				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
+			}
+			if (!sprite_get_nineslice(sprite).enabled) {
+				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
+			}
+			__validated = true;
+		}
+		
 		var _max_w	 =  SURF_W;
 		var _max_h	 =  SURF_H;
 		var _start_w = _max_w + (-__offset_x * 2);
@@ -411,12 +424,26 @@ function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 		var _start_x = (SURF_W - _max_w) + __offset_x;
 		var _start_y = (SURF_H - _max_h) + __offset_y;
 		
-		var _x = _start_x + (_start_w * (0.5 * progress));
-		var _y = _start_y + (_start_h * (0.5 * progress));
-		var _w = _start_w - (_start_w * progress);
-		var _h = _start_h - (_start_h * progress);
+		var _x = _start_x + ((_max_w - __offset_x)* (0.5 * progress));
+		var _y = _start_y + ((_max_h - __offset_y)* (0.5 * progress));
+		var _w = _start_w - ((_max_w - __offset_x)* progress);
+		var _h = _start_h - ((_max_h - __offset_y)* progress);
+		
+		/// Sprite Shadow
+		if (draw_shadow) {
+			shader_set(shdr_alpha_dither); {
+				var _shadow_x = _x +  shadow_inset;
+				var _shadow_y = _y +  shadow_inset;
+				var _shadow_w = _w - (shadow_inset * 2);
+				var _shadow_h = _h - (shadow_inset * 2);
+				draw_sprite_stretched_ext(sprite, image, _shadow_x, _shadow_y, _shadow_w, _shadow_h, shadow_color, shadow_alpha);
+			} shader_reset();
+		}
+		
+		/// Primary Sprite
 		draw_sprite_stretched_ext(sprite, image, _x, _y, _w, _h, color, alpha);
 		
+		/// Overlay Edge
 		if (overlay_edge) {
 			render_begin(); {
 				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
@@ -435,55 +462,10 @@ function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 		}
 	};
 };
-function FloeEffectBorderTrees(_data) : FloeEffectSurface() constructor {
-	/// @func FloeEffectBorderSprite(data)
-	///
-	//threshold = 0.005;
-	//sprite	  = _data.sprite;
-	//image	  = _data.image;
-	//color	  = CONFIG.color.orange;//_data.color;
-	//shader	  = shdr_sine_wave;
-	//u_time	  = shader_get_uniform(shader, "u_time");
-	//u_texel	  = shader_get_uniform(shader, "u_texel");
-	//u_x_props = shader_get_uniform(shader, "u_x_props");
-	//u_y_props = shader_get_uniform(shader, "u_y_props");
-	/*
-	static render = function() {
-		/// @func render()
-		///
-		exit;
-		color = TRANSITION.color;
-		
-		var _offset = 60;
-		var _x		= -_offset;
-		var _y		= -_offset;
-		var _width	= SURF_W + (_offset * 2) - (SURF_W * progress);
-		var _height = SURF_H + (_offset * 2) - (SURF_H * progress) + 5;
-		_x += SURF_W * (0.5 * progress);
-		_y += SURF_H * (0.5 * progress);
-		
-		shader_set(shdr_alpha_dither);
-		var _pad = 15;
-		draw_sprite_stretched_ext(sprite, 0, _x + _pad, _y + _pad, _width - (_pad * 2), _height - (_pad * 2), color, 0.8);
-		shader_reset();
-		
-		draw_sprite_stretched_ext(sprite, image, _x, _y, _width, _height, color, 1);
-		
-		/// Surface Rendering
-		render_begin();
-		draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
-		gpu_set_blendmode(bm_subtract);
-		draw_rectangle_alt(
-			_x +  _offset,
-			_y +  _offset,
-			_width  - (_offset * 2), 
-			_height - (_offset * 2), 
-			0, 
-			c_white, 
-			1
-		);
-		gpu_set_blendmode(bm_normal);
-		render_end();
-	};
-	*/
+////////////////////////////////////////////////////////////////////////////
+function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {
+	image		 = 1;
+	draw_shadow  = true;
+	shadow_alpha = 0.8;
+	shadow_inset = 20;
 };

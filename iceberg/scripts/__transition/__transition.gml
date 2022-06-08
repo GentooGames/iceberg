@@ -1,12 +1,9 @@
-#macro __TRANSITION_DEFAULT_EFFECT_IN		__FLOE_DEFAULT_EFFECT_IN
-#macro __TRANSITION_DEFAULT_EFFECT_IN_DATA	__FLOE_DEFAULT_EFFECT_IN_DATA
-#macro __TRANSITION_DEFAULT_EFFECT_OUT		__FLOE_DEFAULT_EFFECT_OUT
-#macro __TRANSITION_DEFAULT_EFFECT_OUT_DATA	__FLOE_DEFAULT_EFFECT_OUT_DATA
-#macro __TRANSITION_DEFAULT_WAIT			false	// if true, then TRANSITION.complete() must be manually invoked
+#macro __TRANSITION_DEFAULT_EFFECT_IN	FloeEffectBorderTrees
+#macro __TRANSITION_DEFAULT_EFFECT_OUT	__TRANSITION_DEFAULT_EFFECT_IN
+#macro __TRANSITION_DEFAULT_WAIT		false	// if true, then TRANSITION.complete() must be manually invoked
 
 global._transition = { 
     initialized: false,
-		
 	#region Internal ///////
 	
     setup:  function() {
@@ -82,17 +79,15 @@ global._transition = {
 	#endregion
 	#region Private ////////
 	
-	__begin_transition: function(_effect_in, _effect_in_data, _effect_out, _effect_out_data) {
-		/// @func	__begin_transition(effect_in, effect_in_data, effect_out, effect_out_data) 
+	__begin_transition: function(_effect_in, _effect_out) {
+		/// @func	__begin_transition(effect_in, effect_out) 
 		/// @param	{FloeEffect} effect_in
-		/// @param	{struct}	 effect_in_data
 		/// @param	{FloeEffect} effect_out
-		/// @param	{struct}	 effect_out_data
 		///
 		log("TRANSITION.begin_transition()");	
 		
 		/// Instantiate Effect_In()
-		effect_in = new _effect_in(_effect_in_data);
+		effect_in = new _effect_in();
 		effect_in.set_on_leave(function() {
 			effect_in.cleanup();
 			effect = effect_out;
@@ -105,7 +100,7 @@ global._transition = {
 		});
 		
 		/// Instantiate Effect_Out()
-		effect_out = new _effect_out(_effect_out_data);
+		effect_out = new _effect_out();
 		effect_out.set_on_end(function() {
 			effect_out.cleanup();
 			effect = undefined;
@@ -210,15 +205,13 @@ global._transition = {
 		if (__is_transitioning()) exit;
 		
 		log("TRANSITION.goto()");	
-		var _room				= _data[$ "room"			] 
-		var _effect_in			= _data[$ "effect_in"		] ?? __TRANSITION_DEFAULT_EFFECT_IN;
-		var _effect_in_data		= _data[$ "effect_in_data"	] ?? __TRANSITION_DEFAULT_EFFECT_IN_DATA;
-		var _effect_out			= _data[$ "effect_out"		] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
-		var _effect_out_data	= _data[$ "effect_out_data"	] ?? __TRANSITION_DEFAULT_EFFECT_OUT_DATA;
-		var _on_start			= _data[$ "on_start"		] ?? undefined;
-		var _on_change			= _data[$ "on_change"		] ?? undefined;
-		var _on_end				= _data[$ "on_end"			] ?? undefined;
-		var _wait				= _data[$ "wait"			] ?? __TRANSITION_DEFAULT_WAIT;
+		var _room		= _data[$ "room"	   ];
+		var _effect_in	= _data[$ "effect_in"  ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
+		var _effect_out	= _data[$ "effect_out" ] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
+		var _on_start	= _data[$ "on_start"   ] ?? undefined;
+		var _on_change	= _data[$ "on_change"  ] ?? undefined;
+		var _on_end		= _data[$ "on_end"	   ] ?? undefined;
+		var _wait		= _data[$ "wait"	   ] ?? __TRANSITION_DEFAULT_WAIT;
 		
 		/// Wire on_start Callback
 		if (_on_start != undefined) {
@@ -248,7 +241,7 @@ global._transition = {
 		}
 			
 		is_waiting = _wait;
-		__begin_transition(_effect_in, _effect_in_data, _effect_out, _effect_out_data);
+		__begin_transition(_effect_in, _effect_out);
 	},
     goto_next:			function(_data = {}) {
         /// @func   goto_next({effect_in*, effect_out*, on_start*, on_change*, on_end*, wait?*})
@@ -294,14 +287,12 @@ global._transition = {
 		if (__is_transitioning()) exit;
 		
 		log("TRANSITION.restart()");	
-		var _effect_in			= _data[$ "effect_in"		] ?? __TRANSITION_DEFAULT_EFFECT_IN;
-		var _effect_in_data		= _data[$ "effect_in_data"	] ?? __TRANSITION_DEFAULT_EFFECT_IN_DATA;
-		var _effect_out			= _data[$ "effect_out"		] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
-		var _effect_out_data	= _data[$ "effect_out_data"	] ?? __TRANSITION_DEFAULT_EFFECT_OUT_DATA;
-		var _on_start			= _data[$ "on_start"		] ?? undefined;
-		var _on_change			= _data[$ "on_change"		] ?? undefined;
-		var _on_end				= _data[$ "on_end"			] ?? undefined;
-		var _wait				= _data[$ "wait"			] ?? __TRANSITION_DEFAULT_WAIT;
+		var _effect_in	= _data[$ "effect_in"  ] ?? __TRANSITION_DEFAULT_EFFECT_IN;
+		var _effect_out	= _data[$ "effect_out" ] ?? __TRANSITION_DEFAULT_EFFECT_OUT;
+		var _on_start	= _data[$ "on_start"   ] ?? undefined;
+		var _on_change	= _data[$ "on_change"  ] ?? undefined;
+		var _on_end		= _data[$ "on_end"	   ] ?? undefined;
+		var _wait		= _data[$ "wait"	   ] ?? __TRANSITION_DEFAULT_WAIT;
 		
 		/// Wire on_start Callback
 		if (_on_start != undefined) {
@@ -330,7 +321,7 @@ global._transition = {
 		}
 			
 		is_waiting = _wait;
-		__begin_transition(_effect_in, _effect_in_data, _effect_out, _effect_out_data);
+		__begin_transition(_effect_in, _effect_out);
     },
     get_room_next:		function(_room = room) {
         /// @func   get_room_next(room*<room>)
