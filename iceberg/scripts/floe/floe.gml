@@ -260,18 +260,19 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		surface_set_target(surface); 
 		draw_clear_alpha(c_black, 0.0);
 	};
-	static render_end   = function(_shader_method) {
-		/// @func	render_end(shader_method*)
-		/// @param	{shader} shader_method
+	static render_end   = function(_surface_shader_method) {
+		/// @func	render_end(surface_shader_method*)
+		/// @param	{shader} surface_shader_method
 		///
 		surface_reset_target();	
 		
-		if (_shader_method != undefined) {
-			_shader_method();	
+		if (_surface_shader_method != undefined) {
+			_surface_shader_method();	
 		}
+		
 		draw_surface(surface, 0, 0);
 		
-		if (_shader_method != undefined) {
+		if (_surface_shader_method != undefined) {
 			shader_reset();	
 		}
 	};
@@ -439,18 +440,6 @@ function FloeEffectBorderSprite(_data) : FloeEffectSurface() constructor {
 		);
 		gpu_set_blendmode(bm_normal);
 		render_end();
-		//render_end(function() {
-		//	shader_set(shader);
-		//	shader_set_uniform_f(u_time, current_time);
-		//	var _texel_min    = 0.003;
-		//	var _texel_max    = 0.03;
-		//	var _texel_ratio  = 1;
-		//	var _texel_width  = (_texel_max - _texel_min) * _texel_ratio;
-		//	var _texel_height = (_texel_max - _texel_min) * _texel_ratio;
-		//	shader_set_uniform_f(u_texel, _texel_width, _texel_height);
-		//	shader_set_uniform_f_array(u_x_props, [0.005, 20.0, 0.2]);
-		//	shader_set_uniform_f_array(u_y_props, [0.005, 20.0, 0.2]);
-		//});
 	};
 };
 
