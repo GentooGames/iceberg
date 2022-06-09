@@ -7,3 +7,4 @@
 - add macro pointers so that uniquely named libraries can be accessed through intuitively named references
 - reevaluate if we can remove manual event registration now that auto_register is setup in the publisher
 - "do we really need a macro for that?" if a value is only used once, maybe we shouldnt have it as a MACRO
+- rework screen resolution resizing and fullscreen

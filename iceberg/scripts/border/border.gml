@@ -57,7 +57,7 @@ function Border(_sprite, _image = 0) constructor {
 				get_width()  - (shadow_inset * 2),
 				get_height() - (shadow_inset * 2),
 				shadow_color, 
-				shadow_alpha,
+				shadow_alpha * get_alpha(),
 			);
 		} shader_reset();
 	};
@@ -65,34 +65,37 @@ function Border(_sprite, _image = 0) constructor {
 		/// @func render_border()
 		///
 		__surface = surface_ensure(__surface, get_width(), get_height());
-		surface_set_target(__surface); {
-			draw_clear_alpha(c_black, 0.0);
-			draw_sprite_stretched_ext(
-				get_sprite(), 
-				get_image(), 
-				get_x(), 
-				get_y(),
-				get_width(),  
-				get_height(),
-				get_color(), 
-				get_alpha(),
-			);
-		} surface_reset_target();
+		surface_set_target(__surface); 
+		
+		draw_clear_alpha(c_black, 0.0);
+		draw_sprite_stretched_ext(
+			get_sprite(), 
+			get_image(), 
+			get_x(), 
+			get_y(),
+			get_width(),  
+			get_height(),
+			get_color(), 
+			1,
+		);
+		surface_reset_target();
 	};
 	static render_overlay = function() {
 		/// @func render_overlay()
 		///
 		if (!overlay_edge) exit;
 		
-		draw_rectangle_alt(0, 0, __width_base, get_y() + overlay_inset_y, 0, color.get(), 1);								// top
-		draw_rectangle_alt(0, get_y() + get_height() - overlay_inset_y, __width_base, __height_base, 0, color.get(), 1);	// bottom
-		draw_rectangle_alt(get_x() + get_width() - overlay_inset_x, 0, __width_base, __height_base, 0, color.get(), 1);		// right
-		draw_rectangle_alt(0, 0, get_x() + overlay_inset_x, __height_base, 0, color.get(), 1);								// left
+		var _alpha = alpha.get();
+		draw_rectangle_alt(0, 0, __width_base, get_y() + overlay_inset_y, 0, color.get(), _alpha);								// top
+		draw_rectangle_alt(0, get_y() + get_height() - overlay_inset_y, __width_base, __height_base, 0, color.get(), _alpha);	// bottom
+		draw_rectangle_alt(get_x() + get_width() - overlay_inset_x, 0, __width_base, __height_base, 0, color.get(), _alpha);	// right
+		draw_rectangle_alt(get_x() - __width_base + overlay_inset_x, 0, __width_base, __height_base, 0, color.get(), _alpha);	// left
 	};
 	static render_surface = function() {
 		/// @func render_surface()
 		///
-		draw_surface(__surface, 0, 0);
+		var _alpha = alpha.get();
+		draw_surface_ext(__surface, 0, 0, 1, 1, 0, c_white, _alpha);
 	};
 	static render		  = function() {
 		/// @func render()

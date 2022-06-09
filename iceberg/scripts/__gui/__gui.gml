@@ -42,7 +42,11 @@ GUI = {
 		#endregion
 		#region Border /////////
 		
-		border_trees = new BorderTrees();
+		border_trees_bottom	= new BorderTrees();
+		border_trees_top	= new BorderTrees();
+		border_trees_bottom
+			.set_x_offset(-20)
+			.set_y_offset(-30)
 		
 		#endregion
     },    
@@ -53,22 +57,8 @@ GUI = {
         ///
         if (!initialized) exit;
 		
-		if (INPUT.keyboard.button_pressed(vk_right)) {
-			border_trees
-				.spring_width(200)
-		}
-		if (INPUT.keyboard.button_pressed(vk_up)) {
-			border_trees
-				.spring_height(200)
-		}
-		if (INPUT.keyboard.button(vk_down)) {
-			with (border_trees) {
-				set_x_offset(get_x_offset() + 1);	
-				set_y_offset(get_y_offset() + 1);	
-			}
-		}
-		
-		border_trees.update();
+		border_trees_bottom.update();
+		border_trees_top.update();
 	},
 	render: function() {
 		/// @func   update()
@@ -77,7 +67,8 @@ GUI = {
         ///
         if (!initialized) exit;
 		
-		border_trees.render();
+		border_trees_bottom.render();
+		border_trees_top.render();
 	},
 		
     world_to_gui_x: function(_x) {
