@@ -54,15 +54,17 @@ GUI = {
         if (!initialized) exit;
 		
 		if (INPUT.keyboard.button_pressed(vk_right)) {
-			with (border_trees) {
-				//x_scale.target = 0.5;
-				width.target = SURF_W * 0.25;
-			}
+			border_trees
+				.spring_width(200)
 		}
-		if (INPUT.keyboard.button_pressed(vk_left)) {
+		if (INPUT.keyboard.button_pressed(vk_up)) {
+			border_trees
+				.spring_height(200)
+		}
+		if (INPUT.keyboard.button(vk_down)) {
 			with (border_trees) {
-				//x_scale.target = 1.0;
-				width.target = SURF_W;
+				set_x_offset(get_x_offset() + 1);	
+				set_y_offset(get_y_offset() + 1);	
 			}
 		}
 		
@@ -76,7 +78,6 @@ GUI = {
         if (!initialized) exit;
 		
 		border_trees.render();
-		draw_circle(SURF_W * 0.5, SURF_H * 0.5, 5, false);
 	},
 		
     world_to_gui_x: function(_x) {

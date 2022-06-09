@@ -6,6 +6,9 @@ enum INTERP {
 
 #macro __GPROP_ID_DELINEATOR "."
 #macro __GPROP_DEFAULT_INTERP_ON_COMPLETE_EVENT_SUFFIX "interp_completed"
+#macro __GPROP_DEFAULT_SPRING_TENSION	0.15
+#macro __GPROP_DEFAULT_SPRING_DAMPENING 0.15
+#macro __GPROP_DEFAULT_SPRING_SPEED		5
 
 function GProp(_data) constructor {
 	/// @func	GProp(data)
@@ -16,7 +19,6 @@ function GProp(_data) constructor {
 	value  = _data[$ "value" ] ?? 0.0;		// x
 	offset = _data[$ "offset"] ?? 0.0;		// x_off
 	target = _data[$ "target"] ?? value;	// x_lerp
-	spring = _data[$ "spring"] ?? 0.0;
 	interp = {
 		type:	      _data[$ "interp_type"	    ] ?? INTERP.LERP,
 		speed:	      _data[$ "interp_speed"	] ?? 0.1,
@@ -27,6 +29,8 @@ function GProp(_data) constructor {
 			data:	  _data[$ "interp_on_complete_callback_data"] ?? { id: other },
 		}
 	};
+	
+	__spring = new Spring(__GPROP_DEFAULT_SPRING_TENSION, __GPROP_DEFAULT_SPRING_DAMPENING);
 	
 	#region Auto Register Subscriber Channel 
 	
@@ -46,6 +50,7 @@ function GProp(_data) constructor {
 			};
 			__interp_check_complete();
 		}
+		__spring.update();
 	};
 	
 	#region Private ////////
@@ -112,13 +117,19 @@ function GProp(_data) constructor {
 		/// @func	get()
 		/// @return {any} value
 		///
-		return value;
+		return value + __spring.get();
 	};
 	static get_target = function() {
 		/// @func	get_target()
 		/// @return {any} target
 		///
-		return target + offset;
+		return target + get_offset();
+	};
+	static get_offset = function() {
+		/// @func	get_offset()
+		/// @return {any} offset
+		///
+		return offset;
 	};
 	static set_value  = function(_value) {
 		/// @func	set_value(value)
@@ -130,12 +141,32 @@ function GProp(_data) constructor {
 		return self;
 	};
 	static set		  = set_value;
+	static set_target = function(_target) {
+		/// @func	set_target(target)
+		/// @param	{any} target
+		///	@return {GProp} self
+		///
+		target = _target;
+		return self;
+	};
+	static set_offset = function(_offset) {
+		/// @func	set_offset(offset)
+		/// @param	{any} offset
+		///	@return {GProp} self
+		///
+		offset = _offset;
+		return self;
+	};
 	static snap		  = function() {
 		/// @func	snap_value()
 		///	@return {GProp} self
 		///
 		value = get_target();
 		return self;
+	};
+	static spring	  = function(_speed = __GPROP_DEFAULT_SPRING_SPEED) {
+		__spring.fire(_speed);
+		return self;	
 	};
 	
 	#endregion

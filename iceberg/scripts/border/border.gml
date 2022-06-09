@@ -3,17 +3,14 @@ function Border(_sprite, _image = 0) constructor {
 	/// @param	{sprite_index} sprite
 	/// @param	{image_index } image=0
 	///
-	sprite   = new GProp({ name: "sprite",	 value: _sprite			});
-	image    = new GProp({ name: "image",	 value: _image			});
-	color    = new GProp({ name: "color",	 value: c_white			});
-	alpha    = new GProp({ name: "alpha",	 value: 1				});
-	x	     = new GProp({ name: "x",		 value: 0				});
-	y	     = new GProp({ name: "y",		 value: 0				});
-	width	 = new GProp({ name: "width",	 value: SURF_W			});
-	height   = new GProp({ name: "height",	 value: SURF_H			});
-	scale    = new GProp({ name: "scale",	 value: 1				});
-	x_scale  = new GProp({ name: "x_scale",  value: 1 * scale.value });
-	y_scale  = new GProp({ name: "y_scale",  value: 1 * scale.value });
+	sprite = new GProp({ name: "sprite", value: _sprite });
+	image  = new GProp({ name: "image",	 value: _image  });
+	color  = new GProp({ name: "color",	 value: c_white });
+	alpha  = new GProp({ name: "alpha",	 value: 1	    });
+	x	   = new GProp({ name: "x",		 value: 0	    });
+	y	   = new GProp({ name: "y",		 value: 0	    });
+	width  = new GProp({ name: "width",	 value: SURF_W  });
+	height = new GProp({ name: "height", value: SURF_H  });
 	
 	/// Shadow
 	shadow_visible = true;
@@ -21,12 +18,17 @@ function Border(_sprite, _image = 0) constructor {
 	shadow_alpha   = 0.8;
 	shadow_inset   = 20;
 	
+	/// Overlay
+	overlay_edge    = false;
+	overlay_inset_x = 0;
+	overlay_inset_y = 0;
+	
 	/// Private
-	__surface = surface_create(width.value, height.value);
+	__width_base  = width.value;	// track base values to center border on size change
+	__height_base = height.value;	// track base values to center border on size change
+	__surface	  = surface_create(__width_base, __height_base);
 	
-	#region Internal
-	
-	static update		 = function() {
+	static update		  = function() {
 		/// @func	update()
 		/// @return {Border} self
 		///
@@ -38,15 +40,14 @@ function Border(_sprite, _image = 0) constructor {
 		y.update();
 		width.update();
 		height.update();
-		scale.update();
-		x_scale.update();
-		y_scale.update();
 		
 		return self;
 	};
-	static render_shadow = function() {
+	static render_shadow  = function() {
 		/// @func render_shadow()
 		///
+		if (!shadow_visible) exit;
+		
 		shader_set(shdr_alpha_dither); {
 			draw_sprite_stretched_ext(
 				get_sprite(), 
@@ -60,9 +61,8 @@ function Border(_sprite, _image = 0) constructor {
 			);
 		} shader_reset();
 	};
-	static render_border = function(_draw_surface = true) {
-		/// @func	render_border(draw_surface?*)
-		/// @param	{bool} draw_surface=true
+	static render_border  = function() {
+		/// @func render_border()
 		///
 		__surface = surface_ensure(__surface, get_width(), get_height());
 		surface_set_target(__surface); {
@@ -78,28 +78,36 @@ function Border(_sprite, _image = 0) constructor {
 				get_alpha(),
 			);
 		} surface_reset_target();
-		
-		if (_draw_surface) {
-			draw_surface(__surface, 0, 0);
-		}
 	};
-	static render		 = function() {
+	static render_overlay = function() {
+		/// @func render_overlay()
+		///
+		if (!overlay_edge) exit;
+		
+		draw_rectangle_alt(0, 0, __width_base, get_y() + overlay_inset_y, 0, color.get(), 1);								// top
+		draw_rectangle_alt(0, get_y() + get_height() - overlay_inset_y, __width_base, __height_base, 0, color.get(), 1);	// bottom
+		draw_rectangle_alt(get_x() + get_width() - overlay_inset_x, 0, __width_base, __height_base, 0, color.get(), 1);		// right
+		draw_rectangle_alt(0, 0, get_x() + overlay_inset_x, __height_base, 0, color.get(), 1);								// left
+	};
+	static render_surface = function() {
+		/// @func render_surface()
+		///
+		draw_surface(__surface, 0, 0);
+	};
+	static render		  = function() {
 		/// @func render()
 		///
-		if (shadow_visible) {
-			render_shadow();
-		}
+		render_shadow();
 		render_border();
+		render_surface();
+		render_overlay();	
 	};
-	static cleanup		 = function() {
+	static cleanup		  = function() {
 		if (surface_exists(__surface)) {
 			surface_free(__surface);	
 		}
 		__surface = undefined;
 	};
-	
-	#endregion
-	#region Public
 	
 	#region Getters
 	
@@ -131,55 +139,37 @@ function Border(_sprite, _image = 0) constructor {
 		/// @func	get_x()
 		/// @return	{real} x
 		///
-		return x.get();
+		return x.get() + (__width_base - width.get()) * 0.5;
 	};
 	static get_y		= function() {
 		/// @func	get_y()
 		/// @return	{real} y
 		///
-		return y.get();
+		return y.get() + (__height_base - height.get()) * 0.5;
 	};
 	static get_x_offset	= function() {
 		/// @func	get_x_offset()
 		/// @return	{real} x_offset
 		///
-		return x.offset * get_x_scale();
+		return x.offset;
 	};
 	static get_y_offset	= function() {
 		/// @func	get_y_offset()
 		/// @return	{real} y_offset
 		///
-		return y.offset * get_y_scale();
+		return y.offset;
 	};
 	static get_width	= function() {
 		/// @func	get_width()
 		/// @return	{real} width
 		///
-		return (width.get() * get_x_scale()) - (get_x_offset() * 2);
+		return width.get() - (get_x_offset() * 2);
 	};
 	static get_height	= function() {
 		/// @func	get_height()
 		/// @return	{real} height
 		///
-		return (height.get() * get_y_scale()) - (get_y_offset() * 2);	
-	};
-	static get_scale	= function() {
-		/// @func	get_scale()
-		/// @return	{real} scale
-		///	
-		return scale.get();
-	};
-	static get_x_scale	= function() {
-		/// @func	get_x_scale()
-		/// @return	{real} x_scale
-		///	
-		return x_scale.get() * get_scale();
-	};
-	static get_y_scale	= function() {
-		/// @func	get_y_scale()
-		/// @return	{real} y_scale
-		///	
-		return y_scale.get() * get_scale();
+		return height.get() - (get_y_offset() * 2);	
 	};
 		
 	#endregion
@@ -287,6 +277,20 @@ function Border(_sprite, _image = 0) constructor {
 		}
 		return self;
 	};
+	static set_size_base = function(_width, _height) {
+		/// @func	set_size_base(width*, height*)
+		/// @param	{real} width=undefined
+		/// @param	{real} height=undefined
+		/// @return {Border} self
+		///
+		if (_width != undefined) {
+			__width_base = _width;
+		}
+		if (_height != undefined) {
+			__height_base = _height;
+		}
+		return self;
+	};
 	static set_width	 = function(_width) {
 		/// @func	set_height(width)
 		/// @param	{real} width
@@ -301,32 +305,26 @@ function Border(_sprite, _image = 0) constructor {
 		///
 		return set_size(,_height);
 	};
-	static set_scale	 = function(_scale) {
-		/// @func	set_scale(scale)
-		/// @param	{real} scale
-		/// @return {Border} self
-		///
-		scale.set(_scale);
-		return self;
-	};
-	static set_x_scale	 = function(_x_scale) {
-		/// @func	set_x_scale(x_scale)
-		/// @param	{real} x_scale
-		/// @return {Border} self
-		///
-		x_scale.set(_x_scale);
-		return self;
-	};
-	static set_y_scale	 = function(_y_scale) {
-		/// @func	set_x_scale(y_scale)
-		/// @param	{real} y_scale
-		/// @return {Border} self
-		///
-		y_scale.set(_y_scale);
-		return self;
-	};
 	
 	#endregion
+	#region Effects
+	
+	static spring_width  = function(_speed) {
+		/// @func	spring_width(speed)
+		/// @param	{real} speed
+		/// @return {Border} self
+		///
+		width.spring(_speed);
+		return self;
+	};
+ 	static spring_height = function(_speed) {
+		/// @func	spring_height(speed)
+		/// @param	{real} speed
+		/// @return {Border} self
+		///
+		height.spring(_speed);
+		return self;
+	};
 	
 	#endregion
 };
@@ -354,13 +352,16 @@ function BorderTrees() : Border(__spr_transition_border_silhouette_trees, 1) con
 	set_y_offset(-60);
 	set_color(CONFIG.color.orange);
 	
+	/// Overlay
+	overlay_edge	= true;
+	overlay_inset_x = 60;
+	overlay_inset_y = 60;
+	
 	static render = function() {
 		/// @func render()
 		///
-		if (shadow_visible) {
-			render_shadow();
-		}
-		render_border(false);
+		render_shadow();
+		render_border();
 		
 		/// Render Surface With Sine Wave Shader
 		shader_set(shader); {
@@ -368,7 +369,34 @@ function BorderTrees() : Border(__spr_transition_border_silhouette_trees, 1) con
 			shader_set_uniform_f(u_texel, 0.03, 0.03);
 			shader_set_uniform_f_array(u_x_props, [u_x_speed, u_x_freq, u_x_size]);
 			shader_set_uniform_f_array(u_y_props, [u_y_speed, u_y_freq, u_y_size]);
-			draw_surface(__surface, 0, 0);
+			render_surface();
 		} shader_reset();
+		
+		render_overlay();
 	};
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

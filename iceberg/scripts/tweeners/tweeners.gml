@@ -99,6 +99,12 @@ function Spring(_tension, _dampening, _spd = 0, _cutoff = 0.001) constructor {
 		_apply_cutoff();
 		_end();
 	};
+	static get	  = function() {
+		/// @func	get()
+		/// @return {real} val
+		///
+		return val;	
+	};
 	
 	/// _private
 	static _process			= function() {

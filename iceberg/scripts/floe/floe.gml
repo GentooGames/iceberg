@@ -376,21 +376,21 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	///
 	sprite		  = _sprite;
 	image		  = _image;
-	threshold	  = 0.005;
-	overlay_edge  = true;
+	threshold	  =  0.005;
+	x_offset	  = -get_sprite_width()  * 0.5;		// amount sprite will be offset from origin
+	y_offset	  = -get_sprite_height() * 0.5;		// amount sprite will be offset from origin
+	
+	/// Shadow
 	draw_shadow   = false;
 	shadow_alpha  = 1.0;
 	shadow_color  = c_black;
 	shadow_inset  = 0;	
 	
-	/// Assign Specific Offset For Sprite Position
-	var _sprite_w = get_sprite_width();
-	var _sprite_h = get_sprite_height();
-	x_offset	  = -_sprite_w *  0.5;		// amount sprite will be offset from origin
-	y_offset	  = -_sprite_h *  0.5;		// amount sprite will be offset from origin
-	x_inset		  =  _sprite_w * (1 / 6);	// amount that overlay surface will inset into the sprite
-	y_inset		  =  _sprite_h * (1 / 6);	// amount that overlay surface will inset into the sprite
-	
+	/// Overlay
+	overlay_edge	= true;
+	overlay_inset_x	= get_sprite_width()  * (1 / 6);	// amount that overlay surface will inset into the sprite
+	overlay_inset_y	= get_sprite_height() * (1 / 6);	// amount that overlay surface will inset into the sprite
+
 	/// Private
 	__validated	  = false;
 	
@@ -432,10 +432,10 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
 				gpu_set_blendmode(bm_subtract); {
 					draw_rectangle_alt(
-						_x +  x_inset,
-						_y +  y_inset,
-						max(0, _w - (x_inset * 2)), 
-						max(0, _h - (y_inset * 2)), 
+						_x +  overlay_inset_x,
+						_y +  overlay_inset_y,
+						max(0, _w - (overlay_inset_x * 2)), 
+						max(0, _h - (overlay_inset_y * 2)), 
 						0, 
 						c_white, 
 						1,
