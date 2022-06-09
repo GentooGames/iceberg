@@ -476,7 +476,6 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 };
 ////////////////////////////////////////////////////////////////////////////
 function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {
-	image		 = 1;
 	overlay_edge = true;
 	draw_shadow  = true;
 	shadow_alpha = 0.8;

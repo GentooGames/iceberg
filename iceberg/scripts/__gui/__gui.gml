@@ -32,7 +32,7 @@ GUI = {
 		
 		border_trees_bottom
 			.set_x_offset(-80)
-			.set_y_offset( 10)
+			.set_y_offset(-40)
 			.set_color(CONFIG.color.white)
 		
 		border_trees_top
@@ -47,14 +47,34 @@ GUI = {
         ///
         if (!initialized) exit;
 		
+		if (keyboard_check_pressed(ord("1"))) {
+			border_trees_bottom.width.set_target(200);	
+			border_trees_top.width.set_target(230);	
+		}
 		if (keyboard_check_pressed(vk_enter)) {
-			var _width = irandom_range(10, 100);
+			var _width = irandom_range(10, 80);
 			border_trees_bottom.spring_width(_width);	
 			border_trees_top.spring_width(_width);	
 			
-			var _height = irandom_range(10, 100);
+			var _height = irandom_range(50, 200);
 			border_trees_bottom.spring_height(_height);	
 			border_trees_top.spring_height(_height);	
+		}
+		if (keyboard_check(vk_left)) {
+			border_trees_bottom.x.adjust_offset(-1);
+			border_trees_top.x.adjust_offset(-1);
+		}
+		if (keyboard_check(vk_right)) {
+			border_trees_bottom.x.adjust_offset(1);
+			border_trees_top.x.adjust_offset(1);
+		}
+		if (keyboard_check(vk_up)) {
+			border_trees_bottom.y.adjust_offset(-1);
+			border_trees_top.y.adjust_offset(-1);
+		}
+		if (keyboard_check(vk_down)) {
+			border_trees_bottom.y.adjust_offset(1);
+			border_trees_top.y.adjust_offset(1);
 		}
 		
 		border_trees_bottom.update();

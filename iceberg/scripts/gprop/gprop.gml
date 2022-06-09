@@ -21,17 +21,17 @@ function GProp(_data) constructor {
 	offset = _data[$ "offset"] ?? 0.0;
 	target = _data[$ "target"] ?? value;
 	interp = {
-		type:	      _data[$ "interp_type"	    ] ?? INTERP.LERP,
-		speed:	      _data[$ "interp_speed"	] ?? 0.1,
-		threshold:    _data[$ "interp_threshold"] ?? 0.0,
-		complete:      false,
+		type:	      _data[$ "interp_type"	      ] ?? INTERP.LERP,
+		speed:	      _data[$ "interp_speed"	  ] ?? 0.1,
+		threshold:    _data[$ "interp_threshold"  ] ?? 0.0,
 		on_complete:  _data[$ "interp_on_complete"] ?? {
 			callback: _data[$ "interp_on_complete_callback"		],
 			data:	  _data[$ "interp_on_complete_callback_data"],
 		}
+		complete:      false,
 	};
 	
-	static update = function() {
+	static update	  = function() {
 		/// @func update()
 		///
 		if (interp.type != INTERP.NONE) {
@@ -42,6 +42,38 @@ function GProp(_data) constructor {
 			__interp_check_complete();
 		}
 		__spring.update();
+	};
+	static get		  = function() {
+		/// @func	get()
+		/// @return {any} value
+		///
+		return value + __spring.get();
+	};
+	static get_target = function() {
+		/// @func	get_target()
+		/// @return {any} target
+		///
+		return target + offset;
+	};
+	static set		  = function(_value) {
+		/// @func	set_value(value)
+		/// @param	{any} value
+		///	@return {GProp} self
+		///
+		value  = _value + offset;
+		target =  value;
+		return self;
+	};
+	static snap		  = function() {
+		/// @func	snap()
+		///	@return {GProp} self
+		///
+		value = get_target();
+		return self;
+	};
+	static spring	  = function(_speed = __GPROP_DEFAULT_SPRING_SPEED) {
+		__spring.fire(_speed);
+		return self;	
 	};
 	
 	#region Private ////////
@@ -108,65 +140,6 @@ function GProp(_data) constructor {
 	};
 	
 	#endregion
-	#region Public /////////
-	
-	static get		  = function() {
-		/// @func	get()
-		/// @return {any} value
-		///
-		return value + __spring.get();
-	};
-	static get_target = function() {
-		/// @func	get_target()
-		/// @return {any} target
-		///
-		return target + get_offset();
-	};
-	static get_offset = function() {
-		/// @func	get_offset()
-		/// @return {any} offset
-		///
-		return offset;
-	};
-	static set_value  = function(_value) {
-		/// @func	set_value(value)
-		/// @param	{any} value
-		///	@return {GProp} self
-		///
-		value  = _value + offset;
-		target =  value;
-		return self;
-	};
-	static set		  = set_value;
-	static set_target = function(_target) {
-		/// @func	set_target(target)
-		/// @param	{any} target
-		///	@return {GProp} self
-		///
-		target = _target;
-		return self;
-	};
-	static set_offset = function(_offset) {
-		/// @func	set_offset(offset)
-		/// @param	{any} offset
-		///	@return {GProp} self
-		///
-		offset = _offset;
-		return self;
-	};
-	static snap		  = function() {
-		/// @func	snap_value()
-		///	@return {GProp} self
-		///
-		value = get_target();
-		return self;
-	};
-	static spring	  = function(_speed = __GPROP_DEFAULT_SPRING_SPEED) {
-		__spring.fire(_speed);
-		return self;	
-	};
-	
-	#endregion
 	#region Other //////////
 	
 	if (__GPROP_DEFAULT_INTERP_ON_COMPLETE_PUBLISH) {
@@ -177,3 +150,6 @@ function GProp(_data) constructor {
 	
 	#endregion
 };	
+
+
+

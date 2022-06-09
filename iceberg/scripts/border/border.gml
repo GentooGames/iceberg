@@ -1,10 +1,9 @@
-function Border(_sprite, _image = 0) constructor {
-	/// @func	Border(sprite, image*)
+function Border(_sprite) constructor {
+	/// @func	Border(sprite)
 	/// @param	{sprite_index} sprite
-	/// @param	{image_index } image=0
 	///
 	sprite = new GProp({ name: "sprite", value: _sprite });
-	image  = new GProp({ name: "image",	 value: _image  });
+	image  = new GProp({ name: "image",	 value: 0		});
 	color  = new GProp({ name: "color",	 value: c_white });
 	alpha  = new GProp({ name: "alpha",	 value: 1	    });
 	x	   = new GProp({ name: "x",		 value: 0	    });
@@ -331,26 +330,54 @@ function Border(_sprite, _image = 0) constructor {
 	
 	#endregion
 };
-function BorderTrees() : Border(__spr_transition_border_silhouette_trees, 1) constructor {
-	/// @func BorderTrees()
-	/// 	
-	#region Sine Wave 
-	
+function BorderSineWave(_sprite) : Border(_sprite) constructor {
+	/// @func	BorderSineWave(sprite)
+	/// @param	{sprite_index} sprite
+	/// 
 	shader    = shdr_sine_wave;
 	u_time	  = shader_get_uniform(shader, "u_time");
 	u_texel   = shader_get_uniform(shader, "u_texel");
 	u_x_props = shader_get_uniform(shader, "u_x_props");
 	u_y_props = shader_get_uniform(shader, "u_y_props");
 	
-	u_x_speed = 0.005;
-	u_y_speed = 0.005;
-	u_x_freq  = 20.0;
-	u_y_freq  = 20.0;
-	u_x_size  = 0.05;
-	u_y_size  = 0.05;
+	x_texel	  = 0.03;
+	y_texel	  = 0.03;
+	x_props	  = [
+		0.005,	// speed
+		20.0,	// frequency
+		0.05,	// size
+	];
+	y_props	  = [
+		0.005,	// speed
+		20.0,	// frequency
+		0.05,	// size
+	];
 	
-	#endregion
-	
+	static render_uniforms = function() {
+		/// @func render_uniforms()
+		///
+		shader_set_uniform_f(u_time,  current_time);
+		shader_set_uniform_f(u_texel, x_texel, y_texel);
+		shader_set_uniform_f_array(u_x_props, x_props);
+		shader_set_uniform_f_array(u_y_props, y_props);
+	};
+	static render		   = function() {
+		/// @func render()
+		///
+		render_shadow();
+		render_border();
+		
+		shader_set(shader); {
+			render_uniforms();
+			render_surface();
+		} shader_reset();
+		
+		render_overlay();
+	};
+};
+function BorderTrees() : BorderSineWave(__spr_transition_border_silhouette_trees) constructor {
+	/// @func BorderTrees()
+	/// 	
 	set_x_offset(-50);
 	set_y_offset(-60);
 	set_color(CONFIG.color.orange);
@@ -359,24 +386,6 @@ function BorderTrees() : Border(__spr_transition_border_silhouette_trees, 1) con
 	overlay_edge	= true;
 	overlay_inset_x = 60;
 	overlay_inset_y = 60;
-	
-	static render = function() {
-		/// @func render()
-		///
-		render_shadow();
-		render_border();
-		
-		/// Render Surface With Sine Wave Shader
-		shader_set(shader); {
-			shader_set_uniform_f(u_time,  current_time);
-			shader_set_uniform_f(u_texel, 0.03, 0.03);
-			shader_set_uniform_f_array(u_x_props, [u_x_speed, u_x_freq, u_x_size]);
-			shader_set_uniform_f_array(u_y_props, [u_y_speed, u_y_freq, u_y_size]);
-			render_surface();
-		} shader_reset();
-		
-		render_overlay();
-	};
 }
 
 
