@@ -31,9 +31,9 @@ GUI = {
 		border_trees_top	= new BorderTrees();
 		
 		border_trees_bottom
-			.set_x_offset(-20)
-			.set_y_offset(-30)
-			.set_color(color_get_random())
+			.set_x_offset(-80)
+			.set_y_offset( 10)
+			.set_color(CONFIG.color.white)
 		
 		border_trees_top
 			.set_color(color_get_random())
@@ -46,6 +46,16 @@ GUI = {
         /// @return NA
         ///
         if (!initialized) exit;
+		
+		if (keyboard_check_pressed(vk_enter)) {
+			var _width = irandom_range(10, 100);
+			border_trees_bottom.spring_width(_width);	
+			border_trees_top.spring_width(_width);	
+			
+			var _height = irandom_range(10, 100);
+			border_trees_bottom.spring_height(_height);	
+			border_trees_top.spring_height(_height);	
+		}
 		
 		border_trees_bottom.update();
 		border_trees_top.update();

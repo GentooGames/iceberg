@@ -227,7 +227,7 @@ save_file_check_exists		= function() {
 	///
 	log("checking if save file exists");
 	state = __SC_STATE.FILE_CHECK_EXISTS;
-	if (file_exists(get_filename_group())) {
+	if (!__SC_SAVE_FILE_WIPE_ON_START && file_exists(get_filename_group())) {
 		log("save file exists");
 		save_file_first_load();
 	}

@@ -30,15 +30,16 @@ event_id = "save";
 		- also allows us to methodically handle edge cases and error throwing through an implicit
 			type checker, etc.
 */
-#macro __SC_CONTROLLER			SAVE
-#macro __SC_SAVE_FILE_GROUP		"default"
-#macro __SC_SAVE_FILE_PREFIX	"save_data"
-#macro __SC_SAVE_FILE_TYPE		".buf"
-#macro __SC_SAVE_ID_DELINEATOR	"|"
-#macro __SC_SAVE_ID_SUBSTRINGS	["name","x","y","depth","layer"]
-#macro __SC_SAVE_SLOT_DEFAULT	 0
-#macro __SC_FIRST_ROOM_INDEX	_rm_init	// first room index to reference
-#macro __SC_LOAD_ON_FIRST_ROOM	false		// if the first room is used as an init room, 
+#macro __SC_CONTROLLER				SAVE
+#macro __SC_SAVE_FILE_GROUP			"default"
+#macro __SC_SAVE_FILE_PREFIX		"save_data"
+#macro __SC_SAVE_FILE_TYPE			".buf"
+#macro __SC_SAVE_FILE_WIPE_ON_START false
+#macro __SC_SAVE_ID_DELINEATOR		"|"
+#macro __SC_SAVE_ID_SUBSTRINGS		["name","x","y","depth","layer"]
+#macro __SC_SAVE_SLOT_DEFAULT		 0
+#macro __SC_FIRST_ROOM_INDEX		_rm_init	// first room index to reference
+#macro __SC_LOAD_ON_FIRST_ROOM		false		// if the first room is used as an init room, 
 											// loading data in this room may not be wanted
 enum __SC_STATE {
 	BEGIN_VALIDATION,
