@@ -76,7 +76,7 @@
     {"id":{"name":"shdr_flash_white","path":"shaders/shdr_flash_white/shdr_flash_white.yy",},"order":1,},
     {"id":{"name":"CameraTask","path":"scripts/CameraTask/CameraTask.yy",},"order":1,},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"order":3,},
-    {"id":{"name":"utils","path":"scripts/utils/utils.yy",},"order":7,},
+    {"id":{"name":"util","path":"scripts/util/util.yy",},"order":7,},
     {"id":{"name":"GMLive_vm_init","path":"scripts/GMLive_vm_init/GMLive_vm_init.yy",},"order":7,},
     {"id":{"name":"rm_test2","path":"rooms/rm_test2/rm_test2.yy",},"order":2,},
     {"id":{"name":"shdr_gradient_fade_down","path":"shaders/shdr_gradient_fade_down/shdr_gradient_fade_down.yy",},"order":6,},

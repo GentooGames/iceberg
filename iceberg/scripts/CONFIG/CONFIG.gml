@@ -50,3 +50,39 @@ CONFIG = {
     entity: {},
 };
 
+function color_get_random() {
+	/// @func	color_get_random()
+	/// @return {color} color
+	///
+	var _struct = CONFIG.color;
+	var _colors	= variable_struct_get_names(_struct);
+	var _index	= irandom(array_length(_colors) - 1);
+	return _struct[$ _colors[_index]];
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

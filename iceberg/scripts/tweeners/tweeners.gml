@@ -61,6 +61,10 @@ function Shaker() constructor {
 	};
 };
 
+#macro __SPRING_DEFAULT_TENSION	  0.15
+#macro __SPRING_DEFAULT_DAMPENING 0.15
+#macro __SPRING_DEFAULT_SPEED	  5
+
 /// @func Spring(tension, damp, spd*<0>, cutoff*<0.001>) constructor
 function Spring(_tension, _dampening, _spd = 0, _cutoff = 0.001) constructor {
 	/// @param	tension	  -> {real}	

@@ -29,9 +29,14 @@ GUI = {
 		
 		border_trees_bottom	= new BorderTrees();
 		border_trees_top	= new BorderTrees();
+		
 		border_trees_bottom
 			.set_x_offset(-20)
 			.set_y_offset(-30)
+			.set_color(color_get_random())
+		
+		border_trees_top
+			.set_color(color_get_random())
 		
 		#endregion
     },    
@@ -77,25 +82,3 @@ GUI = {
     gui_to_world_x: function() { /* need to implement... */ },
     gui_to_world_y: function() { /* need to implement... */ },
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

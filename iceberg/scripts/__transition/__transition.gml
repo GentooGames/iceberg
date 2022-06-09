@@ -56,6 +56,7 @@ global._transition = {
 		#region FloeEffects ////
 		
 		if (effect != undefined) {
+			effect.color = GUI.border_trees_top.get_color();
 			effect.update();
 		}
 		

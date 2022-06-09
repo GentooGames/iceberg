@@ -4,11 +4,12 @@ enum INTERP {
 	LERP,	
 };
 
-#macro __GPROP_ID_DELINEATOR "."
+#macro __GPROP_ID_DELINEATOR							"."
+#macro __GPROP_DEFAULT_INTERP_ON_COMPLETE_PUBLISH		true
 #macro __GPROP_DEFAULT_INTERP_ON_COMPLETE_EVENT_SUFFIX "interp_completed"
-#macro __GPROP_DEFAULT_SPRING_TENSION	0.15
-#macro __GPROP_DEFAULT_SPRING_DAMPENING 0.15
-#macro __GPROP_DEFAULT_SPRING_SPEED		5
+#macro __GPROP_DEFAULT_SPRING_TENSION					__SPRING_DEFAULT_TENSION
+#macro __GPROP_DEFAULT_SPRING_DAMPENING					__SPRING_DEFAULT_DAMPENING
+#macro __GPROP_DEFAULT_SPRING_SPEED						__SPRING_DEFAULT_SPEED
 
 function GProp(_data) constructor {
 	/// @func	GProp(data)
@@ -25,8 +26,8 @@ function GProp(_data) constructor {
 		threshold:    _data[$ "interp_threshold"] ?? 0.0,
 		complete:      false,
 		on_complete:  _data[$ "interp_on_complete"] ?? {
-			callback: _data[$ "interp_on_complete_callback"		] ?? function(_data) { PUBLISH(__interp_on_complete_get_event_name(), _data); },
-			data:	  _data[$ "interp_on_complete_callback_data"] ?? { id: other },
+			callback: _data[$ "interp_on_complete_callback"		],
+			data:	  _data[$ "interp_on_complete_callback_data"],
 		}
 	};
 	
@@ -81,6 +82,10 @@ function GProp(_data) constructor {
 			}
 		}
 		interp.complete = true;
+		
+		if (__GPROP_DEFAULT_INTERP_ON_COMPLETE_PUBLISH) {
+			PUBLISH(__interp_on_complete_get_event_name(), { id: other });
+		}
 	};
 	static __interp_on_complete_get_event_name = function() {
 		/// @func __interp_on_complete_get_event_name()
@@ -164,8 +169,10 @@ function GProp(_data) constructor {
 	#endregion
 	#region Other //////////
 	
-	if (!PUBLISHER.has_registered_channel(__interp_on_complete_get_event_name())) {
-		PUBLISHER.register_channel(__interp_on_complete_get_event_name());	
+	if (__GPROP_DEFAULT_INTERP_ON_COMPLETE_PUBLISH) {
+		if (!PUBLISHER.has_registered_channel(__interp_on_complete_get_event_name())) {
+			PUBLISHER.register_channel(__interp_on_complete_get_event_name());	
+		}
 	}
 	
 	#endregion
