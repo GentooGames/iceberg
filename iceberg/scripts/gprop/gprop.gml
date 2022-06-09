@@ -16,9 +16,9 @@ function GProp(_data) constructor {
 	///
 	owner  =  other;
 	name   = _data[$ "name"	 ];
-	value  = _data[$ "value" ] ?? 0.0;		// x
-	offset = _data[$ "offset"] ?? 0.0;		// x_off
-	target = _data[$ "target"] ?? value;	// x_lerp
+	value  = _data[$ "value" ] ?? 0.0;
+	offset = _data[$ "offset"] ?? 0.0;
+	target = _data[$ "target"] ?? value;
 	interp = {
 		type:	      _data[$ "interp_type"	    ] ?? INTERP.LERP,
 		speed:	      _data[$ "interp_speed"	] ?? 0.1,
@@ -29,16 +29,6 @@ function GProp(_data) constructor {
 			data:	  _data[$ "interp_on_complete_callback_data"] ?? { id: other },
 		}
 	};
-	
-	__spring = new Spring(__GPROP_DEFAULT_SPRING_TENSION, __GPROP_DEFAULT_SPRING_DAMPENING);
-	
-	#region Auto Register Subscriber Channel 
-	
-	if (!PUBLISHER.has_registered_channel(__interp_on_complete_get_event_name())) {
-		PUBLISHER.register_channel(__interp_on_complete_get_event_name());	
-	}
-	
-	#endregion
 	
 	static update = function() {
 		/// @func update()
@@ -54,6 +44,8 @@ function GProp(_data) constructor {
 	};
 	
 	#region Private ////////
+	
+	__spring = new Spring(__GPROP_DEFAULT_SPRING_TENSION, __GPROP_DEFAULT_SPRING_DAMPENING);
 	
 	static __interp_update_const			   = function() {
 		/// @func __interp_update_const()
@@ -168,6 +160,13 @@ function GProp(_data) constructor {
 		__spring.fire(_speed);
 		return self;	
 	};
+	
+	#endregion
+	#region Other //////////
+	
+	if (!PUBLISHER.has_registered_channel(__interp_on_complete_get_event_name())) {
+		PUBLISHER.register_channel(__interp_on_complete_get_event_name());	
+	}
 	
 	#endregion
 };	

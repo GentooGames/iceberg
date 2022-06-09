@@ -1,10 +1,18 @@
-- add spring to gprop()
-- convert objc_save into global._save = {}
-- have SURF_W & SURF_H get global._gui.surface.application.width
-	- and make sure this is updating whenever changes are made. (listen for surface_change event)
+- some way for us to propegate scale properties into the border.gprops
 - add particle_emitter and sfx_emitter to Border() & FloeEffect()
+- organize and abstract global._gui{} into a more modular system similar to global._transition{}
+	- create an array of borders that is iterated through and updated
+	- expose ways for new borders to be created and destroyed dynamically
 - add PUBSUB to EVERYTHING!!!! make all new systems easily exposable through our global pubsub system
-- add macro pointers so that uniquely named libraries can be accessed through intuitively named references
+
+- convert objc_save into global._save = {}
 - reevaluate if we can remove manual event registration now that auto_register is setup in the publisher
 - "do we really need a macro for that?" if a value is only used once, maybe we shouldnt have it as a MACRO
-- rework screen resolution resizing and fullscreen
+
+minor:
+	- have SURF_W & SURF_H get global._gui.surface.application.width
+		- and make sure this is updating whenever changes are made. (listen for surface_change event)
+	- add macro pointers so that uniquely named libraries can be accessed through intuitively named references
+	
+later:
+	- rework screen resolution resizing and fullscreen
