@@ -41,31 +41,30 @@ function BorderRibbon() constructor {
 	static __construct_vertices = function() {
 		__clear_vertices();
 		if (path_get_number(__path) >= 2) {
-			for (var _i = 0, _iter = 1 / precision; _i <= 1 - _iter; _i += _iter) {
-				var _point_1x =  path_get_x(__path, _i);
-				var _point_1y =  path_get_y(__path, _i);
-				var _point_2x =  path_get_x(__path, _i + _iter);
-				var _point_2y =  path_get_y(__path, _i + _iter);
-				var _perp_dir = (point_direction(_point_1x, _point_1y, _point_2x, _point_2y) + 90) % 360;
-				
-				//if (_i > 0) {
-				//	var _point_0x	   =  path_get_x(__path, _i - 1);
-				//	var _point_0y	   =  path_get_y(__path, _i - 1);
-				//	var _prev_perp_dir = (point_direction(_point_0x, _point_0y, _point_1x, _point_1y) + 90) % 360;
-				//	var _offset_dir    =  avg(_perp_dir, _prev_perp_dir);
-				//}
-				//else {
-				//	var _offset_dir = _perp_dir;	
-				//}
-				var _offset_dir = _perp_dir;
-				
-				var _vertex_offset_x = lengthdir_x(thickness * 0.5, _offset_dir);
-				var _vertex_offset_y = lengthdir_y(thickness * 0.5, _offset_dir);
-				var _vertex_1_x		 = _point_1x + _vertex_offset_x;
-				var _vertex_1_y		 = _point_1y + _vertex_offset_y;
-				var _vertex_2_x		 = _point_2x - _vertex_offset_x;
-				var _vertex_2_y		 = _point_2y - _vertex_offset_y;
-				
+			for (var _i = 0, _len = 1, _iter = _len / precision; _i <= _len; _i += _iter) {
+				if (_i <= _len - _iter) {
+					var _point_1x	  =  path_get_x(__path, _i);
+					var _point_1y	  =  path_get_y(__path, _i);
+					var _point_2x	  =  path_get_x(__path, _i + _iter);
+					var _point_2y	  =  path_get_y(__path, _i + _iter);
+					var _point_base_x = _point_1x;
+					var _point_base_y = _point_1y;
+				}
+				else {
+					var _point_1x	  =  path_get_x(__path, _i - _iter);
+					var _point_1y	  =  path_get_y(__path, _i - _iter);
+					var _point_2x	  =  path_get_x(__path, _i);
+					var _point_2y	  =  path_get_y(__path, _i);
+					var _point_base_x = _point_2x;
+					var _point_base_y = _point_2y;
+				}
+				var _perp_dir   = (point_direction(_point_1x, _point_1y, _point_2x, _point_2y) + 90) % 360;
+				var _offset_x	=  lengthdir_x(thickness * 0.5, _perp_dir);
+				var _offset_y	=  lengthdir_y(thickness * 0.5, _perp_dir);
+				var _vertex_1_x = _point_base_x + _offset_x;
+				var _vertex_1_y = _point_base_y + _offset_y;
+				var _vertex_2_x = _point_base_x - _offset_x;
+				var _vertex_2_y = _point_base_y - _offset_y;
 				array_push(__vertices, { x: _vertex_1_x, y: _vertex_1_y });
 				array_push(__vertices, { x: _vertex_2_x, y: _vertex_2_y });
 				__n_vertices += 2;
@@ -206,12 +205,10 @@ function BorderRibbon() constructor {
 			clear_points();
 		}	
 		if (INPUT.mouse.wheel_down()) {
-			precision = max(precision - 1, 0);	
-			__construct_vertices();
+			adjust_precision(-1);
 		}
 		if (INPUT.mouse.wheel_up()) {
-			precision++;	
-			__construct_vertices();
+			adjust_precision(1);
 		}
 	};
 	static render  = function() {	
@@ -245,37 +242,40 @@ function BorderRibbon() constructor {
 	#endregion
 	#region Public /////////////
 	
-	static add_point = function(_x, _y) {
+	static add_point		= function(_x, _y) {
 		/// @func add_point(x, y)
 		///
 		path_add_point(__path, _x, _y, 100);
 		__construct_vertices();
 	};
-	static clear_points = function() {
+	static clear_points		= function() {
 		/// @func clear_points()
 		///
 		path_clear_points(__path);
 		__construct_vertices();
 	};
+	static adjust_precision = function(_amount) {
+		/// @func	adjust_precision(amount)
+		/// @param	{real} amount
+		/// @return {Border} self
+		///
+		return set_precision(precision + _amount);
+	};
+	static set_precision	= function(_precision) {
+		/// @func	set_precision(precision)
+		/// @param	{real} precision
+		/// @return {Border} self
+		///
+		if (_precision >= 0) {
+			precision = _precision;
+			path_set_precision(__path, precision);
+			__construct_vertices();
+		}
+		return self;
+	};
 	
 	#endregion
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -95,9 +95,8 @@ global._gui = {
 			border_trees_top.adjust_y_offset(1);
 		}
 		
-		//border_trees_bottom.update();
-		//border_trees_top.update();
-		
+		border_trees_bottom.update();
+		border_trees_top.update();
 		border_ribbon.update();
 	},
 	render: function() {
@@ -107,9 +106,8 @@ global._gui = {
         ///
         if (!initialized) exit;
 		
-		//border_trees_bottom.render();
-		//border_trees_top.render();
-		
+		border_trees_bottom.render();
+		border_trees_top.render();
 		border_ribbon.render();
 	},
 	
