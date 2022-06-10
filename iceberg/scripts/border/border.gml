@@ -4,19 +4,28 @@ function Border(_sprite) constructor {
 	/// @func	Border(sprite)
 	/// @param	{sprite_index} sprite
 	///
-	x		=  new Prop({ name: "x",	  value: 0	    });
-	y		=  new Prop({ name: "y",	  value: 0	    });
-	width	=  new Prop({ name: "width",  value: SURF_W });
-	height	=  new Prop({ name: "height", value: SURF_H });
-	alpha	=  new Prop({ name: "alpha",  value: 1	    });
-	sprite	= _sprite;
-	image	=  0;
-	color	=  c_white;
-	angle   =  0;
-	springs	= {} with (springs) {
+	x		  =  new Prop({ name: "x",	  value: 0	    });
+	y		  =  new Prop({ name: "y",	  value: 0	    });
+	width	  =  new Prop({ name: "width",  value: SURF_W });
+	height	  =  new Prop({ name: "height", value: SURF_H });
+	alpha	  =  new Prop({ name: "alpha",  value: 1	    });
+	sprite	  = _sprite;
+	image	  =  0;
+	color	  =  c_white;
+	angle	  =  0;
+	springs	  = {} with (springs) {
 		tension	  = __SPRING_DEFAULT_TENSION;
 		dampening = __SPRING_DEFAULT_DAMPENING;
 		speed	  = __SPRING_DEFAULT_SPEED;
+	};
+	particles = {} with (particles) {
+		//system	  = PARTICLES.get_system();
+		//emitter	  = part_emitter_create(system);
+		//part	  = part_type_create();
+		//tick_rate = -1;
+	};
+	audio	  = {} with (audio) {
+		emitter = audio_emitter_create();
 	};
 	
 	/// Shadow /////////////////
@@ -35,17 +44,53 @@ function Border(_sprite) constructor {
 	__height_base = height.value;	// track base values to center border on size change
 	__surface	  = surface_create(__width_base, __height_base);
 	
+	#region Private ////////////
+	
+	static __update_pos		  = function() {
+		/// @func __update_pos()
+		///
+		x.update();
+		y.update();
+	};
+	static __update_size	  = function() {
+		/// @func __update_size()
+		///
+		width.update();
+		height.update();
+	};
+	static __update_sprite	  = function() {
+		/// @func __update_sprite()
+		///
+		alpha.update();
+	};
+	static __update_particles = function() {
+		/// @func __update_particles()
+		///
+		//if (tick_rate <= 0) exit;
+		//var _system  = particles.system;
+		//var _emitter = particles.emitter;
+		//part_emitter_region(_system, _emitter, get_left(), get_right(), get_top(), get_bottom(), ps_shape_rectangle, ps_distr_invgaussian);
+		//part_emitter_burst(_system, _emitter, )
+	};
+	static __update_audio	  = function() {
+		/// @func __update_audio()
+		///
+		audio_emitter_position(audio.emitter, get_x(), get_y(), 0);
+	};
+	
+	#endregion
 	#region Internal ///////////
 	
 	static update		  = function() {
 		/// @func	update()
 		/// @return {Border} self
 		///
-		x.update();
-		y.update();
-		width.update();
-		height.update();
-		alpha.update();
+		__update_pos();
+		__update_size();
+		__update_sprite();
+		__update_particles();
+		__update_audio();
+		
 		return self;
 	};
 	static render_shadow  = function() {
