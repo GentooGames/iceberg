@@ -65,19 +65,19 @@ function FloeEffect() constructor {
 	speed		=  0.1;
 	threshold	=  0.1;
 	hold_time	= -1;
-	on_enter	=  {
+	on_enter	= {
 		callback: undefined,
 		data:	  undefined,
 	};
-	on_change	=  {
+	on_change	= {
 		callback: undefined,
 		data:	  undefined,
 	};
-	on_leave	=  {
+	on_leave	= {
 		callback: undefined,
 		data:	  undefined,
 	};
-	on_end		=  {
+	on_end		= {
 		callback: undefined,
 		data:	  undefined,
 	};
@@ -89,7 +89,9 @@ function FloeEffect() constructor {
 	hold_timer  = 0;
 	
 	__padding	= 20;	// offset to move effects offscreen for smoother animations
-		
+	
+	#region Internal ///////
+	
 	static update  = function() {
 		/// @func update()
 		///
@@ -153,6 +155,10 @@ function FloeEffect() constructor {
 		};
 	};
 	static cleanup = function() {};
+	
+	#endregion
+	#region Actions ////////
+	
 	static enter   = function() {
 		/// @func enter()
 		///
@@ -176,6 +182,9 @@ function FloeEffect() constructor {
 			progress = 1 - progress;
 		}
 	};
+		
+	#endregion
+	#region Setters ////////
 		
 	static set_on_enter  = function(_callback, _data) {
 		/// @func	set_on_enter(callback, data*)
@@ -221,6 +230,12 @@ function FloeEffect() constructor {
 			data	 = _data;
 		}
 	};
+	
+	#endregion
+	#region Getters ////////
+	
+	
+	#endregion
 };
 function FloeEffectSurface() : FloeEffect() constructor {
 	/// @func FloeEffectSurface()
@@ -392,7 +407,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	overlay_inset_y	= get_sprite_height() * (1 / 6);	// amount that overlay surface will inset into the sprite
 
 	/// Private
-	__validated	  = false;
+	__validated	= false;
 	
 	/// Internal
 	static render = function() {
@@ -484,3 +499,5 @@ function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_borde
 	x_offset	 = -50;
 	y_offset	 = -60;
 };
+
+
