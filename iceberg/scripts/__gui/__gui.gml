@@ -1,17 +1,6 @@
-global._gui = {};
-#macro GUI	 global._gui
-////////////////////////////
-#macro SURF_W		  surface_get_width(application_surface)
-#macro SURF_H		  surface_get_height(application_surface)
-#macro GUI_W		  display_get_gui_width()
-#macro GUI_H		  display_get_gui_height()
-#macro BASE_W		  1600
-#macro BASE_H		  900
-#macro FONT_DEFAULT	 -1
-#macro FONT_SCRIBBLE -1 /// font_scribbles
-
-GUI = {
+global._gui = {
     initialized: false,
+	#region Internal ///////
 	
     setup:  function() {
         /// @func   setup()
@@ -24,6 +13,17 @@ GUI = {
         log("<GUI> setup()");
         initialized = true;
 			
+		#endregion
+		#region Resolution /////
+		
+		width_base  = 1600;
+		height_base = 900;
+		
+		#endregion
+		#region Font ///////////
+		
+		font_default = -1;
+		
 		#endregion
 		#region Border /////////
 		
@@ -106,7 +106,10 @@ GUI = {
 		border_trees_bottom.render();
 		border_trees_top.render();
 	},
-		
+	
+	#endregion
+	#region Public /////////
+	
     world_to_gui_x: function(_x) {
     	/// @func	world_to_gui_x(x)
     	/// @param	x_world {real}
@@ -127,6 +130,12 @@ GUI = {
     },
     gui_to_world_x: function() { /* need to implement... */ },
     gui_to_world_y: function() { /* need to implement... */ },
+	
+	#endregion
 };
+#macro GUI global._gui
 
-
+#macro SURF_W surface_get_width(application_surface)
+#macro SURF_H surface_get_height(application_surface)
+#macro GUI_W  display_get_gui_width()
+#macro GUI_H  display_get_gui_height()

@@ -4,7 +4,7 @@ global._particles = {}
 
 PARTICLES = {
     initialized: false,
-    system: part_system_create(),
+	system: undefined,
 	
     setup:  function() {
         /// @func   setup()
@@ -18,6 +18,9 @@ PARTICLES = {
         initialized = true;
 		
 		#endregion
+		
+		depth  = -1000;
+		system = part_system_create();
 		part_system_depth(system, -1000);  
     },
 	update:	function() {

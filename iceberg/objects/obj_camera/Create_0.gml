@@ -33,8 +33,8 @@ preset = {
 };
 
 // Dimensions
-width   = BASE_W; 
-height  = BASE_H;
+width   = GUI.width_base; 
+height  = GUI.height_base;
 left    = null; // set in _update_edges()
 right   = null; // set in _update_edges()
 top     = null; // set in _update_edges()

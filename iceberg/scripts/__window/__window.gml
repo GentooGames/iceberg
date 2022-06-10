@@ -54,8 +54,8 @@ WINDOW = {
         /// @return NA
         ///
         window_set_fullscreen(_fullscreen);
-		//var _w = _fullscreen ? display_get_width()  : BASE_W;
-		//var _h = _fullscreen ? display_get_height() : BASE_H;
+		//var _w = _fullscreen ? display_get_width()  : GUI.width_base;
+		//var _h = _fullscreen ? display_get_height() : GUI.height_base;
 		//log("fullscreen: {2}, w:{0}, h:{1}", _w, _h, _fullscreen);
 		//surface_resize(application_surface, _w, _h);
 		//display_set_gui_size(_w, _h);
