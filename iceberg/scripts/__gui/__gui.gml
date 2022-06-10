@@ -67,13 +67,14 @@ GUI = {
 		}
 		
 		if (keyboard_check_pressed(vk_enter)) {
-			var _width = irandom_range(10, 80);
-			border_trees_bottom.spring_width(_width);	
-			border_trees_top.spring_width(_width);	
-			
+			var _width  = irandom_range(50, 200);
 			var _height = irandom_range(50, 200);
-			border_trees_bottom.spring_height(_height);	
-			border_trees_top.spring_height(_height);	
+			border_trees_bottom.spring_size(_width, _height);
+			border_trees_top.spring_size(_width, _height);
+		}
+		if (keyboard_check_pressed(vk_backspace)) {
+			border_trees_bottom.x.spring(_spring_speed);	
+			border_trees_top.x.spring(_spring_speed);	
 		}
 		if (keyboard_check(vk_left)) {
 			border_trees_bottom.adjust_x_offset(-1);

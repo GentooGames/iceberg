@@ -1,5 +1,3 @@
-- some way for us to propegate scale properties into the border.gprops
-- center frame even after spring effects
 - add particle_emitter and sfx_emitter to Border() & FloeEffect()
 - organize and abstract global._gui{} into a more modular system similar to global._transition{}
 	- create an array of borders that is iterated through and updated

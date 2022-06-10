@@ -54,13 +54,19 @@ function GProp(_data) constructor {
 	#endregion
 	#region Getters ////////
 	
-	static get_value  = function() {
-		/// @func	get_value()
+	static get_raw	  = function() {
+		/// @func	get_raw()
 		/// @return {any} value
 		///
-		return value + get_spring();
+		return value;
 	};
-	static get		  = get_value;
+	static get		  = function() {
+		/// @func	get()	
+		/// @return {any} value
+		///
+		return get_raw() + get_spring();
+	};
+	static get_total  = get;
 	static get_target = function() {
 		/// @func	get_target()
 		/// @return {any} target

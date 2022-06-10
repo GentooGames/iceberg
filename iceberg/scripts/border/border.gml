@@ -183,8 +183,62 @@ function Border(_sprite) constructor {
 		///
 		return y.offset;
 	};
+	static get_left		= function() {
+		/// @func	get_left()
+		/// @return	{real} x
+		///
+		return get_x();
+	};
+	static get_top		= function() {
+		/// @func	get_top()
+		/// @return	{real} y
+		///
+		return get_y();
+	};
+	static get_right	= function() {
+		/// @func	get_right()
+		/// @return	{real} x
+		///
+		return get_x() + get_width();
+	};
+	static get_bottom	= function() {
+		/// @func	get_bottom()
+		/// @return	{real} y
+		///
+		return get_y() + get_height();
+	};
+	static get_center_x = function() {
+		/// @func	get_center_x()
+		/// @return	{real} x
+		///
+		return get_x() + (get_width() * 0.5);
+	};
+	static get_center_y = function() {
+		/// @func	get_center_y()
+		/// @return	{real} y
+		///
+		return get_y() + (get_height() * 0.5);
+	};
 		
 	/// Properties - Spring ////
+	static get_spring_tension	= function() {
+		/// @func	get_spring_tension()
+		/// @return	{real} tension
+		///
+		return springs.tension;
+	};
+	static get_spring_dampening = function() {
+		/// @func	get_spring_dampening()
+		/// @return	{real} dampening
+		///
+		return springs.dampening;
+	};
+	static get_spring_speed		= function() {
+		/// @func	get_spring_speed()
+		/// @return	{real} speed
+		///
+		return springs.speed;
+	};
 		
 	#endregion
 	#region Setters ////////////
@@ -382,6 +436,30 @@ function Border(_sprite) constructor {
 	};
 		
 	/// Properties - Spring ////
+	static set_spring_tension	= function(_tension) {
+		/// @func	set_spring_tension(tension)
+		/// @param	{real} tension
+		/// @return	{Border} self
+		///
+		springs.tension = _tension;
+		return self;
+	};
+	static set_spring_dampening = function(_dampening) {
+		/// @func	set_spring_dampening(dampening)
+		/// @param	{real} dampening
+		/// @return	{Border} self
+		///
+		springs.dampening = _dampening;
+		return self;
+	};
+	static set_spring_speed		= function(_speed) {
+		/// @func	set_spring_speed(speed)
+		/// @param	{real} speed
+		/// @return	{Border} self
+		///
+		springs.speed = _speed;
+		return self;
+	};
 	
 	#endregion
 	#region Effects ////////////
@@ -508,4 +586,27 @@ function BorderTrees() : BorderSineWave(__spr_transition_border_silhouette_trees
 	overlay_inset_x = 60;
 	overlay_inset_y = 60;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
