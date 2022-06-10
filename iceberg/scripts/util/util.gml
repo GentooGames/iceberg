@@ -688,8 +688,6 @@ function buffer_compressed_encoded_to_struct(_buffer, _destroy_buffer = true) {
 };
 
 #endregion
-#region gamemaker objects
-
 #region paths
 
 function path_sprite_index_to_image_index(_path_index) {
@@ -766,6 +764,13 @@ function path_start_default(_move_speed) {
 	///
 	path_start(path, _move_speed, path_action_stop, false);	
 };
+function path_empty(_path) {
+	/// @func	path_empty(path)
+	/// @param	{path_index} path
+	/// @return {boolean} is_empty?
+	///
+	return path_get_number(_path) == 0;
+};
 
 #endregion
 #region collisions
@@ -835,8 +840,6 @@ function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
 	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
 	return _nearest;
 };
-
-#endregion
 
 #endregion
 #region sprites

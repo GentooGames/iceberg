@@ -15,6 +15,7 @@ DEBUG = {
         /// 
         if (!DEBUGGING)  exit;
 		if (initialized) exit;
+		show_debug_overlay(true);
 		#region ----------------
 		
         log("<DEBUG> setup()");
@@ -82,7 +83,9 @@ DEBUG = {
 		
 		var _y = GUI_H - 30;
 		draw_text(10, _y, room_get_name(room));
-		//draw_text(10, _y - 20, TRANSITION.alpha);
+		
+		draw_text(10, _y - 20, "precision: "  + string(GUI.border_ribbon.precision));
+		draw_text(10, _y - 40, "n_vertices: " + string(GUI.border_ribbon.__n_vertices));
     },
 };
 

@@ -25,11 +25,6 @@ setup_game	  = function() {
 	setup_controller();
 	
 	#endregion
-	#region Rooms //////////
-	
-	#macro ROOM_FIRST rm_test
-	
-	#endregion
 	#region States /////////
 	
 	fsm = new WeeState();
