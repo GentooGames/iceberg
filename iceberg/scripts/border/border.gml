@@ -19,13 +19,17 @@ function Border(_sprite) constructor {
 		speed	  = __SPRING_DEFAULT_SPEED;
 	};
 	particles = {} with (particles) {
-		//system	  = PARTICLES.get_system();
-		//emitter	  = part_emitter_create(system);
-		//part	  = part_type_create();
-		//tick_rate = -1;
+		system	= PARTICLES.get_system();
+		emitter	= part_emitter_create(system);
 	};
 	audio	  = {} with (audio) {
 		emitter = audio_emitter_create();
+		sfx		= {
+			effects: {
+				on_spring_size: undefined,
+				on_bounce_size: undefined,
+			},
+		};
 	};
 	
 	/// Shadow /////////////////
@@ -66,16 +70,11 @@ function Border(_sprite) constructor {
 	static __update_particles = function() {
 		/// @func __update_particles()
 		///
-		//if (tick_rate <= 0) exit;
-		//var _system  = particles.system;
-		//var _emitter = particles.emitter;
-		//part_emitter_region(_system, _emitter, get_left(), get_right(), get_top(), get_bottom(), ps_shape_rectangle, ps_distr_invgaussian);
-		//part_emitter_burst(_system, _emitter, )
 	};
 	static __update_audio	  = function() {
 		/// @func __update_audio()
 		///
-		audio_emitter_position(audio.emitter, get_x(), get_y(), 0);
+		audio_emitter_position(get_emitter_audio(), get_x(), get_y(), 0);
 	};
 	
 	#endregion
@@ -535,6 +534,11 @@ function Border(_sprite) constructor {
 		if (_y_speed != undefined) {
 			height.spring(_y_speed);	
 		}
+			
+		var _sfx  = audio.sfx.effects.on_spring_size;
+		if (_sfx != undefined) {
+			AUDIO.play_mod(get_emitter_audio(), _sfx, false);
+		}
 		return self;
 	};	
 	static bounce_width_to  = function(_x_target, _spring_speed = springs.speed) {
@@ -569,6 +573,37 @@ function Border(_sprite) constructor {
 			set_height_target(_y_target);
 			spring_width(_spring_speed_y);		
 		}
+		
+		var _sfx  = audio.sfx.effects.on_bounce_size;
+		if (_sfx != undefined) {
+			AUDIO.play_mod(get_emitter_audio(), _sfx, false);
+		}
+		return self;
+	};
+	
+	#endregion
+	#region Audio //////////////
+	
+	static get_emitter_audio		= function() {
+		/// @func	get_emitter_audio()
+		/// @return	{emitter_index} emitter_id
+		///
+		return audio.emitter;
+	};
+	static set_sound_on_spring_size = function(_audio_id) {
+		/// @func	set_sound_on_spring_size(audio_id)
+		/// @param	{sound_index} audio_id
+		/// @return {Border} self
+		///
+		audio.sfx.effects.on_spring_size = _audio_id;
+		return self;
+	};
+	static set_sound_on_bounce_size = function(_audio_id) {
+		/// @func	set_sound_on_bounce_size(audio_id)
+		/// @param	{sound_index} audio_id
+		/// @return {Border} self
+		///
+		audio.sfx.effects.on_bounce_size = _audio_id;
 		return self;
 	};
 	

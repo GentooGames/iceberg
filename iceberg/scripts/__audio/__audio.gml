@@ -64,11 +64,13 @@ AUDIO = {
         /// @return NA
         ///
     	if (!is_array(_sound_id)) {
-			_sound_id = [_sound_id];
+			audio_stop_sound(_sound_id);
 		}
-    	for (var _i = 0, _len = array_length(_sound_id); _i < _len; _i++) {
-    		audio_stop_sound(_sound_id[_i]);
-    	}
+		else {
+    		for (var _i = 0, _len = array_length(_sound_id); _i < _len; _i++) {
+    			audio_stop_sound(_sound_id[_i]);
+    		}
+		}
     },
     stop_all: function() {
         /// @func   stop_all()
