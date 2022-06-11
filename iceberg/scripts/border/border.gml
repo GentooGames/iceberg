@@ -42,31 +42,35 @@ function BorderRibbon() constructor {
 		__clear_vertices();
 		if (path_get_number(__path) >= 2) {
 			for (var _i = 0, _len = 1, _iter = _len / precision; _i <= _len; _i += _iter) {
+				/// Get Coordinate Points
 				if (_i <= _len - _iter) {
-					var _point_1x	  =  path_get_x(__path, _i);
-					var _point_1y	  =  path_get_y(__path, _i);
-					var _point_2x	  =  path_get_x(__path, _i + _iter);
-					var _point_2y	  =  path_get_y(__path, _i + _iter);
-					var _point_base_x = _point_1x;
-					var _point_base_y = _point_1y;
+					var _p1_x	 =  path_get_x(__path, _i);
+					var _p1_y	 =  path_get_y(__path, _i);
+					var _p2_x	 =  path_get_x(__path, _i + _iter);
+					var _p2_y	 =  path_get_y(__path, _i + _iter);
+					var _pbase_x = _p1_x;
+					var _pbase_y = _p1_y;
 				}
 				else {
-					var _point_1x	  =  path_get_x(__path, _i - _iter);
-					var _point_1y	  =  path_get_y(__path, _i - _iter);
-					var _point_2x	  =  path_get_x(__path, _i);
-					var _point_2y	  =  path_get_y(__path, _i);
-					var _point_base_x = _point_2x;
-					var _point_base_y = _point_2y;
+					var _p1_x	 =  path_get_x(__path, _i - _iter);
+					var _p1_y	 =  path_get_y(__path, _i - _iter);
+					var _p2_x	 =  path_get_x(__path, _i);
+					var _p2_y	 =  path_get_y(__path, _i);
+					var _pbase_x = _p2_x;
+					var _pbase_y = _p2_y;
 				}
-				var _perp_dir   = (point_direction(_point_1x, _point_1y, _point_2x, _point_2y) + 90) % 360;
-				var _offset_x	=  lengthdir_x(thickness * 0.5, _perp_dir);
-				var _offset_y	=  lengthdir_y(thickness * 0.5, _perp_dir);
-				var _vertex_1_x = _point_base_x + _offset_x;
-				var _vertex_1_y = _point_base_y + _offset_y;
-				var _vertex_2_x = _point_base_x - _offset_x;
-				var _vertex_2_y = _point_base_y - _offset_y;
-				array_push(__vertices, { x: _vertex_1_x, y: _vertex_1_y });
-				array_push(__vertices, { x: _vertex_2_x, y: _vertex_2_y });
+				var _dir = angle_perpendicular(_p1_x, _p1_y, _p2_x, _p2_y);
+	
+				
+				/// Create Vertex Points
+				var _off_x =  lengthdir_x(thickness * 0.5, _dir);
+				var _off_y =  lengthdir_y(thickness * 0.5, _dir);
+				var _v1_x  = _pbase_x + _off_x;
+				var _v1_y  = _pbase_y + _off_y;
+				var _v2_x  = _pbase_x - _off_x;
+				var _v2_y  = _pbase_y - _off_y;
+				array_push(__vertices, { x: _v1_x, y: _v1_y });
+				array_push(__vertices, { x: _v2_x, y: _v2_y });
 				__n_vertices += 2;
 			};
 		}	
@@ -79,7 +83,7 @@ function BorderRibbon() constructor {
 	#region Debug //////////////
 	
 	static __debug_render_path									= function() {
-		static _color = c_red;
+		static _color = CONFIG.color.red;
 		if (!path_empty(__path)) {
 			var _x = path_get_x(__path, 0);
 			var _y = path_get_y(__path, 0);
@@ -89,7 +93,7 @@ function BorderRibbon() constructor {
 		}
 	};
 	static __debug_render_path_anchor_points					= function() {
-		static _color = c_lime;
+		static _color = CONFIG.color.green_lime;
 		for (var _i = 0, _len = path_get_number(__path), _iter = 1; _i < _len; _i += _iter) {
 			var _px = path_get_point_x(__path, _i);
 			var _py = path_get_point_y(__path, _i);
@@ -98,7 +102,7 @@ function BorderRibbon() constructor {
 		}
 	};
 	static __debug_render_path_anchor_points_line_connect		= function() {
-		static _color = c_lime;
+		static _color = CONFIG.color.green_lime;
 		for (var _i = 0, _len = path_get_number(__path), _iter = 1; _i < _len; _i += _iter) {
 			var _px = path_get_point_x(__path, _i);
 			var _py = path_get_point_y(__path, _i);
@@ -115,7 +119,7 @@ function BorderRibbon() constructor {
 		}
 	};
 	static __debug_render_path_anchor_points_line_perpendicular = function() {
-		static _color = c_lime;
+		static _color = CONFIG.color.green_lime;
 		for (var _i = 0, _len = path_get_number(__path), _iter = 1; _i < _len; _i += _iter) {
 			var _px = path_get_point_x(__path, _i);
 			var _py = path_get_point_y(__path, _i);
@@ -139,7 +143,7 @@ function BorderRibbon() constructor {
 		}
 	};
 	static __debug_render_path_points							= function() {
-		static _color = c_black;
+		static _color = CONFIG.color.brown_purple;
 		for (var _i = 0, _len = 1, _iter = _len / precision; _i <= _len; _i += _iter) {
 			var _px = path_get_x(__path, _i);
 			var _py = path_get_y(__path, _i);
@@ -147,7 +151,7 @@ function BorderRibbon() constructor {
 		}
 	};
 	static __debug_render_path_points_line_connect				= function() {
-		static _color = c_black;
+		static _color = CONFIG.color.brown_purple;
 		for (var _i = 0, _len = 1, _iter = _len / precision; _i < _len - _iter; _i += _iter) {
 			if (_i < _len - _iter && _i != 0) {
 				var _px  = path_get_x(__path, _i);
@@ -159,7 +163,7 @@ function BorderRibbon() constructor {
 		}
 	};
 	static __debug_render_path_points_line_perpendicular		= function() {
-		static _color = c_black;
+		static _color = CONFIG.color.brown_purple;
 		for (var _i = 0, _len = 1, _iter = _len / precision; _i < _len; _i += _iter) {
 			var _px = path_get_x(__path, _i);
 			var _py = path_get_y(__path, _i);
@@ -183,10 +187,17 @@ function BorderRibbon() constructor {
 		}	
 	};
 	static __debug_render_vertices								= function() {
-		static _color = c_blue;
+		static _color = CONFIG.color.blue;
 		for (var _i = 0; _i < __n_vertices; _i++) {
 			var _vertex = __vertices[_i];
 			draw_circle_color(_vertex.x, _vertex.y, 4, _color, _color, false);
+		}
+	};
+	static __debug_render_vertices_index						= function() {
+		static _color = CONFIG.color.red;
+		for (var _i = 0; _i < __n_vertices; _i++) {
+			var _vertex = __vertices[_i];
+			draw_text_transformed_color(_vertex.x, _vertex.y, _i, 1, 1, 0, _color, _color, _color, _color, 1);
 		}
 	};
 	
@@ -231,7 +242,8 @@ function BorderRibbon() constructor {
 			__debug_render_path_points();
 			__debug_render_path_points_line_connect();
 			__debug_render_path_points_line_perpendicular();
-			__debug_render_vertices();						
+			__debug_render_vertices();				
+			__debug_render_vertices_index();
 			__debug_render_path();		
 		}
 	};

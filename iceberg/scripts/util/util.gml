@@ -1305,17 +1305,6 @@ function bresenham_line(_i1, _j1, _i2, _j2, _cb, _cb_data) {
         }
     }
 };
-function lerp_angle(_angle_from, _angle_to, _amount) {
-	/// @func   lerp_angle(angle_from, angle_to, amount)
-	/// @param  angle_from -> {real}
-	/// @param  angle_to   -> {real}
-	/// @param  amount	   -> {real}
-	/// @desc   apply a simulated lerp effect to an angle, accounting for the 360->0 angle wrap.
-	/// @return angle -> {real}
-	/// @tested false
-	///
-    return _angle_from - angle_difference(_angle_from, _angle_to) * _amount;
-};
 function wave(_from, _to, _duration, _offset) { 
 	/// @func   wave(from, to, duration, offset)
 	/// @param  from	 -> {real}
@@ -1329,6 +1318,34 @@ function wave(_from, _to, _duration, _offset) {
 	var _a4 = (_to - _from) * 0.5;
 	return _from + _a4 + sin((((current_time * 0.001) + _duration * _offset) / _duration) * (pi * 2)) * _a4;
 };
+	
+/// Angle
+function lerp_angle(_angle_from, _angle_to, _amount) {
+	/// @func   lerp_angle(angle_from, angle_to, amount)
+	/// @param  angle_from -> {real}
+	/// @param  angle_to   -> {real}
+	/// @param  amount	   -> {real}
+	/// @desc   apply a simulated lerp effect to an angle, accounting for the 360->0 angle wrap.
+	/// @return angle -> {real}
+	/// @tested false
+	///
+    return _angle_from - angle_difference(_angle_from, _angle_to) * _amount;
+};
+function angle_perpendicular(_x1, _y1, _x2, _y2) {
+	/// @func	angle_perpendicular(x1, y1, x2, y2)
+	/// @param	{real} x1
+	/// @param	{real} y1
+	/// @param	{real} x2
+	/// @param	{real} y2
+	/// @return {angle} angle_perpendicular
+	///
+	var _dir	  = point_direction(_x1, _y1, _x2, _y2);
+	var _perp_dir = (_dir + 90) % 360;
+	//if (_perp_dir < _dir) {
+	//	_perp_dir += 180;
+	//}
+	return _perp_dir;
+}
 
 #endregion
 #region async
