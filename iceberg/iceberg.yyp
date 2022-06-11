@@ -17,6 +17,7 @@
     {"id":{"name":"GMLive_builder","path":"scripts/GMLive_builder/GMLive_builder.yy",},"order":0,},
     {"id":{"name":"SnowState","path":"scripts/SnowState/SnowState.yy",},"order":0,},
     {"id":{"name":"GMLive_vm_call","path":"scripts/GMLive_vm_call/GMLive_vm_call.yy",},"order":6,},
+    {"id":{"name":"__spr_tx_transition_border_silhouette_trees","path":"sprites/__spr_tx_transition_border_silhouette_trees/__spr_tx_transition_border_silhouette_trees.yy",},"order":7,},
     {"id":{"name":"rm_test3","path":"rooms/rm_test3/rm_test3.yy",},"order":3,},
     {"id":{"name":"__window","path":"scripts/__window/__window.yy",},"order":10,},
     {"id":{"name":"PathFinder","path":"scripts/PathFinder/PathFinder.yy",},"order":0,},
@@ -33,6 +34,7 @@
     {"id":{"name":"tweeners","path":"scripts/tweeners/tweeners.yy",},"order":0,},
     {"id":{"name":"gprop","path":"scripts/gprop/gprop.yy",},"order":4,},
     {"id":{"name":"shdr_water","path":"shaders/shdr_water/shdr_water.yy",},"order":5,},
+    {"id":{"name":"__spr_tx_test","path":"sprites/__spr_tx_test/__spr_tx_test.yy",},"order":8,},
     {"id":{"name":"ENUMS","path":"scripts/ENUMS/ENUMS.yy",},"order":1,},
     {"id":{"name":"GMLive_thread","path":"scripts/GMLive_thread/GMLive_thread.yy",},"order":4,},
     {"id":{"name":"__display","path":"scripts/__display/__display.yy",},"order":3,},
@@ -153,7 +155,8 @@
   ],
   "TextureGroups": [
     {"isScaled":true,"compressFormat":"bz2","autocrop":true,"border":2,"mipsToGenerate":0,"groupParent":null,"targets":-1,"resourceVersion":"1.3","name":"Default","resourceType":"GMTextureGroup",},
-    {"isScaled":true,"compressFormat":"bz2","autocrop":false,"border":16,"mipsToGenerate":0,"groupParent":null,"targets":-1,"resourceVersion":"1.3","name":"sine_wave","resourceType":"GMTextureGroup",},
+    {"isScaled":true,"compressFormat":"bz2","autocrop":false,"border":16,"mipsToGenerate":0,"groupParent":null,"targets":-1,"resourceVersion":"1.3","name":"tg_sine_wave","resourceType":"GMTextureGroup",},
+    {"isScaled":true,"compressFormat":"bz2","autocrop":true,"border":2,"mipsToGenerate":0,"groupParent":null,"targets":-1,"resourceVersion":"1.3","name":"tg_border_trees","resourceType":"GMTextureGroup",},
   ],
   "IncludedFiles": [
     {"CopyToMask":0,"filePath":"datafiles/GMLive","resourceVersion":"1.0","name":"gcmt-dll.dll","resourceType":"GMIncludedFile",},

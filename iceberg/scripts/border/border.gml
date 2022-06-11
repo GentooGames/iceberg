@@ -22,13 +22,18 @@ enum PATH_TYPE {
 function BorderRibbon() constructor {
 	/// @func BorderRibbon()
 	///
-	shape	  = BORDER_SHAPE.RECTANGLE;
-	precision = 5;
-	thickness = 50;
+	//sprite		 = __spr_tx_transition_border_silhouette_trees;
+	sprite		 = __spr_tx_test;
+	image		 = 0;
+	shape		 = BORDER_SHAPE.RECTANGLE;
+	precision	 = 5;
+	thickness	 = 50;
+	repeat_count = 40;
 	
 	__primitive_type = pr_trianglestrip;
 	__vertices		 = [];
 	__n_vertices	 = 0;
+	__texture		 = sprite_get_texture(sprite, image);
 	__path			 = path_add();
 	__path_type		 = PATH_TYPE.SMOOTH;
 	__path_closed	 = false;
@@ -69,8 +74,8 @@ function BorderRibbon() constructor {
 				var _v1_y  = _pbase_y + _off_y;
 				var _v2_x  = _pbase_x - _off_x;
 				var _v2_y  = _pbase_y - _off_y;
-				array_push(__vertices, { x: _v1_x, y: _v1_y });
-				array_push(__vertices, { x: _v2_x, y: _v2_y });
+				array_push(__vertices, { x: _v1_x, y: _v1_y, u: _i, v: 0 });
+				array_push(__vertices, { x: _v2_x, y: _v2_y, u: _i, v: 1 });
 				__n_vertices += 2;
 			};
 		}	
@@ -228,12 +233,14 @@ function BorderRibbon() constructor {
 	static render  = function() {	
 		/// @func render()
 		///
-		draw_primitive_begin(__primitive_type);
+		gpu_set_tex_repeat(true);
+		draw_primitive_begin_texture(__primitive_type, __texture);
 		for (var _i = 0; _i < __n_vertices; _i++) {
 			var _vertex = __vertices[_i];
-			draw_vertex(_vertex.x, _vertex.y);
+			draw_vertex_texture(_vertex.x, _vertex.y, _vertex.u * repeat_count, _vertex.v);
 		};
 		draw_primitive_end();
+		gpu_set_tex_repeat(false);
 		
 		if (__debug_render) {
 			__debug_render_path_anchor_points();
