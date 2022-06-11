@@ -76,7 +76,7 @@ function BorderRibbon() constructor {
 		__n_vertices = 0;
 	};
 	
-	#region Debug
+	#region Debug //////////////
 	
 	static __debug_render_path									= function() {
 		static _color = c_red;
@@ -204,6 +204,9 @@ function BorderRibbon() constructor {
 		if (INPUT.mouse.button_pressed(mb_right)) {
 			clear_points();
 		}	
+		if (INPUT.mouse.button_pressed(mb_middle)) {
+			__debug_render = !__debug_render;	
+		}
 		if (INPUT.mouse.wheel_down()) {
 			adjust_precision(-1);
 		}
