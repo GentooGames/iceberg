@@ -864,57 +864,62 @@ function draw_rectangle_width_color(_x1, _y1, _x2, _y2, _width, _color) {
 	draw_line_width(_x1, _y1, _x1, _y2, _width);
 	draw_set_color(c_white);
 };
-function draw_circle_curve(xx, yy, R, precision, A, Aa, W, Out, alpha = null) {
-	/// @func   draw_circle_curve(x, y, r, precision, ang1, ang2, line_width, outline?, alpha*)
-	/// @param  x		   -> {real}
-	/// @param  y		   -> {real}
-	/// @param  r		   -> {real}
-	/// @param  precision  -> {real}
-	/// @param  angle1	   -> {angle}
-	/// @param  angle2	   -> {angle}
-	/// @param  line_width -> {real}
-	/// @param  outline    -> {bool}
-	/// @param  alpha	   -> {real}
+function draw_circle_curve(_x, _y, _radius, _precision, _angle_start, _angle_end, _thickness, _outline, _alpha = undefined) {
+	/// @func   draw_circle_curve(x, y, radius, precision, angle_start, angle_end, thickness, outline?, alpha*)
 	/// @desc   extended functionality to allow more advanced circle drawing options.
+	/// @param  x			-> {real}
+	/// @param  y			-> {real}
+	/// @param  radius		-> {real}
+	/// @param  precision	-> {real}
+	/// @param  angle_start	-> {angle}
+	/// @param  angle_end	-> {angle}
+	/// @param  thickness	-> {real}
+	/// @param  outline		-> {bool}
+	/// @param  alpha		-> {real}
 	/// @return NA
-	/// @tested false
 	///
-	var B	= max(3, precision);
-	var a	= Aa / B;
-	var Wh	= W / 2;
-	var lp	= R + Wh;
-	var lm	= R - Wh;
-	var AAa	= A + Aa;
-	var dp;
-	var dm;
+	static _precision_min = 3;
+	_precision = max(_precision_min, _precision);
 	
-	if (alpha != null) draw_set_alpha(alpha);
-	if (Out) {
+	var _angle_iter	   = _angle_end / _precision;
+	var _len_perimeter = _radius + (_thickness * 0.5);
+	var _len_middle	   = _radius - (_thickness * 0.5);
+	var _angle		   = _angle_start + _angle_end;
+	var _dist_perimeter, _dist_middle;
+	
+	if (_alpha != undefined) {
+		draw_set_alpha(_alpha);
+	}
+	
+	if (_outline) {
 		draw_primitive_begin(pr_trianglestrip);
-		draw_vertex(xx + lengthdir_x(lm, A), yy + lengthdir_y(lm, A));
+		draw_vertex(_x + lengthdir_x(_len_middle, _angle_start), _y + lengthdir_y(_len_middle, _angle_start));
 
-		for (var i = 1; i <= B; i += 1) {
-			dp = A + a * i;
-			dm = dp - a;
-			draw_vertex(xx + lengthdir_x(lp, dm), yy + lengthdir_y(lp, dm));
-			draw_vertex(xx + lengthdir_x(lm, dp), yy + lengthdir_y(lm, dp));
+		for (var i = 1; i <= _precision; i += 1) {
+			_dist_perimeter = _angle_start    + _angle_iter * i;
+			_dist_middle	= _dist_perimeter - _angle_iter;
+			draw_vertex(_x + lengthdir_x(_len_perimeter, _dist_middle),		_y + lengthdir_y(_len_perimeter, _dist_middle));
+			draw_vertex(_x + lengthdir_x(_len_middle,	 _dist_perimeter),	_y + lengthdir_y(_len_middle,	 _dist_perimeter));
 		}
-		draw_vertex(xx + lengthdir_x(lp, AAa), yy + lengthdir_y(lp, AAa));
-		draw_vertex(xx + lengthdir_x(lm, AAa), yy + lengthdir_y(lm, AAa));
+		draw_vertex(_x + lengthdir_x(_len_perimeter, _angle), _y + lengthdir_y(_len_perimeter, _angle));
+		draw_vertex(_x + lengthdir_x(_len_middle, _angle), _y + lengthdir_y(_len_middle, _angle));
 	}
 	else {
 		draw_primitive_begin(pr_trianglefan);
-		draw_vertex(xx, yy);
+		draw_vertex(_x, _y);
 
-		for (i = 1; i <= B; i += 1) {
-			dp = A + a * i;
-			dm = dp - a;
-			draw_vertex(xx + lengthdir_x(lp, dm), yy + lengthdir_y(lp, dm));
+		for (i = 1; i <= _precision; i += 1) {
+			_dist_perimeter = _angle_start	  + _angle_iter * i;
+			_dist_middle	= _dist_perimeter - _angle_iter;
+			draw_vertex(_x + lengthdir_x(_len_perimeter, _dist_middle), _y + lengthdir_y(_len_perimeter, _dist_middle));
 		}
-		draw_vertex(xx + lengthdir_x(lp, AAa), yy + lengthdir_y(lp, AAa));
+		draw_vertex(_x + lengthdir_x(_len_perimeter, _angle), _y + lengthdir_y(_len_perimeter, _angle));
 	}	
 	draw_primitive_end();
-	if (alpha != null) draw_set_alpha(1.0);
+	
+	if (_alpha != undefined) {
+		draw_set_alpha(1.0);
+	}
 };
 function sprite_get_true_width(_sprite_index) {
 	/// @func   sprite_get_true_width(sprite_index)

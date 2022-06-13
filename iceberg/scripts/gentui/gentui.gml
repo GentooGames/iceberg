@@ -12,6 +12,14 @@
 #endregion
 #region change log //////////////////
 
+#region version 0.1.2
+/*
+	Date: 06/13/2022
+	1. merged in pull request updating return values for state_execute_... methods
+	2. added method descriptions for Ui() base component class
+	3. added new UiComponent -> UiCircle() implementing draw_circle_curve() functionality
+*/
+#endregion
 #region version 0.1.1
 /*	
 	Date: 05/26/2022
@@ -82,7 +90,6 @@
 #macro __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_SPEED		1
 #macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER	true
 #macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT		true
-
 #macro __UI_COMPONENT_DEFAULT_PROPEGATE_POS_TO_CHILD	true
 #macro __UI_COMPONENT_DEFAULT_PROPEGATE_SCALE_TO_CHILD	true
 #macro __UI_COMPONENT_DEFAULT_PROPEGATE_ALPHA_TO_CHILD	false
@@ -92,6 +99,16 @@
 #endregion
 function Ui(_config) constructor {
 	/// @func  Ui(config)
+	///
+	/// @desc  this is the base ui component, containing all core features and functionality that is inherited and implemented
+	///		   by all other ui components. an instance of this class will have no visual representation, but can still be utilized
+	///		   for creating more "abstract" data containers. see UiLine().add_point() for an example, where a "point" is created
+	///		   by instantiating a new Ui() class instance, and passing in x & y values for later reference.
+	///
+	/// @use   generally this class will be implemented through inheritance of the other Ui components; however, if you wish to implement
+	///		   an explicit instance of this class, you can do so using the following: 
+	///		   var _abstractUiPointContainer = new Ui({x : _x, y: _y});		/// creates a component containing coordinate points
+	///
 	/// @param {instance/struct} owner=other
 	/// @param {real}  x*
 	/// @param {real}  y*
@@ -114,6 +131,7 @@ function Ui(_config) constructor {
 	/// @param {bool}  propegate_alpha*
 	///
 	#region Properties 
+	
 	_				 = {
 		update: {
 			active:  true,
@@ -241,6 +259,8 @@ function Ui(_config) constructor {
 	
 	static step = function() {
 		/// @func	step()
+		/// @desc	tick update for the component class. call this in a step event, or
+		///			wherever the code for this component class should be updated.
 		/// @return	{Ui} self
 		///
 		if (_.update.active) {
@@ -337,6 +357,8 @@ function Ui(_config) constructor {
 	};
 	static draw = function() {
 		/// @func	draw()
+		/// @desc	tick update for the component class rendering. call this in a draw 
+		///			event, or wherever the code for this component class should be rendered.
 		/// @return	{Ui} self
 		///
 		if (visible && _.render.active) {
@@ -348,6 +370,7 @@ function Ui(_config) constructor {
 	};	
 	static show	= function() {
 		/// @func	show()
+		/// @desc	toggle the visibility of component to visible
 		/// @return {Ui} self
 		///
 		set_visible(true);
@@ -355,6 +378,7 @@ function Ui(_config) constructor {
 	};
 	static hide	= function() {
 		/// @func	hide()
+		/// @desc	toggle the visibility of component to hidden
 		/// @return {Ui} self
 		///
 		set_visible(false);
@@ -750,9 +774,13 @@ function Ui(_config) constructor {
 	/// Update
 	static update_add_action = function(_update_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	update_add_action(update_action, auto_bind?*)
-		/// @param	{method/function} update
-		/// @param	{boolean}		  auto_bind?*
-		/// @return {Ui}			  self
+		/// @desc	adds a new update action into the update stack to be execute on_update()
+		/// @param	{method/function} update_action	->	method/function to be used for said "action"
+		/// @param	{boolean}		  auto_bind?*	->	should the update_action method be bound to the Ui() component class automatically?
+		///												if this is disabled, then whichever binding is configured upon pass-through will be used.
+		///												see GameMaker's method() function for more information 
+		///												https://manual.yoyogames.com/GameMaker_Language/GML_Reference/Variable_Functions/method.htm
+		/// @return {Ui} self
 		///
 		if (_auto_bind) {
 			_update_action = method(self, _update_action);	
@@ -765,6 +793,7 @@ function Ui(_config) constructor {
 	};
 	static update_enable	 = function() {
 		/// @func	update_enable()
+		/// @desc	set the update actions to be enabled, so that they are run during the update() tick
 		/// @return {Ui} self
 		///
 		_.update.active = true;
@@ -772,6 +801,7 @@ function Ui(_config) constructor {
 	};
 	static update_disable	 = function() {
 		/// @func	update_disable()
+		/// @desc	set the update actions to be disabled, so that they are NOT run during the update() tick
 		/// @return {Ui} self
 		///
 		_.update.active = false;
@@ -779,6 +809,7 @@ function Ui(_config) constructor {
 	};
 	static update_toggle	 = function() {
 		/// @func	update_toggle()
+		/// @desc	toggle the update actions to be enabled/disabled
 		/// @return {Ui} self
 		///
 		_.update.active = !_.update.active;
@@ -787,6 +818,7 @@ function Ui(_config) constructor {
 	static update_set_active = function(_update) {
 		/// @func	update_set_active(update?)
 		/// @param	{boolean} update?
+		/// @desc	set whether or not the update actions should be enabled to run during the update() tick
 		/// @return {Ui}	  self
 		///
 		_.update.active = _update;
@@ -796,9 +828,12 @@ function Ui(_config) constructor {
 	/// Render
 	static render_add_action = function(_render_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	render_add_action(render_action, auto_bind?*)
-		/// @param	{method/function} render_action
-		/// @param	{boolean}		  auto_bind?*
-		/// @return {Ui}			  self
+		/// @param	{method/function} render_action	->	method/function to be used for said "action"
+		/// @param	{boolean}		  auto_bind?*	->	should the render_action method be bound to the Ui() component class automatically?
+		///												if this is disabled, then whichever binding is configured upon pass-through will be used.
+		///												see GameMaker's method() function for more information 
+		///												https://manual.yoyogames.com/GameMaker_Language/GML_Reference/Variable_Functions/method.htm
+		/// @return {Ui} self
 		///
 		if (_auto_bind) {
 			_render_action = method(self, _render_action);	
@@ -811,6 +846,7 @@ function Ui(_config) constructor {
 	};
 	static render_enable	 = function() {
 		/// @func	render_enable()
+		/// @desc	set the render actions to be enabled, so that they are run during the render() tick
 		/// @return {Ui} self
 		///
 		_.render.active = true;
@@ -818,6 +854,7 @@ function Ui(_config) constructor {
 	};
 	static render_disable	 = function() {
 		/// @func	render_disable()
+		/// @desc	set the render actions to be disabled, so that they are NOT run during the render() tick
 		/// @return {Ui} self
 		///
 		_.render.active = false;
@@ -825,6 +862,7 @@ function Ui(_config) constructor {
 	};
 	static render_toggle	 = function() {
 		/// @func	render_toggle()
+		/// @desc	toggle the render actions to be enabled/disabled
 		/// @return {Ui} self
 		///
 		_.render.active = !_.render.active;
@@ -833,6 +871,7 @@ function Ui(_config) constructor {
 	static render_set_active = function(_render) {
 		/// @func	render_set_active(render?)
 		/// @param	{boolean} render?
+		/// @desc	set whether or not the render actions should be enabled to run during the render() tick
 		/// @return {Ui}	  self
 		///
 		_.render.active = _render;
@@ -1230,6 +1269,7 @@ function Ui(_config) constructor {
 		if (variable_struct_exists(_.state.on_enter, _state_name)) {
 			_.state.on_enter[$ _state_name]();	
 		}
+		return self;
 	};
 	static state_execute_on_exit  = function(_state_name) {
 		/// @func	state_execute_on_exit(state_name)
@@ -1239,6 +1279,7 @@ function Ui(_config) constructor {
 		if (variable_struct_exists(_.state.on_exit, _state_name)) {
 			_.state.on_exit[$ _state_name]();	
 		}
+		return self;
 	};
 	
 	#endregion
@@ -1287,14 +1328,14 @@ function Ui(_config) constructor {
 	
 	static __draw_rectangle_width_color = function(_x1, _y1, _x2, _y2, _width, _color) {	
 		/// @func   __draw_rectangle_width_color(x1, y1, x2, y2, width, color)
+		/// @desc   a function designed to extend GMs draw_rectangle_color. This is a pretty low
+		///			perfomance solution though.
 		/// @param  {real}	x1	 
 		/// @param  {real}	y1	 
 		/// @param  {real}	x2	 
 		/// @param  {real}	y2	 
 		/// @param  {real}	width
 		/// @param  {color}	color
-		/// @desc   a function designed to extend GMs draw_rectangle_color. This is a pretty low
-		///			perfomance solution though.
 		/// @return NA
 		///
 		draw_set_color(_color);
@@ -1859,6 +1900,7 @@ function UiLine  (_config) : Ui(_config) constructor {
 				_color, _color,
 			);
 		};
+		return self;
 	};
 	static add_point = function(_x, _y) {
 		/// @func add_point(x, y)
@@ -1939,5 +1981,68 @@ function UiLine  (_config) : Ui(_config) constructor {
 	#endregion
 	
 	render_add_action(render, true);
+};
+function UiCircle(_config) : Ui(_config) constructor {
+	/// @func UiCircle(config) : Ui(config)
+	///
+	exit; // <-- not yet ready
+	
+	static render = function() {};
+	
+	static __draw_circle_curve = function(_x, _y, _radius, _precision, _angle_start, _angle_end, _thickness, _outline, _alpha = undefined) {
+		/// @func   draw_circle_curve(x, y, radius, precision, angle_start, angle_end, thickness, outline?, alpha*)
+		/// @desc   extended functionality to allow more advanced circle drawing options.
+		/// @param  x			-> {real}
+		/// @param  y			-> {real}
+		/// @param  radius		-> {real}
+		/// @param  precision	-> {real}
+		/// @param  angle_start	-> {angle}
+		/// @param  angle_end	-> {angle}
+		/// @param  thickness	-> {real}
+		/// @param  outline		-> {bool}
+		/// @param  alpha		-> {real}
+		/// @return NA
+		///
+		static _precision_min = 3;
+		_precision = max(_precision_min, _precision);
+	
+		var _angle_iter	   = _angle_end / _precision;
+		var _len_perimeter = _radius + (_thickness * 0.5);
+		var _len_middle	   = _radius - (_thickness * 0.5);
+		var _angle		   = _angle_start + _angle_end;
+		var _dist_perimeter, _dist_middle;
+	
+		if (_alpha != undefined) {
+			draw_set_alpha(_alpha);
+		}
+		if (_outline) {
+			draw_primitive_begin(pr_trianglestrip);
+			draw_vertex(_x + lengthdir_x(_len_middle, _angle_start), _y + lengthdir_y(_len_middle, _angle_start));
+
+			for (var i = 1; i <= _precision; i += 1) {
+				_dist_perimeter = _angle_start    + _angle_iter * i;
+				_dist_middle	= _dist_perimeter - _angle_iter;
+				draw_vertex(_x + lengthdir_x(_len_perimeter, _dist_middle),		_y + lengthdir_y(_len_perimeter, _dist_middle));
+				draw_vertex(_x + lengthdir_x(_len_middle,	 _dist_perimeter),	_y + lengthdir_y(_len_middle,	 _dist_perimeter));
+			}
+			draw_vertex(_x + lengthdir_x(_len_perimeter, _angle), _y + lengthdir_y(_len_perimeter, _angle));
+			draw_vertex(_x + lengthdir_x(_len_middle, _angle), _y + lengthdir_y(_len_middle, _angle));
+		}
+		else {
+			draw_primitive_begin(pr_trianglefan);
+			draw_vertex(_x, _y);
+
+			for (i = 1; i <= _precision; i += 1) {
+				_dist_perimeter = _angle_start	  + _angle_iter * i;
+				_dist_middle	= _dist_perimeter - _angle_iter;
+				draw_vertex(_x + lengthdir_x(_len_perimeter, _dist_middle), _y + lengthdir_y(_len_perimeter, _dist_middle));
+			}
+			draw_vertex(_x + lengthdir_x(_len_perimeter, _angle), _y + lengthdir_y(_len_perimeter, _angle));
+		}	
+		draw_primitive_end();
+		if (_alpha != undefined) {
+			draw_set_alpha(1.0);
+		}
+	};
 };
 
