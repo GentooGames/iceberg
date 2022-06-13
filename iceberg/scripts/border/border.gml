@@ -873,6 +873,7 @@ function BorderRibbon() constructor {
 	static update  = function() {
 		/// @func update()
 		///
+		exit;
 		if (INPUT.mouse.button_pressed(mb_left)) {
 			add_point(mouse_x, mouse_y);
 		}	
