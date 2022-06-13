@@ -21,4 +21,7 @@ enum ANCHOR	{
 	BOTTOM_RIGHT, 
 	NONE, 
 }
-
+enum PATH_TYPE {
+	NOT_SMOOTH = 0,
+	SMOOTH	   = 1,
+}
