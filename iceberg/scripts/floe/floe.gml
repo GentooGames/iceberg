@@ -16,6 +16,7 @@
 /*
 	Date: 06/13/2022
 	1. Added sfx_emitters & sounds
+	2. Added general getter methods for base FloeEffect() class
 */
 #endregion
 #region version 0.1.0
