@@ -36,31 +36,33 @@ AUDIO = {
         if (!initialized) exit;
 	},
 		
-    play:     function(_emitter_id, _sound_id, _loops) {
-        /// @func   play(emitter_id, sound_id, loops)
-        /// @param  emitter_id {emitter}
-        /// @param  sound_id   {sound}
-        /// @param  loops      {bool}
+    play:     function(_emitter_id, _sound_id, _loops, _priority = 0) {
+        /// @func   play(emitter_id, sound_id, loops, priority*)
+        /// @param  {emitter}	  emitter_id 
+        /// @param  {sound_index} sound_id   
+        /// @param  {bool}		  loops      
+        /// @param  {real}		  priority=0
 		/// @desc   play a sound on a given emitter.
         /// @return sound_inst {sound}
         ///
-        return audio_play_sound_on(_emitter_id, _sound_id, _loops, 0);
+        return audio_play_sound_on(_emitter_id, _sound_id, _loops, _priority);
     },
-    play_mod: function(_emitter_id, _sound_id, _loops) {
-        /// @func   play_mod(emitter_id, sound_id, loops)
-        /// @param  emitter_id {emitter}
-        /// @param  sound_id   {sound}
-        /// @param  loops      {bool}
-		/// @desc   play a sound on a given emitter with a subtle pitch modification.
-        /// @return sound_inst {sound}
+    play_mod: function(_emitter_id, _sound_id, _loops, _priority = 0) {
+        /// @func   play_mod(emitter_id, sound_id, loops, priority*)
+		/// @desc   play a sound on a given emitter with a subtle pitch modification
+        /// @param  {emitter_index} emitter_id 
+        /// @param  {sound}			sound_id   
+        /// @param  {bool}			loops      
+        /// @param  {real}			priority=0
+        /// @return {sound_index}	sound_inst
         ///
         audio_sound_pitch(_sound_id, random_range(0.9, 1.1));
-        return audio_play_sound_on(_emitter_id, _sound_id, _loops, 0);
+        return audio_play_sound_on(_emitter_id, _sound_id, _loops, _priority);
     },
     stop:     function(_sound_id) {
         /// @func   stop(sound_id)
         /// @desc   stop a given sound.
-        /// @param  sound_id {sound}
+        /// @param  {sound_index} sound_id
         /// @return NA
         ///
     	if (!is_array(_sound_id)) {

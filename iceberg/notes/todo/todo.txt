@@ -51,7 +51,7 @@ orderly:
 	- rework callback handling and normalize to standard
 	
 gstat:
-	- ...
+	- add priority to state processign order
 	
 gprop:
 	- abstract interpolation "algorithm" using Builder Design Pattern
