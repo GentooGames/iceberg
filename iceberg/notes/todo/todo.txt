@@ -22,6 +22,7 @@ __events:
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width
 		- and make sure this is updating whenever changes are made. (listen for surface_change event)
+	- once nearly finalized, replace __sfx_play_method to use AUDIO.play()
 	
 __input:
 	- ...
@@ -31,7 +32,6 @@ __particles:
 	
 __transition:
 	- add particle_emitters to FloeEffects
-	- add sfx_emitters to FloeEffects
 
 __unit_tests:
 	- WRITE UNIT TESTS FOR ICEBERG!!!!

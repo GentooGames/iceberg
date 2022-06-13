@@ -184,88 +184,129 @@ function FloeEffect() constructor {
 	};
 	
 	#endregion
-	#region Actions ////////
-	
-	static enter   = function() {
-		/// @func enter()
-		///
-		__state  = FLOE_STATE.ENTER_PREP;
-		__target = __is_reversed ? 0 : 1;
-	};
-	static leave   = function() {
-		/// @func leave()
-		///
-		__state  = FLOE_STATE.LEAVE_PREP;
-		__target = __is_reversed ? 1 : 0;
-	};
-	static reverse = function(_reverse_progress = true) {
-		/// @func	reverse(reverse_progress?*)
-		/// @param	{bool} reverse_progress=true
-		///
-		__is_reversed = !__is_reversed;
-		__target	  = 1 - __target;
-		
-		if (_reverse_progress) {
-			__progress = 1 - __progress;
-		}
-	};
-		
-	#endregion
 	#region Setters ////////
 		
-	static set_color		= function(_color) {};
-	static set_alpha		= function(_alpha) {};
-	static set_speed		= function(_speed) {};
-	static set_threshold	= function(_threshold) {};
-	static set_hold_time	= function(_hold_time) {};
+	static set_color		= function(_color) {
+		/// @func	set_color(color)
+		/// @param	{color} color
+		/// @param	{any} data=undefined
+		/// @return {FloeEffect} self
+		///
+		color = _color;
+		return self;
+	};
+	static set_alpha		= function(_alpha) {
+		/// @func	set_alpha(alpha)
+		/// @param	{real} alpha
+		/// @return {FloeEffect} self
+		///
+		alpha = _alpha;
+		return self;
+	};
+	static set_speed		= function(_speed) {
+		/// @func	set_speed(speed)
+		/// @param	{real} speed
+		/// @return {FloeEffect} self
+		///
+		speed = _speed;
+		return self;
+	};
+	static set_threshold	= function(_threshold) {
+		/// @func	set_threshold(threshold)
+		/// @param	{real} threshold
+		/// @return {FloeEffect} self
+		///
+		threshold = _threshold;
+		return self;
+	};
+	static set_hold_time	= function(_hold_time) {
+		/// @func	set_hold_time(hold_time)
+		/// @param	{real} hold_time
+		/// @return {FloeEffect} self
+		///
+		hold_time = _hold_time;
+		return self;
+	};
 	static set_on_enter		= function(_callback, _data) {
 		/// @func	set_on_enter(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
-		/// @return NA
+		/// @return {FloeEffect} self
 		///
 		with (on_enter) {
 			callback = _callback;
 			data	 = _data;
 		}
+		return self;
 	};
 	static set_on_change	= function(_callback, _data) {
 		/// @func	set_on_change(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
-		/// @return NA
+		/// @return {FloeEffect} self
 		///
 		with (on_change) {
 			callback = _callback;
 			data	 = _data;
 		}
+		return self;
 	};
 	static set_on_leave		= function(_callback, _data) {
 		/// @func	set_on_leave(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
-		/// @return NA
+		/// @return {FloeEffect} self
 		///
 		with (on_leave) {
 			callback = _callback;
 			data	 = _data;
 		}
+		return self;
 	};
 	static set_on_end		= function(_callback, _data) {
 		/// @func	set_on_end(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
-		/// @return NA
+		/// @return {FloeEffect} self
 		///
 		with (on_end) {
 			callback = _callback;
 			data	 = _data;
 		}
+		return self;
 	};
-	static set_progress		= function(_progress) {};
-	static set_target		= function(_target) {};
-	static set_state		= function(_state) {};
-	static set_is_reversed	= function(_is_reversed) {};
+	static set_progress		= function(_progress) {
+		/// @func	set_progress(progress)
+		/// @param	{real} progress
+		/// @return {FloeEffect} self
+		///
+		__progress = _progress;
+		return self;
+	};
+	static set_target		= function(_target) {
+		/// @func	set_target(target)
+		/// @param	{real} target
+		/// @return {FloeEffect} self
+		///
+		__target = _target;
+		return self;
+	};
+	static set_state		= function(_state) {
+		/// @func	set_state(state)
+		/// @param	{enum} state
+		/// @return {FloeEffect} self
+		///
+		__state = _state;
+		return self;
+	};
+	static set_is_reversed	= function(_is_reversed) {
+		/// @func	set_is_reversed(is_reversed)
+		/// @param	{boolean} is_reversed?
+		/// @return {FloeEffect} self
+		///
+		__is_reversed = _is_reversed;
+		return self;
+	};
 	static set_sound_enter	= function(_sound) {
 		/// @func	set_sound_enter(sound)
 		/// @param	{sound_id} sound
@@ -397,6 +438,33 @@ function FloeEffect() constructor {
 		return __sfx_leave;
 	};
 	
+	#endregion
+	#region Actions ////////
+	
+	static enter   = function() {
+		/// @func enter()
+		///
+		__state  = FLOE_STATE.ENTER_PREP;
+		__target = __is_reversed ? 0 : 1;
+	};
+	static leave   = function() {
+		/// @func leave()
+		///
+		__state  = FLOE_STATE.LEAVE_PREP;
+		__target = __is_reversed ? 1 : 0;
+	};
+	static reverse = function(_reverse_progress = true) {
+		/// @func	reverse(reverse_progress?*)
+		/// @param	{bool} reverse_progress=true
+		///
+		__is_reversed = !__is_reversed;
+		__target	  = 1 - __target;
+		
+		if (_reverse_progress) {
+			__progress = 1 - __progress;
+		}
+	};
+		
 	#endregion
 };
 function FloeEffectSurface() : FloeEffect() constructor {
@@ -583,7 +651,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	overlay_inset_x	= get_sprite_width()  * (1 / 6);	// amount that overlay surface will inset into the sprite
 	overlay_inset_y	= get_sprite_height() * (1 / 6);	// amount that overlay surface will inset into the sprite
 
-	#region Private
+	#region Private ////////
 	
 	__validated	= false;
 	
@@ -602,7 +670,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	};
 	
 	#endregion
-	#region Internal
+	#region Internal ///////
 	
 	static render = function() {
 		/// @func render()
@@ -655,9 +723,14 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	};
 		
 	#endregion
-	#region Public 
+	#region Getters ////////
 	
-	static get_sprite		 = function() {};
+	static get_sprite		 = function() {
+		/// @func get_sprite()
+		/// @return {sprite_index} sprite
+		/// 
+		return sprite;
+	};
 	static get_sprite_width  = function() {
 		/// @func	get_sprite_width()
 		/// @return {real} sprite_width
@@ -670,24 +743,130 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		///
 		return sprite_get_height(sprite);	
 	};
-	static get_image		 = function() {};
-	static get_x_offset		 = function() {};
-	static get_y_offset		 = function() {};
-	static get_draw_shadow	 = function() {};
-	static get_shadow_alpha  = function() {};
-	static get_shadow_color  = function() {};
-	static get_shadow_inset	 = function() {};
-	static get_overlay_edge  = function() {};
+	static get_image		 = function() {
+		/// @func	get_image()
+		/// @return {real} image_index
+		///
+		return image;
+	};
+	static get_x_offset		 = function() {
+		/// @func	get_x_offset()
+		/// @return {real} x_offset
+		///
+		return x_offset;
+	};
+	static get_y_offset		 = function() {
+		/// @func	get_y_offset()
+		/// @return {real} y_offset
+		///
+		return y_offset;
+	};
+	static get_draw_shadow	 = function() {
+		/// @func	get_draw_shadow()
+		/// @return {boolean} draw_shadow?
+		///
+		return draw_shadow;
+	};
+	static get_shadow_alpha  = function() {
+		/// @func	get_shadow_alpha()
+		/// @return {real} shadow_alpha
+		///
+		return shadow_alpha;
+	};
+	static get_shadow_color  = function() {
+		/// @func	get_shadow_color()
+		/// @return {real} shadow_color
+		///
+		return shadow_color;	
+	};
+	static get_shadow_inset	 = function() {
+		/// @func	get_shadow_inset()
+		/// @return {real} shadow_inset
+		///
+		return shadow_inset;	
+	};
+	static get_overlay_edge  = function() {
+		/// @func	get_overlay_edge()
+		/// @return {boolean} overlay_edge?
+		///
+		return overlay_edge;
+	};
 	
-	static set_sprite		 = function(_sprite) {};
-	static set_image		 = function(_image) {};
-	static set_x_offset		 = function(_x_offset) {};
-	static set_y_offset		 = function(_y_offset) {};
-	static set_draw_shadow   = function(_draw_shadow) {};
-	static set_shadow_alpha	 = function(_shadow_alpha) {};
-	static set_shadow_color	 = function(_shadow_color) {};
-	static set_shadow_inset	 = function(_inset_shadow) {};
-	static set_overlay_edge	 = function(_overlay_edge) {};
+	#endregion
+	#region Setters ////////
+	
+	static set_sprite		 = function(_sprite) {
+		/// @func	set_sprite(sprite)
+		/// @param	{sprite_index} sprite
+		/// @return {FloeEffect} self
+		///
+		sprite = _sprite;
+		return self;
+	};
+	static set_image		 = function(_image) {
+		/// @func	set_image(image)
+		/// @param	{image_index} image
+		/// @return {FloeEffect} self
+		///
+		image = _image;
+		return self;
+	};
+	static set_x_offset		 = function(_x_offset) {
+		/// @func	set_x_offset(x_offset)
+		/// @param	{real} x_offset
+		/// @return {FloeEffect} self
+		///
+		x_offset = _x_offset;
+		return self;
+	};
+	static set_y_offset		 = function(_y_offset) {
+		/// @func	set_y_offset(y_offset)
+		/// @param	{real} y_offset
+		/// @return {FloeEffect} self
+		///
+		y_offset = _y_offset;
+		return self;
+	};
+	static set_draw_shadow   = function(_draw_shadow) {
+		/// @func	set_draw_shadow(draw_shadow?)
+		/// @param	{boolean} draw_shadow?
+		/// @return {FloeEffect} self
+		///
+		draw_shadow = _draw_shadow;
+		return self;
+	};
+	static set_shadow_alpha	 = function(_shadow_alpha) {
+		/// @func	set_shadow_alpha(shadow_alpha)
+		/// @param	{real} shadow_alpha
+		/// @return {FloeEffect} self
+		///
+		shadow_alpha = _shadow_alpha;
+		return self;
+	};
+	static set_shadow_color	 = function(_shadow_color) {
+		/// @func	set_shadow_color(shadow_color)
+		/// @param	{color} shadow_color
+		/// @return {FloeEffect} self
+		///
+		shadow_color = _shadow_color;
+		return self;
+	};
+	static set_shadow_inset	 = function(_shadow_inset) {
+		/// @func	set_shadow_inset(shadow_inset)
+		/// @param	{real} shadow_inset
+		/// @return {FloeEffect} self
+		///
+		shadow_inset = _shadow_inset;
+		return self;
+	};
+	static set_overlay_edge	 = function(_overlay_edge) {
+		/// @func	set_overlay_edge(overlay_edge?)
+		/// @param	{boolean} overlay_edge?
+		/// @return {FloeEffect} self
+		///
+		overlay_edge = _overlay_edge;
+		return self;
+	};
 	
 	#endregion
 };
