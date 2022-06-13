@@ -213,7 +213,12 @@ function FloeEffect() constructor {
 	#endregion
 	#region Setters ////////
 		
-	static set_on_enter  = function(_callback, _data) {
+	static set_color		= function(_color) {};
+	static set_alpha		= function(_alpha) {};
+	static set_speed		= function(_speed) {};
+	static set_threshold	= function(_threshold) {};
+	static set_hold_time	= function(_hold_time) {};
+	static set_on_enter		= function(_callback, _data) {
 		/// @func	set_on_enter(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
@@ -224,7 +229,7 @@ function FloeEffect() constructor {
 			data	 = _data;
 		}
 	};
-	static set_on_change = function(_callback, _data) {
+	static set_on_change	= function(_callback, _data) {
 		/// @func	set_on_change(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
@@ -235,7 +240,7 @@ function FloeEffect() constructor {
 			data	 = _data;
 		}
 	};
-	static set_on_leave  = function(_callback, _data) {
+	static set_on_leave		= function(_callback, _data) {
 		/// @func	set_on_leave(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
@@ -246,7 +251,7 @@ function FloeEffect() constructor {
 			data	 = _data;
 		}
 	};
-	static set_on_end	 = function(_callback, _data) {
+	static set_on_end		= function(_callback, _data) {
 		/// @func	set_on_end(callback, data*)
 		/// @param	{method} callback
 		/// @param	{any} data=undefined
@@ -257,7 +262,10 @@ function FloeEffect() constructor {
 			data	 = _data;
 		}
 	};
-	
+	static set_progress		= function(_progress) {};
+	static set_target		= function(_target) {};
+	static set_state		= function(_state) {};
+	static set_is_reversed	= function(_is_reversed) {};
 	static set_sound_enter	= function(_sound) {
 		/// @func	set_sound_enter(sound)
 		/// @param	{sound_id} sound
@@ -575,10 +583,27 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	overlay_inset_x	= get_sprite_width()  * (1 / 6);	// amount that overlay surface will inset into the sprite
 	overlay_inset_y	= get_sprite_height() * (1 / 6);	// amount that overlay surface will inset into the sprite
 
-	/// Private
+	#region Private
+	
 	__validated	= false;
 	
-	/// Internal
+	static __validate_sprite = function() {
+		/// @func __validate_sprite()
+		///
+		if (!__validated) {
+			if (sprite == undefined) {
+				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
+			}
+			if (!sprite_get_nineslice(sprite).enabled) {
+				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
+			}
+			__validated = true;
+		}
+	};
+	
+	#endregion
+	#region Internal
+	
 	static render = function() {
 		/// @func render()
 		///
@@ -629,7 +654,10 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		}
 	};
 		
-	/// Public
+	#endregion
+	#region Public 
+	
+	static get_sprite		 = function() {};
 	static get_sprite_width  = function() {
 		/// @func	get_sprite_width()
 		/// @return {real} sprite_width
@@ -642,21 +670,26 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		///
 		return sprite_get_height(sprite);	
 	};
-		
-	/// Private
-	static __validate_sprite = function() {
-		/// @func __validate_sprite()
-		///
-		if (!__validated) {
-			if (sprite == undefined) {
-				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
-			}
-			if (!sprite_get_nineslice(sprite).enabled) {
-				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
-			}
-			__validated = true;
-		}
-	};
+	static get_image		 = function() {};
+	static get_x_offset		 = function() {};
+	static get_y_offset		 = function() {};
+	static get_draw_shadow	 = function() {};
+	static get_shadow_alpha  = function() {};
+	static get_shadow_color  = function() {};
+	static get_shadow_inset	 = function() {};
+	static get_overlay_edge  = function() {};
+	
+	static set_sprite		 = function(_sprite) {};
+	static set_image		 = function(_image) {};
+	static set_x_offset		 = function(_x_offset) {};
+	static set_y_offset		 = function(_y_offset) {};
+	static set_draw_shadow   = function(_draw_shadow) {};
+	static set_shadow_alpha	 = function(_shadow_alpha) {};
+	static set_shadow_color	 = function(_shadow_color) {};
+	static set_shadow_inset	 = function(_inset_shadow) {};
+	static set_overlay_edge	 = function(_overlay_edge) {};
+	
+	#endregion
 };
 ////////////////////////////////////////////////////////////////////////////
 function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {
