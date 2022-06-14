@@ -1,5 +1,6 @@
 /// @desc ...
 
+exit;
 if (keyboard_check_pressed(vk_enter)) {
 	var _test_data = {
 		test_number: -1,	

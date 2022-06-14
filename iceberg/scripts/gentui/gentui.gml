@@ -2142,5 +2142,10 @@ function UiCircle(_config) : Ui(_config) constructor {
 		}
 	};
 };
-function UiTextbox(_config) : Ui(_config) constructor {};
-
+function UiTextbox(_config) : Ui(_config) constructor {
+	/// @func UiTextbox(config) : Ui(config)
+	///
+	exit; // <-- not yet ready
+	
+	static render = function() {};
+};

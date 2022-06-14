@@ -2,7 +2,7 @@
 #macro __TRANSITION_DEFAULT_EFFECT_OUT	__TRANSITION_DEFAULT_EFFECT_IN
 #macro __TRANSITION_DEFAULT_WAIT		false	// if true, then TRANSITION.complete() must be manually invoked
 
-#macro ROOM_FIRST rm_test2
+#macro ROOM_FIRST rm_test
 
 global._transition = { 
     initialized: false,
@@ -58,7 +58,7 @@ global._transition = {
 		#region FloeEffects ////
 		
 		if (effect != undefined) {
-			effect.color = GUI.border_trees_top.get_color();
+			effect.color = GUI.border_mouth.get_color();
 			effect.update();
 		}
 		

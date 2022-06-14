@@ -27,17 +27,32 @@ global._gui = {
 		#endregion
 		#region Border /////////
 		
-		border_trees_bottom	= new BorderTrees();
-		border_trees_top	= new BorderTrees();
+		border_mouth = new BorderTrees();
+		border_teeth = new BorderTrees();
+		border_uvula = new BorderTrees();
+		border_ribs	 = new BorderTrees();
 		
-		with (border_trees_bottom) {
+		with (border_mouth) {
+			set_color(CONFIG.color.green_lime);
+		}
+		with (border_teeth) {
 			set_x_offset(-80);
 			set_y_offset(-40);
 			set_color(CONFIG.color.white);
 		}
-		with (border_trees_top) {
-			set_color(color_get_random());
+		with (border_uvula) {
+			set_x_offset(-80);
+			set_y_offset(-40);
+			set_sprite(__spr_transition_border_silhouette_uvula);
+			set_color(CONFIG.color.red_dark);
 		}
+		with (border_ribs) {
+			set_x_offset(-100);
+			set_y_offset(-100);
+			set_color(CONFIG.color.sand);
+			set_sprite(__spr_transition_border_silhouette_bones);
+		}
+		
 		
 		border_ribbon = new BorderRibbon();
 		
@@ -95,8 +110,10 @@ global._gui = {
 			border_trees_top.adjust_y_offset(1);
 		}
 		
-		border_trees_bottom.update();
-		border_trees_top.update();
+		border_mouth.update();
+		border_teeth.update();
+		//border_uvula.update();
+		//border_ribs.update();
 		border_ribbon.update();
 	},
 	render: function() {
@@ -106,8 +123,10 @@ global._gui = {
         ///
         if (!initialized) exit;
 		
-		border_trees_bottom.render();
-		border_trees_top.render();
+		//border_ribs.render();
+		//border_uvula.render();
+		border_teeth.render();
+		border_mouth.render();
 		border_ribbon.render();
 	},
 	
