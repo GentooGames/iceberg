@@ -7,19 +7,37 @@
 #region about ///////////////////////
 /*
 	written_by:__gentoo_____________
-	version:_____0.1.1______________
+	version:_____0.2.0______________
 */
 #endregion
 #region change log //////////////////
 
-#region version 0.1.2
+#region version 0.2.x
+
+#region version 0.2.0
 /*
-	Date: 06/13/2022
-	1. merged in pull request updating return values for state_execute_... methods
-	2. added method descriptions for Ui() base component class
-	3. added new UiComponent -> UiCircle() implementing draw_circle_curve() functionality
+	Date: 06/14/2022
+	1.	merged in fryman's pull request updating return values for state_execute_... methods
+	2.	added method descriptions for Ui() base component class
+	3.	renamed set_execute_on_enter() to set_state_execute_on_enter()
+	4.	renamed set_execute_on_exit() to set_state_execute_on_exit()
+	5.	renamed hover_enter() to hover_execute_enter() 
+	6.	renamed hover_hold() to hover_execute_hold() 
+	7.	renamed hover_leave() to hover_execute_exit() 
+			- let's normalize the "leave" keyword, and use "exit" instead, and will use this for all similarly named methods
+	8.	renamed hover_leave_add_action() to hover_exit_add_action()
+	9.	renamed hover_leave_add_trigger() to hover_exit_add_trigger()
+	10. renamed click_pressed() to click_execute_pressed()
+	11. renamed click_down() to click_execute_down()
+	12. renamed click_released() to click_execute_released()
+	xx.	added new UiComponent -> UiCircle() implementing draw_circle_curve() functionality
+	xx.	added new UiComponent -> UiTextbox() 
 */
 #endregion
+
+#endregion
+#region version 0.1.x
+
 #region version 0.1.1
 /*	
 	Date: 05/26/2022
@@ -40,6 +58,8 @@
 	Date: 05/24/2022
 	1. FINISHED FIRST ITERATION! WOO!
 */
+#endregion
+
 #endregion
 
 #endregion
@@ -275,13 +295,12 @@ function Ui(_config) constructor {
 		#region Check For Event Triggers
 		
 		var _self = self;
-		
 		with (_.events) {
 			if (on_click.pressed.active) {
 				with (on_click.pressed.trigger) {
 					for (var _i = 0; _i < size; _i++) {
 						if (methods[_i]()) {
-							_self.click_pressed();
+							_self.click_execute_pressed();
 							break;	
 						}
 					};
@@ -291,7 +310,7 @@ function Ui(_config) constructor {
 				with (on_click.down.trigger) {
 					for (var _i = 0; _i < size; _i++) {
 						if (methods[_i]()) {
-							_self.click_down();
+							_self.click_execute_down();
 							break;	
 						}
 					};
@@ -301,7 +320,7 @@ function Ui(_config) constructor {
 				with (on_click.released.trigger) {
 					for (var _i = 0; _i < size; _i++) {
 						if (methods[_i]()) {
-							_self.click_released();
+							_self.click_execute_released();
 							break;	
 						}
 					};
@@ -312,7 +331,7 @@ function Ui(_config) constructor {
 					for (var _i = 0; _i < trigger.size; _i++) {
 						if (trigger.methods[_i]()) {
 							if (!did_enter) {
-								_self.hover_enter();
+								_self.hover_execute_enter();
 								did_enter = true;
 								break;	
 							}
@@ -327,7 +346,7 @@ function Ui(_config) constructor {
 				with (on_hover.hold) {
 					for (var _i = 0; _i < trigger.size; _i++) {
 						if (trigger.methods[_i]()) {
-							_self.hover_hold();
+							_self.hover_execute_hold();
 							break;	
 						}
 					};
@@ -338,7 +357,7 @@ function Ui(_config) constructor {
 					for (var _i = 0; _i < trigger.size; _i++) {
 						if (trigger.methods[_i]()) {
 							if (!did_leave) {
-								_self.hover_leave();
+								_self.hover_execute_exit();
 								did_leave = true;
 								break;	
 							}
@@ -386,9 +405,8 @@ function Ui(_config) constructor {
 	};
 	
 	#endregion
-	#region Getters & Setters
+	#region Getters 
 	
-	/// Getters
 	static get_owner			= function() {
 		/// @func	get_owner()
 		/// @return {instance/struct} owner
@@ -523,12 +541,15 @@ function Ui(_config) constructor {
 	};
 	static get_input_device		= function() {
 		/// @func	get_input_device()
+		/// @desc	input device registered for use with device_mouse_x_...
 		/// @return {real} input_device
-		///
+		
 		return input_device;
 	};
 	static get_use_gui_space	= function() {
 		/// @func	get_use_gui_space()
+		/// @desc	if toggled to true, component will be rendered on gui_space and look for mouse interactions
+		///			with coordinates based off of the gui_space positioning
 		/// @return {bool} use_gui_space?
 		///
 		return use_gui_space;
@@ -564,26 +585,39 @@ function Ui(_config) constructor {
 	};
 	static get_propegate_pos	= function() {
 		/// @func	get_propegate_pos()
+		/// @desc	if propegate_pos toggled to true, the position properties will be sent down to
+		///			pinned children and used for their sub-positioning, so that elements stick together
 		/// @return {boolean} propegate_position?
 		///
 		return propegate_pos;
 	};
 	static get_propegate_scale	= function() {
 		/// @func	get_propegate_scale()
+		/// @desc	if propegate_scale toggled to true, the scale properties will be sent down to pinned
+		///			children and used for their scaling and positioning, so that elements stick/scale together
 		/// @return {boolean} propegate_scale?
 		///
 		return propegate_scale;
 	};
 	static get_propegate_alpha	= function() {
 		/// @func	get_propegate_alpha()
+		/// @desc	if propegate_alpha toggled to true, the alpha properties will be sent down to pinned
+		///			children and used for their alpha, so that elements blend/fade together
 		/// @return {boolean} propegate_alpha?
 		///
 		return propegate_alpha;
 	};
 	
-	/// Setters
-	static set_properties		= function(_properties_struct) {
+	#endregion
+	#region Setters
+	
+	static set_properties			  = function(_properties_struct) {
 		/// @func	set_properties(properties_struct)
+		/// @desc	ui components are designed to be modular and lightweight, as a result, this method can be used
+		///			to declare and instantiate additional properties that should be associated with this component.
+		///			this also prevents the initially passed in config struct, from being bloated and having to account
+		///			for all possible passed in values, as we can instead, pass in added values after-the-fact using this 
+		///			method.
 		/// @param  {struct} properties
 		/// @return {Ui}	 self
 		///
@@ -598,7 +632,7 @@ function Ui(_config) constructor {
 		}
 		return self;
 	};
-	static set_owner			= function(_owner) {
+	static set_owner				  = function(_owner) {
 		/// @func	set_owner(owner)
 		/// @param	{instance/struct} owner
 		/// @return {Ui} self
@@ -606,7 +640,7 @@ function Ui(_config) constructor {
 		owner = _owner;
 		return self;
 	};
-	static set_x				= function(_x) {
+	static set_x					  = function(_x) {
 		/// @func	set_x(x)
 		/// @param	{real} x
 		/// @return {Ui} self
@@ -614,7 +648,7 @@ function Ui(_config) constructor {
 		x = _x;
 		return self;
 	};
-	static set_y				= function(_y) {
+	static set_y					  = function(_y) {
 		/// @func	set_y(y)
 		/// @param	{real} y
 		/// @return {Ui} self
@@ -622,7 +656,7 @@ function Ui(_config) constructor {
 		y = _y;
 		return self;
 	};
-	static set_pos				= function(_x, _y) {
+	static set_pos					  = function(_x, _y) {
 		/// @func	set_y(y)
 		/// @param	{real} y
 		/// @return {Ui} self
@@ -631,7 +665,7 @@ function Ui(_config) constructor {
 		set_y(_y);
 		return self;
 	};
-	static set_width			= function(_width) {
+	static set_width				  = function(_width) {
 		/// @func	set_width(width)
 		/// @param	{real} width
 		/// @return {Ui} self
@@ -639,7 +673,7 @@ function Ui(_config) constructor {
 		width = _width;
 		return self;
 	};
-	static set_height			= function(_height) {
+	static set_height				  = function(_height) {
 		/// @func	set_height(height)
 		/// @param	{real} height
 		/// @return {Ui} self
@@ -647,7 +681,7 @@ function Ui(_config) constructor {
 		height = _height;
 		return self;
 	};
-	static set_color			= function(_color) {
+	static set_color				  = function(_color) {
 		/// @func	set_color(color)
 		/// @param	{color} color
 		/// @return {Ui} self
@@ -655,7 +689,7 @@ function Ui(_config) constructor {
 		color = _color;
 		return self;
 	};
-	static set_alpha			= function(_alpha) {
+	static set_alpha				  = function(_alpha) {
 		/// @func	set_alpha(alpha)
 		/// @param	{real} alpha
 		/// @return {Ui} self
@@ -663,7 +697,7 @@ function Ui(_config) constructor {
 		alpha = _alpha;
 		return self;
 	};
-	static set_angle			= function(_angle) {
+	static set_angle				  = function(_angle) {
 		/// @func	set_angle(angle)
 		/// @param	{real} angle
 		/// @return {Ui} self
@@ -671,7 +705,7 @@ function Ui(_config) constructor {
 		angle = _angle;
 		return self;
 	};
-	static set_xscale			= function(_xscale) {
+	static set_xscale				  = function(_xscale) {
 		/// @func	set_xscale(xscale)
 		/// @param	{real} xscale
 		/// @return {Ui} self
@@ -679,7 +713,7 @@ function Ui(_config) constructor {
 		xscale = _xscale;
 		return self;
 	};
-	static set_yscale			= function(_yscale) {
+	static set_yscale				  = function(_yscale) {
 		/// @func	set_yscale(yscale)
 		/// @param	{real} yscale
 		/// @return {Ui} self
@@ -687,7 +721,7 @@ function Ui(_config) constructor {
 		yscale = _yscale;
 		return self;
 	};
-	static set_scale			= function(_scale) {
+	static set_scale				  = function(_scale) {
 		/// @func	set_scale(scale)
 		/// @param	{real} scale
 		/// @return {Ui} self
@@ -695,7 +729,7 @@ function Ui(_config) constructor {
 		scale = _scale;
 		return self;
 	};
-	static set_visible			= function(_visible) {
+	static set_visible				  = function(_visible) {
 		/// @func	set_visible(visible)
 		/// @param	{boolean} visible?
 		/// @return {Ui} self
@@ -703,7 +737,7 @@ function Ui(_config) constructor {
 		visible = _visible;
 		return self;
 	};
-	static set_thickness		= function(_thickness) {
+	static set_thickness			  = function(_thickness) {
 		/// @func	set_thickness(thickness)
 		/// @param	{real} thickness
 		/// @return {Ui} self
@@ -711,7 +745,7 @@ function Ui(_config) constructor {
 		thickness = _thickness;
 		return self;
 	};
-	static set_input_device		= function(_device) {
+	static set_input_device			  = function(_device) {
 		/// @func	set_input_device(interact_action)
 		/// @param	{real}		   device
 		/// @return {UiInteractor} self
@@ -719,7 +753,7 @@ function Ui(_config) constructor {
 		input_device = _device;
 		return self;
 	};
-	static set_use_gui_space	= function(_use_gui_space) {
+	static set_use_gui_space		  = function(_use_gui_space) {
 		/// @func	set_use_gui_space(use_gui_space?)
 		/// @param	{boolean}	   use_gui_space?
 		/// @return {UiInteractor} self
@@ -727,23 +761,7 @@ function Ui(_config) constructor {
 		use_gui_space = _use_gui_space;
 		return self;
 	};	
-	static set_execute_on_enter = function(_execute_on_enter) {
-		/// @func	set_execute_on_enter(execute_on_enter?)
-		/// @param	{boolean}	   execute_on_enter?
-		/// @return {UiInteractor} self
-		///
-		execute_on_enter = _execute_on_enter;
-		return self;
-	};	
-	static set_execute_on_exit  = function(_execute_on_exit) {
-		/// @func	set_execute_on_enter(execute_on_exit?)
-		/// @param	{boolean}	   execute_on_exit?
-		/// @return {UiInteractor} self
-		///
-		execute_on_exit = _execute_on_exit;
-		return self;
-	};	
-	static set_propegate_pos	= function(_propegate_pos) {
+	static set_propegate_pos		  = function(_propegate_pos) {
 		/// @func	set_propegate_pos(propegate_pos?)
 		/// @param	{boolean}	   propegate_pos?
 		/// @return {UiInteractor} self
@@ -751,7 +769,7 @@ function Ui(_config) constructor {
 		propegate_pos = _propegate_pos;
 		return self;
 	};	
-	static set_propegate_scale	= function(_propegate_scale) {
+	static set_propegate_scale		  = function(_propegate_scale) {
 		/// @func	set_propegate_pos(propegate_scale?)
 		/// @param	{boolean}	   propegate_scale?
 		/// @return {UiInteractor} self
@@ -759,12 +777,32 @@ function Ui(_config) constructor {
 		propegate_scale = _propegate_scale;
 		return self;
 	};	
-	static set_propegate_alpha  = function(_propegate_alpha) {
+	static set_propegate_alpha		  = function(_propegate_alpha) {
 		/// @func	set_propegate_alpha(propegate_alpha?)
 		/// @param	{boolean}	   propegate_alpha?
 		/// @return {UiInteractor} self
 		///
 		propegate_alpha = _propegate_alpha;
+		return self;
+	};	
+	static set_state_execute_on_enter = function(_execute_on_enter) {
+		/// @func	set_state_execute_on_enter(execute_on_enter?)
+		/// @desc	whether or not the defined on_enter state function should execute whenever
+		///			transitioning into a new state.
+		/// @param	{boolean}	   execute_on_enter?
+		/// @return {UiInteractor} self
+		///
+		execute_on_enter = _execute_on_enter;
+		return self;
+	};	
+	static set_state_execute_on_exit  = function(_execute_on_exit) {
+		/// @func	set_state_execute_on_exit(execute_on_exit?)
+		/// @desc	whether or not the defined on_exit state function should execute whenever
+		///			transitioning out of the current state.
+		/// @param	{boolean}	   execute_on_exit?
+		/// @return {UiInteractor} self
+		///
+		execute_on_exit = _execute_on_exit;
 		return self;
 	};	
 		
@@ -809,7 +847,7 @@ function Ui(_config) constructor {
 	};
 	static update_toggle	 = function() {
 		/// @func	update_toggle()
-		/// @desc	toggle the update actions to be enabled/disabled
+		/// @desc	toggle the update actions to be enabled/disabled during the update() tick
 		/// @return {Ui} self
 		///
 		_.update.active = !_.update.active;
@@ -819,7 +857,7 @@ function Ui(_config) constructor {
 		/// @func	update_set_active(update?)
 		/// @param	{boolean} update?
 		/// @desc	set whether or not the update actions should be enabled to run during the update() tick
-		/// @return {Ui}	  self
+		/// @return {Ui} self
 		///
 		_.update.active = _update;
 		return self;
@@ -828,6 +866,7 @@ function Ui(_config) constructor {
 	/// Render
 	static render_add_action = function(_render_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	render_add_action(render_action, auto_bind?*)
+		/// @desc	add a new action/method to the render stack for execution in the render() tick.
 		/// @param	{method/function} render_action	->	method/function to be used for said "action"
 		/// @param	{boolean}		  auto_bind?*	->	should the render_action method be bound to the Ui() component class automatically?
 		///												if this is disabled, then whichever binding is configured upon pass-through will be used.
@@ -862,7 +901,7 @@ function Ui(_config) constructor {
 	};
 	static render_toggle	 = function() {
 		/// @func	render_toggle()
-		/// @desc	toggle the render actions to be enabled/disabled
+		/// @desc	toggle the render actions to be enabled/disabled during the render() tick
 		/// @return {Ui} self
 		///
 		_.render.active = !_.render.active;
@@ -872,15 +911,18 @@ function Ui(_config) constructor {
 		/// @func	render_set_active(render?)
 		/// @param	{boolean} render?
 		/// @desc	set whether or not the render actions should be enabled to run during the render() tick
-		/// @return {Ui}	  self
+		/// @return {Ui} self
 		///
 		_.render.active = _render;
 		return self;
 	};	
 	
 	/// Hover
-	static hover_enter			   = function() {
-		/// @func	hover_enter()
+	static hover_execute_enter	   = function() {
+		/// @func	hover_execute_enter()
+		/// @desc	method to invoke for one-time-execution of the hover_enter logic bound to the
+		///			hover_on_enter stack. this will most likely not need to be manually invoked, and 
+		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
 		with (_.events.on_hover) {
@@ -896,6 +938,8 @@ function Ui(_config) constructor {
 	};
 	static hover_enter_add_action  = function(_hover_enter_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	hover_enter_add_action(hover_enter_action, auto_bind?*)
+		/// @desc	add a new action/method to the on_hover_enter stack for execution when hover_enter is triggered.
+		///			see hover_enter_add_trigger() for configuring a trigger that would execute the on_hover_enter stack.
 		/// @param	{method/function} hover_enter_action
 		/// @param	{boolean}		  auto_bind?=true
 		/// @return {UiInteractor}	  self
@@ -911,6 +955,8 @@ function Ui(_config) constructor {
 	};
 	static hover_enter_add_trigger = function(_hover_enter_trigger, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	hover_enter_add_trigger(hover_enter_trigger, auto_bind?*)
+		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_enter 
+		///			stack should be executed. the trigger method should always return a boolean.
 		/// @param	{method/function} hover_enter_trigger
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -924,8 +970,11 @@ function Ui(_config) constructor {
 		}
 		return self;	
 	};
-	static hover_hold			   = function() {
-		/// @func	hover_hold()
+	static hover_execute_hold	   = function() {
+		/// @func	hover_execute_hold()
+		/// @desc	method to invoke for one-time-execution of the hover_hold logic bound to the
+		///			hover_on_hold stack. this will most likely not need to be manually invoked, and 
+		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
 		if (_.events.on_hover.hold.active) {
@@ -939,6 +988,8 @@ function Ui(_config) constructor {
 	};
 	static hover_hold_add_action   = function(_hover_hold_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	hover_hold_add_action(hover_hold_action, auto_bind?*)
+		/// @desc	add a new action/method to the on_hover_hold stack for execution when hover_hold is triggered.
+		///			see hover_hold_add_trigger() for configuring a trigger that would execute the on_hover_hold stack.
 		/// @param	{method/function} hover_hold_action
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -954,6 +1005,8 @@ function Ui(_config) constructor {
 	};
 	static hover_hold_add_trigger  = function(_hover_hold_trigger, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	hover_hold_add_trigger(hover_hold_trigger, auto_bind?*)
+		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_hold
+		///			stack should be executed. the trigger method should always return a boolean.
 		/// @param	{method/function} hover_hold_trigger
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -967,8 +1020,11 @@ function Ui(_config) constructor {
 		}
 		return self;
 	};
-	static hover_leave			   = function() {
-		/// @func	hover_leave()
+	static hover_execute_exit	   = function() {
+		/// @func	hover_execute_exit()
+		/// @desc	method to invoke for one-time-execution of the hover_exit logic bound to the
+		///			hover_on_exit stack. this will most likely not need to be manually invoked, and 
+		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
 		with (_.events.on_hover) {
@@ -982,8 +1038,10 @@ function Ui(_config) constructor {
 		}
 		return self;
 	};
-	static hover_leave_add_action  = function(_hover_leave_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
-		/// @func	hover_leave_add_action(hover_leave_action, auto_bind?*)
+	static hover_exit_add_action   = function(_hover_leave_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
+		/// @func	hover_exit_add_action(hover_leave_action, auto_bind?*)
+		/// @desc	add a new action/method to the on_hover_enter stack for execution when hover_enter is triggered.
+		///			see hover_enter_add_trigger() for configuring a trigger that would execute the on_hover_enter stack.
 		/// @param	{method/function} hover_leave_action
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -997,8 +1055,10 @@ function Ui(_config) constructor {
 		}
 		return self;	
 	};
-	static hover_leave_add_trigger = function(_hover_leave_trigger, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
-		/// @func	hover_leave_add_trigger(hover_leave_trigger, auto_bind?*)
+	static hover_exit_add_trigger  = function(_hover_leave_trigger, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
+		/// @func	hover_exit_add_trigger(hover_leave_trigger, auto_bind?*)
+		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_exit
+		///			stack should be executed. the trigger method should always return a boolean.
 		/// @param	{method/function} hover_leave_trigger
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -1014,8 +1074,11 @@ function Ui(_config) constructor {
 	};
 	
 	/// Click
-	static click_pressed			  = function() {
-		/// @func	click_pressed()
+	static click_execute_pressed	  = function() {
+		/// @func	click_execute_pressed()
+		/// @desc	method to invoke for one-time-execution of the click_pressed logic bound to the
+		///			click_pressed stack. this will most likely not need to be manually invoked, and 
+		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
 		if (_.events.on_click.pressed.active) {
@@ -1029,6 +1092,8 @@ function Ui(_config) constructor {
 	};
 	static click_pressed_add_action	  = function(_click_pressed_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	click_pressed_add_action(click_pressed_action, auto_bind?*)
+		/// @desc	add a new action/method to the click_pressed stack for execution when click_pressed is triggered.
+		///			see click_pressed_add_trigger() for configuring a trigger that would execute the on_click_pressed stack.
 		/// @param	{method/function} click_pressed_action
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -1044,6 +1109,8 @@ function Ui(_config) constructor {
 	};
 	static click_pressed_add_trigger  = function(_click_pressed_trigger, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	click_pressed_add_trigger(click_pressed_trigger, auto_bind?*)
+		/// @desc	add a new trigger/method used for conditional validation to determine if the click_pressed
+		///			stack should be executed. the trigger method should always return a boolean.
 		/// @param	{method/function} click_pressed_trigger
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -1057,8 +1124,10 @@ function Ui(_config) constructor {
 		}
 		return self;	
 	};
-	static click_down				  = function() {
-		/// @func	click_down()
+	static click_execute_down		  = function() {
+		/// @func	click_execute_down()
+		/// @desc	method to invoke for one-time-execution of the click_down logic bound to the
+		///			click_down stack. this will most likely not need to be manually invoked, and
 		/// @return {UiInteractor} self
 		///
 		if (_.events.on_click.down.active) {
@@ -1072,6 +1141,8 @@ function Ui(_config) constructor {
 	};
 	static click_down_add_action	  = function(_click_down_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	click_down_add_action(click_down_action, auto_bind?*)
+		/// @desc	add a new action/method to the click_down stack for execution when click_down is triggered.
+		///			see click_down_add_trigger() for configuring a trigger that would execute the on_click_down stack.
 		/// @param	{method/function} click_down_action
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -1087,6 +1158,8 @@ function Ui(_config) constructor {
 	};
 	static click_down_add_trigger	  = function(_click_down_trigger, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	click_down_add_trigger(click_down_trigger, auto_bind?*)
+		/// @desc	add a new trigger/method used for conditional validation to determine if the click_down
+		///			stack should be executed. the trigger method should always return a boolean.
 		/// @param	{method/function} click_down_trigger
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -1100,8 +1173,10 @@ function Ui(_config) constructor {
 		}
 		return self;	
 	};
-	static click_released			  = function() {
-		/// @func	click_released()
+	static click_execute_released	  = function() {
+		/// @func	click_execute_released()
+		/// @desc	method to invoke for one-time-execution of the click_released logic bound to the
+		///			click_released stack. this will most likely not need to be manually invoked, and
 		/// @return {UiInteractor} self
 		///
 		if (_.events.on_click.released.active) {
@@ -1115,6 +1190,8 @@ function Ui(_config) constructor {
 	};
 	static click_released_add_action  = function(_click_released_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	click_released_add_action(click_released_action, auto_bind?*)
+		/// @desc	add a new action/method to the click_released stack for execution when click_released is triggered.
+		///			see click_released_add_trigger() for configuring a trigger that would execute the on_click_released stack.
 		/// @param	{method/function} click_released_action
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -1130,6 +1207,8 @@ function Ui(_config) constructor {
 	};
 	static click_released_add_trigger = function(_click_released_trigger, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	click_released_add_trigger(click_released_trigger, auto_bind?*)
+		/// @desc	add a new trigger/method used for conditional validation to determine if the click_released
+		///			stack should be executed. the trigger method should always return a boolean.
 		/// @param	{method/function} click_released_trigger
 		/// @param	{boolean}		  auto_bind?*
 		/// @return {UiInteractor}	  self
@@ -1149,6 +1228,7 @@ function Ui(_config) constructor {
 	
 	static state_add			  = function(_state_name, _state_method, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	state_add(state_name, state_method, auto_bind?*)
+		/// @desc	add a new state_method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} state_method
 		/// @param	{boolean}		  auto_bind?*
@@ -1164,6 +1244,7 @@ function Ui(_config) constructor {
 	};
 	static state_add_on_enter	  = function(_state_name, _state_method, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	state_add_on_enter(state_name, state_method, auto_bind?*)
+		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} state_method
 		/// @param	{boolean}		  auto_bind?*
@@ -1179,6 +1260,7 @@ function Ui(_config) constructor {
 	};
 	static state_add_on_exit	  = function(_state_name, _state_method, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	state_add_on_exit(state_name, state_method, auto_bind?*)
+		/// @desc	add a new state_on_exit method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} state_method
 		/// @param	{boolean}		  auto_bind?*
@@ -1194,6 +1276,7 @@ function Ui(_config) constructor {
 	};
 	static state_get			  = function(_state_name) {
 		/// @func	state_get(state_name)
+		/// @desc	return the method associated to the given state name that would be executed during a state update.
 		/// @param	{string}		  state_name
 		/// @return {method/function} state
 		///
@@ -1201,18 +1284,21 @@ function Ui(_config) constructor {
 	};
 	static state_get_current	  = function() {
 		/// @func	state_get_current()
+		/// @desc	get the currently executing state method
 		/// @return {method/function} state
 		///
 		return _.state.current;
 	};
 	static state_get_current_name = function() {
 		/// @func	state_get_current_name()
+		/// @desc	get the name of the currently executing state method.
 		/// @return {string} name
 		///
 		return _.state.name;
 	};
 	static state_set_current	  = function(_state_name) {
 		/// @func	state_set_current(state_name)	
+		/// @desc	set the current state method to that of the passed state_name's method
 		/// @param	{string} name
 		/// @return	{Ui}	 self
 		///
@@ -1229,6 +1315,7 @@ function Ui(_config) constructor {
 	};
 	static state_exists			  = function(_state_name) {
 		/// @func	state_exists(state_name)
+		/// @desc	return if the given state_name has been registered as a state_method.
 		/// @param	{string}  state_name
 		/// @return {boolean} state_exists?
 		///
@@ -1236,6 +1323,7 @@ function Ui(_config) constructor {
 	};
 	static state_change			  = function(_state_name) {
 		/// @func	state_change(state_name)
+		/// @desc	do state transition if a state exists with the given name.
 		/// @param	{string} state_name
 		/// @return {Ui}	 self
 		///
@@ -1256,6 +1344,7 @@ function Ui(_config) constructor {
 	};
 	static state_is				  = function(_state_name) {
 		/// @func	state_is(state_name)
+		/// @desc	check if the current state_is the same as that of the passed in state_name
 		/// @param	{string}  state_name 
 		/// @return {boolean} state_is?
 		///
@@ -1263,6 +1352,8 @@ function Ui(_config) constructor {
 	};
 	static state_execute_on_enter = function(_state_name) {
 		/// @func	state_execute_on_enter(state_name)
+		/// @desc	one-time encapsulation of the state_on_enter logic. this method will probably not need to be 
+		///			manually invoked, and should be executed automatically if state_execute_on_enter is toggled to true
 		/// @param	{string} name
 		/// @return {Ui} self
 		///
@@ -1273,6 +1364,8 @@ function Ui(_config) constructor {
 	};
 	static state_execute_on_exit  = function(_state_name) {
 		/// @func	state_execute_on_exit(state_name)
+		/// @desc	one-time encapsulation of the state_on_exit logic. this method will probably not need to be 
+		///			manually invoked, and should be executed automatically if state_execute_on_exit is toggled t
 		/// @param	{string} name
 		/// @return {Ui} self
 		///
@@ -1287,6 +1380,9 @@ function Ui(_config) constructor {
 	
 	static pin_components = function() {
 		/// @func	pin_components(component1, ..., componentN)	
+		/// @desc	pin x number of passed in components to this self component. pinned components 
+		///			will propegate position, scale, and alpha to children components if the associated
+		///			flag toggles are set to true.
 		/// @param	{Ui} components
 		/// @return {Ui} component
 		///
@@ -1314,6 +1410,7 @@ function Ui(_config) constructor {
 	
 	static mouse_touching = function() {
 		/// @func	mouse_touching()
+		/// @desc	return if the mouse is currently touching the component.
 		/// @return {boolean} mouse_touching?
 		///
 		var _mxy = get_mouse_xy();
@@ -2045,4 +2142,5 @@ function UiCircle(_config) : Ui(_config) constructor {
 		}
 	};
 };
+function UiTextbox(_config) : Ui(_config) constructor {};
 
