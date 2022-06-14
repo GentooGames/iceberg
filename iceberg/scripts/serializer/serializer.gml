@@ -4,6 +4,17 @@
 // L---J L---J |   V   |   L---J L---J //
 //////////////////////////////////$(*)>//
 
+/*
+	- handle on_serialize()/on_deserialize() callbacks
+	- replace typeof(var) with custom type checker so that we can utilize customly created Translator classes
+		- account for possibility that other users will want to extend this class and add their own custom Translators
+	- finish Translators for other data types
+		- maybe we need to create a new class called SerializerType(var_name, VAR_TYPE.BUFFER)
+			- new class would take var_name and an explicitly defined var_type, so that the system doesnt need to try 
+			and infer the serialization technique. if no type is declared, then type inference can act as the backup solution.
+			- if this is the case, use this method to standardize implementation with all other existing data types
+*/
+
 function Serializer(_owner = other, _vars) constructor {	
 	/// @func  Serializer(owner*, vars)
 	/// @param {struct/instance} owner=other
@@ -26,9 +37,6 @@ function Serializer(_owner = other, _vars) constructor {
 			var _translator	   =  var_to_translator(_var_name);
 			_data[$ _var_name] = _translator.serialize();
 			
-			///	if (_var_name_uses_lookup(_var)) {
-			///		_value = _get_lookup_write_value(_var, owner);
-			///	}
 			///	if (on_serialize != undefined) {
 			///		on_serialize(_var, _value);
 			///	}
@@ -51,9 +59,6 @@ function Serializer(_owner = other, _vars) constructor {
 			_translator.deserialize(_var_value);
 			_data_out[$ _var_name] = _var_value;
 			
-			//if (_var_name_uses_lookup(_var)) {
-			//	_value = _get_lookup_read_value(_var, _value);
-			//}
 			//if (on_deserialize != undefined) {
 			//	on_deserialize(_var, _value);
 			//}
@@ -89,24 +94,25 @@ function Serializer(_owner = other, _vars) constructor {
 		/// Check If Custom "Lookup" Has Been Defined For var_name
 		/// ...
 		
-		var _variable_owner_get = variable_owner_get();
-		var _value = _variable_owner_get(owner, _var_name);
+		var _instanceof = undefined;
+		var _value		= variable_owner_get()(owner, _var_name);
 		
 		switch (typeof(_value)) {
-			case "number":		return new SerializerTranslator_Number(owner, _var_name); 
-			case "string":		return new SerializerTranslator_Number(owner, _var_name); 
-			case "array":		break;
-			case "bool":		break;
-			case "ptr":			break;
-			case "undefined":	return new SerializerTranslator_Undefined(owner, _var_name);
-			case "method":		break;
-			case "struct":		break;
-			//case "int32":		break;
-			//case "int64":		break;
-			//case "null":		break;
-			//case "vec3":		break;
-			//case "vec4":		break;
+			case "number":	  _instanceof = SerializerTranslator_Number;	break;
+			case "string":	  _instanceof = SerializerTranslator_String;	break;
+			case "array":	  _instanceof = SerializerTranslator_Array;		break;
+			case "bool":	  _instanceof = SerializerTranslator_Bool;		break;
+			case "ptr":		  _instanceof = SerializerTranslator_Ptr;		break;
+			case "undefined": _instanceof = SerializerTranslator_Undefined; break;
+			case "method":	  _instanceof = SerializerTranslator_Method;	break;
+			case "struct":	  _instanceof = SerializerTranslator_Struct;	break;
+			//case "int32":	  _instanceof = SerializerTranslator_Int32;		break;
+			//case "int64":	  _instanceof = SerializerTranslator_Int64;		break;
+			//case "null":	  _instanceof = SerializerTranslator_Null;		break;
+			//case "vec3":	  _instanceof = SerializerTranslator_vec3;		break;
+			//case "vec4":	  _instanceof = SerializerTranslator_vec4;		break;
 		};
+		return new _instanceof(owner, _var_name);
 	};
 	static variable_owner_get = function() {
 		/// @func	variable_owner_get()
@@ -185,7 +191,36 @@ function SerializerTranslator(_owner, _name) constructor {
 	};
 };
 function SerializerTranslator_Number(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_String(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_Array(_owner, _name) : SerializerTranslator(_owner, _name) constructor {
+	/// ... handle array serialization. account for possibly nested value
+};
+function SerializerTranslator_Bool(_owner, _name) : SerializerTranslator(_owner, _name) constructor {
+	/// ... account for fact that 0 & 1 can be used, but would be interpreted as a number ...
+};
+function SerializerTranslator_Ptr(_owner, _name) : SerializerTranslator(_owner, _name) constructor {
+	/// ... can serialize as a number, but must deserialize as a ptr
+};
 function SerializerTranslator_Undefined(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_Method(_owner, _name) : SerializerTranslator(_owner, _name) constructor {
+	/// ... todo ...
+};
+function SerializerTranslator_Struct(_owner, _name) : SerializerTranslator(_owner, _name) constructor {
+	/// ... todo ... account for possible nested values
+	/// also, check if we need to handle Constructors differently than anonymous structs
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+function SerializerTranslator_ObjectName(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_SpriteName(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_PathName(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_RoomName(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_Surface(_owner, _name) : SerializerTranslator(_owner, _name) constructor {
+	/// convert into buffer, and serialize as buffer ...
+};
+function SerializerTranslator_Buffer(_owner, _name) : SerializerTranslator(_owner, _name) constructor {
+	/// buffer_base64_encode() ...
+};
+
 
 /*
 	lookup_write = {

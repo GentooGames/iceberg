@@ -182,10 +182,9 @@ test_serializer = new Serializer(
 	[
 		"test_number",
 		"test_name",
+		/// new SerializerType("buffer_name", VAR_TYPE.BUFFER)
 	]
 );
-show_message(test_serializer.serialize());
-
 
 
 
