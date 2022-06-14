@@ -10,8 +10,184 @@ function Serializer(_owner = other, _vars) constructor {
 	/// @param {array} vars
 	/// @desc  ...
 	///
-	owner = _owner;
-	vars  = _vars;
+	owner			= _owner;
+	on_serialize	=  undefined;
+	on_deserialize	=  undefined;
+	var_names		= _vars;
+	
+	/// Core
+	static serialize   = function() {
+		/// @func	serialize()
+		/// @return {json_string} data_serialized
+		/// 
+		var _data = {};
+		for (var _i = 0, _len = array_length(var_names); _i < _len; _i++) {
+			var _var_name	   =  var_names[_i];
+			var _translator	   =  var_to_translator(_var_name);
+			_data[$ _var_name] = _translator.serialize();
+			
+			///	if (_var_name_uses_lookup(_var)) {
+			///		_value = _get_lookup_write_value(_var, owner);
+			///	}
+			///	if (on_serialize != undefined) {
+			///		on_serialize(_var, _value);
+			///	}
+		}
+		return json_stringify(_data);
+	};
+	static deserialize = function(_data_string) {
+		/// @func   deserialize(data_string)
+		/// @param	{string} data_string
+		/// @return {struct} data_loaded
+		///
+		var _data_out		  = {};
+		var _data_struct	  = json_parse(_data_string);
+		var _data_string_vars = variable_struct_get_names(_data_struct);
+		
+		for (var _i = 0, _len = array_length(_data_string_vars); _i < _len; _i++) {
+			var _var_name	= _data_string_vars[_i];
+			var _var_value  = _data_struct[$ _var_name];
+			var _translator =  var_to_translator(_var_name);
+			_translator.deserialize(_var_value);
+			_data_out[$ _var_name] = _var_value;
+			
+			//if (_var_name_uses_lookup(_var)) {
+			//	_value = _get_lookup_read_value(_var, _value);
+			//}
+			//if (on_deserialize != undefined) {
+			//	on_deserialize(_var, _value);
+			//}
+		}
+		return _data_out;
+	};
+	
+	/// Extensions
+	static set_on_serialize	  = function(_func) {
+		/// @func	set_on_serialize(func)
+		/// @param	{method/function} func
+		/// @return {Serializer}	  self
+		/// 
+		on_serialize = _func;
+		return self;
+	};
+	static set_on_deserialize = function(_func) {
+		/// @func	set_on_deserialize(func)
+		/// @param	{method/function} func
+		/// @return {Serializer}	  self
+		/// 
+		on_deserialize = _func;
+		return self;
+	};
+		
+	/// Util
+	static var_to_translator  = function(_var_name) {
+		/// @func	var_to_translator(var_name)
+		/// @param	{string} var_name
+		/// @return {SerializerTranslator} translator
+		///
+		
+		/// Check If Custom "Lookup" Has Been Defined For var_name
+		/// ...
+		
+		var _variable_owner_get = variable_owner_get();
+		var _value = _variable_owner_get(owner, _var_name);
+		
+		switch (typeof(_value)) {
+			case "number":		return new SerializerTranslator_Number(owner, _var_name); 
+			case "string":		return new SerializerTranslator_Number(owner, _var_name); 
+			case "array":		break;
+			case "bool":		break;
+			case "ptr":			break;
+			case "undefined":	return new SerializerTranslator_Undefined(owner, _var_name);
+			case "method":		break;
+			case "struct":		break;
+			//case "int32":		break;
+			//case "int64":		break;
+			//case "null":		break;
+			//case "vec3":		break;
+			//case "vec4":		break;
+		};
+	};
+	static variable_owner_get = function() {
+		/// @func	variable_owner_get()
+		/// @return {function} variable_x_get
+		///
+		if (is_struct(owner)) {
+			return variable_struct_get;
+		}
+		return variable_instance_get;
+	};
+	static variable_owner_set = function() {
+		/// @func	variable_owner_set()
+		/// @return {function} variable_x_set
+		///
+		if (is_struct(owner)) {
+			return variable_struct_set;
+		}
+		return variable_instance_set;
+	};
+};
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+function SerializerTranslator(_owner, _name) constructor {
+	/// @func	SerializerTranslator(owner, name)
+	/// @param	{instance/struct} owner
+	/// @param	{string} name
+	///
+	__serializer =  other;
+	__var_owner  = _owner;
+	__var_name	 = _name;
+	
+	/// Core
+	static serialize   = function() {
+		/// @func serialize()
+		///
+		return string(get_var_value());
+	};
+	static deserialize = function(_var_value) {
+		/// @func	deserialize(var_value)
+		/// @param	{number} var_value
+		/// @return {SerializerTranslator} self
+		///
+		set_var_value(_var_value);
+		return self;
+	};
+		
+	/// Getters
+	static get_owner	 = function() {
+		/// @func	get_owner()
+		/// @return {instance/struct} var_owner
+		///
+		return __var_owner;
+	};
+	static get_var_name  = function() {
+		/// @func	get_var_name()
+		/// @return {string} var_name
+		///
+		return __var_name;
+	};
+	static get_var_value = function() {
+		/// @func	get_var_value()
+		/// @return {any} var_value
+		///
+		var _variable_owner_get = __serializer.variable_owner_get();
+		return _variable_owner_get(__var_owner, __var_name);
+	};
+		
+	/// Setters
+	static set_var_value = function(_var_value) {
+		/// @func	set_var_value(var_value)
+		/// @param	{any} var_value
+		/// @return {SerializerTranslator} self
+		///
+		var _variable_owner_set = __serializer.variable_owner_set();
+		_variable_owner_set(__var_owner, __var_name, _var_value);
+		return self;
+	};
+};
+function SerializerTranslator_Number(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+function SerializerTranslator_Undefined(_owner, _name) : SerializerTranslator(_owner, _name) constructor {};
+
+/*
 	lookup_write = {
 		object_index: function(_id) {
 			return object_get_name(_id.object_index);
@@ -52,159 +228,19 @@ function Serializer(_owner = other, _vars) constructor {
 			return asset_get_index(_asset_name);
 		},
 	};
-	
- 	on_serialize   = undefined;
-	on_deserialize = undefined;
-	
-	/// Core
-	static serialize   = function() {
-		/// @func	serialize()
-		/// @return {json_string} data_serialized
-		/// 
-		var _data = {};
-		for (var _i = 0, _var, _value, _len = array_length(vars); _i < _len; _i++) {
-			_var   = vars[_i];
-			_value = variable_instance_get(owner, _var);	
-			
-			/// Check For Lookup Table Translation
-			if (_var_name_uses_lookup(_var)) {
-				_value = _get_lookup_write_value(_var, owner);
-			}
-			_data[$ _var] = _value;
-			
-			if (on_serialize != undefined) {
-				on_serialize(_var, _value);
-			}
-		}
-		return json_stringify(_data);
-	};
-	static deserialize = function(_serialized_string) {
-		/// @func   deserialize(serialized_string)
-		/// @param  {string} serialized_string
-		/// @return {struct} data_loaded
-		///
-		var _data_out = {};
-		var _data_in  = json_parse(_serialized_string);
-		
-		for (var _i = 0, _var, _value, _len = array_length(vars); _i < _len; _i++) {
-			_var   =  vars[_i];
-			_value = _data_in[$ _var];	
-			
-			if (_var_name_uses_lookup(_var)) {
-				_value = _get_lookup_read_value(_var, _value);
-			}
-			_data_out[$ _var] = _value;
-			variable_instance_set(owner, _var, _value);
-			
-			if (on_deserialize != undefined) {
-				on_deserialize(_var, _value);
-			}
-		}
-		return _data_out;
-	};
-	
-	/// Extensions
-	static set_on_serialize	  = function(_func) {
-		/// @func	set_on_serialize(func)
-		/// @param	{method/function} func
-		/// @return {Serializer}	  self
-		/// 
-		on_serialize = _func;
-		return self;
-	};
-	static set_on_deserialize = function(_func) {
-		/// @func	set_on_deserialize(func)
-		/// @param	{method/function} func
-		/// @return {Serializer}	  self
-		/// 
-		on_deserialize = _func;
-		return self;
-	};
-	static add_lookup		  = function(_name, _func_write, _func_read, _bind_to_serializer = true) {
-		/// @func	add_lookup(name, func_write, func_read, bind_to_serializer?*)
-		/// @param  {string}		  name
-		/// @param  {method/function} func_write
-		/// @param  {method/function} func_read
-		/// @param  {boolean}		  bind_to_serializer?=true
-		/// @return {Serializer}	  self
-		///
-		add_lookup_write(_name, _func_write, _bind_to_serializer);
-		add_lookup_read (_name, _func_read,  _bind_to_serializer);
-		return self;
-	};
-	static add_lookup_write	  = function(_name, _func_write, _bind_to_serializer = true) {
-		/// @func	add_lookup_write(name, func_write, bind_to_serializer?*)
-		/// @param  {string}		  name
-		/// @param  {method/function} func_write
-		/// @param  {boolean}		  bind_to_serializer?=true
-		/// @return {Serializer}	  self
-		///
-		if (_bind_to_serializer) {
-			_func_write = method(self, _func_write);	
-		}
-		variable_struct_set(lookup_write, _name, _func_write);
-		return self;
-	};
-	static add_lookup_read	  = function(_name, _func_read, _bind_to_serializer = true) {
-		/// @func	add_lookup_read(name, func_read, bind_to_serializer?*)
-		/// @param  {string}		  name
-		/// @param  {method/function} func_read
-		/// @param  {boolean}		  bind_to_serializer?=true
-		/// @return {Serializer}	  self
-		///
-		if (_bind_to_serializer) {
-			_func_read = method(self, _func_read);	
-		}
-		variable_struct_set(lookup_read, _name, _func_read);
-		return self;
-	};
-		
-	/// Util
-	static _var_name_uses_lookup   = function(_lookup_name) {
-		/// @func   _var_name_uses_lookup(lookup_name)
-		/// @param  {string} lookup_name
-		/// @return {bool} use_lookup?
-		///
-		return variable_struct_exists(lookup_write, _lookup_name);	
-	};
-	static _get_lookup_write_value = function(_lookup_name, _param) {
-		/// @func   _get_lookup_write_value(lookup_name, param)
-		/// @param  {string} lookup_name
-		/// @param  {any} param
-		/// @return {any} value
-		///
-		return lookup_write[$ _lookup_name](_param);		
-	};
-	static _get_lookup_read_value  = function(_lookup_name, _param) {
-		/// @func	_get_lookup_read_value(lookup_name, param)
-		/// @param	{string} lookup_name
-		/// @param  {any} param
-		/// @return {any} value
-		///
-		return lookup_read[$ _lookup_name](_param); 	
-	};
-	static _execute_ext_method	   = function(_context = self, _func, _params = undefined) {
-		/// @func	_execute_ext_method(context*, func, params*)
-	    /// @param	{struct/instance} context=self
-	    /// @param	{method/function} func
-	    /// @param	{any}			 params=undefined
-		/// @return NA
-	    ///
-	    if (_func == undefined) {
-	        throw("script_execute_ext_method() requires a valid script, function, or method reference.\n" + 
-	            "func: " + string(_func) + " is undefined.");
-	    }
-	    if (is_method(_func)) {
-	        _func = method_get_index(_func);    
-	    }
-	    with (_context) {
-	        if (_params != undefined) {
-	            if (!is_array(_params)) {
-	                return _func(_params);
-	            }    
-	            else return script_execute_ext(_func, _params);    
-	        }
-	        else return _func();
-	    }
-	};	
-};
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

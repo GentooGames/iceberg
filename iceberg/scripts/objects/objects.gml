@@ -53,9 +53,9 @@ function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) cons
 	static __save_object_load		   = function(_load_data) {
 		/// Search For Load Data Ourselves
 		if (_load_data == undefined) {
-			var _save_id    = __save_object_get_save_id();
 			var _room_name	= room_get_name(room);
 			var _room_data  = __SC_CONTROLLER.load_data.room_data[$ _room_name];
+			var _save_id    = __save_object_get_save_id();
 				_load_data  = _room_data[$ _save_id];
 				
 			if (_load_data == undefined) {

@@ -19,16 +19,6 @@ event_id = "save";
 	- SaveObject and serializer auto binding handling?
 	- Serialize & Deserialize 
 		- arrays, structs, constructors, ds_lists, ds_maps, ds_queues, buffers
-	- (LATER) futher decoupling by implenting the "Builder" design pattern:
-		- pass in array of vars into an interpreter script 
-		- script checks each typeof(var) 
-		- instantiates new class for var based off of var-type
-		- each var-type data class contains isolated serialization "algorithm"
-		- Serializer() then just invokes data_class.serialize()
-		- this allows us to remove out lookup_read and lookup_write and replace
-			with a more encapsulated implementation
-		- also allows us to methodically handle edge cases and error throwing through an implicit
-			type checker, etc.
 */
 #macro __SC_CONTROLLER				SAVE
 #macro __SC_SAVE_FILE_GROUP			"default"
@@ -183,3 +173,20 @@ render	 = function() {
 };
 
 #endregion
+
+test_number = 100;
+test_name	= "Gentoo";
+
+test_serializer = new Serializer(
+	id, 
+	[
+		"test_number",
+		"test_name",
+	]
+);
+show_message(test_serializer.serialize());
+
+
+
+
+
