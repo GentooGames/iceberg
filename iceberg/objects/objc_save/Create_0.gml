@@ -30,7 +30,7 @@ event_id = "save";
 #macro __SC_SAVE_SLOT_DEFAULT		 0
 #macro __SC_FIRST_ROOM_INDEX		_rm_init	// first room index to reference
 #macro __SC_LOAD_ON_FIRST_ROOM		false		// if the first room is used as an init room, 
-											// loading data in this room may not be wanted
+												// loading data in this room may not be wanted
 enum __SC_STATE {
 	BEGIN_VALIDATION,
 	FILE_CHECK_EXISTS,

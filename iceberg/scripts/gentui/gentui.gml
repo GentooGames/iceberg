@@ -30,8 +30,11 @@
 	10. renamed click_pressed() to click_execute_pressed()
 	11. renamed click_down() to click_execute_down()
 	12. renamed click_released() to click_execute_released()
+	
 	xx.	added new UiComponent -> UiCircle() implementing draw_circle_curve() functionality
 	xx.	added new UiComponent -> UiTextbox() 
+	xx. added "active" flag for entire component
+	xx. added custom configs, with possible state binding for auto-assignment
 */
 #endregion
 
@@ -70,21 +73,25 @@
 #endregion
 #region upcoming features ///////////
 /*
+	- add active flag toggling
+	- add custom configurations, so that we can point the component to a config, and it will "snap" values to that
+	- be able to add custom events with custom triggers. do not be restricted to just one set of predefined events
 	- ability to have parent components implement child components' update() and render() methods automatically
 		- additionally, setup corresponding depth system for custom depth sorting if automatic updates and renders are used
-	- propegate parent angle to children components
-	- have mouse click detection and interactions respond to different angles. currently not supported!
 	- docs & help
 	- improve performance with draw_rectangle_alt, draw_line_alt utilizing one pixel sprite
 		- dynamically generate one pixel sprite using surface, sprite_save, etc
 	- add support for UI components to render contents to a surface
 		- only update surface contents when necessary, and bake children surfaces onto parent
+	- propegate parent angle to children components
+		- have mouse click detection and interactions respond to different angles. currently not supported!
 */
 #endregion
 #region default config values ///////
 
 #macro __UI_DEFAULT_AUTO_BIND_METHODS					false
-														
+																	
+#macro __UI_COMPONENT_DEFAULT_ACTIVE					true
 #macro __UI_COMPONENT_DEFAULT_VISIBLE					true
 #macro __UI_COMPONENT_DEFAULT_ALPHA						1.0
 #macro __UI_COMPONENT_DEFAULT_COLOR						c_white
@@ -130,6 +137,7 @@ function Ui(_config) constructor {
 	///		   var _abstractUiPointContainer = new Ui({x : _x, y: _y});		/// creates a component containing coordinate points
 	///
 	/// @param {instance/struct} owner=other
+	/// @param {bool}  active*
 	/// @param {real}  x*
 	/// @param {real}  y*
 	/// @param {color} color*
@@ -153,17 +161,17 @@ function Ui(_config) constructor {
 	#region Properties 
 	
 	_				 = {
-		update: {
+		update:  {
 			active:  true,
 			methods: [],
 			size:	 0,
 		},
-		render: {
+		render:  {
 			active:  true,
 			methods: [],
 			size:	 0,
 		},
-		state:  {
+		state:   {
 			active:   true,
 			current:  undefined,	
 			name:	  "",
@@ -171,14 +179,14 @@ function Ui(_config) constructor {
 			on_enter: {},
 			on_exit:  {},
 		},
-		pin:    {
+		pin:     {
 			pins:	[],
 			size:	0,
 			parent:	undefined,
 			xoff:	0,
 			yoff:	0,
 		},
-		events: {
+		events:  {
 			on_hover: {
 				enter: {
 					active:    true,
@@ -252,8 +260,10 @@ function Ui(_config) constructor {
 				},
 			},
 		},
+		configs: {},
 	};	
 	owner			 = _config[$ "owner"		   ] ?? other;
+	active			 = _config[$ "active"		   ] ?? __UI_COMPONENT_DEFAULT_ACTIVE;
 	x				 = _config[$ "x"			   ] ?? __UI_COMPONENT_DEFAULT_X;
 	y				 = _config[$ "y"			   ] ?? __UI_COMPONENT_DEFAULT_Y;
 	color			 = _config[$ "color"		   ] ?? __UI_COMPONENT_DEFAULT_COLOR;
@@ -277,12 +287,13 @@ function Ui(_config) constructor {
 	#endregion
 	#region Core 
 	
-	static step = function() {
+	static step		  = function() {
 		/// @func	step()
 		/// @desc	tick update for the component class. call this in a step event, or
 		///			wherever the code for this component class should be updated.
 		/// @return	{Ui} self
 		///
+		if (!active) exit;
 		if (_.update.active) {
 			for (var _i = 0; _i < _.update.size; _i++) {
 				_.update.methods[_i]();	
@@ -374,12 +385,13 @@ function Ui(_config) constructor {
 		
 		return self;
 	};
-	static draw = function() {
+	static draw		  = function() {
 		/// @func	draw()
 		/// @desc	tick update for the component class rendering. call this in a draw 
 		///			event, or wherever the code for this component class should be rendered.
 		/// @return	{Ui} self
 		///
+		if (!active) exit;
 		if (visible && _.render.active) {
 			for (var _i = 0; _i < _.render.size; _i++) {
 				_.render.methods[_i]();	
@@ -387,7 +399,7 @@ function Ui(_config) constructor {
 		}
 		return self;
 	};	
-	static show	= function() {
+	static show		  = function() {
 		/// @func	show()
 		/// @desc	toggle the visibility of component to visible
 		/// @return {Ui} self
@@ -395,12 +407,28 @@ function Ui(_config) constructor {
 		set_visible(true);
 		return self;
 	};
-	static hide	= function() {
+	static hide		  = function() {
 		/// @func	hide()
 		/// @desc	toggle the visibility of component to hidden
 		/// @return {Ui} self
 		///
 		set_visible(false);
+		return self;
+	};
+	static activate   = function() {
+		/// @func	activate()
+		/// @desc	set active to true
+		/// @return {Ui} self
+		///
+		set_active(true);
+		return self;
+	};
+	static deactivate = function() {
+		/// @func	deactivate()
+		/// @desc	set active to false
+		/// @return {Ui} self
+		///
+		set_active(false);
 		return self;
 	};
 	
@@ -412,6 +440,12 @@ function Ui(_config) constructor {
 		/// @return {instance/struct} owner
 		///
 		return owner;
+	};
+	static get_active			= function() {
+		/// @func	get_active()
+		/// @return {instance/struct} owner
+		///
+		return active;
 	};
 	static get_x				= function() {
 		/// @func	get_x()
@@ -638,6 +672,14 @@ function Ui(_config) constructor {
 		/// @return {Ui} self
 		///
 		owner = _owner;
+		return self;
+	};
+	static set_active				  = function(_active) {
+		/// @func	set_active(active)
+		/// @param	{boolean} active
+		/// @return {Ui} self
+		///
+		active = _active;
 		return self;
 	};
 	static set_x					  = function(_x) {
@@ -1405,6 +1447,9 @@ function Ui(_config) constructor {
 		return self;
 	};
 		
+	#endregion
+	#region Configs
+	
 	#endregion
 	#region Interactions
 	
