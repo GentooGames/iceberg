@@ -30,8 +30,9 @@
 			x.	fixed bug where state_execute_on_enter was executing on_exit, and state_execute_on_exit was executing on_enter
 		
 		Feature Additions:
-			x.	added custom configs, with possible state binding for auto-assignment
 			x.	added "active" flag for entire component
+			x.	added custom configurations
+			x.	state machine will now check for configs with matching names
 		
 		QOL:
 			x.	added method descriptions for Ui() base component class
@@ -100,10 +101,10 @@
 #endregion
 #region upcoming features ///////////
 /*
-	- config state binding
 	- NORMALIZE PIN, STATE, CONFIG SPECIFIC GETTERS AND MOVE INTO PROPER REGIONS
 		- normalize method naming convention so that: 
 			- state_enter_get() config_start_get() match up, etc
+	- localize every global macro value into the ui component itself so that each component can have different behavior if desired
 	- figure out what to do with owner property and decide if needs to be in configs or not
 	- test overridden methods, such as panel.get_width() and make sure that automatic property updating is taking into account these new methods
 	- be able to add custom events with custom triggers. do not be restricted to just one set of predefined events
@@ -210,6 +211,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			__states:   {}, 
 			__on_enter: {},
 			__on_exit:  {},
+			__configs:	{},
 		};
 		__pin    = {
 			__pins:	[],
@@ -909,7 +911,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	
 	#endregion
-	#region Actions //////////////////////// 
+	#region Actions ////////////////////////
 	
 	/// Update
 	static update_add_action = function(_update_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
@@ -1398,12 +1400,13 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __this.__state.__name;
 	};
-	static state_set_current			= function(_state_name, _state_method, _check_for_config) {
-		/// @func	state_set_current(state_name, state_method, check_for_config?)	
+	static state_set_current			= function(_state_name, _state_method, _config_override = undefined, _check_for_config = __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG) {
+		/// @func	state_set_current(state_name, state_method, config_override*, check_for_config?*)	
 		/// @desc	set the current state method to that of the passed state_name's method
 		/// @param	{string}  state_name
 		/// @param	{method}  state_method
-		/// @param	{boolean} check_for_config
+		/// @param	{string}  config_override=undefined
+		/// @param	{boolean} check_for_config?=__UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG
 		/// @return	{Ui}	  self
 		///
 		if (state_execute_on_exit) {
@@ -1417,10 +1420,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			state_execute_state_on_enter(_state_name);
 		}
 		
-		/// Check For A Config With A Matching Name
-		if (_check_for_config && config_exists(_state_name)) {
-			config_change(_state_name);	
-		}
+		__state_sync_config(_state_name, _config_override, _check_for_config);
+		
 		return self;
 	};
 	static state_exists					= function(_state_name) {
@@ -1431,15 +1432,24 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return variable_struct_exists(__this.__state.__states, _state_name);
 	};
-	static state_change					= function(_state_name, _check_for_config = __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG) {
-		/// @func	state_change(state_name, check_for_config?*)
+	static state_change					= function(_state_name) {
+		/// @func	state_change(state_name)
+		/// @desc	do state transition if a state exists with the given name.
+		/// @param	{string} state_name
+		/// @return {Ui}	 self
+		///
+		return state_change_ext(_state_name);
+	};
+	static state_change_ext				= function(_state_name, _config_override = undefined, _check_for_config = __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG) {
+		/// @func	state_change_ext(state_name, config_override*, check_for_config?*)
 		/// @desc	do state transition if a state exists with the given name.
 		/// @param	{string}  state_name
-		/// @param	{boolean} check_for_config=true
+		/// @param	{string}  config_override=undefined
+		/// @param	{boolean} check_for_config=__UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG
 		/// @return {Ui}	  self
 		///
 		if (state_exists(_state_name)) {
-			state_set_current(_state_name, state_get(_state_name), _check_for_config);
+			state_set_current(_state_name, state_get(_state_name), _config_override, _check_for_config);
 		}
 		return self;
 	};
@@ -1485,6 +1495,51 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
+	static state_bind_config			= function(_state_name, _config_name) {
+		/// @func	state_bind_config(state_name, config_name)
+		/// @desc	establish a relationship between a state and a config, so that the config is
+		///			automatically applied upon state transition.
+		/// @param	{string} state_name
+		/// @param	{string} config_name
+		/// @return {Ui} self
+		///
+		if (state_exists(_state_name)) {
+			__this.__state.__configs[$ _state_name] = _config_name;	
+		}
+		return self;
+	};
+	
+	static __state_sync_config			= function(_state_name, _config_override, _check_for_config) {
+		/// @func	__state_sync_config(state_name, config_override, check_for_config) 
+		/// @param	{string}  state_name
+		/// @param	{string}  config_overide
+		/// @param	{boolean} check_for_config?
+		/// @return NA
+		///
+		var _config = undefined;
+		
+		/// Check For Config Override
+		if (_config_override != undefined && config_exists(_config_override)) {
+			_config = _config_override;
+		}
+		/// Check For Config Binding
+		if (_config == undefined) {
+			var _config_bind  = __this.__state.__configs[$ _state_name];
+			if (_config_bind != undefined && config_exists(_config_bind)) {
+				_config = _config_bind;
+			}
+		}
+		/// Check For Config w/Same State Name
+		if (_config == undefined && _check_for_config) {
+			if (config_exists(_state_name)) {
+				_config = _state_name;	
+			}
+		}
+		/// Assign Config If Set
+		if (_config != undefined) {
+			config_change(_config);	
+		}
+	};
 	
 	#endregion
 	#region Pins ///////////////////////////
@@ -1519,8 +1574,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region Configs ////////////////////////
 	
-	static config_set				 = function(_config_name, _config_struct) {
-		/// @func	config_set(config_name, config)
+	static config_add				 = function(_config_name, _config_struct) {
+		/// @func	config_add(config_name, config)
 		/// @param	{string} config_name
 		/// @param	{struct} config_struct
 		/// @return {Ui} self
@@ -1688,7 +1743,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {struct} config_default_struct
 		///
 		var _config_default = __this.__config.__default;
-		config_set(config_default_get_name(), _config_default);
+		config_add(config_default_get_name(), _config_default);
 		return _config_default;
 	};
 	static __config_init_start		 = function(_config_start_name, _config_start_struct) {
@@ -1698,7 +1753,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {struct} config_start_struct
 		///
 		__this.__config.__name_start = _config_start_name;
-		config_set(_config_start_name, _config_start_struct);
+		config_add(_config_start_name, _config_start_struct);
 		return _config_start_struct;
 	};
 	static __config_init_complete	 = function(_config_default_struct, _config_start_name, _config_start_struct) {

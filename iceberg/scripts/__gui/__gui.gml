@@ -61,17 +61,22 @@ global._gui = {
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
-		.config_set("state_2", {
+		.config_add("state_2", {
 			text: "text for config 2",	
 			x: SURF_W * 0.1,
 			y: SURF_H * 0.2,
 		})
-		.config_set("state_3", {
+		.config_add("state_3", {
 			text: "text for config 3",	
+		})
+		.config_add("config_4", {
+			text: "text for config 4",
+			color: c_red,
 		})
 		.state_add("state_start", function() {})
 		.state_add("state_2",	  function() {})
 		.state_add("state_3",	  function() {})
+		//.state_bind_config("state_3", "config_4")
 		
     },    
 	update:	function() {
