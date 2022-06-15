@@ -65,7 +65,6 @@ global._gui = {
 			text: "text for config 2",	
 			x: SURF_W * 0.1,
 			y: SURF_H * 0.2,
-			alpha: 0.1,
 		})
 		.config_set("config_3", {
 			text: "text for config 3",	
@@ -78,6 +77,7 @@ global._gui = {
         /// @return NA
         ///
         if (!initialized) exit;
+		
 		#region Border /////////
 		
 		var _spring_speed = -15;

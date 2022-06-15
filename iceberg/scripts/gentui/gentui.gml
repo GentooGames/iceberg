@@ -324,16 +324,24 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return	{Ui} self
 		///
 		if (!active) exit;
+		
+		#region Update Stack ///////
+		
 		if (__this.__update.__active) {
 			for (var _i = 0; _i < __this.__update.__size; _i++) {
 				__this.__update.__methods[_i]();	
 			}
 		}
+			
+		#endregion
+		#region State Machine //////
+		
 		if (__this.__state.__active) {
 			state_execute();
 		};
-			
-		#region Check For Event Triggers
+		
+		#endregion
+		#region Event Triggers /////
 		
 		var _self = self;
 		with (__this.__events) {
@@ -422,11 +430,17 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return	{Ui} self
 		///
 		if (!active) exit;
+		
+		#region Render Stack ///////
+		
 		if (__visible && __this.__render.__active) {
 			for (var _i = 0; _i < __this.__render.__size; _i++) {
 				__this.__render.__methods[_i]();	
 			}
 		}
+			
+		#endregion
+		
 		return self;
 	};	
 	static show		  = function() {
@@ -1612,22 +1626,21 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		__config_init_start(_config_start_name, _config_struct);
 		__config_init_complete(_config_default, _config_start_name, _config_struct);
 	};
-	static config_add_property		 = function(_config = undefined, _property_name, _default_value, _add_to_start_config = true) {
-		/// @func	config_add_property(config*, property_name, default_value, add_to_start_config?*)
-		/// @param	{struct}  config=undefined
+	static config_add_property		 = function(_config_in, _property_name, _default_value, _add_to_start_config = true) {
+		/// @func	config_add_property(config_in, property_name, default_value, add_to_start_config?*)
+		/// @param	{struct}  config_in
 		/// @param	{string}  property_name
 		/// @param	{any}	  default_value
 		/// @param	{boolean} add_to_start_config=true
 		/// @return {any}	  value
 		///
-		var _value   = _default_value;
-		if (_config !=  undefined) {
-			_value   = _config[$ _property_name] ?? _default_value;
+		var _value = _default_value;
+		if (_config_in !=  undefined) {
+			_value = _config_in[$ _property_name] ?? _default_value;
 		}
 		if (_add_to_start_config) {
 			config_start_get()[$ _property_name] = _value;
 		}
-		
 		/// Store Property Into Struct For Dynamic Updating
 		__this.__config.__properties[$ _property_name] = {
 			getter: variable_struct_get(self, "get_" + _property_name),	
@@ -1641,28 +1654,14 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{struct} config=config_get_current()
 		/// @return {Ui} self
 		///
-		if (_config[$ "owner"				  ] != undefined) set_owner(_config.owner);
-		if (_config[$ "active"				  ] != undefined) set_active(_config.active);
-		if (_config[$ "x"					  ] != undefined) set_x(_config.x);
-		if (_config[$ "y"					  ] != undefined) set_y(_config.y);
-		if (_config[$ "color"				  ] != undefined) set_color(_config.color);
-		if (_config[$ "alpha"				  ] != undefined) set_alpha(_config.alpha);
-		if (_config[$ "angle"				  ] != undefined) set_angle(_config.angle);
-		if (_config[$ "scale"				  ] != undefined) set_scale(_config.scale);
-		if (_config[$ "xscale"				  ] != undefined) set_xscale(_config.xscale);
-		if (_config[$ "yscale"				  ] != undefined) set_yscale(_config.yscale);
-		if (_config[$ "width"				  ] != undefined) set_width(_config.width);
-		if (_config[$ "height"				  ] != undefined) set_height(_config.height);
-		if (_config[$ "visible"				  ] != undefined) set_visible(_config.visible);
-		if (_config[$ "thickness"			  ] != undefined) set_thickness(_config.thickness);
-		if (_config[$ "input_device"		  ] != undefined) set_input_device(_config.input_device);
-		if (_config[$ "use_gui_space"		  ] != undefined) set_use_gui_space(_config.use_gui_space);
-		if (_config[$ "state_execute_on_enter"] != undefined) set_state_execute_on_enter(_config.state_execute_on_enter);
-		if (_config[$ "state_execute_on_exit" ] != undefined) set_state_execute_on_exit(_config.state_execute_on_exit);
-		if (_config[$ "pin_propagate_pos"	  ] != undefined) set_pin_propagate_pos(_config.pin_propagate_pos);
-		if (_config[$ "pin_propagate_scale"	  ] != undefined) set_pin_propagate_scale(_config.pin_propagate_scale);
-		if (_config[$ "pin_propagate_alpha"	  ] != undefined) set_pin_propagate_alpha(_config.pin_propagate_alpha);
-		
+		var _property_names = variable_struct_get_names(_config); 
+		for (var _i = 0, _len = array_length(_property_names); _i < _len; _i++) {
+			var _property_name    = _property_names[_i];
+			var _property_setter  = __this.__config.__properties[$ _property_name].setter;
+			if (_property_setter != undefined) {
+				_property_setter(_config[$ _property_name]);
+			}
+		}	
 		return self;
 	};
 	
@@ -1847,24 +1846,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	line_space = config_add_property(_config, "line_space", __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE);
 	halign	   = config_add_property(_config, "halign",		__UI_COMPONENT_DEFAULT_LABEL_HALIGN);
 	valign	   = config_add_property(_config, "valign",		__UI_COMPONENT_DEFAULT_LABEL_VALIGN);
-	
-	static config_update_properties_super = config_update_properties;
-	static config_update_properties		  = function(_config) {		/// @OVERRIDE
-		/// @func	config_update_properties(config)
-		/// @desc	assign the values of the given config_struct to self ui component.
-		/// @param	{struct} config
-		/// @return {Ui} self
-		///
-		config_update_properties_super(_config);
 		
-		if (_config[$ "text"	  ] != undefined) set_text(_config.text);
-		if (_config[$ "wrap_apply"] != undefined) set_wrap_apply(_config.wrap_apply);
-		if (_config[$ "wrap_width"] != undefined) set_wrap_width(_config.wrap_width);
-		if (_config[$ "line_space"] != undefined) set_line_space(_config.line_space);
-		if (_config[$ "halign"	  ] != undefined) set_halign(_config.halign);
-		if (_config[$ "valign"	  ] != undefined) set_valign(_config.valign);
-	};
-	
 	#endregion
 	#region Core ///////////////////
 	
