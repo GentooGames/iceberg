@@ -91,7 +91,7 @@
 #endregion
 #region upcoming features ///////////
 /*
-	- encapsulate property assignments to method calls so that we do not need to override config_update_properties()
+	- test overridden methods, such as panel.get_width() and make sure that automatic property updating is taking into account these new methods
 	- NORMALIZE PIN, STATE, CONFIG SPECIFIC GETTERS AND MOVE INTO PROPER REGIONS
 		- normalize method naming convention so that: 
 			- state_enter_get() config_start_get() match up, etc
@@ -312,7 +312,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			__name_default	= __UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT;
 		};
 	};	
-	config_init(_config_name, _config);
+	__config_init(_config_name, _config);
 		
 	#endregion
 	#region Core ///////////////////////////
@@ -1541,7 +1541,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		__this.__config.__name	  = _config_name;
 		__this.__config.__current = _config_struct;
-		config_update_properties(_config_struct);
+		properties_update(_config_struct);
 		return self;
 	};
 	static config_exists			 = function(_config_name) {
@@ -1600,7 +1600,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {Ui} self
 		///
 		if (_restore_all_properties) {
-			config_update_properties(config_default_get());	// wipe all values to default first
+			properties_update(config_default_get());	// wipe all values to default first
 		}
 		return config_change(config_start_get_name());
 	};
@@ -1611,23 +1611,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		return config_change(config_default_get_name());
 	};
 	
-	static config_init				 = function(_config_start_name, _config_struct) {
-		/// @func	config_init(config_start_name, config_struct*)
-		/// @param	{string} config_start_name
-		/// @param	{struct} config_struct=config_default_get()
-		///	@return NA
-		///
-		var _config_default = __config_init_default();
-		
-		/// If Not Config Struct Was Passed, Use Default Config
-		if (_config_struct == undefined || _config_struct == {}) {
-			_config_struct  = _config_default;
-		}
-		__config_init_start(_config_start_name, _config_struct);
-		__config_init_complete(_config_default, _config_start_name, _config_struct);
-	};
-	static config_add_property		 = function(_config_in, _property_name, _default_value, _add_to_start_config = true) {
-		/// @func	config_add_property(config_in, property_name, default_value, add_to_start_config?*)
+	static property_add				 = function(_config_in, _property_name, _default_value, _add_to_start_config = true) {
+		/// @func	property_add(config_in, property_name, default_value, add_to_start_config?*)
 		/// @param	{struct}  config_in
 		/// @param	{string}  property_name
 		/// @param	{any}	  default_value
@@ -1648,8 +1633,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		};
 		return _value;
 	};
-	static config_update_properties	 = function(_config = config_get_current()) {	/// @OVERRIDE
-		/// @func	config_update_properties(config*)
+	static properties_update		 = function(_config = config_get_current()) {	/// @OVERRIDE
+		/// @func	properties_update(config*)
 		/// @desc	assign the values of the given config_struct to self ui component.
 		/// @param	{struct} config=config_get_current()
 		/// @return {Ui} self
@@ -1665,6 +1650,21 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		return self;
 	};
 	
+	static __config_init			 = function(_config_start_name, _config_struct) {
+		/// @func	__config_init(config_start_name, config_struct*)
+		/// @param	{string} config_start_name
+		/// @param	{struct} config_struct=config_default_get()
+		///	@return NA
+		///
+		var _config_default = __config_init_default();
+		
+		/// If Not Config Struct Was Passed, Use Default Config
+		if (_config_struct == undefined || _config_struct == {}) {
+			_config_struct  = _config_default;
+		}
+		__config_init_start(_config_start_name, _config_struct);
+		__config_init_complete(_config_default, _config_start_name, _config_struct);
+	};
 	static __config_init_default	 = function() {
 		/// @func	__config_init_default()
 		/// @return {struct} config_default_struct
@@ -1694,7 +1694,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		__config_stash_properties(_config_start_struct);
 		
 		/// Invoke Default So That All Properties Are At Least Set Once
-		config_update_properties(_config_default_struct);
+		properties_update(_config_default_struct);
 		config_set_current(_config_start_name, _config_start_struct);	/// <-- will automatically update properties to start_struct
 	};
 	static __config_stash_properties = function(_config_struct) {
@@ -1706,7 +1706,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		for (var _i = 0, _len = array_length(_property_names); _i < _len; _i++) {
 			var _property_name  = _property_names[_i];
 			var _property_value = _config_struct[$ _property_name]
-			config_add_property(_config_struct, _property_name, _property_value, false);
+			property_add(_config_struct, _property_name, _property_value, false);
 		}
 	};
 	
@@ -1755,11 +1755,8 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
-	#region Properties /////////////
+	outline = property_add(_config, "outline", __UI_COMPONENT_DEFAULT_OUTLINE);
 	
-	outline = _config[$ "outline"] ?? __UI_COMPONENT_DEFAULT_OUTLINE;
-	
-	#endregion
 	#region Core ///////////////////
 	
 	static render = function() {
@@ -1807,15 +1804,12 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	#endregion
 	#region Getters & Setters //////
 	
-	/// Getters
 	static get_outline = function() {
 		/// @func	get_outline()
 		/// @return {real} outline
 		///
 		return outline;
 	};
-		
-	/// Setters
 	static set_outline = function(_outline) {
 		/// @func	set_outline(outline)
 		/// @param	{real} outline
@@ -1838,16 +1832,13 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	/// @param {constant} halign*
 	/// @param {constant} valign*
 	///
-	#region Properties /////////////
-	
-	text	   = config_add_property(_config, "text",		__UI_COMPONENT_DEFAULT_LABEL_TEXT);
-	wrap_apply = config_add_property(_config, "wrap_apply", __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY);
-	wrap_width = config_add_property(_config, "wrap_width", __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH);
-	line_space = config_add_property(_config, "line_space", __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE);
-	halign	   = config_add_property(_config, "halign",		__UI_COMPONENT_DEFAULT_LABEL_HALIGN);
-	valign	   = config_add_property(_config, "valign",		__UI_COMPONENT_DEFAULT_LABEL_VALIGN);
+	text	   = property_add(_config, "text",		 __UI_COMPONENT_DEFAULT_LABEL_TEXT);
+	wrap_apply = property_add(_config, "wrap_apply", __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY);
+	wrap_width = property_add(_config, "wrap_width", __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH);
+	line_space = property_add(_config, "line_space", __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE);
+	halign	   = property_add(_config, "halign",	 __UI_COMPONENT_DEFAULT_LABEL_HALIGN);
+	valign	   = property_add(_config, "valign",	 __UI_COMPONENT_DEFAULT_LABEL_VALIGN);
 		
-	#endregion
 	#region Core ///////////////////
 	
 	static render = function() {
