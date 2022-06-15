@@ -1378,6 +1378,19 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
+	static state_add_config				= function(_state_name, _config_name) {
+		/// @func	state_add_config(state_name, config_name)
+		/// @desc	establish a relationship between a state and a config, so that the config is
+		///			automatically updated and applied upon state transition.
+		/// @param	{string} state_name
+		/// @param	{string} config_name
+		/// @return {Ui} self
+		///
+		if (state_exists(_state_name)) {
+			__this.__state.__configs[$ _state_name] = _config_name;	
+		}
+		return self;
+	};
 	static state_get					= function(_state_name) {
 		/// @func	state_get(state_name)
 		/// @desc	return the method associated to the given state name that would be executed during a state update.
@@ -1492,19 +1505,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		if (variable_struct_exists(__this.__state.__on_exit, _state_name)) {
 			__this.__state.__on_exit[$ _state_name]();	
-		}
-		return self;
-	};
-	static state_bind_config			= function(_state_name, _config_name) {
-		/// @func	state_bind_config(state_name, config_name)
-		/// @desc	establish a relationship between a state and a config, so that the config is
-		///			automatically applied upon state transition.
-		/// @param	{string} state_name
-		/// @param	{string} config_name
-		/// @return {Ui} self
-		///
-		if (state_exists(_state_name)) {
-			__this.__state.__configs[$ _state_name] = _config_name;	
 		}
 		return self;
 	};
@@ -1643,6 +1643,24 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return _config_name == config_get_current_name();
 	};
+	static config_apply_state		 = function (_state_name, _check_for_state_config = __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG) {
+		/// @func	config_apply_state(state_name, check_for_state_config?*)
+		/// @param	{string}  state_name
+		/// @param	{boolean} check_for_state_config?=__UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG
+		/// @return {Ui} self
+		///
+		/// Check For State Bound Config First
+		var _config_name = __this.__state.__configs[$ _state_name];
+		if (config_exists(_config_name)) {
+			config_change(_config_name);
+			return self;
+		}
+		/// Check For Matching State Config
+		if (_check_for_state_config && config_exists(_state_name)) {
+			config_change(_state_name);	
+		}
+		return self;
+	};
 	static config_start_get			 = function() {
 		/// @func	config_start_get()
 		/// @return {struct} config_start
@@ -1706,7 +1724,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		};
 		return _value;
 	};
-	static properties_update		 = function(_config = config_get_current()) {	/// @OVERRIDE
+	static properties_update		 = function(_config = config_get_current()) {
 		/// @func	properties_update(config*)
 		/// @desc	assign the values of the given config_struct to self ui component.
 		/// @param	{struct} config=config_get_current()

@@ -76,7 +76,7 @@ global._gui = {
 		.state_add("state_start", function() {})
 		.state_add("state_2",	  function() {})
 		.state_add("state_3",	  function() {})
-		//.state_bind_config("state_3", "config_4")
+		//.state_add_config("state_3", "config_4")
 		
     },    
 	update:	function() {
