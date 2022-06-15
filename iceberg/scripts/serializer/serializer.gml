@@ -2,8 +2,8 @@
 // .---. r---. .   . .---. .---. .---. //
 // |  -. r--   | \ |   |   |   | |   | //
 // L---J L---J |   V   |   L---J L---J //
-//////////////////////////////////$(*)>//
-
+//////////////////////////////////$(º)>//
+#region docs, info & configs ////////////
 /*
 	- handle on_serialize()/on_deserialize() callbacks
 	- replace typeof(var) with custom type checker so that we can utilize customly created Translator classes
@@ -14,6 +14,7 @@
 			and infer the serialization technique. if no type is declared, then type inference can act as the backup solution.
 			- if this is the case, use this method to standardize implementation with all other existing data types
 */
+#endregion
 
 function Serializer(_owner = other, _vars) constructor {	
 	/// @func  Serializer(owner*, vars)

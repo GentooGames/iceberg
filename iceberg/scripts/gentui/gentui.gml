@@ -1,10 +1,12 @@
-//// NORMALIZE PIN, STATE, CONFIG SPECIFIC GETTERS AND MOVE INTO PROPER REGIONS
+//	- encapsulate property assignments to method calls so that we do not need to override config_update_properties()
+//	- NORMALIZE PIN, STATE, CONFIG SPECIFIC GETTERS AND MOVE INTO PROPER REGIONS
 
 /////////////////////////////////////
 // .---. r---. .   . .---. .   . . //
 // |  -. r--   | \ |   |   |   | | //
 // L---J L---J |   V   |   L---J | //
-#region //////////////////////$(*)>//
+//////////////////////////////$(º)>//
+#region docs, info & configs ////////
 
 #region about ///////////////////////
 /*
@@ -16,6 +18,14 @@
 
 #region version 0.2.x
 
+#region version 0.2.x
+/*
+	Date: xx/xx/2022
+		Feature Additions:
+			x.	NEW COMPONENT: added UiCircle() implementing draw_circle_curve() functionality
+			x.	NEW COMPONENT: added UiTextbox() 
+*/
+#endregion
 #region version 0.2.0
 /*
 	Date: 06/14/2022
@@ -23,10 +33,8 @@
 			x.	fixed bug where state_execute_on_enter was executing on_exit, and state_execute_on_exit was executing on_enter
 		
 		Feature Additions:
-			x.	added "active" flag for entire component
 			x.	added custom configs, with possible state binding for auto-assignment
-			x.	NEW COMPONENT: added UiCircle() implementing draw_circle_curve() functionality
-			x.	NEW COMPONENT: added UiTextbox() 
+			x.	added "active" flag for entire component
 		
 		QOL:
 			x.	added method descriptions for Ui() base component class
@@ -86,8 +94,6 @@
 #endregion
 #region upcoming features ///////////
 /*
-	- add active flag toggling
-	- add custom configurations, so that we can point the component to a config, and it will "snap" values to that
 	- be able to add custom events with custom triggers. do not be restricted to just one set of predefined events
 	- ability to have parent components implement child components' update() and render() methods automatically
 		- additionally, setup corresponding depth system for custom depth sorting if automatic updates and renders are used
@@ -120,7 +126,7 @@
 #macro __UI_COMPONENT_DEFAULT_INPUT_DEVICE					0
 #macro __UI_COMPONENT_DEFAULT_USE_GUI_SPACE					false
 #macro __UI_COMPONENT_DEFAULT_LABEL_TEXT					""
-#macro __UI_COMPONENT_DEFAULT_LABEL_WRAP					false
+#macro __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY				false
 #macro __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH			   -1
 #macro __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE			   -1
 #macro __UI_COMPONENT_DEFAULT_LABEL_HALIGN					fa_left
@@ -133,10 +139,12 @@
 #macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD	true
 #macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD	false
 #macro __UI_COMPONENT_DEFAULT_CONFIG_NAME_START				"__start__"
+#macro __UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT			"__default__"
 
 #endregion
 
 #endregion
+
 function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) constructor {
 	/// @func  Ui(owner*, config_name*, config*)
 	/// @desc  this is the base ui component, containing all core features and functionality that is inherited and implemented
@@ -168,7 +176,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	/// @param {bool}  propagate_scale*
 	/// @param {bool}  propagate_alpha*
 	///
-	#region Properties 
+	#region Properties /////////////////////
 	
 	owner = _owner;
 	_	  =  {
@@ -278,10 +286,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			name_start: __UI_COMPONENT_DEFAULT_CONFIG_NAME_START,
 		},
 	};	
-	config_assign_start(_config_name, _config);
+	config_init_start(_config_name, _config);
 		
 	#endregion
-	#region Core 
+	#region Core ///////////////////////////
 	
 	static update	  = function() {
 		/// @func	update()
@@ -429,7 +437,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	#endregion
-	#region Getters
+	#region Getters & Setters //////////////
+	
+	#region Getters //////////////////////// 
 	
 	static get_owner			   = function() {
 		/// @func	get_owner()
@@ -638,7 +648,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 		
 	#endregion
-	#region Setters
+	#region Setters ////////////////////////
 		
 	static set_properties			  = function(_properties_struct) {
 		/// @func	set_properties(properties_struct)
@@ -845,7 +855,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 			
 	#endregion
-	#region Actions
+	
+	#endregion
+	
+	#region Actions //////////////////////// 
 	
 	/// Update
 	static update_add_action = function(_update_action, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
@@ -1262,7 +1275,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	#endregion
-	#region State Machine
+	#region State Machine //////////////////
 	
 	static state_add			  = function(_state_name, _state_method, _auto_bind = __UI_DEFAULT_AUTO_BIND_METHODS) {
 		/// @func	state_add(state_name, state_method, auto_bind?*)
@@ -1416,7 +1429,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	#endregion
-	#region Pins
+	#region Pins ///////////////////////////
 	
 	static pin_components = function() {
 		/// @func	pin_components(component1, ..., componentN)	
@@ -1446,9 +1459,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 		
 	#endregion
-	#region Configs
+	#region Configs ////////////////////////
 	
-	static config_add				= function(_config_name, _config_struct) {
+	static config_add				 = function(_config_name, _config_struct) {
 		/// @func	config_add(config_name, config)
 		/// @param	{string} config_name
 		/// @param	{struct} config_struct
@@ -1459,7 +1472,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static config_get				= function(_config_name) {
+	static config_get				 = function(_config_name) {
 		/// @func	config_get(config_name)
 		/// @desc	return the config associated to the given config_name
 		/// @param	{string} config_name
@@ -1467,21 +1480,21 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return _.config.configs[$ _config_name];
 	};
-	static config_get_current		= function() {
+	static config_get_current		 = function() {
 		/// @func	config_get_current()
 		/// @desc	get the currently assigned config
 		/// @return {struct} config
 		///
 		return _.config.current;
 	};
-	static config_get_current_name	= function() {
+	static config_get_current_name	 = function() {
 		/// @func	config_get_current_name()
 		/// @desc	get the name of the currently assigned config
 		/// @return {string} name
 		///
 		return _.config.name;
 	};
-	static config_set_current		= function(_config_name, _config_struct) {
+	static config_set_current		 = function(_config_name, _config_struct) {
 		/// @func	config_set_current(config_name, config_struct)	
 		/// @desc	set the current configuration and update values
 		/// @param	{string} config_name
@@ -1493,14 +1506,14 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		config_update_properties(_config_struct);
 		return self;
 	};
-	static config_exists			= function(_config_name) {
+	static config_exists			 = function(_config_name) {
 		/// @func	config_exists(config_name) 
 		/// @param	{string}  config_name
 		/// @return {boolean} config_exists?
 		///
 		return variable_struct_exists(_.config.configs, _config_name);
 	};
-	static config_change			= function(_config_name) {
+	static config_change			 = function(_config_name) {
 		/// @func	config_change(config_name)
 		/// @desc	do config transition
 		/// @param	{string} config_name
@@ -1511,7 +1524,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static config_is				= function(_config_name) {
+	static config_is				 = function(_config_name) {
 		/// @func	config_is(state_name)
 		/// @desc	check if the current config_is the same as that of the passed in config_name
 		/// @param	{string}  config_name
@@ -1519,64 +1532,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return _config_name == config_get_current_name();
 	};
-	
-	static config_assign_start		= function(_config_name, _config_struct) {
-		/// @func	config_assing_start(config_name, config_struct*)
-		/// @param	{string} config_name
-		/// @param	{struct} config_struct=config_get_default()
-		///	@return NA
-		///
-		if (_config_struct == undefined || _config_struct == {}) {
-			_config_struct  = config_get_default();	
-		}
-		else {
-			config_update_properties(config_get_default());	
-		}
-		_.config.name_start = _config_name;
-		config_add(_config_name, _config_struct);
-		config_set_current(_config_name, _config_struct);
-	};
-	static config_restore_to_start	= function() {
-		/// @func	config_restore_to_start()
-		/// @return {Ui} self
-		///
-		return config_change(config_get_start());
-	};
-	static config_get_start			= function() {
-		/// @func	config_get_start()
-		/// @return {struct} config_start
-		///
-		return config_get(_.config.name_start);
-	};
-	static config_get_default		= function() {
-		///	@func	config_get_default()
-		/// @return {struct} config_default
-		/// 
-		var _return_data = {}; with (_return_data) {
-			active					= __UI_COMPONENT_DEFAULT_ACTIVE;
-			x						= __UI_COMPONENT_DEFAULT_X;
-			y						= __UI_COMPONENT_DEFAULT_Y;
-			color					= __UI_COMPONENT_DEFAULT_COLOR;
-			alpha					= __UI_COMPONENT_DEFAULT_ALPHA;
-			angle					= __UI_COMPONENT_DEFAULT_ANGLE;
-			scale					= __UI_COMPONENT_DEFAULT_SCALE;
-			xscale					= __UI_COMPONENT_DEFAULT_XSCALE;
-			yscale					= __UI_COMPONENT_DEFAULT_YSCALE;
-			width					= __UI_COMPONENT_DEFAULT_WIDTH  * scale;
-			height					= __UI_COMPONENT_DEFAULT_HEIGHT * scale;
-			visible					= __UI_COMPONENT_DEFAULT_VISIBLE;
-			thickness				= __UI_COMPONENT_DEFAULT_THICKNESS;
-			input_device			= __UI_COMPONENT_DEFAULT_INPUT_DEVICE;
-			use_gui_space			= __UI_COMPONENT_DEFAULT_USE_GUI_SPACE;
-			execute_state_on_enter	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER;
-			execute_state_on_exit	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT;
-			pin_propagate_pos		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_POS_TO_CHILD;
-			pin_propagate_scale		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD;
-			pin_propagate_alpha		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD;	
-		};
-		return _return_data;
-	};
-	static config_update_properties	= function(_config = config_get_current()) {	/// @OVERRIDE
+	static config_update_properties	 = function(_config = config_get_current()) {	/// @OVERRIDE
 		/// @func	config_update_properties(config*)
 		/// @desc	assign the values of the given config_struct to self ui component.
 		/// @param	{struct} config=config_get_current()
@@ -1606,9 +1562,84 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		
 		return self;
 	};
+	static config_init_start		 = function(_config_name, _config_struct) {
+		/// @func	config_init_start(config_name, config_struct*)
+		/// @param	{string} config_name
+		/// @param	{struct} config_struct=config_get_default()
+		///	@return NA
+		///
+		/// Stash Default Config For Later Reference
+		var _config_default = config_get_default();
+		config_add(__UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT, _config_default);
+		
+		/// If Not Config Struct Was Passed, Use Default Config
+		if (_config_struct == undefined || _config_struct == {}) {
+			_config_struct  = _config_default;	
+		}
+		/// Invoke Default Config First Just So That All Default Properties Are Guaranteed To Be Set At Least Once
+		else {
+			config_update_properties(_config_default);	
+		}
+		_.config.name_start = _config_name;
+		config_add(_config_name, _config_struct);
+		config_set_current(_config_name, _config_struct);
+	};
+	static config_add_prop_to_start  = function(_prop_name, _prop_value) {
+		///	@func	config_add_prop_to_start()
+		/// @return	{Ui} self
+		///
+		config_get_start()[$ _prop_name] = _prop_value;
+		return self;
+	};
+	static config_get_start			 = function() {
+		/// @func	config_get_start()
+		/// @return {struct} config_start
+		///
+		return config_get(_.config.name_start);
+	};
+	static config_get_default		 = function() {
+		///	@func	config_get_default()
+		/// @return {struct} config_default
+		/// 
+		var _return_data = {}; with (_return_data) {
+			active					= __UI_COMPONENT_DEFAULT_ACTIVE;
+			x						= __UI_COMPONENT_DEFAULT_X;
+			y						= __UI_COMPONENT_DEFAULT_Y;
+			color					= __UI_COMPONENT_DEFAULT_COLOR;
+			alpha					= __UI_COMPONENT_DEFAULT_ALPHA;
+			angle					= __UI_COMPONENT_DEFAULT_ANGLE;
+			scale					= __UI_COMPONENT_DEFAULT_SCALE;
+			xscale					= __UI_COMPONENT_DEFAULT_XSCALE;
+			yscale					= __UI_COMPONENT_DEFAULT_YSCALE;
+			width					= __UI_COMPONENT_DEFAULT_WIDTH  * scale;
+			height					= __UI_COMPONENT_DEFAULT_HEIGHT * scale;
+			visible					= __UI_COMPONENT_DEFAULT_VISIBLE;
+			thickness				= __UI_COMPONENT_DEFAULT_THICKNESS;
+			input_device			= __UI_COMPONENT_DEFAULT_INPUT_DEVICE;
+			use_gui_space			= __UI_COMPONENT_DEFAULT_USE_GUI_SPACE;
+			execute_state_on_enter	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER;
+			execute_state_on_exit	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT;
+			pin_propagate_pos		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_POS_TO_CHILD;
+			pin_propagate_scale		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD;
+			pin_propagate_alpha		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD;	
+		};
+		return _return_data;
+	};
+	static config_restore_to_start	 = function() {
+		/// @func	config_restore_to_start()
+		/// @return {Ui} self
+		///
+		return config_change(_.config.name_start);
+	};
+	static config_restore_to_default = function() {
+		/// @func	config_restore_to_default()
+		/// @return {Ui} self
+		///
+		return config_change(__UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT);
+	};
 	
 	#endregion
-	#region Interactions
+	#region Interactions ///////////////////
 	
 	static mouse_touching = function() {
 		/// @func	mouse_touching()
@@ -1623,7 +1654,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	#endregion
-	#region Util Functions
+	#region Util Functions /////////////////
 	
 	static __draw_rectangle_width_color = function(_x1, _y1, _x2, _y2, _width, _color) {	
 		/// @func   __draw_rectangle_width_color(x1, y1, x2, y2, width, color)
@@ -1652,12 +1683,12 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
-	#region Properties
+	#region Properties /////////////
 	
 	outline = _config[$ "outline"] ?? __UI_COMPONENT_DEFAULT_OUTLINE;
 	
 	#endregion
-	#region Core 
+	#region Core ///////////////////
 	
 	static render = function() {
 		/// @func	render()
@@ -1702,7 +1733,7 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	};
 	
 	#endregion
-	#region Getters & Setters
+	#region Getters & Setters //////
 	
 	/// Getters
 	static get_outline = function() {
@@ -1735,14 +1766,20 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	/// @param {constant} halign*
 	/// @param {constant} valign*
 	///
-	#region Properties
+	#region Properties /////////////
 	
 	text		= _config[$ "text"		] ?? __UI_COMPONENT_DEFAULT_LABEL_TEXT;
-	wrap		= _config[$ "wrap"		] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP;
+	wrap_apply	= _config[$ "wrap_apply"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY;
 	wrap_width	= _config[$ "wrap_width"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH;
 	line_space  = _config[$ "line_space"] ?? __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE;
 	halign		= _config[$ "halign"	] ?? __UI_COMPONENT_DEFAULT_LABEL_HALIGN;
 	valign		= _config[$ "valign"	] ?? __UI_COMPONENT_DEFAULT_LABEL_VALIGN;
+	config_add_prop_to_start("text",	   text);
+	config_add_prop_to_start("wrap_apply", wrap_apply);
+	config_add_prop_to_start("wrap_width", wrap_width);
+	config_add_prop_to_start("line_space", line_space);
+	config_add_prop_to_start("halign",	   halign);
+	config_add_prop_to_start("valign",	   valign);
 	
 	static config_update_properties_super = config_update_properties;
 	static config_update_properties		  = function(_config) {		/// @OVERRIDE
@@ -1762,7 +1799,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	};
 	
 	#endregion
-	#region Core
+	#region Core ///////////////////
 	
 	static render = function() {
 		/// @func	render()
@@ -1807,7 +1844,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	};
 	
 	#endregion
-	#region Getters & Setters
+	#region Getters & Setters //////
 		
 	/// Getters
 	static get_text		  = function() {
@@ -1971,7 +2008,7 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	/// @param {real} image*
 	/// @param {real} speed*
 	///
-	#region Properties
+	#region Properties /////////////
 	
 	if (!variable_struct_exists(_config, "sprite")) {
 		throw("***error in UiSprite*** sprite not defined.");	
@@ -1982,7 +2019,7 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	speed  = _config[$ "speed" ] ?? __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_SPEED;
 
 	#endregion
-	#region Core
+	#region Core ///////////////////
 	
 	static update = function() {
 		/// @func	update()
@@ -2012,7 +2049,7 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	};
 	
 	#endregion
-	#region Getters & Setters
+	#region Getters & Setters //////
 	
 	/// Getters
 	static get_sprite	= function() {
@@ -2174,7 +2211,7 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLine(config) : Ui(config)
 	///
-	#region Properties
+	#region Properties /////////////
 	
 	points   = [];
 	point    = {
@@ -2194,7 +2231,7 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	}
 	
 	#endregion
-	#region Core
+	#region Core ///////////////////
 	
 	static render	 = function() {
 		/// @func	render()
@@ -2225,7 +2262,7 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		/// @param	{real}	 y
 		/// @return {UiLine} self
 		///
-		var _point = new Ui({ // create empty object to hold coordinates
+		var _point = new Ui(,,{ // create empty object to hold coordinates
 			x: _x,
 			y: _y,
 		});
@@ -2243,7 +2280,7 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	};
 	
 	#endregion
-	#region Getters & Setters
+	#region Getters & Setters //////
 	
 	/// Getters
 	static get_width	= function() {	/// @OVERRIDE
@@ -2369,23 +2406,4 @@ function UiTextbox(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	static render = function() {};
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

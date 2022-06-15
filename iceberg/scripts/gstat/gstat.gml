@@ -2,7 +2,8 @@
 // .---. .---- .---. .---. .---. //
 // |  -. L---.   |   r---j   |   //
 // L---J ----J   |   |   |   |   //
-#region ////////////////////$(*)>//
+////////////////////////////$(º)>//
+#region docs, info & configs //////
 
 #region about
 /*
@@ -45,6 +46,7 @@ enum __STAT_MOD {
 #endregion
 
 #endregion
+
 function GStat(_value, _decay) constructor {
 	/// @func	GStat(value, decay)
 	/// @param	{real} value

@@ -2,7 +2,8 @@
 // .   . r---. r---. .---- .---. .---. .---. r---. //
 // |. .| r--   r--   L---.   |   r---j   |   r--   //
 // | V | L---J L---J ----J   |   |   |   |   L---J //
-#region //////////////////////////////////////$(*)>//
+//////////////////////////////////////////////$(º)>//
+#region docs, info & configs ////////////////////////
 
 #region about ///////////////////////////////////////
 /*
@@ -42,6 +43,7 @@
 #endregion
 
 #endregion
+
 function WeeState() constructor {
 	/// @func	WeeState() constructor
 	/// @desc	...
@@ -170,4 +172,3 @@ function WeeState() constructor {
         };
     };
 };
-

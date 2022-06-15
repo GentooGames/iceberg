@@ -2,7 +2,8 @@
 // .---. .---. .---\ .---- .---. .    .   . //
 // |   | r---J |   | r--   r---J |      V   //
 // L---J |  \  L---/ L---- |  \  L----  |   //
-#region ///////////////////////////////$(*)>//
+///////////////////////////////////////$(º)>//
+#region docs, info & configs /////////////////
 
 #region about ////////////////////////////////
 /*
@@ -71,6 +72,7 @@ enum __AR_ACTION_END {
 #endregion
 
 #endregion
+
 function Orderly()  constructor {
 	/// @func	Orderly() 
 	/// @desc	implementing the Command design pattern.
@@ -982,4 +984,3 @@ function OrderlyAction(_config) constructor {
 		);
 	};
 };
-
