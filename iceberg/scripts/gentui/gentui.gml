@@ -1,5 +1,8 @@
 //	- encapsulate property assignments to method calls so that we do not need to override config_update_properties()
 //	- NORMALIZE PIN, STATE, CONFIG SPECIFIC GETTERS AND MOVE INTO PROPER REGIONS
+//		- normalize method naming convention so that: 
+//			- state_enter_get() config_start_get() match up, etc
+//	- figure out what to do with owner property and decide if needs to be in configs or not
 
 /////////////////////////////////////
 // .---. r---. .   . .---. .   . . //
@@ -179,7 +182,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#region Properties /////////////////////
 	
 	__owner = _owner;
-	__this  =  {}; with (__this) {
+	__this  = {}; with (__this) {
 		__update = {
 			__active:  true,
 			__methods: [],
@@ -309,7 +312,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			__name_default	= __UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT;
 		};
 	};	
-	config_init_start(_config_name, _config);
+	config_start_init(_config_name, _config);
 		
 	#endregion
 	#region Core ///////////////////////////
@@ -1585,55 +1588,63 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		
 		return self;
 	};
-	static config_init_start		 = function(_config_name, _config_struct) {
-		/// @func	config_init_start(config_name, config_struct*)
-		/// @param	{string} config_name
-		/// @param	{struct} config_struct=config_get_default()
+	static config_start_set_property = function(_config = undefined, _property_name, _default_value) {
+		/// @func	config_start_set_property(config*, property_name, default_value)
+		/// @param	{struct} config=undefined
+		/// @param	{string} property_name
+		/// @param	{any}	 default_value
+		/// @return {any}	 value
+		///
+		var _value   = _default_value;
+		if (_config !=  undefined) {
+			_value   = _config[$ _property_name] ?? _default_value;
+		}
+		config_start_get()[$ _property_name] = _value;
+		return _value;
+	};
+	static config_start_init		 = function(_config_start_name, _config_struct) {
+		/// @func	config_start_init(config_start_name, config_struct*)
+		/// @param	{string} config_start_name
+		/// @param	{struct} config_struct=config_default_get()
 		///	@return NA
 		///
 		/// Stash Default Config For Later Reference
 		var _config_default = __this.__config.__default;
-		config_add(config_get_default_name(), _config_default);
+		config_add(config_default_get_name(), _config_default);
 		
 		/// If Not Config Struct Was Passed, Use Default Config
 		if (_config_struct == undefined || _config_struct == {}) {
-			_config_struct  = config_get_default();	
+			_config_struct  = config_default_get();	
 		}
+		
+		/// Set The Start Config
+		__this.__config.__name_start = _config_start_name;
+		config_add(_config_start_name, _config_struct);
+		
 		/// Invoke Default Config First Just So That All Default Properties Are Guaranteed To Be Set At Least Once
-		else {
-			config_update_properties(config_get_default());	
-		}
-		__this.__config.__name_start = _config_name;
-		config_add(_config_name, _config_struct);
-		config_set_current(_config_name, _config_struct);
+		config_update_properties(config_default_get());	
+		config_set_current(_config_start_name, _config_struct);
 	};
-	static config_add_prop_to_start  = function(_prop_name, _prop_value) {
-		///	@func	config_add_prop_to_start()
-		/// @return	{Ui} self
-		///
-		config_get_start()[$ _prop_name] = _prop_value;
-		return self;
-	};
-	static config_get_start			 = function() {
-		/// @func	config_get_start()
+	static config_start_get			 = function() {
+		/// @func	config_start_get()
 		/// @return {struct} config_start
 		///
-		return config_get(config_get_start_name());
+		return config_get(config_start_get_name());
 	};
-	static config_get_start_name	 = function() {
-		/// @func	config_get_start_name()
+	static config_start_get_name	 = function() {
+		/// @func	config_start_get_name()
 		/// @return {string} start_name
 		///
 		return __this.__config.__name_start;
 	};
-	static config_get_default		 = function() {
-		///	@func	config_get_default()
+	static config_default_get		 = function() {
+		///	@func	config_default_get()
 		/// @return {struct} config_default
 		/// 
-		return config_get(config_get_default_name());
+		return config_get(config_default_get_name());
 	};
-	static config_get_default_name	 = function() {
-		/// @func	config_get_default_name()
+	static config_default_get_name	 = function() {
+		/// @func	config_default_get_name()
 		/// @return {string} default_name
 		///
 		return __this.__config.__name_default;
@@ -1642,13 +1653,13 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	config_restore_to_start()
 		/// @return {Ui} self
 		///
-		return config_change(config_get_start_name());
+		return config_change(config_start_get_name());
 	};
 	static config_restore_to_default = function() {
 		/// @func	config_restore_to_default()
 		/// @return {Ui} self
 		///
-		return config_change(config_get_default_name());
+		return config_change(config_default_get_name());
 	};
 	
 	#endregion
@@ -1781,18 +1792,12 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	///
 	#region Properties /////////////
 	
-	text	   = _config[$ "text"	   ] ?? __UI_COMPONENT_DEFAULT_LABEL_TEXT;
-	wrap_apply = _config[$ "wrap_apply"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY;
-	wrap_width = _config[$ "wrap_width"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH;
-	line_space = _config[$ "line_space"] ?? __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE;
-	halign	   = _config[$ "halign"	   ] ?? __UI_COMPONENT_DEFAULT_LABEL_HALIGN;
-	valign	   = _config[$ "valign"	   ] ?? __UI_COMPONENT_DEFAULT_LABEL_VALIGN;
-	config_add_prop_to_start("text",	   text);
-	config_add_prop_to_start("wrap_apply", wrap_apply);
-	config_add_prop_to_start("wrap_width", wrap_width);
-	config_add_prop_to_start("line_space", line_space);
-	config_add_prop_to_start("halign",	   halign);
-	config_add_prop_to_start("valign",	   valign);
+	text	   = config_start_set_property(_config, "text",		  __UI_COMPONENT_DEFAULT_LABEL_TEXT);
+	wrap_apply = config_start_set_property(_config, "wrap_apply", __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY);
+	wrap_width = config_start_set_property(_config, "wrap_width", __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH);
+	line_space = config_start_set_property(_config, "line_space", __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE);
+	halign	   = config_start_set_property(_config, "halign",	  __UI_COMPONENT_DEFAULT_LABEL_HALIGN);
+	valign	   = config_start_set_property(_config, "valign",	  __UI_COMPONENT_DEFAULT_LABEL_VALIGN);
 	
 	static config_update_properties_super = config_update_properties;
 	static config_update_properties		  = function(_config) {		/// @OVERRIDE
@@ -1804,7 +1809,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		config_update_properties_super();
 		
 		if (_config[$ "text"	  ] != undefined) set_text(_config.text);
-		if (_config[$ "wrap"	  ] != undefined) set_wrap(_config.wrap);
+		if (_config[$ "wrap_apply"] != undefined) set_wrap_apply(_config.wrap_apply);
 		if (_config[$ "wrap_width"] != undefined) set_wrap_width(_config.wrap_width);
 		if (_config[$ "line_space"] != undefined) set_line_space(_config.line_space);
 		if (_config[$ "halign"	  ] != undefined) set_halign(_config.halign);
@@ -1818,6 +1823,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		/// @func	render()
 		/// @return {UiLabel} self
 		///
+		log("visible: {0}", get_visible());
 		if (has_text()) {
 			draw_set_halign(halign);
 			draw_set_valign(valign);
@@ -1962,12 +1968,12 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		text = _text;
 		return self;
 	};
-	static set_wrap		  = function(_wrap) {
-		/// @func	set_wrap(wrap?)
-		/// @param	{bool} wrap?
+	static set_wrap_apply = function(_wrap_apply) {
+		/// @func	set_wrap_apply(wrap_apply?)
+		/// @param	{bool} wrap_apply?
 		/// @return {Ui} self
 		///
-		wrap = _wrap;
+		wrap_apply = _wrap_apply;
 		return self;
 	};
 	static set_wrap_width = function(_wrap_width) {

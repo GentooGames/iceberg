@@ -63,9 +63,13 @@ global._gui = {
 		})
 		.config_add("config_2", {
 			text: "text for config 2",	
+			x: SURF_W * 0.1,
+			y: SURF_H * 0.2,
 		})
 		.config_add("config_3", {
 			text: "text for config 3",	
+			x: SURF_W * 0.8,
+			y: SURF_H * 0.5,
 		})
 		
     },    
