@@ -178,113 +178,136 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	///
 	#region Properties /////////////////////
 	
-	owner = _owner;
-	_	  =  {
-		update: {
-			active:  true,
-			methods: [],
-			size:	 0,
-		},
-		render: {
-			active:  true,
-			methods: [],
-			size:	 0,
-		},
-		state:  {
-			active:   true,
-			current:  undefined,	
-			name:	  "",
-			states:   {}, 
-			on_enter: {},
-			on_exit:  {},
-		},
-		pin:    {
-			pins:	[],
-			size:	0,
-			parent:	undefined,
-			xoff:	0,
-			yoff:	0,
-		},
-		events: {
-			on_hover: {
-				enter: {
-					active:    true,
-					action:    {
-						methods: [],	
-						size:    0,	
+	__owner = _owner;
+	__this  =  {}; with (__this) {
+		__update = {
+			__active:  true,
+			__methods: [],
+			__size:	 0,
+		};
+		__render = {
+			__active:  true,
+			__methods: [],
+			__size:	 0,
+		};
+		__state  = {
+			__active:   true,
+			__current:  undefined,	
+			__name:	  "",
+			__states:   {}, 
+			__on_enter: {},
+			__on_exit:  {},
+		};
+		__pin    = {
+			__pins:	[],
+			__size:	0,
+			__parent:	undefined,
+			__xoff:	0,
+			__yoff:	0,
+		};
+		__events = {
+			__on_hover: {
+				__enter: {
+					__active:    true,
+					__action:    {
+						__methods: [],	
+						__size:    0,	
 					},
-					trigger:   {
-						methods: [],
-						size:    0,
+					__trigger:   {
+						__methods: [],
+						__size:    0,
 					},
-					did_enter: false,
+					__did_enter: false,
 				},
-				hold:  {
-					active:  true,
-					action:  {
-						methods: [],	
-						size:    0,	
+				__hold:  {
+					__active:  true,
+					__action:  {
+						__methods: [],	
+						__size:    0,	
 					},
-					trigger: {
-						methods: [],
-						size:    0,
-					},
-				},
-				leave: {
-					active:    true,
-					action:    {
-						methods: [],	
-						size:    0,	
-					},
-					trigger:   {
-						methods: [],
-						size:    0,
-					},
-					did_leave: false,
-				},
-			},
-			on_click: {
-				pressed: {
-					active:  true,
-					action:  {
-						methods: [],	
-						size:    0,	
-					},
-					trigger: {
-						methods: [],
-						size:    0,
+					__trigger: {
+						__methods: [],
+						__size:    0,
 					},
 				},
-				down: {
-					active:  true,
-					action:  {
-						methods: [],	
-						size:    0,	
+				__leave: {
+					__active:    true,
+					__action:    {
+						__methods: [],	
+						__size:    0,	
 					},
-					trigger: {
-						methods: [],
-						size:    0,
+					__trigger:   {
+						__methods: [],
+						__size:    0,
 					},
-				},
-				released: {
-					active:  true,
-					action:  {
-						methods: [],	
-						size:    0,	
-					},
-					trigger: {
-						methods: [],
-						size:    0,
-					},
+					__did_leave: false,
 				},
 			},
-		},
-		config: {
-			current:	undefined,
-			name:		"",
-			configs:	{},
-			name_start: __UI_COMPONENT_DEFAULT_CONFIG_NAME_START,
-		},
+			__on_click: {
+				__pressed: {
+					__active:  true,
+					__action:  {
+						__methods: [],	
+						__size:    0,	
+					},
+					__trigger: {
+						__methods: [],
+						__size:    0,
+					},
+				},
+				__down: {
+					__active:  true,
+					__action:  {
+						__methods: [],	
+						__size:    0,	
+					},
+					__trigger: {
+						__methods: [],
+						__size:    0,
+					},
+				},
+				__released: {
+					__active:  true,
+					__action:  {
+						__methods: [],	
+						__size:    0,	
+					},
+					__trigger: {
+						__methods: [],
+						__size:    0,
+					},
+				},
+			},
+		};
+		__config = {}; with (__config) {
+			__current		= undefined;
+			__configs		= {};
+			__default		= {} with (__default) {
+				active				   = __UI_COMPONENT_DEFAULT_ACTIVE;
+				x					   = __UI_COMPONENT_DEFAULT_X;
+				y					   = __UI_COMPONENT_DEFAULT_Y;
+				color				   = __UI_COMPONENT_DEFAULT_COLOR;
+				alpha				   = __UI_COMPONENT_DEFAULT_ALPHA;
+				angle				   = __UI_COMPONENT_DEFAULT_ANGLE;
+				scale				   = __UI_COMPONENT_DEFAULT_SCALE;
+				xscale				   = __UI_COMPONENT_DEFAULT_XSCALE;
+				yscale				   = __UI_COMPONENT_DEFAULT_YSCALE;
+				width				   = __UI_COMPONENT_DEFAULT_WIDTH  * scale;
+				height				   = __UI_COMPONENT_DEFAULT_HEIGHT * scale;
+				visible				   = __UI_COMPONENT_DEFAULT_VISIBLE;
+				thickness			   = __UI_COMPONENT_DEFAULT_THICKNESS;
+				input_device		   = __UI_COMPONENT_DEFAULT_INPUT_DEVICE;
+				use_gui_space		   = __UI_COMPONENT_DEFAULT_USE_GUI_SPACE;
+				execute_state_on_enter = __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER;
+				execute_state_on_exit  = __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT;
+				pin_propagate_pos	   = __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_POS_TO_CHILD;
+				pin_propagate_scale	   = __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD;
+				pin_propagate_alpha	   = __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD;	
+			};
+			__name			= "";
+			__name_start	= __UI_COMPONENT_DEFAULT_CONFIG_NAME_START;
+			__name_default	= __UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT;
+		};
 	};	
 	config_init_start(_config_name, _config);
 		
@@ -298,87 +321,87 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return	{Ui} self
 		///
 		if (!active) exit;
-		if (_.update.active) {
-			for (var _i = 0; _i < _.update.size; _i++) {
-				_.update.methods[_i]();	
+		if (__this.__update.__active) {
+			for (var _i = 0; _i < __this.__update.__size; _i++) {
+				__this.__update.__methods[_i]();	
 			}
 		}
-		if (_.state.active) {
+		if (__this.__state.__active) {
 			state_execute();
 		};
 			
 		#region Check For Event Triggers
 		
 		var _self = self;
-		with (_.events) {
-			if (on_click.pressed.active) {
-				with (on_click.pressed.trigger) {
-					for (var _i = 0; _i < size; _i++) {
-						if (methods[_i]()) {
+		with (__this.__events) {
+			if (__on_click.__pressed.__active) {
+				with (__on_click.__pressed.__trigger) {
+					for (var _i = 0; _i < __size; _i++) {
+						if (__methods[_i]()) {
 							_self.click_execute_pressed();
 							break;	
 						}
 					};
 				}
 			}
-			if (on_click.down.active) {
-				with (on_click.down.trigger) {
-					for (var _i = 0; _i < size; _i++) {
-						if (methods[_i]()) {
+			if (__on_click.__down.__active) {
+				with (__on_click.__down.__trigger) {
+					for (var _i = 0; _i < __size; _i++) {
+						if (__methods[_i]()) {
 							_self.click_execute_down();
 							break;	
 						}
 					};
 				}
 			}
-			if (on_click.released.active) {
-				with (on_click.released.trigger) {
-					for (var _i = 0; _i < size; _i++) {
-						if (methods[_i]()) {
+			if (__on_click.__released.__active) {
+				with (__on_click.__released.__trigger) {
+					for (var _i = 0; _i < __size; _i++) {
+						if (__methods[_i]()) {
 							_self.click_execute_released();
 							break;	
 						}
 					};
 				}
 			}
-			if (on_hover.enter.active) {
-				with (on_hover.enter) {
-					for (var _i = 0; _i < trigger.size; _i++) {
-						if (trigger.methods[_i]()) {
-							if (!did_enter) {
+			if (__on_hover.__enter.__active) {
+				with (__on_hover.__enter) {
+					for (var _i = 0; _i < __trigger.__size; _i++) {
+						if (__trigger.__methods[_i]()) {
+							if (!__did_enter) {
 								_self.hover_execute_enter();
-								did_enter = true;
+								__did_enter = true;
 								break;	
 							}
 						}
 						else {
-							did_enter = false;
+							__did_enter = false;
 						}
 					};
 				}
 			}
-			if (on_hover.hold.active) {
-				with (on_hover.hold) {
-					for (var _i = 0; _i < trigger.size; _i++) {
-						if (trigger.methods[_i]()) {
+			if (__on_hover.__hold.__active) {
+				with (__on_hover.__hold) {
+					for (var _i = 0; _i < __trigger.__size; _i++) {
+						if (__trigger.__methods[_i]()) {
 							_self.hover_execute_hold();
 							break;	
 						}
 					};
 				}
 			}
-			if (on_hover.leave.active) {
-				with (on_hover.leave) {
-					for (var _i = 0; _i < trigger.size; _i++) {
-						if (trigger.methods[_i]()) {
-							if (!did_leave) {
+			if (__on_hover.__leave.__active) {
+				with (__on_hover.__leave) {
+					for (var _i = 0; _i < __trigger.__size; _i++) {
+						if (__trigger.__methods[_i]()) {
+							if (!__did_leave) {
 								_self.hover_execute_exit();
-								did_leave = true;
+								__did_leave = true;
 								break;	
 							}
 						}
 						else {
-							did_leave = false;
+							__did_leave = false;
 						}
 					};
 				}
@@ -396,9 +419,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return	{Ui} self
 		///
 		if (!active) exit;
-		if (visible && _.render.active) {
-			for (var _i = 0; _i < _.render.size; _i++) {
-				_.render.methods[_i]();	
+		if (__visible && __this.__render.__active) {
+			for (var _i = 0; _i < __this.__render.__size; _i++) {
+				__this.__render.__methods[_i]();	
 			}
 		}
 		return self;
@@ -457,9 +480,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	get_x()
 		/// @return {real} x
 		///
-		with (_.pin) {
-			if (parent != undefined && other.pin_propagate_pos) {
-				return parent.get_x() - (xoff * parent.get_xscale());	// apply parent scale to position offset
+		with (__this.__pin) {
+			if (__parent != undefined && other.__pin_propagate_pos) {
+				return __parent.get_x() - (__xoff * __parent.get_xscale());	// apply parent scale to position offset
 			}
 		}
 		return x;	
@@ -468,9 +491,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	get_y()
 		/// @return {real} y
 		///
-		with (_.pin) {
-			if (parent != undefined && other.pin_propagate_pos) {
-				return parent.get_y() - (yoff * parent.get_yscale());	// apply parent scale to position offset
+		with (__this.__pin) {
+			if (__parent != undefined && other.__pin_propagate_pos) {
+				return __parent.get_y() - (__yoff * __parent.get_yscale());	// apply parent scale to position offset
 			}
 		}
 		return y;	
@@ -534,8 +557,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {real} alpha
 		///
 		var _parent_alpha = 1;
-		if (_.pin.parent != undefined && pin_propagate_alpha) {
-			_parent_alpha = _.pin.parent.get_alpha();
+		if (__this.__pin.__parent != undefined && __pin_propagate_alpha) {
+			_parent_alpha = __this.__pin.__parent.get_alpha();
 		}
 		return alpha * _parent_alpha;
 	};
@@ -562,8 +585,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {real} scale
 		///
 		var _parent_scale = 1;
-		if (_.pin.parent != undefined && pin_propagate_scale) {
-			_parent_scale = _.pin.parent.get_scale();
+		if (__this.__pin.__parent != undefined && __pin_propagate_scale) {
+			_parent_scale = __this.__pin.__parent.get_scale();
 		}
 		return scale * _parent_scale;
 	};
@@ -583,6 +606,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	get_input_device()
 		/// @desc	input device registered for use with device_mouse_x_...
 		/// @return {real} input_device
+		///
 		return input_device;
 	};
 	static get_use_gui_space	   = function() {
@@ -614,13 +638,13 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	get_execute_on_enter()
 		/// @return {boolean} execute_state_on_enter?
 		///
-		return execute_on_enter;
+		return execute_state_on_enter;
 	};
 	static get_execute_on_exit	   = function() {
 		/// @func	get_execute_on_exit()
 		/// @return {boolean} execute_state_on_exit?
 		///
-		return execute_on_exit;
+		return execute_state_on_exit;
 	};
 	static get_pin_propagate_pos   = function() {
 		/// @func	get_pin_propagate_pos()
@@ -833,31 +857,30 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		pin_propagate_alpha = _pin_propagate_alpha;
 		return self;
 	};
-	static set_state_execute_on_enter = function(_execute_on_enter) {
-		/// @func	set_state_execute_on_enter(execute_on_enter?)
+	static set_state_execute_on_enter = function(_execute_state_on_enter) {
+		/// @func	set_state_execute_on_enter(execute_state_on_enter?)
 		/// @desc	whether or not the defined on_enter state function should execute whenever
 		///			transitioning into a new state.
-		/// @param	{boolean}	   execute_on_enter?
+		/// @param	{boolean}	   execute_state_on_enter?
 		/// @return {UiInteractor} self
 		///
-		execute_on_enter = _execute_on_enter;
+		execute_state_on_enter = _execute_state_on_enter;
 		return self;
 	};
-	static set_state_execute_on_exit  = function(_execute_on_exit) {
-		/// @func	set_state_execute_on_exit(execute_on_exit?)
+	static set_state_execute_on_exit  = function(_execute_state_on_exit) {
+		/// @func	set_state_execute_on_exit(execute_state_on_exit?)
 		/// @desc	whether or not the defined on_exit state function should execute whenever
 		///			transitioning out of the current state.
-		/// @param	{boolean}	   execute_on_exit?
+		/// @param	{boolean}	   execute_state_on_exit?
 		/// @return {UiInteractor} self
 		///
-		execute_on_exit = _execute_on_exit;
+		execute_state_on_exit = _execute_state_on_exit;
 		return self;
 	};
 			
 	#endregion
 	
 	#endregion
-	
 	#region Actions //////////////////////// 
 	
 	/// Update
@@ -874,9 +897,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_update_action = method(self, _update_action);	
 		}
-		with (_.update) {
-			array_push(methods, _update_action);	
-			size++;
+		with (__this.__update) {
+			array_push(__methods, _update_action);	
+			__size++;
 		}
 		return self;
 	};
@@ -885,7 +908,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	set the update actions to be enabled, so that they are run during the update() tick
 		/// @return {Ui} self
 		///
-		_.update.active = true;
+		__this.__update.__active = true;
 		return self;
 	};
 	static update_disable	 = function() {
@@ -893,7 +916,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	set the update actions to be disabled, so that they are NOT run during the update() tick
 		/// @return {Ui} self
 		///
-		_.update.active = false;
+		__this.__update.__active = false;
 		return self;
 	};
 	static update_toggle	 = function() {
@@ -901,7 +924,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	toggle the update actions to be enabled/disabled during the update() tick
 		/// @return {Ui} self
 		///
-		_.update.active = !_.update.active;
+		__this.__update.__active = !__this.__update.__active;
 		return self;
 	};
 	static update_set_active = function(_update) {
@@ -910,7 +933,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	set whether or not the update actions should be enabled to run during the update() tick
 		/// @return {Ui} self
 		///
-		_.update.active = _update;
+		__this.__update.__active = _update;
 		return self;
 	};
 	
@@ -928,9 +951,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_render_action = method(self, _render_action);	
 		}
-		with (_.render) {
-			array_push(methods, _render_action);	
-			size++;
+		with (__this.__render) {
+			array_push(__methods, _render_action);	
+			__size++;
 		}
 		return self;
 	};
@@ -939,7 +962,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	set the render actions to be enabled, so that they are run during the render() tick
 		/// @return {Ui} self
 		///
-		_.render.active = true;
+		__this.__render.__active = true;
 		return self;
 	};
 	static render_disable	 = function() {
@@ -947,7 +970,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	set the render actions to be disabled, so that they are NOT run during the render() tick
 		/// @return {Ui} self
 		///
-		_.render.active = false;
+		__this.__render.__active = false;
 		return self;
 	};
 	static render_toggle	 = function() {
@@ -955,7 +978,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	toggle the render actions to be enabled/disabled during the render() tick
 		/// @return {Ui} self
 		///
-		_.render.active = !_.render.active;
+		__this.__render.__active = !__this.__render.__active;
 		return self;
 	};
 	static render_set_active = function(_render) {
@@ -964,7 +987,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @desc	set whether or not the render actions should be enabled to run during the render() tick
 		/// @return {Ui} self
 		///
-		_.render.active = _render;
+		__this.__render.__active = _render;
 		return self;
 	};	
 	
@@ -976,11 +999,11 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
-		with (_.events.on_hover) {
-			if (enter.active) {
-				with (enter.action) {
-					for (var _i = 0; _i < size; _i++) {
-						methods[_i]();	
+		with (__this.__events.__on_hover) {
+			if (__enter.__active) {
+				with (__enter.__action) {
+					for (var _i = 0; _i < __size; _i++) {
+						__methods[_i]();	
 					}
 				}
 			}
@@ -998,9 +1021,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_hover_enter_action = method(self, _hover_enter_action);	
 		}
-		with (_.events.on_hover.enter.action) {
-			array_push(methods, _hover_enter_action);
-			size++;
+		with (__this.__events.__on_hover.__enter.__action) {
+			array_push(__methods, _hover_enter_action);
+			__size++;
 		}
 		return self;	
 	};
@@ -1015,9 +1038,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_hover_enter_trigger = method(self, _hover_enter_trigger);	
 		}
-		with (_.events.on_hover.enter.trigger) {
-			array_push(methods, _hover_enter_trigger);
-			size++;
+		with (__this.__events.__on_hover.__enter.__trigger) {
+			array_push(__methods, _hover_enter_trigger);
+			__size++;
 		}
 		return self;	
 	};
@@ -1028,10 +1051,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
-		if (_.events.on_hover.hold.active) {
-			with (_.events.on_hover.hold.action) {
-				for (var _i = 0; _i < size; _i++) {
-					methods[_i]();	
+		if (__this.__events.__on_hover.__hold.__active) {
+			with (__this.__events.__on_hover.__hold.__action) {
+				for (var _i = 0; _i < __size; _i++) {
+					__methods[_i]();	
 				}
 			}
 		}
@@ -1048,9 +1071,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_hover_hold_action = method(self, _hover_hold_action);	
 		}
-		with (_.events.on_hover.hold.action) {
-			array_push(methods, _hover_hold_action);
-			size++;
+		with (__this.__events.__on_hover.__hold.__action) {
+			array_push(__methods, _hover_hold_action);
+			__size++;
 		}
 		return self;	
 	};
@@ -1065,9 +1088,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_hover_hold_trigger = method(self, _hover_hold_trigger);	
 		}
-		with (_.events.on_hover.hold.trigger) {
-			array_push(methods, _hover_hold_trigger);
-			size++;
+		with (__this.__events.__on_hover.__hold.__trigger) {
+			array_push(__methods, _hover_hold_trigger);
+			__size++;
 		}
 		return self;
 	};
@@ -1078,11 +1101,11 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
-		with (_.events.on_hover) {
-			if (leave.active) {
-				with (leave.action) {
-					for (var _i = 0; _i < size; _i++) {
-						methods[_i]();	
+		with (__this.__events.__on_hover) {
+			if (__leave.__active) {
+				with (__leave.__action) {
+					for (var _i = 0; _i < __size; _i++) {
+						__methods[_i]();	
 					}
 				}
 			}
@@ -1100,9 +1123,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_hover_leave_action = method(self, _hover_leave_action);	
 		}
-		with (_.events.on_hover.leave.action) {
-			array_push(methods, _hover_leave_action);
-			size++;
+		with (__this.__events.__on_hover.__leave.__action) {
+			array_push(__methods, _hover_leave_action);
+			__size++;
 		}
 		return self;	
 	};
@@ -1117,9 +1140,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_hover_leave_trigger = method(self, _hover_leave_trigger);	
 		}
-		with (_.events.on_hover.leave.trigger) {
-			array_push(methods, _hover_leave_trigger);
-			size++;
+		with (__this.__events.__on_hover.__leave.__trigger) {
+			array_push(__methods, _hover_leave_trigger);
+			__size++;
 		}
 		return self;
 	};
@@ -1132,10 +1155,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			should be handled automatically based off of defined triggers.
 		/// @return {UiInteractor} self
 		///
-		if (_.events.on_click.pressed.active) {
-			with (_.events.on_click.pressed.action) {
-				for (var _i = 0; _i < size; _i++) {
-					methods[_i]();	
+		if (__this.__events.__on_click.__pressed.__active) {
+			with (__this.__events.__on_click.__pressed.__action) {
+				for (var _i = 0; _i < __size; _i++) {
+					__methods[_i]();	
 				}
 			}
 		}
@@ -1152,9 +1175,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_click_pressed_action = method(self, _click_pressed_action);	
 		}
-		with (_.events.on_click.pressed.action) {
-			array_push(methods, _click_pressed_action);
-			size++;
+		with (__this.__events.__on_click.__pressed.__action) {
+			array_push(__methods, _click_pressed_action);
+			__size++;
 		}
 		return self;	
 	};
@@ -1169,9 +1192,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_click_pressed_trigger = method(self, _click_pressed_trigger);	
 		}
-		with (_.events.on_click.pressed.trigger) {
-			array_push(methods, _click_pressed_trigger);
-			size++;
+		with (__this.__events.__on_click.__pressed.__trigger) {
+			array_push(__methods, _click_pressed_trigger);
+			__size++;
 		}
 		return self;	
 	};
@@ -1181,10 +1204,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			click_down stack. this will most likely not need to be manually invoked, and
 		/// @return {UiInteractor} self
 		///
-		if (_.events.on_click.down.active) {
-			with (_.events.down.hold.action) {
-				for (var _i = 0; _i < size; _i++) {
-					methods[_i]();	
+		if (__this.__events.__on_click.__down.__active) {
+			with (__this.__events.__down.__hold.__action) {
+				for (var _i = 0; _i < __size; _i++) {
+					__methods[_i]();	
 				}
 			}
 		}
@@ -1201,9 +1224,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_click_down_action = method(self, _click_down_action);	
 		}
-		with (_.events.on_click.down.action) {
-			array_push(methods, _click_down_action);
-			size++;
+		with (__this.__events.__on_click.__down.__action) {
+			array_push(__methods, _click_down_action);
+			__size++;
 		}
 		return self;	
 	};
@@ -1218,9 +1241,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_click_down_trigger = method(self, _click_down_trigger);	
 		}
-		with (_.events.on_click.down.trigger) {
-			array_push(methods, _click_down_trigger);
-			size++;
+		with (__this.__events.__on_click.__down.__trigger) {
+			array_push(__methods, _click_down_trigger);
+			__size++;
 		}
 		return self;	
 	};
@@ -1230,10 +1253,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			click_released stack. this will most likely not need to be manually invoked, and
 		/// @return {UiInteractor} self
 		///
-		if (_.events.on_click.released.active) {
-			with (_.events.on_click.released.action) {
-				for (var _i = 0; _i < size; _i++) {
-					methods[_i]();	
+		if (__this.__events.__on_click.__released.__active) {
+			with (__this.__events.__on_click.__released.__action) {
+				for (var _i = 0; _i < __size; _i++) {
+					__methods[_i]();	
 				}
 			}
 		}
@@ -1250,9 +1273,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_click_released_action = method(self, _click_released_action);	
 		}
-		with (_.events.on_click.released.action) {
-			array_push(methods, _click_released_action);
-			size++;
+		with (__this.__events.__on_click.__released.__action) {
+			array_push(__methods, _click_released_action);
+			__size++;
 		}
 		return self;	
 	};
@@ -1267,9 +1290,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind) {
 			_click_released_trigger = method(self, _click_released_trigger);	
 		}
-		with (_.events.on_click.released.trigger) {
-			array_push(methods, _click_released_trigger);
-			size++;
+		with (__this.__events.__on_click.__released.__trigger) {
+			array_push(__methods, _click_released_trigger);
+			__size++;
 		}
 		return self;	
 	};
@@ -1289,7 +1312,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			if (_auto_bind) {
 				_state_method = method(self, _state_method);	
 			}
-			_.state.states[$ _state_name] = _state_method;
+			__this.__state.__states[$ _state_name] = _state_method;
 		}
 		return self;
 	};
@@ -1301,11 +1324,11 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean}		  auto_bind?*
 		/// @return	{Ui}			  self
 		///
-		if (!variable_struct_exists(_.state.on_enter, _state_name)) {
+		if (!variable_struct_exists(__this.__state.__on_enter, _state_name)) {
 			if (_auto_bind) {
 				_state_method = method(self, _state_method);	
 			}
-			_.state.on_enter[$ _state_name] = _state_method;
+			__this.__state.__on_enter[$ _state_name] = _state_method;
 		}
 		return self;
 	};
@@ -1317,11 +1340,11 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean}		  auto_bind?*
 		/// @return	{Ui}			  self
 		///
-		if (!variable_struct_exists(_.state.on_exit, _state_name)) {
+		if (!variable_struct_exists(__this.__state.__on_exit, _state_name)) {
 			if (_auto_bind) {
 				_state_method = method(self, _state_method);	
 			}
-			_.state.on_exit[$ _state_name] = _state_method;
+			__this.__state.__on_exit[$ _state_name] = _state_method;
 		}
 		return self;
 	};
@@ -1331,21 +1354,21 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string}		  state_name
 		/// @return {method/function} state
 		///
-		return _.state.states[$ _state_name];
+		return __this.__state.__states[$ _state_name];
 	};
 	static state_get_current	  = function() {
 		/// @func	state_get_current()
 		/// @desc	get the currently executing state method
 		/// @return {method/function} state
 		///
-		return _.state.current;
+		return __this.__state.__current;
 	};
 	static state_get_current_name = function() {
 		/// @func	state_get_current_name()
 		/// @desc	get the name of the currently executing state method.
 		/// @return {string} name
 		///
-		return _.state.name;
+		return __this.__state.__name;
 	};
 	static state_set_current	  = function(_state_name, _state_method) {
 		/// @func	state_set_current(state_name, state_method)	
@@ -1354,14 +1377,14 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{method} state_method
 		/// @return	{Ui}	 self
 		///
-		if (execute_on_exit) {
+		if (__state_execute_on_exit) {
 			state_execute_on_exit(state_get_current_name());
 		}
 		
-		_.state.name	= _state_name;
-		_.state.current = _state_method;
+		__this.__state.__name	 = _state_name;
+		__this.__state.__current = _state_method;
 		
-		if (execute_on_enter) {
+		if (__state_execute_on_enter) {
 			state_execute_on_enter(_state_name);
 		}
 		return self;
@@ -1372,7 +1395,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string}  state_name
 		/// @return {boolean} state_exists?
 		///
-		return variable_struct_exists(_.state.states, _state_name);
+		return variable_struct_exists(__this.__state.__states, _state_name);
 	};
 	static state_change			  = function(_state_name) {
 		/// @func	state_change(state_name)
@@ -1410,8 +1433,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} name
 		/// @return {Ui} self
 		///
-		if (variable_struct_exists(_.state.on_enter, _state_name)) {
-			_.state.on_enter[$ _state_name]();	
+		if (variable_struct_exists(__this.__state.__on_enter, _state_name)) {
+			__this.__state.__on_enter[$ _state_name]();	
 		}
 		return self;
 	};
@@ -1422,8 +1445,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} name
 		/// @return {Ui} self
 		///
-		if (variable_struct_exists(_.state.on_exit, _state_name)) {
-			_.state.on_exit[$ _state_name]();	
+		if (variable_struct_exists(__this.__state.__on_exit, _state_name)) {
+			__this.__state.__on_exit[$ _state_name]();	
 		}
 		return self;
 	};
@@ -1441,8 +1464,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		for (var _i = 0; _i < argument_count; _i++) {
 			var _component = argument[_i];
-			array_push(_.pin.pins, _component);
-			_.pin.size++;
+			array_push(__this.__pin.__pins, _component);
+			__this.__pin.__size++;
 			_component.set_pin_parent(self);	
 		}
 		return self;
@@ -1452,9 +1475,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param  {Ui} parent
 		/// @return {Ui} self
 		///
-		_.pin.xoff   = _parent.get_x() - get_x();
-		_.pin.yoff   = _parent.get_y() - get_y();
-		_.pin.parent = _parent;
+		__this.__pin.__xoff   = _parent.get_x() - get_x();
+		__this.__pin.__yoff   = _parent.get_y() - get_y();
+		__this.__pin.__parent = _parent;
 		return self;
 	};
 		
@@ -1468,7 +1491,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {Ui} self
 		///
 		if (!config_exists(_config_name)) {
-			_.config.configs[$ _config_name] = _config_struct;	
+			__this.__config.__configs[$ _config_name] = _config_struct;	
 		}
 		return self;
 	};
@@ -1478,21 +1501,21 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} config_name
 		/// @return {struct} config_struct
 		///
-		return _.config.configs[$ _config_name];
+		return __this.__config.__configs[$ _config_name];
 	};
 	static config_get_current		 = function() {
 		/// @func	config_get_current()
 		/// @desc	get the currently assigned config
 		/// @return {struct} config
 		///
-		return _.config.current;
+		return __this.__config.__current;
 	};
 	static config_get_current_name	 = function() {
 		/// @func	config_get_current_name()
 		/// @desc	get the name of the currently assigned config
 		/// @return {string} name
 		///
-		return _.config.name;
+		return __this.__config.__name;
 	};
 	static config_set_current		 = function(_config_name, _config_struct) {
 		/// @func	config_set_current(config_name, config_struct)	
@@ -1501,8 +1524,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{struct} config_struct
 		/// @return	{Ui}	 self
 		///
-		_.config.name	 = _config_name;
-		_.config.current = _config_struct;
+		__this.__config.__name	  = _config_name;
+		__this.__config.__current = _config_struct;
 		config_update_properties(_config_struct);
 		return self;
 	};
@@ -1511,7 +1534,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string}  config_name
 		/// @return {boolean} config_exists?
 		///
-		return variable_struct_exists(_.config.configs, _config_name);
+		return variable_struct_exists(__this.__config.__configs, _config_name);
 	};
 	static config_change			 = function(_config_name) {
 		/// @func	config_change(config_name)
@@ -1569,18 +1592,18 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///	@return NA
 		///
 		/// Stash Default Config For Later Reference
-		var _config_default = config_get_default();
-		config_add(__UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT, _config_default);
+		var _config_default = __this.__config.__default;
+		config_add(config_get_default_name(), _config_default);
 		
 		/// If Not Config Struct Was Passed, Use Default Config
 		if (_config_struct == undefined || _config_struct == {}) {
-			_config_struct  = _config_default;	
+			_config_struct  = config_get_default();	
 		}
 		/// Invoke Default Config First Just So That All Default Properties Are Guaranteed To Be Set At Least Once
 		else {
-			config_update_properties(_config_default);	
+			config_update_properties(config_get_default());	
 		}
-		_.config.name_start = _config_name;
+		__this.__config.__name_start = _config_name;
 		config_add(_config_name, _config_struct);
 		config_set_current(_config_name, _config_struct);
 	};
@@ -1595,47 +1618,37 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	config_get_start()
 		/// @return {struct} config_start
 		///
-		return config_get(_.config.name_start);
+		return config_get(config_get_start_name());
+	};
+	static config_get_start_name	 = function() {
+		/// @func	config_get_start_name()
+		/// @return {string} start_name
+		///
+		return __this.__config.__name_start;
 	};
 	static config_get_default		 = function() {
 		///	@func	config_get_default()
 		/// @return {struct} config_default
 		/// 
-		var _return_data = {}; with (_return_data) {
-			active					= __UI_COMPONENT_DEFAULT_ACTIVE;
-			x						= __UI_COMPONENT_DEFAULT_X;
-			y						= __UI_COMPONENT_DEFAULT_Y;
-			color					= __UI_COMPONENT_DEFAULT_COLOR;
-			alpha					= __UI_COMPONENT_DEFAULT_ALPHA;
-			angle					= __UI_COMPONENT_DEFAULT_ANGLE;
-			scale					= __UI_COMPONENT_DEFAULT_SCALE;
-			xscale					= __UI_COMPONENT_DEFAULT_XSCALE;
-			yscale					= __UI_COMPONENT_DEFAULT_YSCALE;
-			width					= __UI_COMPONENT_DEFAULT_WIDTH  * scale;
-			height					= __UI_COMPONENT_DEFAULT_HEIGHT * scale;
-			visible					= __UI_COMPONENT_DEFAULT_VISIBLE;
-			thickness				= __UI_COMPONENT_DEFAULT_THICKNESS;
-			input_device			= __UI_COMPONENT_DEFAULT_INPUT_DEVICE;
-			use_gui_space			= __UI_COMPONENT_DEFAULT_USE_GUI_SPACE;
-			execute_state_on_enter	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER;
-			execute_state_on_exit	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT;
-			pin_propagate_pos		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_POS_TO_CHILD;
-			pin_propagate_scale		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD;
-			pin_propagate_alpha		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD;	
-		};
-		return _return_data;
+		return config_get(config_get_default_name());
+	};
+	static config_get_default_name	 = function() {
+		/// @func	config_get_default_name()
+		/// @return {string} default_name
+		///
+		return __this.__config.__name_default;
 	};
 	static config_restore_to_start	 = function() {
 		/// @func	config_restore_to_start()
 		/// @return {Ui} self
 		///
-		return config_change(_.config.name_start);
+		return config_change(config_get_start_name());
 	};
 	static config_restore_to_default = function() {
 		/// @func	config_restore_to_default()
 		/// @return {Ui} self
 		///
-		return config_change(__UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT);
+		return config_change(config_get_default_name());
 	};
 	
 	#endregion
@@ -1768,12 +1781,12 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	///
 	#region Properties /////////////
 	
-	text		= _config[$ "text"		] ?? __UI_COMPONENT_DEFAULT_LABEL_TEXT;
-	wrap_apply	= _config[$ "wrap_apply"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY;
-	wrap_width	= _config[$ "wrap_width"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH;
-	line_space  = _config[$ "line_space"] ?? __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE;
-	halign		= _config[$ "halign"	] ?? __UI_COMPONENT_DEFAULT_LABEL_HALIGN;
-	valign		= _config[$ "valign"	] ?? __UI_COMPONENT_DEFAULT_LABEL_VALIGN;
+	text	   = _config[$ "text"	   ] ?? __UI_COMPONENT_DEFAULT_LABEL_TEXT;
+	wrap_apply = _config[$ "wrap_apply"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_APPLY;
+	wrap_width = _config[$ "wrap_width"] ?? __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH;
+	line_space = _config[$ "line_space"] ?? __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE;
+	halign	   = _config[$ "halign"	   ] ?? __UI_COMPONENT_DEFAULT_LABEL_HALIGN;
+	valign	   = _config[$ "valign"	   ] ?? __UI_COMPONENT_DEFAULT_LABEL_VALIGN;
 	config_add_prop_to_start("text",	   text);
 	config_add_prop_to_start("wrap_apply", wrap_apply);
 	config_add_prop_to_start("wrap_width", wrap_width);
@@ -1853,11 +1866,11 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		///
 		return text;
 	};
-	static get_wrap		  = function() {
-		/// @func	get_wrap()
-		/// @return {bool} wrap?
+	static get_wrap_apply = function() {
+		/// @func	get_wrap_apply()
+		/// @return {bool} wrap_apply?
 		///
-		return wrap;
+		return wrap_apply;
 	};
 	static get_wrap_width = function() {
 		/// @func	get_wrap_width()
@@ -2213,14 +2226,16 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	///
 	#region Properties /////////////
 	
-	points   = [];
-	point    = {
-		left_most:	 undefined,
-		right_most:	 undefined,
-		top_most:	 undefined,
-		bottom_most: undefined,
-	};
-	n_points = 0;
+	with (__this) {
+		__points   = [];
+		__point    = {
+			__left_most:   undefined,
+			__right_most:  undefined,
+			__top_most:	   undefined,
+			__bottom_most: undefined,
+		};
+		__n_points = 0;
+	}
 	
 	/// Dynamically Add Passed In Points To Points Array
 	if (variable_struct_exists(_config, "points")) {
@@ -2241,9 +2256,9 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		var _color	   = get_color();
 		var _p1, _p2;
 		
-		for (var _i = 0, _len = n_points; _i < _len - 1; _i++) {
-			_p1	= points[_i];
-			_p2 = points[_i + 1];
+		for (var _i = 0, _len = __this.__n_points; _i < _len - 1; _i++) {
+			_p1	= __this.__points[_i];
+			_p2 = __this.__points[_i + 1];
 			
 			draw_line_width_color(
 				_p1.get_x(),
@@ -2266,15 +2281,15 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 			x: _x,
 			y: _y,
 		});
-		array_push(points, _point);
+		array_push(__this.__points, _point);
 		pin_components(_point);
-		n_points++;
+		__this.__n_points++;
 		
 		/// Update Bounding Box
-		if (point.left_most   == undefined || _x < point.left_most  ) point.left_most   = _x;	
-		if (point.right_most  == undefined || _x > point.right_most ) point.right_most  = _x;	
-		if (point.top_most    == undefined || _y < point.top_most   ) point.top_most    = _y;	
-		if (point.bottom_most == undefined || _y > point.bottom_most) point.bottom_most = _y;	
+		if (__this.__point.__left_most   == undefined || _x < __this.__point.__left_most  ) __this.__point.__left_most   = _x;	
+		if (__this.__point.__right_most  == undefined || _x > __this.__point.__right_most ) __this.__point.__right_most  = _x;	
+		if (__this.__point.__top_most    == undefined || _y < __this.__point.__top_most   ) __this.__point.__top_most    = _y;	
+		if (__this.__point.__bottom_most == undefined || _y > __this.__point.__bottom_most) __this.__point.__bottom_most = _y;	
 		
 		return self;
 	};
@@ -2287,37 +2302,37 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		/// @func	get_width()
 		/// @return {real} width
 		///
-		return point.right_most - point.left_most;
+		return __this.__point.__right_most - __this.__point.__left_most;
 	};
 	static get_height	= function() {	/// @OVERRIDE
 		/// @func	get_height()
 		/// @return {real} height
 		///
-		return point.bottom_most - point.top_most;
+		return __this.__point.__bottom_most - __this.__point.__top_most;
 	};
 	static get_left		= function() {	/// @OVERRIDE
 		/// @func	get_left()
 		/// @return {real} x_pos
 		///
-		return point.left_most;
+		return __this.__point.__left_most;
 	};
 	static get_right	= function() {	/// @OVERRIDE
 		/// @func	get_right()
 		/// @return {real} x_pos
 		///
-		return point.right_most;
+		return __this.__point.__right_most;
 	};
 	static get_top		= function() {	/// @OVERRIDE
 		/// @func	get_top()
 		/// @return {real} y_pos
 		///
-		return point.top_most;
+		return __this.__point.__top_most;
 	};
 	static get_bottom	= function() {	/// @OVERRIDE
 		/// @func	get_bottom()
 		/// @return {real} y_pos
 		///
-		return point.bottom_most;
+		return __this.__point.__bottom_most;
 	};
 	static get_center_x = function() {	/// @OVERRIDE
 		/// @func	get_center_x()
