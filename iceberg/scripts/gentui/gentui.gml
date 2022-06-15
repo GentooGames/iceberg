@@ -1,3 +1,5 @@
+//// NORMALIZE PIN, STATE, CONFIG SPECIFIC GETTERS AND MOVE INTO PROPER REGIONS
+
 /////////////////////////////////////
 // .---. r---. .   . .---. .   . . //
 // |  -. r--   | \ |   |   |   | | //
@@ -17,24 +19,35 @@
 #region version 0.2.0
 /*
 	Date: 06/14/2022
-	1.	merged in fryman's pull request updating return values for state_execute_... methods
-	2.	added method descriptions for Ui() base component class
-	3.	renamed set_execute_on_enter() to set_state_execute_on_enter()
-	4.	renamed set_execute_on_exit() to set_state_execute_on_exit()
-	5.	renamed hover_enter() to hover_execute_enter() 
-	6.	renamed hover_hold() to hover_execute_hold() 
-	7.	renamed hover_leave() to hover_execute_exit() 
-			- let's normalize the "leave" keyword, and use "exit" instead, and will use this for all similarly named methods
-	8.	renamed hover_leave_add_action() to hover_exit_add_action()
-	9.	renamed hover_leave_add_trigger() to hover_exit_add_trigger()
-	10. renamed click_pressed() to click_execute_pressed()
-	11. renamed click_down() to click_execute_down()
-	12. renamed click_released() to click_execute_released()
-	
-	xx.	added new UiComponent -> UiCircle() implementing draw_circle_curve() functionality
-	xx.	added new UiComponent -> UiTextbox() 
-	xx. added "active" flag for entire component
-	xx. added custom configs, with possible state binding for auto-assignment
+		Bug Fixes:
+			x.	fixed bug where state_execute_on_enter was executing on_exit, and state_execute_on_exit was executing on_enter
+		
+		Feature Additions:
+			x.	added "active" flag for entire component
+			x.	added custom configs, with possible state binding for auto-assignment
+			x.	NEW COMPONENT: added UiCircle() implementing draw_circle_curve() functionality
+			x.	NEW COMPONENT: added UiTextbox() 
+		
+		QOL:
+			x.	added method descriptions for Ui() base component class
+			x.	reformatted state_set_current() & config_set_current() to match more appropriate levels of abstraction, especially
+				when compared to it's corollary methods state_change() & config_change(), such that the two different methods are 
+				operating on not-so-similar functionalities.
+			
+		Property/Method Name Changes:
+			x.	renamed step() method to update() method to remove implied context sensitivity
+			x.	renamed draw() method to render() method to remove implied context snesitivity
+			x.	renamed set_execute_on_enter() methods to set_state_execute_on_enter()
+			x.	renamed set_execute_on_exit() methods to set_state_execute_on_exit()
+			x.	renamed hover_x() methods to hover_execute_x() 
+					- let's normalize the "leave" keyword, and use "exit" instead, and will use this for all similarly named methods
+			x.	renamed hover_leave_add_x() methods to hover_exit_add_x()
+			x.	renamed click_x() methods to click_execute_x()
+			x.	renamed set_propegate_x() methods to set_pin_propegate_x()
+			x.	renamed propegate_x() to propagate_x() fixing spelling error
+		
+		Pull Requests:
+			x.	merged in fryman's pull request updating return values for state_execute_... methods
 */
 #endregion
 
@@ -44,14 +57,14 @@
 #region version 0.1.1
 /*	
 	Date: 05/26/2022
-	1. components now propegate their alpha values down to pinned children components
+	1. components now propagate their alpha values down to pinned children components
 	2. global config macros to toggle property propegation
 	3. components now implement local property instantiations of the following global default macros:
 		- execute_on_enter
 		- execute_on_exit
-		- propegate_pos_to_child
-		- propegate_scale_to_child
-		- propegate_alpha_to_child
+		- propagate_pos_to_child
+		- propagate_scale_to_child
+		- propagate_alpha_to_child
 	4. created public getter and setter methods to interact with new local propeties listed in 3.
 	5. draw_rectangle_width_color removed from global scope and integrated into base Ui() component.
 */
@@ -83,59 +96,56 @@
 		- dynamically generate one pixel sprite using surface, sprite_save, etc
 	- add support for UI components to render contents to a surface
 		- only update surface contents when necessary, and bake children surfaces onto parent
-	- propegate parent angle to children components
+	- propagate parent angle to children components
 		- have mouse click detection and interactions respond to different angles. currently not supported!
 */
 #endregion
 #region default config values ///////
 
-#macro __UI_DEFAULT_AUTO_BIND_METHODS					false
-																	
-#macro __UI_COMPONENT_DEFAULT_ACTIVE					true
-#macro __UI_COMPONENT_DEFAULT_VISIBLE					true
-#macro __UI_COMPONENT_DEFAULT_ALPHA						1.0
-#macro __UI_COMPONENT_DEFAULT_COLOR						c_white
-#macro __UI_COMPONENT_DEFAULT_X							0
-#macro __UI_COMPONENT_DEFAULT_Y							0
-#macro __UI_COMPONENT_DEFAULT_WIDTH						0
-#macro __UI_COMPONENT_DEFAULT_HEIGHT					0
-#macro __UI_COMPONENT_DEFAULT_ANGLE						0
-#macro __UI_COMPONENT_DEFAULT_SCALE						1
-#macro __UI_COMPONENT_DEFAULT_XSCALE					1
-#macro __UI_COMPONENT_DEFAULT_YSCALE					1
-#macro __UI_COMPONENT_DEFAULT_OUTLINE					false
-#macro __UI_COMPONENT_DEFAULT_THICKNESS					1
-#macro __UI_COMPONENT_DEFAULT_INPUT_DEVICE				0
-#macro __UI_COMPONENT_DEFAULT_USE_GUI_SPACE				false
-#macro __UI_COMPONENT_DEFAULT_LABEL_TEXT				""
-#macro __UI_COMPONENT_DEFAULT_LABEL_WRAP				false
-#macro __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH		   -1
-#macro __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE		   -1
-#macro __UI_COMPONENT_DEFAULT_LABEL_HALIGN				fa_left
-#macro __UI_COMPONENT_DEFAULT_LABEL_VALIGN				fa_top
-#macro __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_INDEX		0
-#macro __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_SPEED		1
-#macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER	true
-#macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT		true
-#macro __UI_COMPONENT_DEFAULT_PROPEGATE_POS_TO_CHILD	true
-#macro __UI_COMPONENT_DEFAULT_PROPEGATE_SCALE_TO_CHILD	true
-#macro __UI_COMPONENT_DEFAULT_PROPEGATE_ALPHA_TO_CHILD	false
+#macro __UI_DEFAULT_AUTO_BIND_METHODS						false
+#macro __UI_COMPONENT_DEFAULT_ACTIVE						true
+#macro __UI_COMPONENT_DEFAULT_VISIBLE						true
+#macro __UI_COMPONENT_DEFAULT_ALPHA							1.0
+#macro __UI_COMPONENT_DEFAULT_COLOR							c_white
+#macro __UI_COMPONENT_DEFAULT_X								0
+#macro __UI_COMPONENT_DEFAULT_Y								0
+#macro __UI_COMPONENT_DEFAULT_WIDTH							0
+#macro __UI_COMPONENT_DEFAULT_HEIGHT						0
+#macro __UI_COMPONENT_DEFAULT_ANGLE							0
+#macro __UI_COMPONENT_DEFAULT_SCALE							1
+#macro __UI_COMPONENT_DEFAULT_XSCALE						1
+#macro __UI_COMPONENT_DEFAULT_YSCALE						1
+#macro __UI_COMPONENT_DEFAULT_OUTLINE						false
+#macro __UI_COMPONENT_DEFAULT_THICKNESS						1
+#macro __UI_COMPONENT_DEFAULT_INPUT_DEVICE					0
+#macro __UI_COMPONENT_DEFAULT_USE_GUI_SPACE					false
+#macro __UI_COMPONENT_DEFAULT_LABEL_TEXT					""
+#macro __UI_COMPONENT_DEFAULT_LABEL_WRAP					false
+#macro __UI_COMPONENT_DEFAULT_LABEL_WRAP_WIDTH			   -1
+#macro __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE			   -1
+#macro __UI_COMPONENT_DEFAULT_LABEL_HALIGN					fa_left
+#macro __UI_COMPONENT_DEFAULT_LABEL_VALIGN					fa_top
+#macro __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_INDEX			0
+#macro __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_SPEED			1
+#macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER		true
+#macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT			true
+#macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_POS_TO_CHILD	true
+#macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD	true
+#macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD	false
+#macro __UI_COMPONENT_DEFAULT_CONFIG_NAME_START				"__start__"
 
 #endregion
 
 #endregion
-function Ui(_config) constructor {
-	/// @func  Ui(config)
-	///
+function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) constructor {
+	/// @func  Ui(owner*, config_name*, config*)
 	/// @desc  this is the base ui component, containing all core features and functionality that is inherited and implemented
 	///		   by all other ui components. an instance of this class will have no visual representation, but can still be utilized
 	///		   for creating more "abstract" data containers. see UiLine().add_point() for an example, where a "point" is created
 	///		   by instantiating a new Ui() class instance, and passing in x & y values for later reference.
-	///
 	/// @use   generally this class will be implemented through inheritance of the other Ui components; however, if you wish to implement
 	///		   an explicit instance of this class, you can do so using the following: 
 	///		   var _abstractUiPointContainer = new Ui({x : _x, y: _y});		/// creates a component containing coordinate points
-	///
 	/// @param {instance/struct} owner=other
 	/// @param {bool}  active*
 	/// @param {real}  x*
@@ -154,24 +164,25 @@ function Ui(_config) constructor {
 	/// @param {bool}  use_gui_space*
 	/// @param {bool}  state_execute_on_enter*
 	/// @param {bool}  state_execute_on_exit*
-	/// @param {bool}  propegate_position*
-	/// @param {bool}  propegate_scale*
-	/// @param {bool}  propegate_alpha*
+	/// @param {bool}  propagate_position*
+	/// @param {bool}  propagate_scale*
+	/// @param {bool}  propagate_alpha*
 	///
 	#region Properties 
 	
-	_				 = {
-		update:  {
+	owner = _owner;
+	_	  =  {
+		update: {
 			active:  true,
 			methods: [],
 			size:	 0,
 		},
-		render:  {
+		render: {
 			active:  true,
 			methods: [],
 			size:	 0,
 		},
-		state:   {
+		state:  {
 			active:   true,
 			current:  undefined,	
 			name:	  "",
@@ -179,14 +190,14 @@ function Ui(_config) constructor {
 			on_enter: {},
 			on_exit:  {},
 		},
-		pin:     {
+		pin:    {
 			pins:	[],
 			size:	0,
 			parent:	undefined,
 			xoff:	0,
 			yoff:	0,
 		},
-		events:  {
+		events: {
 			on_hover: {
 				enter: {
 					active:    true,
@@ -260,35 +271,20 @@ function Ui(_config) constructor {
 				},
 			},
 		},
-		configs: {},
+		config: {
+			current:	undefined,
+			name:		"",
+			configs:	{},
+			name_start: __UI_COMPONENT_DEFAULT_CONFIG_NAME_START,
+		},
 	};	
-	owner			 = _config[$ "owner"		   ] ?? other;
-	active			 = _config[$ "active"		   ] ?? __UI_COMPONENT_DEFAULT_ACTIVE;
-	x				 = _config[$ "x"			   ] ?? __UI_COMPONENT_DEFAULT_X;
-	y				 = _config[$ "y"			   ] ?? __UI_COMPONENT_DEFAULT_Y;
-	color			 = _config[$ "color"		   ] ?? __UI_COMPONENT_DEFAULT_COLOR;
-	alpha			 = _config[$ "alpha"		   ] ?? __UI_COMPONENT_DEFAULT_ALPHA;
-	angle			 = _config[$ "angle"		   ] ?? __UI_COMPONENT_DEFAULT_ANGLE;
-	scale			 = _config[$ "scale"		   ] ?? __UI_COMPONENT_DEFAULT_SCALE;
-	xscale			 = _config[$ "xscale"		   ] ?? __UI_COMPONENT_DEFAULT_XSCALE;
-	yscale			 = _config[$ "yscale"		   ] ?? __UI_COMPONENT_DEFAULT_YSCALE;
-	width			 = _config[$ "width"		   ] ?? __UI_COMPONENT_DEFAULT_WIDTH  * scale;
-	height			 = _config[$ "height"		   ] ?? __UI_COMPONENT_DEFAULT_HEIGHT * scale;
-	visible			 = _config[$ "visible"		   ] ?? __UI_COMPONENT_DEFAULT_VISIBLE;
-	thickness		 = _config[$ "thickness"	   ] ?? __UI_COMPONENT_DEFAULT_THICKNESS;
-	input_device	 = _config[$ "input_device"	   ] ?? __UI_COMPONENT_DEFAULT_INPUT_DEVICE;
-	use_gui_space	 = _config[$ "use_gui_space"   ] ?? __UI_COMPONENT_DEFAULT_USE_GUI_SPACE;
-	execute_on_enter = _config[$ "execute_on_enter"] ?? __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER;
-	execute_on_exit	 = _config[$ "execute_on_exit" ] ?? __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT;
-	propegate_pos	 = _config[$ "propegate_pos"   ] ?? __UI_COMPONENT_DEFAULT_PROPEGATE_POS_TO_CHILD;
-	propegate_scale	 = _config[$ "propegate_scale" ] ?? __UI_COMPONENT_DEFAULT_PROPEGATE_SCALE_TO_CHILD;
-	propegate_alpha	 = _config[$ "propegate_alpha" ] ?? __UI_COMPONENT_DEFAULT_PROPEGATE_ALPHA_TO_CHILD;
-	
+	config_assign_start(_config_name, _config);
+		
 	#endregion
 	#region Core 
 	
-	static step		  = function() {
-		/// @func	step()
+	static update	  = function() {
+		/// @func	update()
 		/// @desc	tick update for the component class. call this in a step event, or
 		///			wherever the code for this component class should be updated.
 		/// @return	{Ui} self
@@ -385,8 +381,8 @@ function Ui(_config) constructor {
 		
 		return self;
 	};
-	static draw		  = function() {
-		/// @func	draw()
+	static render	  = function() {
+		/// @func	render()
 		/// @desc	tick update for the component class rendering. call this in a draw 
 		///			event, or wherever the code for this component class should be rendered.
 		/// @return	{Ui} self
@@ -433,154 +429,153 @@ function Ui(_config) constructor {
 	};
 	
 	#endregion
-	#region Getters 
+	#region Getters
 	
-	static get_owner			= function() {
+	static get_owner			   = function() {
 		/// @func	get_owner()
 		/// @return {instance/struct} owner
 		///
 		return owner;
 	};
-	static get_active			= function() {
+	static get_active			   = function() {
 		/// @func	get_active()
 		/// @return {instance/struct} owner
 		///
 		return active;
 	};
-	static get_x				= function() {
+	static get_x				   = function() {
 		/// @func	get_x()
 		/// @return {real} x
 		///
 		with (_.pin) {
-			if (parent != undefined && other.propegate_pos) {
+			if (parent != undefined && other.pin_propagate_pos) {
 				return parent.get_x() - (xoff * parent.get_xscale());	// apply parent scale to position offset
 			}
 		}
 		return x;	
 	};
-	static get_y				= function() {
+	static get_y				   = function() {
 		/// @func	get_y()
 		/// @return {real} y
 		///
 		with (_.pin) {
-			if (parent != undefined && other.propegate_pos) {
+			if (parent != undefined && other.pin_propagate_pos) {
 				return parent.get_y() - (yoff * parent.get_yscale());	// apply parent scale to position offset
 			}
 		}
 		return y;	
 	};
-	static get_width			= function() {	/// @OVERRIDE
+	static get_width			   = function() {	/// @OVERRIDE
 		/// @func	get_width()
 		/// @return {real} width
 		///
 		return width * get_xscale();
 	};
-	static get_height			= function() {	/// @OVERRIDE
+	static get_height			   = function() {	/// @OVERRIDE
 		/// @func	get_height()
 		/// @return {real} height
 		///
 		return height * get_yscale();
 	};
-	static get_right			= function() {	/// @OVERRIDE
+	static get_right			   = function() {	/// @OVERRIDE
 		/// @func	get_right()
 		/// @return {x} right
 		///
 		return get_x() + get_width();
 	};
-	static get_left				= function() {	/// @OVERRIDE
+	static get_left				   = function() {	/// @OVERRIDE
 		/// @func	get_left()
 		/// @return {x} left
 		///
 		return get_x();
 	};
-	static get_top				= function() {	/// @OVERRIDE
+	static get_top				   = function() {	/// @OVERRIDE
 		/// @func	get_top()
 		/// @return {y} top
 		///
 		return get_y();
 	};
-	static get_bottom			= function() {	/// @OVERRIDE
+	static get_bottom			   = function() {	/// @OVERRIDE
 		/// @func	get_bottom()
 		/// @return {y} bottom
 		///
 		return get_y() + get_height();
 	};
-	static get_center_x			= function() {	/// @OVERRIDE
+	static get_center_x			   = function() {	/// @OVERRIDE
 		/// @func	get_center_x()
 		/// @return {x} center
 		///
 		return get_x() + (get_width() * 0.5);
 	};
-	static get_center_y			= function() {	/// @OVERRIDE
+	static get_center_y			   = function() {	/// @OVERRIDE
 		/// @func	get_center_y()
 		/// @return {y} center
 		///
 		return get_y() + (get_height() * 0.5);
 	};
-	static get_color			= function() {
+	static get_color			   = function() {
 		/// @func	get_color()
 		/// @return {real} color
 		///
 		return color;
 	};
-	static get_alpha			= function() {
+	static get_alpha			   = function() {
 		/// @func	get_alpha()
 		/// @return {real} alpha
 		///
 		var _parent_alpha = 1;
-		if (_.pin.parent != undefined && propegate_alpha) {
+		if (_.pin.parent != undefined && pin_propagate_alpha) {
 			_parent_alpha = _.pin.parent.get_alpha();
 		}
 		return alpha * _parent_alpha;
 	};
-	static get_angle			= function() {
+	static get_angle			   = function() {
 		/// @func	get_angle()
 		/// @return {real} angle
 		///
 		return angle;
 	};
-	static get_xscale			= function() {
+	static get_xscale			   = function() {
 		/// @func	get_xscale()
 		/// @return {real} xscale
 		///
 		return xscale * get_scale();
 	};
-	static get_yscale			= function() {
+	static get_yscale			   = function() {
 		/// @func	get_yscale()
 		/// @return {real} yscale
 		///
 		return yscale * get_scale();
 	};
-	static get_scale			= function() {
+	static get_scale			   = function() {
 		/// @func	get_scale()
 		/// @return {real} scale
 		///
 		var _parent_scale = 1;
-		if (_.pin.parent != undefined && propegate_scale) {
+		if (_.pin.parent != undefined && pin_propagate_scale) {
 			_parent_scale = _.pin.parent.get_scale();
 		}
 		return scale * _parent_scale;
 	};
-	static get_visible			= function() {
+	static get_visible			   = function() {
 		/// @func	get_visible()
 		/// @return {boolean} visible
 		///
 		return visible;
 	};
-	static get_thickness		= function() {
+	static get_thickness		   = function() {
 		/// @func	get_thickness()
 		/// @return {real} thickness
 		///
 		return thickness * get_scale();
 	};
-	static get_input_device		= function() {
+	static get_input_device		   = function() {
 		/// @func	get_input_device()
 		/// @desc	input device registered for use with device_mouse_x_...
 		/// @return {real} input_device
-		
 		return input_device;
 	};
-	static get_use_gui_space	= function() {
+	static get_use_gui_space	   = function() {
 		/// @func	get_use_gui_space()
 		/// @desc	if toggled to true, component will be rendered on gui_space and look for mouse interactions
 		///			with coordinates based off of the gui_space positioning
@@ -588,7 +583,7 @@ function Ui(_config) constructor {
 		///
 		return use_gui_space;
 	};
-	static get_mouse_xy			= function() {
+	static get_mouse_xy			   = function() {
 		/// @func	get_mouse_xy()
 		/// @return {struct} mouse_xy
 		///
@@ -605,46 +600,46 @@ function Ui(_config) constructor {
 			};
 		}
 	};
-	static get_execute_on_enter	= function() {
+	static get_execute_on_enter	   = function() {
 		/// @func	get_execute_on_enter()
 		/// @return {boolean} execute_state_on_enter?
 		///
 		return execute_on_enter;
 	};
-	static get_execute_on_exit  = function() {
+	static get_execute_on_exit	   = function() {
 		/// @func	get_execute_on_exit()
 		/// @return {boolean} execute_state_on_exit?
 		///
 		return execute_on_exit;
 	};
-	static get_propegate_pos	= function() {
-		/// @func	get_propegate_pos()
-		/// @desc	if propegate_pos toggled to true, the position properties will be sent down to
+	static get_pin_propagate_pos   = function() {
+		/// @func	get_pin_propagate_pos()
+		/// @desc	if propagate_pos toggled to true, the position properties will be sent down to
 		///			pinned children and used for their sub-positioning, so that elements stick together
-		/// @return {boolean} propegate_position?
+		/// @return {boolean} propagate_position?
 		///
-		return propegate_pos;
+		return pin_propagate_pos;
 	};
-	static get_propegate_scale	= function() {
-		/// @func	get_propegate_scale()
-		/// @desc	if propegate_scale toggled to true, the scale properties will be sent down to pinned
+	static get_pin_propagate_scale = function() {
+		/// @func	get_pin_propagate_scale()
+		/// @desc	if propagate_scale toggled to true, the scale properties will be sent down to pinned
 		///			children and used for their scaling and positioning, so that elements stick/scale together
-		/// @return {boolean} propegate_scale?
+		/// @return {boolean} propagate_scale?
 		///
-		return propegate_scale;
+		return pin_propagate_scale;
 	};
-	static get_propegate_alpha	= function() {
-		/// @func	get_propegate_alpha()
-		/// @desc	if propegate_alpha toggled to true, the alpha properties will be sent down to pinned
+	static get_pin_propagate_alpha = function() {
+		/// @func	get_pin_propagate_alpha()
+		/// @desc	if propagate_alpha toggled to true, the alpha properties will be sent down to pinned
 		///			children and used for their alpha, so that elements blend/fade together
-		/// @return {boolean} propegate_alpha?
+		/// @return {boolean} propagate_alpha?
 		///
-		return propegate_alpha;
+		return pin_propagate_alpha;
 	};
-	
+		
 	#endregion
 	#region Setters
-	
+		
 	static set_properties			  = function(_properties_struct) {
 		/// @func	set_properties(properties_struct)
 		/// @desc	ui components are designed to be modular and lightweight, as a result, this method can be used
@@ -699,7 +694,8 @@ function Ui(_config) constructor {
 		return self;
 	};
 	static set_pos					  = function(_x, _y) {
-		/// @func	set_y(y)
+		/// @func	set_pos(x, y)
+		/// @param	{real} x
 		/// @param	{real} y
 		/// @return {Ui} self
 		///
@@ -802,31 +798,31 @@ function Ui(_config) constructor {
 		///
 		use_gui_space = _use_gui_space;
 		return self;
-	};	
-	static set_propegate_pos		  = function(_propegate_pos) {
-		/// @func	set_propegate_pos(propegate_pos?)
-		/// @param	{boolean}	   propegate_pos?
+	};
+	static set_pin_propagate_pos	  = function(_pin_propagate_pos) {
+		/// @func	set_pin_propagate_pos(pin_propagate_pos?)
+		/// @param	{boolean}	   pin_propagate_pos?
 		/// @return {UiInteractor} self
 		///
-		propegate_pos = _propegate_pos;
+		pin_propagate_pos = _pin_propagate_pos;
 		return self;
-	};	
-	static set_propegate_scale		  = function(_propegate_scale) {
-		/// @func	set_propegate_pos(propegate_scale?)
-		/// @param	{boolean}	   propegate_scale?
+	};
+	static set_pin_propagate_scale	  = function(_pin_propagate_scale) {
+		/// @func	set_pin_propagate_scale(pin_propagate_scale?)
+		/// @param	{boolean}	   pin_propagate_scale?
 		/// @return {UiInteractor} self
 		///
-		propegate_scale = _propegate_scale;
+		pin_propagate_scale = _pin_propagate_scale;
 		return self;
-	};	
-	static set_propegate_alpha		  = function(_propegate_alpha) {
-		/// @func	set_propegate_alpha(propegate_alpha?)
-		/// @param	{boolean}	   propegate_alpha?
+	};
+	static set_pin_propagate_alpha	  = function(_pin_propagate_alpha) {
+		/// @func	set_pin_propagate_alpha(pin_propagate_alpha?)
+		/// @param	{boolean}	   pin_propagate_alpha?
 		/// @return {UiInteractor} self
 		///
-		propegate_alpha = _propegate_alpha;
+		pin_propagate_alpha = _pin_propagate_alpha;
 		return self;
-	};	
+	};
 	static set_state_execute_on_enter = function(_execute_on_enter) {
 		/// @func	set_state_execute_on_enter(execute_on_enter?)
 		/// @desc	whether or not the defined on_enter state function should execute whenever
@@ -836,7 +832,7 @@ function Ui(_config) constructor {
 		///
 		execute_on_enter = _execute_on_enter;
 		return self;
-	};	
+	};
 	static set_state_execute_on_exit  = function(_execute_on_exit) {
 		/// @func	set_state_execute_on_exit(execute_on_exit?)
 		/// @desc	whether or not the defined on_exit state function should execute whenever
@@ -846,8 +842,8 @@ function Ui(_config) constructor {
 		///
 		execute_on_exit = _execute_on_exit;
 		return self;
-	};	
-		
+	};
+			
 	#endregion
 	#region Actions
 	
@@ -1338,19 +1334,21 @@ function Ui(_config) constructor {
 		///
 		return _.state.name;
 	};
-	static state_set_current	  = function(_state_name) {
-		/// @func	state_set_current(state_name)	
+	static state_set_current	  = function(_state_name, _state_method) {
+		/// @func	state_set_current(state_name, state_method)	
 		/// @desc	set the current state method to that of the passed state_name's method
-		/// @param	{string} name
+		/// @param	{string} state_name
+		/// @param	{method} state_method
 		/// @return	{Ui}	 self
 		///
-		if (execute_on_enter) {
+		if (execute_on_exit) {
 			state_execute_on_exit(state_get_current_name());
 		}
-		_.state.current =  state_get(_state_name);
-		_.state.name	= _state_name;
 		
-		if (execute_on_exit) {
+		_.state.name	= _state_name;
+		_.state.current = _state_method;
+		
+		if (execute_on_enter) {
 			state_execute_on_enter(_state_name);
 		}
 		return self;
@@ -1370,7 +1368,7 @@ function Ui(_config) constructor {
 		/// @return {Ui}	 self
 		///
 		if (state_exists(_state_name)) {
-			state_set_current(_state_name);
+			state_set_current(_state_name, state_get(_state_name));
 		}
 		return self;
 	};
@@ -1423,7 +1421,7 @@ function Ui(_config) constructor {
 	static pin_components = function() {
 		/// @func	pin_components(component1, ..., componentN)	
 		/// @desc	pin x number of passed in components to this self component. pinned components 
-		///			will propegate position, scale, and alpha to children components if the associated
+		///			will propagate position, scale, and alpha to children components if the associated
 		///			flag toggles are set to true.
 		/// @param	{Ui} components
 		/// @return {Ui} component
@@ -1449,6 +1447,165 @@ function Ui(_config) constructor {
 		
 	#endregion
 	#region Configs
+	
+	static config_add				= function(_config_name, _config_struct) {
+		/// @func	config_add(config_name, config)
+		/// @param	{string} config_name
+		/// @param	{struct} config_struct
+		/// @return {Ui} self
+		///
+		if (!config_exists(_config_name)) {
+			_.config.configs[$ _config_name] = _config_struct;	
+		}
+		return self;
+	};
+	static config_get				= function(_config_name) {
+		/// @func	config_get(config_name)
+		/// @desc	return the config associated to the given config_name
+		/// @param	{string} config_name
+		/// @return {struct} config_struct
+		///
+		return _.config.configs[$ _config_name];
+	};
+	static config_get_current		= function() {
+		/// @func	config_get_current()
+		/// @desc	get the currently assigned config
+		/// @return {struct} config
+		///
+		return _.config.current;
+	};
+	static config_get_current_name	= function() {
+		/// @func	config_get_current_name()
+		/// @desc	get the name of the currently assigned config
+		/// @return {string} name
+		///
+		return _.config.name;
+	};
+	static config_set_current		= function(_config_name, _config_struct) {
+		/// @func	config_set_current(config_name, config_struct)	
+		/// @desc	set the current configuration and update values
+		/// @param	{string} config_name
+		/// @param	{struct} config_struct
+		/// @return	{Ui}	 self
+		///
+		_.config.name	 = _config_name;
+		_.config.current = _config_struct;
+		config_update_properties(_config_struct);
+		return self;
+	};
+	static config_exists			= function(_config_name) {
+		/// @func	config_exists(config_name) 
+		/// @param	{string}  config_name
+		/// @return {boolean} config_exists?
+		///
+		return variable_struct_exists(_.config.configs, _config_name);
+	};
+	static config_change			= function(_config_name) {
+		/// @func	config_change(config_name)
+		/// @desc	do config transition
+		/// @param	{string} config_name
+		/// @return {Ui}	 self
+		///
+		if (config_exists(_config_name)) {
+			config_set_current(_config_name, config_get(_config_name));
+		}
+		return self;
+	};
+	static config_is				= function(_config_name) {
+		/// @func	config_is(state_name)
+		/// @desc	check if the current config_is the same as that of the passed in config_name
+		/// @param	{string}  config_name
+		/// @return {boolean} config_is?
+		///
+		return _config_name == config_get_current_name();
+	};
+	
+	static config_assign_start		= function(_config_name, _config_struct) {
+		/// @func	config_assing_start(config_name, config_struct*)
+		/// @param	{string} config_name
+		/// @param	{struct} config_struct=config_get_default()
+		///	@return NA
+		///
+		if (_config_struct == undefined || _config_struct == {}) {
+			_config_struct  = config_get_default();	
+		}
+		else {
+			config_update_properties(config_get_default());	
+		}
+		_.config.name_start = _config_name;
+		config_add(_config_name, _config_struct);
+		config_set_current(_config_name, _config_struct);
+	};
+	static config_restore_to_start	= function() {
+		/// @func	config_restore_to_start()
+		/// @return {Ui} self
+		///
+		return config_change(config_get_start());
+	};
+	static config_get_start			= function() {
+		/// @func	config_get_start()
+		/// @return {struct} config_start
+		///
+		return config_get(_.config.name_start);
+	};
+	static config_get_default		= function() {
+		///	@func	config_get_default()
+		/// @return {struct} config_default
+		/// 
+		var _return_data = {}; with (_return_data) {
+			active					= __UI_COMPONENT_DEFAULT_ACTIVE;
+			x						= __UI_COMPONENT_DEFAULT_X;
+			y						= __UI_COMPONENT_DEFAULT_Y;
+			color					= __UI_COMPONENT_DEFAULT_COLOR;
+			alpha					= __UI_COMPONENT_DEFAULT_ALPHA;
+			angle					= __UI_COMPONENT_DEFAULT_ANGLE;
+			scale					= __UI_COMPONENT_DEFAULT_SCALE;
+			xscale					= __UI_COMPONENT_DEFAULT_XSCALE;
+			yscale					= __UI_COMPONENT_DEFAULT_YSCALE;
+			width					= __UI_COMPONENT_DEFAULT_WIDTH  * scale;
+			height					= __UI_COMPONENT_DEFAULT_HEIGHT * scale;
+			visible					= __UI_COMPONENT_DEFAULT_VISIBLE;
+			thickness				= __UI_COMPONENT_DEFAULT_THICKNESS;
+			input_device			= __UI_COMPONENT_DEFAULT_INPUT_DEVICE;
+			use_gui_space			= __UI_COMPONENT_DEFAULT_USE_GUI_SPACE;
+			execute_state_on_enter	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER;
+			execute_state_on_exit	= __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT;
+			pin_propagate_pos		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_POS_TO_CHILD;
+			pin_propagate_scale		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD;
+			pin_propagate_alpha		= __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD;	
+		};
+		return _return_data;
+	};
+	static config_update_properties	= function(_config = config_get_current()) {	/// @OVERRIDE
+		/// @func	config_update_properties(config*)
+		/// @desc	assign the values of the given config_struct to self ui component.
+		/// @param	{struct} config=config_get_current()
+		/// @return {Ui} self
+		///
+		if (_config[$ "owner"				  ] != undefined) set_owner(_config.owner);
+		if (_config[$ "active"				  ] != undefined) set_active(_config.active);
+		if (_config[$ "x"					  ] != undefined) set_x(_config.x);
+		if (_config[$ "y"					  ] != undefined) set_y(_config.y);
+		if (_config[$ "color"				  ] != undefined) set_color(_config.color);
+		if (_config[$ "alpha"				  ] != undefined) set_alpha(_config.alpha);
+		if (_config[$ "angle"				  ] != undefined) set_angle(_config.angle);
+		if (_config[$ "scale"				  ] != undefined) set_scale(_config.scale);
+		if (_config[$ "xscale"				  ] != undefined) set_xscale(_config.xscale);
+		if (_config[$ "yscale"				  ] != undefined) set_yscale(_config.yscale);
+		if (_config[$ "width"				  ] != undefined) set_width(_config.width);
+		if (_config[$ "height"				  ] != undefined) set_height(_config.height);
+		if (_config[$ "visible"				  ] != undefined) set_visible(_config.visible);
+		if (_config[$ "thickness"			  ] != undefined) set_thickness(_config.thickness);
+		if (_config[$ "input_device"		  ] != undefined) set_input_device(_config.input_device);
+		if (_config[$ "use_gui_space"		  ] != undefined) set_use_gui_space(_config.use_gui_space);
+		if (_config[$ "execute_state_on_enter"] != undefined) set_state_execute_on_enter(_config.execute_state_on_enter);
+		if (_config[$ "execute_state_on_exit "] != undefined) set_state_execute_on_exit(_config.execute_state_on_exit);
+		if (_config[$ "pin_propagate_pos"	  ] != undefined) set_pin_propagate_pos(_config.pin_propagate_pos);
+		if (_config[$ "pin_propagate_scale"	  ] != undefined) set_pin_propagate_scale(_config.pin_propagate_scale);
+		if (_config[$ "pin_propagate_alpha"	  ] != undefined) set_pin_propagate_alpha(_config.pin_propagate_alpha);
+		
+		return self;
+	};
 	
 	#endregion
 	#region Interactions
@@ -1490,7 +1647,8 @@ function Ui(_config) constructor {
 	
 	#endregion
 };
-function UiPanel (_config) : Ui(_config) constructor {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
@@ -1568,7 +1726,7 @@ function UiPanel (_config) : Ui(_config) constructor {
 	
 	render_add_action(render, true);
 };
-function UiLabel (_config) : Ui(_config) constructor {
+function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLabel(config) : Ui(config)
 	/// @param {string}	  text*
 	/// @param {bool}	  wrap*
@@ -1585,6 +1743,23 @@ function UiLabel (_config) : Ui(_config) constructor {
 	line_space  = _config[$ "line_space"] ?? __UI_COMPONENT_DEFAULT_LABEL_LINE_SPACE;
 	halign		= _config[$ "halign"	] ?? __UI_COMPONENT_DEFAULT_LABEL_HALIGN;
 	valign		= _config[$ "valign"	] ?? __UI_COMPONENT_DEFAULT_LABEL_VALIGN;
+	
+	static config_update_properties_super = config_update_properties;
+	static config_update_properties		  = function(_config) {		/// @OVERRIDE
+		/// @func	config_update_properties(config)
+		/// @desc	assign the values of the given config_struct to self ui component.
+		/// @param	{struct} config
+		/// @return {Ui} self
+		///
+		config_update_properties_super();
+		
+		if (_config[$ "text"	  ] != undefined) set_text(_config.text);
+		if (_config[$ "wrap"	  ] != undefined) set_wrap(_config.wrap);
+		if (_config[$ "wrap_width"] != undefined) set_wrap_width(_config.wrap_width);
+		if (_config[$ "line_space"] != undefined) set_line_space(_config.line_space);
+		if (_config[$ "halign"	  ] != undefined) set_halign(_config.halign);
+		if (_config[$ "valign"	  ] != undefined) set_valign(_config.valign);
+	};
 	
 	#endregion
 	#region Core
@@ -1762,7 +1937,7 @@ function UiLabel (_config) : Ui(_config) constructor {
 		return self;
 	};
 	static set_halign	  = function(_halign) {
-		/// @func	set_line_space(halign)
+		/// @func	set_halign(halign)
 		/// @param	{constant} halign
 		/// @return {Ui} self
 		///
@@ -1770,7 +1945,7 @@ function UiLabel (_config) : Ui(_config) constructor {
 		return self;
 	};
 	static set_valign	  = function(_valign) {
-		/// @func	set_line_space(valign)
+		/// @func	set_valign(valign)
 		/// @param	{constant} valign
 		/// @return {Ui} self
 		///
@@ -1790,7 +1965,7 @@ function UiLabel (_config) : Ui(_config) constructor {
 	
 	render_add_action(render, true);
 };
-function UiSprite(_config) : Ui(_config) constructor {
+function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiSprite(config) : Ui(config)
 	/// @param {sprite_index} sprite*
 	/// @param {real} image*
@@ -1996,7 +2171,7 @@ function UiSprite(_config) : Ui(_config) constructor {
 	update_add_action(update, true);
 	render_add_action(render, true);
 };
-function UiLine  (_config) : Ui(_config) constructor {
+function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLine(config) : Ui(config)
 	///
 	#region Properties
@@ -2124,7 +2299,7 @@ function UiLine  (_config) : Ui(_config) constructor {
 	
 	render_add_action(render, true);
 };
-function UiCircle(_config) : Ui(_config) constructor {
+function UiCircle (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func UiCircle(config) : Ui(config)
 	///
 	exit; // <-- not yet ready
@@ -2187,10 +2362,30 @@ function UiCircle(_config) : Ui(_config) constructor {
 		}
 	};
 };
-function UiTextbox(_config) : Ui(_config) constructor {
+function UiTextbox(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func UiTextbox(config) : Ui(config)
 	///
 	exit; // <-- not yet ready
 	
 	static render = function() {};
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

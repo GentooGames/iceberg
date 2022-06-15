@@ -31,6 +31,7 @@ global._gui = {
 		border_teeth = new BorderTrees();
 		border_uvula = new BorderTrees();
 		border_ribs	 = new BorderTrees();
+		border_ribbon = new BorderRibbon();
 		
 		with (border_mouth) {
 			set_color(CONFIG.color.green_lime);
@@ -53,10 +54,20 @@ global._gui = {
 			set_sprite(__spr_transition_border_silhouette_bones);
 		}
 		
-		
-		border_ribbon = new BorderRibbon();
-		
 		#endregion
+		
+		label = new UiLabel(,,{
+			text: "text for config start",
+			x: SURF_W * 0.5,
+			y: SURF_H * 0.5,
+		})
+		.config_add("config_2", {
+			text: "text for config 2",	
+		})
+		.config_add("config_3", {
+			text: "text for config 3",	
+		})
+		
     },    
 	update:	function() {
 		/// @func   update()
@@ -64,50 +75,51 @@ global._gui = {
         /// @return NA
         ///
         if (!initialized) exit;
+		#region Border /////////
 		
 		var _spring_speed = -15;
 		if (keyboard_check_pressed(ord("1"))) {
-			border_trees_bottom.bounce_width_to(200, _spring_speed);
-			border_trees_top.bounce_width_to(230, _spring_speed);
+			border_teeth.bounce_width_to(200, _spring_speed);
+			border_mouth.bounce_width_to(230, _spring_speed);
 		}
 		if (keyboard_check_pressed(ord("2"))) {
-			border_trees_bottom.bounce_width_to(SURF_W, _spring_speed);
-			border_trees_top.bounce_width_to(SURF_W, _spring_speed);
+			border_teeth.bounce_width_to(SURF_W, _spring_speed);
+			border_mouth.bounce_width_to(SURF_W, _spring_speed);
 		}
 		if (keyboard_check_pressed(ord("3"))) {
-			border_trees_bottom.bounce_height_to(100, _spring_speed);
-			border_trees_top.bounce_height_to(130, _spring_speed);
+			border_teeth.bounce_height_to(100, _spring_speed);
+			border_mouth.bounce_height_to(130, _spring_speed);
 		}
 		if (keyboard_check_pressed(ord("4"))) {
-			border_trees_bottom.bounce_height_to(SURF_H, _spring_speed);
-			border_trees_top.bounce_height_to(SURF_H, _spring_speed);
+			border_teeth.bounce_height_to(SURF_H, _spring_speed);
+			border_mouth.bounce_height_to(SURF_H, _spring_speed);
 		}
 		
 		if (keyboard_check_pressed(vk_enter)) {
 			var _width  = irandom_range(50, 200);
 			var _height = irandom_range(50, 200);
-			border_trees_bottom.spring_size(_width, _height);
-			border_trees_top.spring_size(_width, _height);
+			border_teeth.spring_size(_width, _height);
+			border_mouth.spring_size(_width, _height);
 		}
 		if (keyboard_check_pressed(vk_backspace)) {
-			border_trees_bottom.x.spring(_spring_speed);	
-			border_trees_top.x.spring(_spring_speed);	
+			border_teeth.x.spring(_spring_speed);	
+			border_mouth.x.spring(_spring_speed);	
 		}
 		if (keyboard_check(vk_left)) {
-			border_trees_bottom.adjust_x_offset(-1);
-			border_trees_top.adjust_x_offset(-1);
+			border_teeth.adjust_x_offset(-1);
+			border_mouth.adjust_x_offset(-1);
 		}
 		if (keyboard_check(vk_right)) {
-			border_trees_bottom.adjust_x_offset(1);
-			border_trees_top.adjust_x_offset(1);
+			border_teeth.adjust_x_offset(1);
+			border_mouth.adjust_x_offset(1);
 		}
 		if (keyboard_check(vk_up)) {
-			border_trees_bottom.adjust_y_offset(-1);
-			border_trees_top.adjust_y_offset(-1);
+			border_teeth.adjust_y_offset(-1);
+			border_mouth.adjust_y_offset(-1);
 		}
 		if (keyboard_check(vk_down)) {
-			border_trees_bottom.adjust_y_offset(1);
-			border_trees_top.adjust_y_offset(1);
+			border_teeth.adjust_y_offset(1);
+			border_mouth.adjust_y_offset(1);
 		}
 		
 		border_mouth.update();
@@ -115,6 +127,20 @@ global._gui = {
 		//border_uvula.update();
 		//border_ribs.update();
 		border_ribbon.update();
+		
+		#endregion
+		
+		if (keyboard_check_pressed(ord("1"))) {
+			label.config_restore_to_start();	
+		}
+		if (keyboard_check_pressed(ord("2"))) {
+			label.config_change("config_2");
+		}
+		if (keyboard_check_pressed(ord("3"))) {
+			label.config_change("config_3");
+		}
+		
+		label.update();
 	},
 	render: function() {
 		/// @func   update()
@@ -122,12 +148,17 @@ global._gui = {
         /// @return NA
         ///
         if (!initialized) exit;
+		#region Border /////////
 		
 		//border_ribs.render();
 		//border_uvula.render();
 		border_teeth.render();
 		border_mouth.render();
 		border_ribbon.render();
+		
+		#endregion
+		
+		label.render();
 	},
 	
 	#endregion
