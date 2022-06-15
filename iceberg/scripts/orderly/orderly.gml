@@ -473,13 +473,13 @@ function Orderly()  constructor {
 		this.config.default_repeat_action = _repeat_action;
 		return self;
 	};
-	static set_default_auto_bind_to_actor	  = function(_auto_bind) {
-		/// @func	set_default_auto_bind_to_actor(auto_bind?)
-		/// @param	{bool} auto_bind?
+	static set_default_auto_bind_to_actor	  = function(_auto_bind_methods) {
+		/// @func	set_default_auto_bind_to_actor(auto_bind_methods?)
+		/// @param	{bool} auto_bind_methods?
 		/// @desc	...
 		/// @return {Orderly} self
 		///
-		this.config.default_auto_bind_to_actor = _auto_bind;
+		this.config.default_auto_bind_to_actor = _auto_bind_methods;
 		return self;
 	};
 	static set_default_use_script_execute_ext = function(_use_script_execute_ext) {
@@ -880,13 +880,13 @@ function OrderlyAction(_config) constructor {
 		this.config.end_behavior = _action_end_enum;
 		return self;
 	};
-	static set_auto_bind_to_actor	  = function(_auto_bind) {
-		/// @func	set_auto_bind_to_actor(auto_bind?)
-		/// @param	{bool} auto_bind?
+	static set_auto_bind_to_actor	  = function(_auto_bind_methods) {
+		/// @func	set_auto_bind_to_actor(auto_bind_methods?)
+		/// @param	{bool} auto_bind_methods?
 		/// @desc	...
 		/// @return {OrderlyAction} self
 		/// 
-		this.config.auto_bind_to_actor = _auto_bind;
+		this.config.auto_bind_to_actor = _auto_bind_methods;
 		return self;
 	};
 	static set_use_script_execute_ext = function(_use_script_execute_ext) {
