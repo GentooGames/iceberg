@@ -1621,6 +1621,14 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		__this.__config.__name_start = _config_start_name;
 		config_add(_config_start_name, _config_struct);
 		
+		/// Iterate Over All Values, And Invoke config_start_set_property() So That It Is Stashed For Automatic Updating
+		var _property_names = variable_struct_get_names(_config_struct);
+		for (var _i = 0, _len = array_length(_property_names); _i < _len; _i++) {
+			var _property_name  = _property_names[_i];
+			var _property_value = _config_struct[$ _property_name]
+			config_start_set_property(_config_struct, _property_name, _property_value);
+		}
+		
 		/// Invoke Default Config First Just So That All Default Properties Are Guaranteed To Be Set At Least Once
 		config_update_properties(config_default_get());	
 		config_set_current(_config_start_name, _config_struct);
