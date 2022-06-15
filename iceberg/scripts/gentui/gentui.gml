@@ -147,6 +147,7 @@
 #macro __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_SPEED			1
 #macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_ENTER		true
 #macro __UI_COMPONENT_DEFAULT_STATE_EXECUTE_ON_EXIT			true
+#macro __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG		true
 #macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_POS_TO_CHILD	true
 #macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_SCALE_TO_CHILD	true
 #macro __UI_COMPONENT_DEFAULT_PIN_PROPAGATE_ALPHA_TO_CHILD	false
@@ -1397,12 +1398,12 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __this.__state.__name;
 	};
-	static state_set_current			= function(_state_name, _state_method, _check_for_config = true) {
-		/// @func	state_set_current(state_name, state_method, check_for_config?*)	
+	static state_set_current			= function(_state_name, _state_method, _check_for_config) {
+		/// @func	state_set_current(state_name, state_method, check_for_config?)	
 		/// @desc	set the current state method to that of the passed state_name's method
 		/// @param	{string}  state_name
 		/// @param	{method}  state_method
-		/// @param	{boolean} check_for_config=true
+		/// @param	{boolean} check_for_config
 		/// @return	{Ui}	  self
 		///
 		if (state_execute_on_exit) {
@@ -1430,7 +1431,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return variable_struct_exists(__this.__state.__states, _state_name);
 	};
-	static state_change					= function(_state_name, _check_for_config = true) {
+	static state_change					= function(_state_name, _check_for_config = __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG) {
 		/// @func	state_change(state_name, check_for_config?*)
 		/// @desc	do state transition if a state exists with the given name.
 		/// @param	{string}  state_name

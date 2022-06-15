@@ -83,50 +83,50 @@ global._gui = {
 		
 		#region Border /////////
 		
-		var _spring_speed = -15;
-		if (keyboard_check_pressed(ord("1"))) {
-			border_teeth.bounce_width_to(200, _spring_speed);
-			border_mouth.bounce_width_to(230, _spring_speed);
-		}
-		if (keyboard_check_pressed(ord("2"))) {
-			border_teeth.bounce_width_to(SURF_W, _spring_speed);
-			border_mouth.bounce_width_to(SURF_W, _spring_speed);
-		}
-		if (keyboard_check_pressed(ord("3"))) {
-			border_teeth.bounce_height_to(100, _spring_speed);
-			border_mouth.bounce_height_to(130, _spring_speed);
-		}
-		if (keyboard_check_pressed(ord("4"))) {
-			border_teeth.bounce_height_to(SURF_H, _spring_speed);
-			border_mouth.bounce_height_to(SURF_H, _spring_speed);
-		}
+		//var _spring_speed = -15;
+		//if (keyboard_check_pressed(ord("1"))) {
+		//	border_teeth.bounce_width_to(200, _spring_speed);
+		//	border_mouth.bounce_width_to(230, _spring_speed);
+		//}
+		//if (keyboard_check_pressed(ord("2"))) {
+		//	border_teeth.bounce_width_to(SURF_W, _spring_speed);
+		//	border_mouth.bounce_width_to(SURF_W, _spring_speed);
+		//}
+		//if (keyboard_check_pressed(ord("3"))) {
+		//	border_teeth.bounce_height_to(100, _spring_speed);
+		//	border_mouth.bounce_height_to(130, _spring_speed);
+		//}
+		//if (keyboard_check_pressed(ord("4"))) {
+		//	border_teeth.bounce_height_to(SURF_H, _spring_speed);
+		//	border_mouth.bounce_height_to(SURF_H, _spring_speed);
+		//}
 		
-		if (keyboard_check_pressed(vk_enter)) {
-			var _width  = irandom_range(50, 200);
-			var _height = irandom_range(50, 200);
-			border_teeth.spring_size(_width, _height);
-			border_mouth.spring_size(_width, _height);
-		}
-		if (keyboard_check_pressed(vk_backspace)) {
-			border_teeth.x.spring(_spring_speed);	
-			border_mouth.x.spring(_spring_speed);	
-		}
-		if (keyboard_check(vk_left)) {
-			border_teeth.adjust_x_offset(-1);
-			border_mouth.adjust_x_offset(-1);
-		}
-		if (keyboard_check(vk_right)) {
-			border_teeth.adjust_x_offset(1);
-			border_mouth.adjust_x_offset(1);
-		}
-		if (keyboard_check(vk_up)) {
-			border_teeth.adjust_y_offset(-1);
-			border_mouth.adjust_y_offset(-1);
-		}
-		if (keyboard_check(vk_down)) {
-			border_teeth.adjust_y_offset(1);
-			border_mouth.adjust_y_offset(1);
-		}
+		//if (keyboard_check_pressed(vk_enter)) {
+		//	var _width  = irandom_range(50, 200);
+		//	var _height = irandom_range(50, 200);
+		//	border_teeth.spring_size(_width, _height);
+		//	border_mouth.spring_size(_width, _height);
+		//}
+		//if (keyboard_check_pressed(vk_backspace)) {
+		//	border_teeth.x.spring(_spring_speed);	
+		//	border_mouth.x.spring(_spring_speed);	
+		//}
+		//if (keyboard_check(vk_left)) {
+		//	border_teeth.adjust_x_offset(-1);
+		//	border_mouth.adjust_x_offset(-1);
+		//}
+		//if (keyboard_check(vk_right)) {
+		//	border_teeth.adjust_x_offset(1);
+		//	border_mouth.adjust_x_offset(1);
+		//}
+		//if (keyboard_check(vk_up)) {
+		//	border_teeth.adjust_y_offset(-1);
+		//	border_mouth.adjust_y_offset(-1);
+		//}
+		//if (keyboard_check(vk_down)) {
+		//	border_teeth.adjust_y_offset(1);
+		//	border_mouth.adjust_y_offset(1);
+		//}
 		
 		border_mouth.update();
 		border_teeth.update();
