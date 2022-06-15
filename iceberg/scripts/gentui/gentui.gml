@@ -38,6 +38,15 @@
 			x.	reformatted state_set_current() & config_set_current() to match more appropriate levels of abstraction, especially
 				when compared to it's corollary methods state_change() & config_change(), such that the two different methods are 
 				operating on not-so-similar functionalities.
+			x.	no-longer need to override properties_update() as properties will now automatically update if a getter/setter method
+				exists with the proper naming convention.
+					e.g. :	text = property_add(...);
+							set_text();
+							get_text();
+							
+							interpolation = property_add(...);
+							set_interpolation();
+							get_interpolation();
 			
 		Property/Method Name Changes:
 			x.	renamed step() method to update() method to remove implied context sensitivity
@@ -91,11 +100,12 @@
 #endregion
 #region upcoming features ///////////
 /*
-	- test overridden methods, such as panel.get_width() and make sure that automatic property updating is taking into account these new methods
+	- config state binding
 	- NORMALIZE PIN, STATE, CONFIG SPECIFIC GETTERS AND MOVE INTO PROPER REGIONS
 		- normalize method naming convention so that: 
 			- state_enter_get() config_start_get() match up, etc
 	- figure out what to do with owner property and decide if needs to be in configs or not
+	- test overridden methods, such as panel.get_width() and make sure that automatic property updating is taking into account these new methods
 	- be able to add custom events with custom triggers. do not be restricted to just one set of predefined events
 	- ability to have parent components implement child components' update() and render() methods automatically
 		- additionally, setup corresponding depth system for custom depth sorting if automatic updates and renders are used
@@ -1387,12 +1397,13 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __this.__state.__name;
 	};
-	static state_set_current			= function(_state_name, _state_method) {
-		/// @func	state_set_current(state_name, state_method)	
+	static state_set_current			= function(_state_name, _state_method, _check_for_config = true) {
+		/// @func	state_set_current(state_name, state_method, check_for_config?*)	
 		/// @desc	set the current state method to that of the passed state_name's method
-		/// @param	{string} state_name
-		/// @param	{method} state_method
-		/// @return	{Ui}	 self
+		/// @param	{string}  state_name
+		/// @param	{method}  state_method
+		/// @param	{boolean} check_for_config=true
+		/// @return	{Ui}	  self
 		///
 		if (state_execute_on_exit) {
 			state_execute_state_on_exit(state_get_current_name());
@@ -1404,6 +1415,11 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (state_execute_on_enter) {
 			state_execute_state_on_enter(_state_name);
 		}
+		
+		/// Check For A Config With A Matching Name
+		if (_check_for_config && config_exists(_state_name)) {
+			config_change(_state_name);	
+		}
 		return self;
 	};
 	static state_exists					= function(_state_name) {
@@ -1414,14 +1430,15 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return variable_struct_exists(__this.__state.__states, _state_name);
 	};
-	static state_change					= function(_state_name) {
-		/// @func	state_change(state_name)
+	static state_change					= function(_state_name, _check_for_config = true) {
+		/// @func	state_change(state_name, check_for_config?*)
 		/// @desc	do state transition if a state exists with the given name.
-		/// @param	{string} state_name
-		/// @return {Ui}	 self
+		/// @param	{string}  state_name
+		/// @param	{boolean} check_for_config=true
+		/// @return {Ui}	  self
 		///
 		if (state_exists(_state_name)) {
-			state_set_current(_state_name, state_get(_state_name));
+			state_set_current(_state_name, state_get(_state_name), _check_for_config);
 		}
 		return self;
 	};

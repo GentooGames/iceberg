@@ -56,19 +56,22 @@ global._gui = {
 		
 		#endregion
 		
-		label = new UiLabel(,,{
+		label = new UiLabel(,"state_start",{
 			text: "text for config start",
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
-		.config_set("config_2", {
+		.config_set("state_2", {
 			text: "text for config 2",	
 			x: SURF_W * 0.1,
 			y: SURF_H * 0.2,
 		})
-		.config_set("config_3", {
+		.config_set("state_3", {
 			text: "text for config 3",	
 		})
+		.state_add("state_start", function() {})
+		.state_add("state_2",	  function() {})
+		.state_add("state_3",	  function() {})
 		
     },    
 	update:	function() {
@@ -134,13 +137,16 @@ global._gui = {
 		#endregion
 		
 		if (keyboard_check_pressed(ord("1"))) {
-			label.config_restore_to_start();	
+			//label.config_restore_to_start();	
+			label.state_change("state_start");
 		}
 		if (keyboard_check_pressed(ord("2"))) {
-			label.config_change("config_2");
+			//label.config_change("config_2");
+			label.state_change("state_2");
 		}
 		if (keyboard_check_pressed(ord("3"))) {
-			label.config_change("config_3");
+			//label.config_change("config_3");
+			label.state_change("state_3");
 		}
 		
 		label.update();
