@@ -1580,10 +1580,14 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __this.__config.__name_default;
 	};
-	static config_restore_to_start	 = function() {
-		/// @func	config_restore_to_start()
+	static config_restore_to_start	 = function(_restore_all_properties = true) {
+		/// @func	config_restore_to_start(restore_all_properties?*)
+		/// @param	{bool} restore_all_properties?=true
 		/// @return {Ui} self
 		///
+		if (_restore_all_properties) {
+			config_update_properties(config_default_get());	// wipe all values to default first
+		}
 		return config_change(config_start_get_name());
 	};
 	static config_restore_to_default = function() {
@@ -1851,7 +1855,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		/// @param	{struct} config
 		/// @return {Ui} self
 		///
-		config_update_properties_super();
+		config_update_properties_super(_config);
 		
 		if (_config[$ "text"	  ] != undefined) set_text(_config.text);
 		if (_config[$ "wrap_apply"] != undefined) set_wrap_apply(_config.wrap_apply);
