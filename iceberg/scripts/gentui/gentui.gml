@@ -1645,6 +1645,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	static config_apply_state		 = function (_state_name, _check_for_state_config = __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG) {
 		/// @func	config_apply_state(state_name, check_for_state_config?*)
+		/// @desc	apply the config bound to a given state. if no binding exists, default 
+		///			check for an existing config with the same state name.
 		/// @param	{string}  state_name
 		/// @param	{boolean} check_for_state_config?=__UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG
 		/// @return {Ui} self
