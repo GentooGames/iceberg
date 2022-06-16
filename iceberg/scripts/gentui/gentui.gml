@@ -1856,7 +1856,7 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
-	outline = property_add(_config, "outline", default_get_outline());
+	outline = property_add(_config, "outline", false);
 	
 	#region Core ///////////////////
 	
@@ -1905,12 +1905,15 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	#endregion
 	#region Getters & Setters //////
 	
+	/// Getters
 	static get_outline = function() {
 		/// @func	get_outline()
 		/// @return {real} outline
 		///
 		return outline;
 	};
+		
+	/// Setters
 	static set_outline = function(_outline) {
 		/// @func	set_outline(outline)
 		/// @param	{real} outline
@@ -2150,17 +2153,14 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	/// @param {real} image*
 	/// @param {real} speed*
 	///
-	#region Properties /////////////
-	
 	if (!variable_struct_exists(_config, "sprite")) {
 		throw("***error in UiSprite*** sprite not defined.");	
 	}
 		
-	sprite = _config[$ "sprite"] ?? undefined;
-	image  = _config[$ "image" ] ?? __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_INDEX;
-	speed  = _config[$ "speed" ] ?? __UI_COMPONENT_DEFAULT_SPRITE_IMAGE_SPEED;
+	sprite = property_add(_config, "sprite", undefined);
+	image  = property_add(_config, "image",  0);
+	speed  = property_add(_config, "speed",  1);
 
-	#endregion
 	#region Core ///////////////////
 	
 	static update = function() {
@@ -2353,7 +2353,7 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLine(config) : Ui(config)
 	///
-	#region Properties /////////////
+	#region __this /////////////////
 	
 	with (__this) {
 		__points   = [];
