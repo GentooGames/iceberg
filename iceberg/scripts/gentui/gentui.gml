@@ -105,8 +105,6 @@
 #endregion
 #region upcoming features ///////////
 /*	
-	- localize every global macro value into the ui component itself so that each component can have different behavior if desired
-	- figure out what to do with owner property and decide if needs to be in configs or not
 	- test overridden methods, such as panel.get_width() and make sure that automatic property updating is taking into account these new methods
 	
 	- replace properties with GProps(); however, do not create a dependency to that system, instead, re-implement the basic functionality 
@@ -479,7 +477,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	get_owner()
 		/// @return {instance/struct} owner
 		///
-		return owner;
+		return __owner;
 	};
 	static get_active						= function() {
 		/// @func	get_active()
@@ -711,7 +709,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{instance/struct} owner
 		/// @return {Ui} self
 		///
-		owner = _owner;
+		__owner = _owner;
 		return self;
 	};
 	static set_active						= function(_active) {
