@@ -171,28 +171,30 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	__owner = _owner;
 	__this  = {}; with (__this) {
 		__default = {} with (__default) {
-			active						 = true;
-			x							 = 0;
-			y							 = 0;
-			color						 = c_white;
-			alpha						 = 1.0;
-			angle						 = 0;
-			scale						 = 1;
-			xscale						 = 1;
-			yscale						 = 1;
-			width						 = 0;
-			height						 = 0;
-			visible						 = true;
-			thickness					 = 1;
-			input_device				 = 1;
-			use_gui_space				 = false;
-			auto_bind_methods			 = false;
-			state_execute_on_enter		 = true;
-			state_execute_on_exit		 = true;
-			state_check_for_config_sync	 = true;
-			pin_propagate_pos_to_child	 = true;
-			pin_propagate_scale_to_child = true;
-			pin_propagate_alpha_to_child = false;	
+			__defaults = {
+				active						 : true,
+				x							 : 0,
+				y							 : 0,
+				color						 : c_white,
+				alpha						 : 1.0,
+				angle						 : 0,
+				scale						 : 1,
+				xscale						 : 1,
+				yscale						 : 1,
+				width						 : 0,
+				height						 : 0,
+				visible						 : true,
+				thickness					 : 1,
+				input_device				 : 1,
+				use_gui_space				 : false,
+				auto_bind_methods			 : false,
+				state_execute_on_enter		 : true,
+				state_execute_on_exit		 : true,
+				state_on_change_sync_config	 : true,
+				pin_propagate_pos_to_child	 : true,
+				pin_propagate_scale_to_child : true,
+				pin_propagate_alpha_to_child : false,	
+			};
 		};
 		__update  = {
 			__active:  true,
@@ -888,369 +890,32 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 			
 	#endregion
-	
-	#endregion
 	#region Defaults ///////////////////////
-
-	/// MAKE SURE THAT IF WE UPDATE A DEFAULT VALUE, THAT THE DEFAULT CONFIG IS ALSO UPDATED?
 	
-	static default_set_property						= function(_property_name, _property_default_value) {
-		/// @func	default_set_property(property_name, property_default_value)
+	static default_set = function(_property_name, _property_default_value) {
+		/// @func	default_set(property_name, property_default_value)
 		/// @param	{string} property_name
 		/// @param	{any}	 property_default_value
 		/// @return {Ui}	 self
 		///
-		__this.__default[$ _property_name] = _property_default_value;
-		
-		//variable_struct_set(
-		//	self, 
-		//	"default_get_" + _property_name, 
-		//	method(self, function(_property_name) {
-		//		return default_get_property(_property_name);
-		//	})
-		//);
-		//variable_struct_set(
-		//	self,
-		//	"default_set_" + _property_name,
-		//	method(self, function(_property_name, _property_value) {
-		//		default_set_property(_property_name, _property_value);
-		//		return self;	
-		//	})
-		//);
-		//
-		//default_get_text = function() {
-		//	return default_get_property("text");	
-		//};
-		//default_set_text = function(_text) {
-		//	default_set_property("text");
-		//	return self;
-		//};
-		
+		__this.__default.__defaults[$ _property_name] = _property_default_value;
 		return self;
 	};
-	static default_get_property						= function(_property_name) {
-		/// @func	default_get_property(property_name)
+	static default_get = function(_property_name) {
+		/// @func	default_get(property_name)
 		/// @param	{string} property_name
 		/// @return {any}	 property_default_value
 		///
-		return __this.__default[$ _property_name];
-	};
-	
-	static default_get_active						= function() {
-		/// @func	default_get_active()
-		/// @return	{boolean} active
-		///
-		return default_get_property("active");
-	};
-	static default_get_x							= function() {
-		/// @func	default_get_active()
-		/// @return	{real} x
-		///
-		return default_get_property("x");
-	};
-	static default_get_y							= function() {
-		/// @func	default_get_active()
-		/// @return	{real} y
-		///
-		return default_get_property("y");
-	};
-	static default_get_color						= function() {
-		/// @func	default_get_color()
-		/// @return	{real} color
-		///
-		return default_get_property("color");
-	};
-	static default_get_alpha						= function() {
-		/// @func	default_get_alpha()
-		/// @return	{real} alpha
-		///
-		return default_get_property("alpha");
-	};
-	static default_get_angle						= function() {
-		/// @func	default_get_angle()
-		/// @return	{real} angle
-		///
-		return default_get_property("angle");
-	};
-	static default_get_scale						= function() {
-		/// @func	default_get_scale()
-		/// @return	{real} scale
-		///
-		return default_get_property("scale");
-	};
-	static default_get_xscale						= function() {
-		/// @func	default_get_xscale()
-		/// @return	{real} xscale
-		///
-		return default_get_property("xscale") * default_get_scale();
-	};
-	static default_get_yscale						= function() {
-		/// @func	default_get_yscale()
-		/// @return	{real} yscale
-		///
-		return default_get_property("yscale") * default_get_scale();
-	};
-	static default_get_width						= function() {
-		/// @func	default_get_width()
-		/// @return	{real} width
-		///
-		return default_get_property("width") * default_get_scale();
-	};
-	static default_get_height						= function() {
-		/// @func	default_get_height()
-		/// @return	{real} height
-		///
-		return default_get_property("height") * default_get_scale();
-	};
-	static default_get_visible						= function() {
-		/// @func	default_get_visible()
-		/// @return	{boolean} visible
-		///
-		return default_get_property("visible");
-	};
-	static default_get_thickness					= function() {
-		/// @func	default_get_thickness()
-		/// @return	{real} thickness
-		///
-		return default_get_property("thickness");
-	};
-	static default_get_input_device					= function() {
-		/// @func	default_get_input_device()
-		/// @return	{real} input_device
-		///
-		return default_get_property("input_device");
-	};
-	static default_get_use_gui_space				= function() {
-		/// @func	default_get_use_gui_space()
-		/// @return	{boolean} use_gui_space
-		///
-		return default_get_property("use_gui_space");
-	};
-	static default_get_auto_bind_methods			= function() {
-		/// @func	default_get_auto_bind_method()
-		/// @return	{boolean} auto_bind_methods
-		///
-		return default_get_property("auto_bind_methods");
-	};
-	static default_get_state_execute_on_enter		= function() {
-		/// @func	default_state_execute_on_enter()
-		/// @return	{boolean} state_execute_on_enter
-		///
-		return default_get_property("state_execute_on_enter");
-	};
-	static default_get_state_execute_on_exit		= function() {
-		/// @func	default_state_execute_on_exit()
-		/// @return	{boolean} state_execute_on_exit
-		///
-		return default_get_property("state_execute_on_exit");
-	};
-	static default_get_state_check_for_config_sync	= function() {
-		/// @func	default_get_state_check_for_config_sync()
-		/// @return	{boolean} state_check_for_config_sync
-		///
-		return default_get_property("state_check_for_config_sync");
-	};
-	static default_get_pin_propagate_pos_to_child	= function() {
-		/// @func	default_get_pin_propegate_pos_to_child()
-		/// @return	{boolean} pin_propegate_pos_to_child
-		///
-		return default_get_property("pin_propegate_pos_to_child");
-	};
-	static default_get_pin_propagate_scale_to_child	= function() {
-		/// @func	default_get_pin_propegate_scale_to_child()
-		/// @return	{boolean} pin_propegate_scale_to_child
-		///
-		return default_get_property("pin_propegate_scale_to_child");
-	};
-	static default_get_pin_propagate_alpha_to_child	= function() {
-		/// @func	default_get_pin_propegate_alpha_to_child()
-		/// @return	{boolean} pin_propegate_alpha_to_child
-		///
-		return default_get_property("pin_propegate_alpha_to_child");
-	};
-	
-	static default_set_active						= function(_active) {
-		/// @func	default_set_active(active)
-		/// @param	{boolean} active
-		/// @return {Ui} self
-		///
-		default_set_property("active", _active);
-		return self;
-	};
-	static default_set_x							= function(_x) {
-		/// @func	default_set_x(x)
-		/// @param	{boolean} x
-		/// @return {Ui} self
-		///
-		default_set_property("x", _x);
-		return self;
-	};
-	static default_set_y							= function(_y) {
-		/// @func	default_set_y(y)
-		/// @param	{boolean} y
-		/// @return {Ui} self
-		///
-		default_set_property("y", _y);
-		return self;
-	};
-	static default_set_color						= function(_color) {
-		/// @func	default_set_color(color)
-		/// @param	{boolean} color
-		/// @return {Ui} self
-		///
-		default_set_property("color", _color);
-		return self;
-	};
-	static default_set_alpha						= function(_alpha) {
-		/// @func	default_set_alpha(alpha)
-		/// @param	{boolean} alpha
-		/// @return {Ui} self
-		///
-		default_set_property("alpha", _alpha);
-		return self;
-	};
-	static default_set_angle						= function(_angle) {
-		/// @func	default_set_angle(angle)
-		/// @param	{boolean} 
-		/// @return {Ui} self
-		///
-		default_set_property("angle", _angle);
-		return self;
-	};
-	static default_set_scale						= function(_scale) {
-		/// @func	default_set_scale(scale)
-		/// @param	{boolean} scale
-		/// @return {Ui} self
-		///
-		default_set_property("scale", _scale);
-		return self;
-	};
-	static default_set_xscale						= function(_xscale) {
-		/// @func	default_set_xscale(_xscale)
-		/// @param	{boolean} xscale
-		/// @return {Ui} self
-		///
-		default_set_property("xscale", _xscale);
-		return self;
-	};
-	static default_set_yscale						= function(_yscale) {
-		/// @func	default_set_yscale(yscale)
-		/// @param	{boolean} yscale
-		/// @return {Ui} self
-		///
-		default_set_property("yscale", _yscale);
-		return self;
-	};
-	static default_set_width						= function(_width) {
-		/// @func	default_set_width(width)
-		/// @param	{boolean} width
-		/// @return {Ui} self
-		///
-		default_set_property("width", _width);
-		return self;
-	};
-	static default_set_height						= function(_height) {
-		/// @func	default_set_height(height)
-		/// @param	{boolean} height
-		/// @return {Ui} self
-		///
-		default_set_property("height", _height);
-		return self;
-	};
-	static default_set_visible						= function(_visible) {
-		/// @func	default_set_visible(visible)
-		/// @param	{boolean} visible
-		/// @return {Ui} self
-		///
-		default_set_property("visible", _visible);
-		return self;
-	};
-	static default_set_thickness					= function(_thickness) {
-		/// @func	default_set_thickness(thickness)
-		/// @param	{boolean} thickness
-		/// @return {Ui} self
-		///
-		default_set_property("thickness", _thickness);
-		return self;
-	};
-	static default_set_input_device					= function(_input_device) {
-		/// @func	default_set_input_device(input_device)
-		/// @param	{boolean} input_device
-		/// @return {Ui} self
-		///
-		default_set_property("input_device", _input_device);
-		return self;
-	};
-	static default_set_use_gui_space				= function(_use_gui_space) {
-		/// @func	default_set_use_gui_space(use_gui_space)
-		/// @param	{boolean} use_gui_space
-		/// @return {Ui} self
-		///
-		default_set_property("use_gui_space", _use_gui_space);
-		return self;
-	};
-	static default_set_auto_bind_methods			= function(_auto_bind_methods) {
-		/// @func	default_set_auto_bind_methods(auto_bind_methods)
-		/// @param	{boolean} auto_bind_methods
-		/// @return {Ui} self
-		///
-		default_set_property("auto_bind_methods", _auto_bind_methods);
-		return self;
-	};
-	static default_set_state_execute_on_enter		= function(_state_execute_on_enter) {
-		/// @func	default_set_state_execute_on_enter(state_execute_on_enter)
-		/// @param	{boolean} state_execute_on_enter
-		/// @return {Ui} self
-		///
-		default_set_property("state_execute_on_enter", _state_execute_on_enter);
-		return self;
-	};
-	static default_set_state_execute_on_exit		= function(_state_execute_on_exit) {
-		/// @func	default_set_state_execute_on_exit(state_execute_on_exit)
-		/// @param	{boolean} state_execute_on_exit
-		/// @return {Ui} self
-		///
-		default_set_property("state_execute_on_exit", _state_execute_on_exit);
-		return self;
-	};
-	static default_set_state_check_for_config_sync	= function(_state_check_for_config_sync) {
-		/// @func	default_set_state_check_for_config_sync(state_check_for_config_sync)
-		/// @param	{boolean} state_check_for_config_sync
-		/// @return {Ui} self
-		///
-		default_set_property("state_check_for_config_sync", _state_check_for_config_sync);
-		return self;
-	};
-	static default_set_pin_propagate_pos_to_child	= function(_pin_propagate_pos_to_child) {
-		/// @func	default_set_pin_propagate_pos_to_child(pin_propagate_pos_to_child)
-		/// @param	{boolean} pin_propagate_pos_to_child
-		/// @return {Ui} self
-		///
-		default_set_property("pin_propagate_pos_to_child", _pin_propagate_pos_to_child);
-		return self;
-	};
-	static default_set_pin_propagate_scale_to_child	= function(_pin_propagate_scale_to_child) {
-		/// @func	default_set_pin_propagate_scale_to_child(pin_propagate_scale_to_child)
-		/// @param	{boolean} pin_propagate_scale_to_child
-		/// @return {Ui} self
-		///
-		default_set_property("pin_propagate_scale_to_child", _pin_propagate_scale_to_child);
-		return self;
-	};
-	static default_set_pin_propagate_alpha_to_child	= function(_pin_propagate_alpha_to_child) {
-		/// @func	default_set_pin_propagate_alpha_to_child(pin_propagate_alpha_to_child)
-		/// @param	{boolean} pin_propagate_alpha_to_child
-		/// @return {Ui} self
-		///
-		default_set_property("pin_propagate_alpha_to_child", _pin_propagate_alpha_to_child);
-		return self;
+		return __this.__default.__defaults[$ _property_name];
 	};
 	
 	#endregion
-	#region Actions ////////////////////////
 	
+	#endregion
+	#region Actions ////////////////////////
+
 	/// Update
-	static update_add_action = function(_update_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static update_add_action = function(_update_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	update_add_action(update_action, auto_bind_methods?*)
 		/// @desc	adds a new update action into the update stack to be execute on_update()
 		/// @param	{method/function} update_action			->	method/function to be used for said "action"
@@ -1304,7 +969,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	/// Render
-	static render_add_action = function(_render_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static render_add_action = function(_render_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	render_add_action(render_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the render stack for execution in the render() tick.
 		/// @param	{method/function} render_action			->	method/function to be used for said "action"
@@ -1376,12 +1041,12 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static hover_enter_add_action  = function(_hover_enter_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static hover_enter_add_action  = function(_hover_enter_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	hover_enter_add_action(hover_enter_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the on_hover_enter stack for execution when hover_enter is triggered.
 		///			see hover_enter_add_trigger() for configuring a trigger that would execute the on_hover_enter stack.
 		/// @param	{method/function} hover_enter_action
-		/// @param	{boolean}		  auto_bind_methods?=true
+		/// @param	{boolean}		  auto_bind_methods?*
 		/// @return {UiInteractor}	  self
 		///
 		if (_auto_bind_method) {
@@ -1393,7 +1058,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;	
 	};
-	static hover_enter_add_trigger = function(_hover_enter_trigger, _auto_bind_method = default_get_auto_bind_methods()) {
+	static hover_enter_add_trigger = function(_hover_enter_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	hover_enter_add_trigger(hover_enter_trigger, auto_bind_methods?*)
 		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_enter 
 		///			stack should be executed. the trigger method should always return a boolean.
@@ -1426,7 +1091,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static hover_hold_add_action   = function(_hover_hold_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static hover_hold_add_action   = function(_hover_hold_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	hover_hold_add_action(hover_hold_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the on_hover_hold stack for execution when hover_hold is triggered.
 		///			see hover_hold_add_trigger() for configuring a trigger that would execute the on_hover_hold stack.
@@ -1443,7 +1108,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;	
 	};
-	static hover_hold_add_trigger  = function(_hover_hold_trigger, _auto_bind_method = default_get_auto_bind_methods()) {
+	static hover_hold_add_trigger  = function(_hover_hold_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	hover_hold_add_trigger(hover_hold_trigger, auto_bind_methods?*)
 		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_hold
 		///			stack should be executed. the trigger method should always return a boolean.
@@ -1478,7 +1143,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static hover_exit_add_action   = function(_hover_leave_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static hover_exit_add_action   = function(_hover_leave_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	hover_exit_add_action(hover_leave_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the on_hover_enter stack for execution when hover_enter is triggered.
 		///			see hover_enter_add_trigger() for configuring a trigger that would execute the on_hover_enter stack.
@@ -1495,7 +1160,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;	
 	};
-	static hover_exit_add_trigger  = function(_hover_leave_trigger, _auto_bind_method = default_get_auto_bind_methods()) {
+	static hover_exit_add_trigger  = function(_hover_leave_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	hover_exit_add_trigger(hover_leave_trigger, auto_bind_methods?*)
 		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_exit
 		///			stack should be executed. the trigger method should always return a boolean.
@@ -1530,7 +1195,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static click_pressed_add_action	  = function(_click_pressed_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static click_pressed_add_action	  = function(_click_pressed_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	click_pressed_add_action(click_pressed_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the click_pressed stack for execution when click_pressed is triggered.
 		///			see click_pressed_add_trigger() for configuring a trigger that would execute the on_click_pressed stack.
@@ -1547,7 +1212,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;	
 	};
-	static click_pressed_add_trigger  = function(_click_pressed_trigger, _auto_bind_method = default_get_auto_bind_methods()) {
+	static click_pressed_add_trigger  = function(_click_pressed_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	click_pressed_add_trigger(click_pressed_trigger, auto_bind_methods?*)
 		/// @desc	add a new trigger/method used for conditional validation to determine if the click_pressed
 		///			stack should be executed. the trigger method should always return a boolean.
@@ -1579,7 +1244,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static click_down_add_action	  = function(_click_down_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static click_down_add_action	  = function(_click_down_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	click_down_add_action(click_down_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the click_down stack for execution when click_down is triggered.
 		///			see click_down_add_trigger() for configuring a trigger that would execute the on_click_down stack.
@@ -1596,7 +1261,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;	
 	};
-	static click_down_add_trigger	  = function(_click_down_trigger, _auto_bind_method = default_get_auto_bind_methods()) {
+	static click_down_add_trigger	  = function(_click_down_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	click_down_add_trigger(click_down_trigger, auto_bind_methods?*)
 		/// @desc	add a new trigger/method used for conditional validation to determine if the click_down
 		///			stack should be executed. the trigger method should always return a boolean.
@@ -1628,7 +1293,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static click_released_add_action  = function(_click_released_action, _auto_bind_method = default_get_auto_bind_methods()) {
+	static click_released_add_action  = function(_click_released_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	click_released_add_action(click_released_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the click_released stack for execution when click_released is triggered.
 		///			see click_released_add_trigger() for configuring a trigger that would execute the on_click_released stack.
@@ -1645,7 +1310,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;	
 	};
-	static click_released_add_trigger = function(_click_released_trigger, _auto_bind_method = default_get_auto_bind_methods()) {
+	static click_released_add_trigger = function(_click_released_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	click_released_add_trigger(click_released_trigger, auto_bind_methods?*)
 		/// @desc	add a new trigger/method used for conditional validation to determine if the click_released
 		///			stack should be executed. the trigger method should always return a boolean.
@@ -1666,7 +1331,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region State Machine //////////////////
 	
-	static state_add					= function(_state_name, _state_method, _auto_bind_method = default_get_auto_bind_methods()) {
+	static state_add					= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	state_add(state_name, state_method, auto_bind_methods?*)
 		/// @desc	add a new state_method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1682,7 +1347,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static state_add_on_enter			= function(_state_name, _state_method, _auto_bind_method = default_get_auto_bind_methods()) {
+	static state_add_on_enter			= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	state_add_on_enter(state_name, state_method, auto_bind_methods?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1698,7 +1363,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static state_add_on_exit			= function(_state_name, _state_method, _auto_bind_method = default_get_auto_bind_methods()) {
+	static state_add_on_exit			= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	state_add_on_exit(state_name, state_method, auto_bind_methods?*)
 		/// @desc	add a new state_on_exit method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1749,13 +1414,13 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __this.__state.__name;
 	};
-	static state_set_current			= function(_state_name, _state_method, _config_override = undefined, _check_for_config_sync = default_get_state_check_for_config_sync()) {
-		/// @func	state_set_current(state_name, state_method, config_override*, check_for_config_sync?*)	
+	static state_set_current			= function(_state_name, _state_method, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
+		/// @func	state_set_current(state_name, state_method, config_override*, state_on_change_sync_config?*)	
 		/// @desc	set the current state method to that of the passed state_name's method
 		/// @param	{string}  state_name
 		/// @param	{method}  state_method
 		/// @param	{string}  config_override=undefined
-		/// @param	{boolean} check_for_config_sync?=default
+		/// @param	{boolean} state_on_change_sync_config?=default
 		/// @return	{Ui}	  self
 		///
 		if (state_execute_on_exit) {
@@ -1769,7 +1434,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			state_execute_state_on_enter(_state_name);
 		}
 		
-		__state_sync_config(_state_name, _config_override, _check_for_config_sync);
+		__state_sync_config(_state_name, _config_override, _state_on_change_sync_config);
 		
 		return self;
 	};
@@ -1789,16 +1454,16 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return state_change_ext(_state_name);
 	};
-	static state_change_ext				= function(_state_name, _config_override = undefined, _check_for_config_sync = default_get_state_check_for_config_sync()) {
-		/// @func	state_change_ext(state_name, config_override*, check_for_config_sync?*)
+	static state_change_ext				= function(_state_name, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
+		/// @func	state_change_ext(state_name, config_override*, state_on_change_sync_config?*)
 		/// @desc	do state transition if a state exists with the given name.
 		/// @param	{string}  state_name
 		/// @param	{string}  config_override=undefined
-		/// @param	{boolean} check_for_config_sync=default
+		/// @param	{boolean} state_on_change_sync_config=default
 		/// @return {Ui}	  self
 		///
 		if (state_exists(_state_name)) {
-			state_set_current(_state_name, state_get(_state_name), _config_override, _check_for_config_sync);
+			state_set_current(_state_name, state_get(_state_name), _config_override, _state_on_change_sync_config);
 		}
 		return self;
 	};
@@ -1845,11 +1510,11 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		return self;
 	};
 	
-	static __state_sync_config			= function(_state_name, _config_override, _check_for_config_sync) {
-		/// @func	__state_sync_config(state_name, config_override, check_for_config_sync) 
+	static __state_sync_config			= function(_state_name, _config_override, _state_on_change_sync_config) {
+		/// @func	__state_sync_config(state_name, config_override, state_on_change_sync_config) 
 		/// @param	{string}  state_name
 		/// @param	{string}  config_overide
-		/// @param	{boolean} check_for_config_sync?
+		/// @param	{boolean} state_on_change_sync_config?
 		/// @return NA
 		///
 		var _config = undefined;
@@ -1866,7 +1531,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			}
 		}
 		/// Check For Config w/Same State Name
-		if (_config == undefined && _check_for_config_sync) {
+		if (_config == undefined && _state_on_change_sync_config) {
 			if (config_exists(_state_name)) {
 				_config = _state_name;	
 			}
@@ -2061,7 +1726,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			setter: variable_struct_get(self, "set_" + _property_name),	
 		};
 		/// Store Default Property
-		default_set_property(_property_name, _default_value);
+		default_set(_property_name, _default_value);
 		
 		return _value;
 	};
@@ -2101,7 +1766,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	__config_init_default()
 		/// @return {struct} config_default_struct
 		///
-		var _config_default = __this.__default;
+		var _config_default = __this.__default.__defaults;
 		config_add(config_default_get_name(), _config_default);
 		return _config_default;
 	};
@@ -2138,7 +1803,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		for (var _i = 0, _len = array_length(_property_names); _i < _len; _i++) {
 			var _property_name    = _property_names[_i];
 			var _property_value   = _config_struct[$ _property_name];
-			var _property_default =  default_get_property(_property_name);
+			var _property_default =  default_get(_property_name);
 			if (_property_default == undefined) {
 				_property_default = _property_value;	
 			}
@@ -2255,26 +1920,6 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		return self;
 	};
 		
-	#endregion
-	#region Defaults ///////////////
-	
-	default_set_property("outline", false);
-	
-	static default_get_outline = function() {
-		/// @func	default_get_outline()
-		/// @return	{boolean} outline?
-		/// 
-		return default_get_property("outline");
-	};
-	static default_set_outline = function(_outline) {
-		/// @func	default_set_outline(outline?)
-		/// @param	{boolean} outline?
-		/// @return {Ui} self
-		/// 
-		default_set_property("outline", _outline);
-		return self;
-	};
-	
 	#endregion
 	
 	render_add_action(render, true);
@@ -2495,46 +2140,6 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		return text != "" && text != undefined;
 	};
 	
-	#endregion
-	#region Defaults ///////////////
-		
-	static default_get_text		  = function() {
-		/// @func	default_get_text()
-		/// @return	{string} text
-		/// 
-		return default_get_property("text");
-	};
-	static default_get_wrap_apply = function() {
-		/// @func	default_get_wrap_apply()
-		/// @return	{boolean} wrap_apply?
-		/// 
-		return default_get_property("wrap_apply");
-	};
-	static default_get_wrap_width = function() {
-		/// @func	default_get_wrap_width()
-		/// @return	{reak} wrap_width
-		/// 
-		return default_get_property("wrap_width");
-	};
-	static default_get_line_space = function() {
-		/// @func	default_get_line_space()
-		/// @return	{real} line_space
-		/// 
-		return default_get_property("line_space");
-	};
-	static default_get_halign	  = function() {
-		/// @func	default_get_halign()
-		/// @return	{real} halign
-		/// 
-		return default_get_property("halign");
-	};
-	static default_get_valign	  = function() {
-		/// @func	default_get_valign()
-		/// @return	{real} valign
-		/// 
-		return default_get_property("valign");
-	};
-		
 	#endregion
 	
 	render_add_action(render, true);
