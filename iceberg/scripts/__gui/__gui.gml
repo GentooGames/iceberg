@@ -56,10 +56,13 @@ global._gui = {
 		
 		#endregion
 		
-		label = new UiLabel(,"state_start",{
+		label = new UiLabel(,"state_start", {
 			text: "text for config start",
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
+		})
+		.set_properties({
+			x_lerp: 100,	
 		})
 		.config_add("state_2", {
 			text: "text for config 2",	
@@ -76,8 +79,13 @@ global._gui = {
 		.state_add("state_start", function() {})
 		.state_add("state_2",	  function() {})
 		.state_add("state_3",	  function() {})
-		//.state_add_config("state_3", "config_4")
-		
+		.update_add_action(function() {})
+		.hover_enter_add_action(function() {
+			set_color(c_green);		
+		})
+		.hover_enter_add_trigger(function() {
+			return mouse_touching();
+		})
     },    
 	update:	function() {
 		/// @func   update()

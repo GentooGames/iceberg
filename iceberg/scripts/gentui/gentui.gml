@@ -48,6 +48,7 @@
 							interpolation = property_add(...);
 							set_interpolation();
 							get_interpolation();
+			x. set use_gui_space default to true
 			
 		Property/Method Name Changes:
 			x.	renamed step() method to update() method to remove implied context sensitivity
@@ -103,14 +104,21 @@
 	- to implement...
 */
 #endregion
+#region bugs ////////////////////////
+/*
+	
+*/
+#endregion
 #region upcoming features ///////////
 /*	
-	- test overridden methods, such as panel.get_width() and make sure that automatic property updating is taking into account these new methods
-	
+	- be able to add custom events with custom triggers. do not be restricted to just one set of predefined events
+		- remove context sensitivity for actions and triggers. logic exists, do not need arbitrary context definition
+		- be able to name actions and triggers, and establish relational bindings
+	- set_properties() should take a config_name param for config binding?
+	- check if set_properties() method should be implementing property_add()	
 	- replace properties with GProps(); however, do not create a dependency to that system, instead, re-implement the basic functionality 
 		- this will allow our new values to have lerp and spring motion
 		- setup configs so that they can lerp to their newly assigned property values
-	- be able to add custom events with custom triggers. do not be restricted to just one set of predefined events
 	- ability to have parent components implement child components' update() and render() methods automatically
 		- additionally, setup corresponding depth system for custom depth sorting if automatic updates and renders are used
 	
@@ -164,35 +172,31 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	/// @param {bool}  propagate_scale_to_child*
 	/// @param {bool}  propagate_alpha_to_child*
 	///
-	#region Properties /////////////////////
-	
 	__owner = _owner;
 	__this  = {}; with (__this) {
-		__default = {} with (__default) {
-			__defaults = {
-				active						 : true,
-				x							 : 0,
-				y							 : 0,
-				color						 : c_white,
-				alpha						 : 1.0,
-				angle						 : 0,
-				scale						 : 1,
-				xscale						 : 1,
-				yscale						 : 1,
-				width						 : 0,
-				height						 : 0,
-				visible						 : true,
-				thickness					 : 1,
-				input_device				 : 1,
-				use_gui_space				 : false,
-				auto_bind_methods			 : false,
-				state_execute_on_enter		 : true,
-				state_execute_on_exit		 : true,
-				state_on_change_sync_config	 : true,
-				pin_propagate_pos_to_child	 : true,
-				pin_propagate_scale_to_child : true,
-				pin_propagate_alpha_to_child : false,	
-			};
+		__default = {
+			active						 : true,
+			x							 : 0,
+			y							 : 0,
+			color						 : c_white,
+			alpha						 : 1.0,
+			angle						 : 0,
+			scale						 : 1,
+			xscale						 : 1,
+			yscale						 : 1,
+			width						 : 0,
+			height						 : 0,
+			visible						 : true,
+			thickness					 : 1,
+			input_device				 : 0,
+			use_gui_space				 : true,
+			auto_bind_methods			 : true,
+			state_execute_on_enter		 : true,
+			state_execute_on_exit		 : true,
+			state_on_change_sync_config	 : true,
+			pin_propagate_pos_to_child	 : true,
+			pin_propagate_scale_to_child : true,
+			pin_propagate_alpha_to_child : false,	
 		};
 		__update  = {
 			__active:  true,
@@ -306,7 +310,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};	
 	__config_init(_config_name, _config);
 		
-	#endregion
 	#region Core ///////////////////////////
 	
 	static update	  = function() {
@@ -896,7 +899,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{any}	 property_default_value
 		/// @return {Ui}	 self
 		///
-		__this.__default.__defaults[$ _property_name] = _property_default_value;
+		__this.__default[$ _property_name] = _property_default_value;
 		return self;
 	};
 	static default_get = function(_property_name) {
@@ -904,7 +907,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} property_name
 		/// @return {any}	 property_default_value
 		///
-		return __this.__default.__defaults[$ _property_name];
+		return __this.__default[$ _property_name];
 	};
 	
 	#endregion
@@ -1711,16 +1714,17 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean} add_to_start_config=true
 		/// @return {any}	  value
 		///
+		/// Get Property Value
 		var _value = _default_value;
 		if (_config_in !=  undefined) {
 			_value = _config_in[$ _property_name] ?? _default_value;
 		}
+		/// Add Property To Start Struct?
 		if (_add_to_start_config) {
 			config_get_start()[$ _property_name] = _value;
 		}
-		/// Store Property Into Struct For Dynamic Updating
+		/// Store Property Setter() For Dynamic Updates In properties_update()
 		__this.__config.__properties[$ _property_name] = {
-			getter: variable_struct_get(self, "get_" + _property_name),	
 			setter: variable_struct_get(self, "set_" + _property_name),	
 		};
 		/// Store Default Property
@@ -1764,7 +1768,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	__config_init_default()
 		/// @return {struct} config_default_struct
 		///
-		var _config_default = __this.__default.__defaults;
+		var _config_default = __this.__default;
 		config_add(config_get_default_name(), _config_default);
 		return _config_default;
 	};
@@ -1818,6 +1822,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {boolean} mouse_touching?
 		///
 		var _mxy = get_mouse_xy();
+		log("mxy.x: {0}, mxy.y: {1}, x: {2}, y: {3}", _mxy.x, _mxy.y, x, y);
 		return (
 			_mxy.x >= get_left() && _mxy.x <= get_right() &&
 			_mxy.y >= get_top()  && _mxy.y <= get_bottom()
@@ -1947,7 +1952,6 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		/// @func	render()
 		/// @return {UiLabel} self
 		///
-		log("visible: {0}", get_visible());
 		if (has_text()) {
 			draw_set_halign(halign);
 			draw_set_valign(valign);
