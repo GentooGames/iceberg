@@ -7,18 +7,23 @@
 
 #region about ///////////////////////
 /*
-	written_by:__gentoo_____________
-	version:_____0.2.0______________
+	written_by:_______gentoo________
+	version:__________0.2.0_________
+	last_updated:___06/16/2022______
 */
 #endregion
 #region change log //////////////////
 
-#region version 0.2.x
+#region version 0.2.*
 
 #region version 0.2.x
 /*
 	Date: xx/xx/2022
 		Feature Additions:
+			x.	abstracted actions and triggers. previously, a few set contexts existed in which the action/triggers were defined.
+				these included for example: "hover_action_add()" "hover_trigger_add()"; however, this functionality does not need
+				to be context sensitive and specific to the hover action. instead, we can generalize a simple action/trigger binding
+				that can be defined however desired.
 			x.	NEW COMPONENT: added UiCircle() implementing draw_circle_curve() functionality
 			x.	NEW COMPONENT: added UiTextbox() 
 */
@@ -30,9 +35,10 @@
 			x.	fixed bug where state_execute_on_enter was executing on_exit, and state_execute_on_exit was executing on_enter
 		
 		Feature Additions:
-			x.	added "active" flag for entire component
-			x.	added custom configurations
-			x.	state machine will now check for configs with matching names
+			x.	added "active" flag for entire component that can now be toggled to enable/disable update() and render() entirely
+			x.	added custom configurations that can be used for quick style toggling  
+			x.	state machine will now check for configs with matching names if no config_override or config_binding is established. 
+				this can be disabled by setting state_on_change_sync_config to false.
 		
 		QOL:
 			x.	added method descriptions for Ui() base component class
@@ -41,38 +47,40 @@
 				operating on not-so-similar functionalities.
 			x.	no-longer need to override properties_update() as properties will now automatically update if a getter/setter method
 				exists with the proper naming convention.
-					e.g. :	text = property_add(...);
+					<property_name> : set_<property_name>() get_<property_name>
+					e.g. :	text = property_add(...);	// this will now automatically update if the following methods have been declared
 							set_text();
 							get_text();
 							
 							interpolation = property_add(...);
 							set_interpolation();
 							get_interpolation();
+							
 			x. set use_gui_space default to true
 			
 		Property/Method Name Changes:
 			x.	renamed step() method to update() method to remove implied context sensitivity
-			x.	renamed draw() method to render() method to remove implied context snesitivity
+			x.	renamed draw() method to render() method to remove implied context sensitivity
 			x.	renamed set_execute_on_enter() methods to set_state_execute_on_enter()
 			x.	renamed set_execute_on_exit() methods to set_state_execute_on_exit()
-			x.	renamed hover_x() methods to hover_execute_x() 
+			x.	renamed hover_*() methods to hover_execute_*() 
 					- let's normalize the "leave" keyword, and use "exit" instead, and will use this for all similarly named methods
-			x.	renamed hover_leave_add_x() methods to hover_exit_add_x()
-			x.	renamed click_x() methods to click_execute_x()
-			x.	renamed set_propegate_x() methods to set_pin_propegate_x()
-			x.	renamed propegate_x() to propagate_x() fixing spelling error
+			x.	renamed hover_leave_add_*() methods to hover_exit_add_*()
+			x.	renamed click_*() methods to click_execute_*()
+			x.	renamed set_propegate_*() methods to set_pin_propegate_*()
+			x.	renamed propegate_*() to propagate_*() fixing spelling error
 			x.	renamed auto_bind to auto_bind_methods
 			x.	renamed pin_propagate_pos to pin_propagate_pos_to_child
 			x.	renamed pin_propagate_scale	to pin_propagate_scale_to_child
 			x.	renamed pin_propagate_alpha	to pin_propagate_alpha_to_child
 		
 		Pull Requests:
-			x.	merged in fryman's pull request updating return values for state_execute_... methods
+			x.	merged in fryman's pull request updating return values for state_execute_* methods
 */
 #endregion
 
 #endregion
-#region version 0.1.x
+#region version 0.1.*
 
 #region version 0.1.1
 /*	
@@ -100,9 +108,11 @@
 
 #endregion
 #region docs & help /////////////////
-/*
-	- to implement...
-*/
+
+#region definitions
+
+#endregion
+
 #endregion
 #region bugs ////////////////////////
 /*
@@ -2552,4 +2562,5 @@ function UiTextbox(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	static render = function() {};
 };
+
 
