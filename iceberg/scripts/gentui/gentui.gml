@@ -149,7 +149,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	///		   by instantiating a new Ui() class instance, and passing in x & y values for later reference.
 	/// @use   generally this class will be implemented through inheritance of the other Ui components; however, if you wish to implement
 	///		   an explicit instance of this class, you can do so using the following: 
-	///		   var _abstractUiPointContainer = new Ui({x : _x, y: _y});		/// creates a component containing coordinate points
+	///		   var _abstractUiPointContainer = new Ui({x : _x, y: _y});		/// creates an abstract component containing coordinate points
 	/// @param {instance/struct} owner=other
 	/// @param {bool}  active*
 	/// @param {real}  x*
@@ -173,8 +173,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	/// @param {bool}  propagate_alpha_to_child*
 	///
 	__owner = _owner;
-	__this  = {}; with (__this) {
-		__default = {
+	__this  = {}; with (__this) {	/// <-- change default starting values here
+		__default = {	/// <-- change default starting values here
 			active						 : true,
 			x							 : 0,
 			y							 : 0,
@@ -211,21 +211,21 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		__state   = {
 			__active:   true,
 			__current:  undefined,	
-			__name:	  "",
+			__name:	    "",
 			__states:   {}, 
 			__on_enter: {},
 			__on_exit:  {},
 			__configs:	{},
 		};
 		__pin     = {
-			__pins:	[],
-			__size:	0,
-			__parent:	undefined,
-			__xoff:	0,
-			__yoff:	0,
+			__pins:	  [],
+			__size:	  0,
+			__parent: undefined,
+			__xoff:	  0,
+			__yoff:	  0,
 		};
 		__events  = {
-			__on_hover: {
+			__on_hover:  {
 				__enter: {
 					__active:    true,
 					__action:    {
