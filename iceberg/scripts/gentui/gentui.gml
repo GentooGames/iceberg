@@ -1668,12 +1668,12 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return _config_name == config_get_current_name();
 	};
-	static config_apply_state		 = function (_state_name, _check_for_state_config = __UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG) {
+	static config_apply_state		 = function (_state_name, _check_for_state_config = default_get("state_on_change_sync_config")) {
 		/// @func	config_apply_state(state_name, check_for_state_config?*)
 		/// @desc	apply the config bound to a given state. if no binding exists, default 
 		///			check for an existing config with the same state name.
 		/// @param	{string}  state_name
-		/// @param	{boolean} check_for_state_config?=__UI_COMPONENT_DEFAULT_STATE_CHECK_FOR_CONFIG
+		/// @param	{boolean} check_for_state_config?
 		/// @return {Ui} self
 		///
 		/// Check For State Bound Config First
