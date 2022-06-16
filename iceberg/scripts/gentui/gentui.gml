@@ -1618,6 +1618,30 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		properties_update(_config_struct);
 		return self;
 	};
+	static config_get_start			 = function() {
+		/// @func	config_get_start()
+		/// @return {struct} config_start
+		///
+		return config_get(config_get_start_name());
+	};
+	static config_get_start_name	 = function() {
+		/// @func	config_get_start_name()
+		/// @return {string} start_name
+		///
+		return __this.__config.__name_start;
+	};
+	static config_get_default		 = function() {
+		///	@func	config_get_default()
+		/// @return {struct} config_default
+		/// 
+		return config_get(config_get_default_name());
+	};
+	static config_get_default_name	 = function() {
+		/// @func	config_get_default_name()
+		/// @return {string} default_name
+		///
+		return __this.__config.__name_default;
+	};
 	static config_exists			 = function(_config_name) {
 		/// @func	config_exists(config_name) 
 		/// @param	{string}  config_name
@@ -1664,45 +1688,21 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static config_start_get			 = function() {
-		/// @func	config_start_get()
-		/// @return {struct} config_start
-		///
-		return config_get(config_start_get_name());
-	};
-	static config_start_get_name	 = function() {
-		/// @func	config_start_get_name()
-		/// @return {string} start_name
-		///
-		return __this.__config.__name_start;
-	};
-	static config_default_get		 = function() {
-		///	@func	config_default_get()
-		/// @return {struct} config_default
-		/// 
-		return config_get(config_default_get_name());
-	};
-	static config_default_get_name	 = function() {
-		/// @func	config_default_get_name()
-		/// @return {string} default_name
-		///
-		return __this.__config.__name_default;
-	};
 	static config_restore_to_start	 = function(_restore_all_properties = true) {
 		/// @func	config_restore_to_start(restore_all_properties?*)
 		/// @param	{bool} restore_all_properties?=true
 		/// @return {Ui} self
 		///
 		if (_restore_all_properties) {
-			properties_update(config_default_get());	// wipe all values to default first
+			properties_update(config_get_default());	// wipe all values to default first
 		}
-		return config_change(config_start_get_name());
+		return config_change(config_get_start_name());
 	};
 	static config_restore_to_default = function() {
 		/// @func	config_restore_to_default()
 		/// @return {Ui} self
 		///
-		return config_change(config_default_get_name());
+		return config_change(config_get_default_name());
 	};
 	
 	static property_add				 = function(_config_in, _property_name, _default_value, _add_to_start_config = true) {
@@ -1718,7 +1718,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			_value = _config_in[$ _property_name] ?? _default_value;
 		}
 		if (_add_to_start_config) {
-			config_start_get()[$ _property_name] = _value;
+			config_get_start()[$ _property_name] = _value;
 		}
 		/// Store Property Into Struct For Dynamic Updating
 		__this.__config.__properties[$ _property_name] = {
@@ -1750,7 +1750,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	static __config_init			 = function(_config_start_name, _config_struct) {
 		/// @func	__config_init(config_start_name, config_struct*)
 		/// @param	{string} config_start_name
-		/// @param	{struct} config_struct=config_default_get()
+		/// @param	{struct} config_struct=config_get_default()
 		///	@return NA
 		///
 		var _config_default = __config_init_default();
@@ -1767,7 +1767,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {struct} config_default_struct
 		///
 		var _config_default = __this.__default.__defaults;
-		config_add(config_default_get_name(), _config_default);
+		config_add(config_get_default_name(), _config_default);
 		return _config_default;
 	};
 	static __config_init_start		 = function(_config_start_name, _config_start_struct) {
