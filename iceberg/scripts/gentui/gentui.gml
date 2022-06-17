@@ -16,7 +16,7 @@
 
 #region version 0.2.*
 
-#region version 0.2.x
+#region version 0.2.1
 /*
 	Date: xx/xx/2022
 		Feature Additions:
@@ -124,6 +124,7 @@
 	- be able to add custom events with custom triggers. do not be restricted to just one set of predefined events
 		- remove context sensitivity for actions and triggers. logic exists, do not need arbitrary context definition
 		- be able to name actions and triggers, and establish relational bindings
+	- condense state *_on_enter() *_on_exit() & *_configs()
 	- set_properties() should take a config_name param for config binding?
 	- check if set_properties() method should be implementing property_add()	
 	- replace properties with GProps(); however, do not create a dependency to that system, instead, re-implement the basic functionality 
@@ -183,140 +184,70 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	/// @param {bool}  propagate_alpha_to_child*
 	///
 	__owner = _owner;
-	__this  = {}; with (__this) {	/// <-- change default starting values here
-		__default = {	/// <-- change default starting values here
-			active						 : true,
-			x							 : 0,
-			y							 : 0,
-			color						 : c_white,
-			alpha						 : 1.0,
-			angle						 : 0,
-			scale						 : 1,
-			xscale						 : 1,
-			yscale						 : 1,
-			width						 : 0,
-			height						 : 0,
-			visible						 : true,
-			thickness					 : 1,
-			input_device				 : 0,
-			use_gui_space				 : true,
-			auto_bind_methods			 : true,
-			state_execute_on_enter		 : true,
-			state_execute_on_exit		 : true,
-			state_on_change_sync_config	 : true,
-			pin_propagate_pos_to_child	 : true,
-			pin_propagate_scale_to_child : true,
-			pin_propagate_alpha_to_child : false,	
-		};
-		__update  = {
-			__active:  true,
-			__methods: [],
-			__size:	 0,
-		};
-		__render  = {
-			__active:  true,
-			__methods: [],
-			__size:	 0,
-		};
-		__state   = {
+	__this  = {			/// <-- change default starting values here
+		__default:	{	/// <-- change default starting values here
+			active:						  true,
+			x:							  0,
+			y:							  0,
+			color:						  c_white,
+			alpha:						  1.0,
+			angle:						  0,
+			scale:						  1,
+			xscale:						  1,
+			yscale:						  1,
+			width:						  0,
+			height:						  0,
+			visible:					  true,
+			thickness:					  1,
+			input_device:				  0,
+			use_gui_space:				  true,
+			auto_bind_methods:			  true,
+			state_execute_on_enter:		  true,
+			state_execute_on_exit:		  true,
+			state_on_change_sync_config:  true,
+			pin_propagate_pos_to_child:	  true,
+			pin_propagate_scale_to_child: true,
+			pin_propagate_alpha_to_child: false,	
+		},
+		__actions:	{
+			__custom:	{
+				__active:	true,
+				__methods:  {},
+				__triggers: {},
+				__size:	    0,
+			},
+			__update:	{
+				__active:  true,
+				__methods: [],
+				__size:	   0,
+			},
+			__render:	{
+				__active:  true,
+				__methods: [],
+				__size:	   0,
+			},
+		},
+		__state:	{
 			__active:   true,
 			__current:  undefined,	
 			__name:	    "",
-			__states:   {}, 
-			__on_enter: {},
-			__on_exit:  {},
-			__configs:	{},
-		};
-		__pin     = {
+			__states:   {},		/// <-- add on_enter, on_exit, and config to state stored here
+		},
+		__config:	{
+			__current:		undefined,	/// current config struct pointer
+			__configs:		{},			/// all stored configs keyed out by config_name
+			__properties:	{},			/// stored properties for dynamic updating
+			__name:			"",			/// current config name
+			__name_start:	__UI_COMPONENT_DEFAULT_CONFIG_NAME_START,
+			__name_default:	__UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT,
+		},
+		__pin:		{
 			__pins:	  [],
 			__size:	  0,
 			__parent: undefined,
 			__xoff:	  0,
 			__yoff:	  0,
-		};
-		__events  = {
-			__on_hover: {
-				__enter: {
-					__active:    true,
-					__action:    {
-						__methods: [],	
-						__size:    0,	
-					},
-					__trigger:   {
-						__methods: [],
-						__size:    0,
-					},
-					__did_enter: false,
-				},
-				__hold:  {
-					__active:  true,
-					__action:  {
-						__methods: [],	
-						__size:    0,	
-					},
-					__trigger: {
-						__methods: [],
-						__size:    0,
-					},
-				},
-				__leave: {
-					__active:    true,
-					__action:    {
-						__methods: [],	
-						__size:    0,	
-					},
-					__trigger:   {
-						__methods: [],
-						__size:    0,
-					},
-					__did_leave: false,
-				},
-			},
-			__on_click: {
-				__pressed: {
-					__active:  true,
-					__action:  {
-						__methods: [],	
-						__size:    0,	
-					},
-					__trigger: {
-						__methods: [],
-						__size:    0,
-					},
-				},
-				__down: {
-					__active:  true,
-					__action:  {
-						__methods: [],	
-						__size:    0,	
-					},
-					__trigger: {
-						__methods: [],
-						__size:    0,
-					},
-				},
-				__released: {
-					__active:  true,
-					__action:  {
-						__methods: [],	
-						__size:    0,	
-					},
-					__trigger: {
-						__methods: [],
-						__size:    0,
-					},
-				},
-			},
-		};
-		__config  = {}; with (__config) {
-			__this			= other;
-			__current		= undefined;				/// current config struct pointer
-			__configs		= {};						/// all stored configs keyed out by config_name
-			__properties	= {};						/// stored properties for dynamic updating
-			__name			= "";						/// current config name
-			__name_start	= __UI_COMPONENT_DEFAULT_CONFIG_NAME_START;
-			__name_default	= __UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT;
-		};
+		},
 	};	
 	__config_init(_config_name, _config);
 		
@@ -346,83 +277,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		};
 		
 		#endregion
-		#region Event Triggers /////
+		#region Action Triggers ////
 		
-		var _self = self;
-		with (__this.__events) {
-			if (__on_click.__pressed.__active) {
-				with (__on_click.__pressed.__trigger) {
-					for (var _i = 0; _i < __size; _i++) {
-						if (__methods[_i]()) {
-							_self.click_execute_pressed();
-							break;	
-						}
-					};
-				}
-			}
-			if (__on_click.__down.__active) {
-				with (__on_click.__down.__trigger) {
-					for (var _i = 0; _i < __size; _i++) {
-						if (__methods[_i]()) {
-							_self.click_execute_down();
-							break;	
-						}
-					};
-				}
-			}
-			if (__on_click.__released.__active) {
-				with (__on_click.__released.__trigger) {
-					for (var _i = 0; _i < __size; _i++) {
-						if (__methods[_i]()) {
-							_self.click_execute_released();
-							break;	
-						}
-					};
-				}
-			}
-			if (__on_hover.__enter.__active) {
-				with (__on_hover.__enter) {
-					for (var _i = 0; _i < __trigger.__size; _i++) {
-						if (__trigger.__methods[_i]()) {
-							if (!__did_enter) {
-								_self.hover_execute_enter();
-								__did_enter = true;
-								break;	
-							}
-						}
-						else {
-							__did_enter = false;
-						}
-					};
-				}
-			}
-			if (__on_hover.__hold.__active) {
-				with (__on_hover.__hold) {
-					for (var _i = 0; _i < __trigger.__size; _i++) {
-						if (__trigger.__methods[_i]()) {
-							_self.hover_execute_hold();
-							break;	
-						}
-					};
-				}
-			}
-			if (__on_hover.__leave.__active) {
-				with (__on_hover.__leave) {
-					for (var _i = 0; _i < __trigger.__size; _i++) {
-						if (__trigger.__methods[_i]()) {
-							if (!__did_leave) {
-								_self.hover_execute_exit();
-								__did_leave = true;
-								break;	
-							}
-						}
-						else {
-							__did_leave = false;
-						}
-					};
-				}
-			}
-		}
+		throw("add action updates here...");
 		
 		#endregion
 		
@@ -925,8 +782,57 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region Actions ////////////////////////
 
-	/// Update
-	static update_add_action = function(_update_action, _auto_bind_method = default_get("auto_bind_methods")) {
+	/// @NOTE: add name assignment to update and render actions, if no name passed in, stringify method pointer
+
+	/// Action - Custom
+	static action_add				= function(_action_name, _action_method, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	action_add(action_name, action_method, auto_bind_method?*)
+		/// @param	{string}  action_name
+		/// @param	{method}  action_method
+		/// @param	{boolean} auto_bind_method?
+		/// @return	...
+		///
+		if (_auto_bind_method) {
+			_action_method = method(self, _action_method);	
+		}
+		__this.__actions[$ _action_name] = { 
+			action:	 _action_method, 
+			triggers: [],
+		};
+	};
+	static action_add_trigger		= function(_action_name, _trigger_name = undefined, _trigger_method, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	action_add_trigger(action_name, trigger_name*, trigger_method, auto_bind_methods?)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name*=undefined
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} auto_bind_method?
+		/// @return	...
+		///
+		var _action_data  = __this.__actions[$ _action_name];
+		if (_action_data != undefined) {
+			if (_auto_bind_method) {
+				_trigger_method = method(self, _trigger_method);	
+			}
+			array_push(_action_data.triggers, _trigger_method);
+			
+			
+			// if (_trigger_name == undefined) {
+			// 	_trigger_name = string(ptr(_trigger_method));	
+			// }
+			
+		}
+	};
+	static action_remove			= function() {};
+	static action_remove_trigger	= function() {};
+	static action_clear_triggers	= function() {};
+	static action_get				= function() {};
+	static action_get_triggers		= function() {};
+	static action_exists			= function() {};
+	static action_execute			= function() {};
+	static action_set_active		= function() {};
+
+	/// Action - Update
+	static action_update_add		= function(_update_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	update_add_action(update_action, auto_bind_methods?*)
 		/// @desc	adds a new update action into the update stack to be execute on_update()
 		/// @param	{method/function} update_action			->	method/function to be used for said "action"
@@ -939,48 +845,33 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind_method) {
 			_update_action = method(self, _update_action);	
 		}
-		with (__this.__update) {
-			array_push(__methods, _update_action);	
-			__size++;
-		}
+		array_push(__this.__update.__methods, _update_action);	
+		__this.__update.__size++;
 		return self;
 	};
-	static update_enable	 = function() {
-		/// @func	update_enable()
-		/// @desc	set the update actions to be enabled, so that they are run during the update() tick
-		/// @return {Ui} self
-		///
-		__this.__update.__active = true;
-		return self;
-	};
-	static update_disable	 = function() {
-		/// @func	update_disable()
-		/// @desc	set the update actions to be disabled, so that they are NOT run during the update() tick
-		/// @return {Ui} self
-		///
-		__this.__update.__active = false;
-		return self;
-	};
-	static update_toggle	 = function() {
-		/// @func	update_toggle()
-		/// @desc	toggle the update actions to be enabled/disabled during the update() tick
-		/// @return {Ui} self
-		///
-		__this.__update.__active = !__this.__update.__active;
-		return self;
-	};
-	static update_set_active = function(_update) {
-		/// @func	update_set_active(update?)
-		/// @param	{boolean} update?
+	static action_update_remove		= function() {};
+	static action_update_clear		= function() {};
+	static action_update_get		= function() {};
+	static action_update_exists		= function() {};
+	static action_update_execute	= function() {};
+	static action_update_set_active	= function(_active) {
+		/// @func	update_set_active(active?)
+		/// @param	{boolean} active?
 		/// @desc	set whether or not the update actions should be enabled to run during the update() tick
 		/// @return {Ui} self
 		///
-		__this.__update.__active = _update;
+		__this.__update.__active = _active;
 		return self;
 	};
+	static action_update_get_active	= function() {
+		/// @func	update_get_active()
+		/// @return {boolean} active?
+		///
+		return __this.__update.__active;
+	};
 	
-	/// Render
-	static render_add_action = function(_render_action, _auto_bind_method = default_get("auto_bind_methods")) {
+	/// Action - Render
+	static action_render_add		= function(_render_action, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	render_add_action(render_action, auto_bind_methods?*)
 		/// @desc	add a new action/method to the render stack for execution in the render() tick.
 		/// @param	{method/function} render_action			->	method/function to be used for said "action"
@@ -993,390 +884,29 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		if (_auto_bind_method) {
 			_render_action = method(self, _render_action);	
 		}
-		with (__this.__render) {
-			array_push(__methods, _render_action);	
-			__size++;
-		}
+		array_push(__this.__render.__methods, _render_action);	
+		__this.__render.__size++;
 		return self;
 	};
-	static render_enable	 = function() {
-		/// @func	render_enable()
-		/// @desc	set the render actions to be enabled, so that they are run during the render() tick
-		/// @return {Ui} self
-		///
-		__this.__render.__active = true;
-		return self;
-	};
-	static render_disable	 = function() {
-		/// @func	render_disable()
-		/// @desc	set the render actions to be disabled, so that they are NOT run during the render() tick
-		/// @return {Ui} self
-		///
-		__this.__render.__active = false;
-		return self;
-	};
-	static render_toggle	 = function() {
-		/// @func	render_toggle()
-		/// @desc	toggle the render actions to be enabled/disabled during the render() tick
-		/// @return {Ui} self
-		///
-		__this.__render.__active = !__this.__render.__active;
-		return self;
-	};
-	static render_set_active = function(_render) {
-		/// @func	render_set_active(render?)
-		/// @param	{boolean} render?
+	static action_render_remove		= function() {};
+	static action_render_clear		= function() {};
+	static action_render_get		= function() {};
+	static action_render_exists		= function() {};
+	static action_render_execute	= function() {};
+	static action_render_set_active	= function(_active) {
+		/// @func	render_set_active(active?)
+		/// @param	{boolean} active?
 		/// @desc	set whether or not the render actions should be enabled to run during the render() tick
 		/// @return {Ui} self
 		///
-		__this.__render.__active = _render;
+		__this.__render.__active = _active;
 		return self;
 	};	
-	
-	/// Events
-	static event_add_action  = function(_event_name, _event_method, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	event_add_action(event_name, event_method, auto_bind_method?*)
-		/// @param	{string}  event_name
-		/// @param	{method}  event_method
-		/// @param	{boolean} auto_bind_method?
-		/// @return	...
+	static action_render_get_active	= function() {
+		/// @func	render_get_active()
+		/// @return {boolean} active?
 		///
-		if (_auto_bind_method) {
-			_event_method = method(self, _event_method);	
-		}
-		__this.__events[$ _event_name] = { event: _event_method, triggers: [] };
-	};
-	static event_add_trigger = function(_event_name, _trigger_name = undefined, _trigger_method, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	event_add_trigger(event_name, trigger_name*, trigger_method, auto_bind_methods?)
-		/// @param	{string}  event_name
-		/// @param	{string}  trigger_name*=undefined
-		/// @param	{method}  trigger_method
-		/// @param	{boolean} auto_bind_method?
-		/// @return	...
-		///
-		var _event_data  = __this.__events[$ _event_name];
-		if (_event_data != undefined) {
-			if (_auto_bind_method) {
-				_trigger_method = method(self, _trigger_method);	
-			}
-			array_push(_event_data.triggers, _trigger_method);
-			
-			
-			// if (_trigger_name == undefined) {
-			// 	_trigger_name = string(ptr(_trigger_method));	
-			// }
-			
-		}
-	};
-	static event_remove_trigger = function(_event_name, _trigger_name) {
-		
-	};
-	
-	
-	/// Hover
-	static hover_execute_enter	   = function() {
-		/// @func	hover_execute_enter()
-		/// @desc	method to invoke for one-time-execution of the hover_enter logic bound to the
-		///			hover_on_enter stack. this will most likely not need to be manually invoked, and 
-		///			should be handled automatically based off of defined triggers.
-		/// @return {UiInteractor} self
-		///
-		with (__this.__events.__on_hover) {
-			if (__enter.__active) {
-				with (__enter.__action) {
-					for (var _i = 0; _i < __size; _i++) {
-						__methods[_i]();	
-					}
-				}
-			}
-		}
-		return self;
-	};
-	static hover_enter_add_action  = function(_hover_enter_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	hover_enter_add_action(hover_enter_action, auto_bind_methods?*)
-		/// @desc	add a new action/method to the on_hover_enter stack for execution when hover_enter is triggered.
-		///			see hover_enter_add_trigger() for configuring a trigger that would execute the on_hover_enter stack.
-		/// @param	{method/function} hover_enter_action
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_hover_enter_action = method(self, _hover_enter_action);	
-		}
-		with (__this.__events.__on_hover.__enter.__action) {
-			array_push(__methods, _hover_enter_action);
-			__size++;
-		}
-		return self;	
-	};
-	static hover_enter_add_trigger = function(_hover_enter_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	hover_enter_add_trigger(hover_enter_trigger, auto_bind_methods?*)
-		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_enter 
-		///			stack should be executed. the trigger method should always return a boolean.
-		/// @param	{method/function} hover_enter_trigger
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_hover_enter_trigger = method(self, _hover_enter_trigger);	
-		}
-		with (__this.__events.__on_hover.__enter.__trigger) {
-			array_push(__methods, _hover_enter_trigger);
-			__size++;
-		}
-		return self;	
-	};
-	static hover_execute_hold	   = function() {
-		/// @func	hover_execute_hold()
-		/// @desc	method to invoke for one-time-execution of the hover_hold logic bound to the
-		///			hover_on_hold stack. this will most likely not need to be manually invoked, and 
-		///			should be handled automatically based off of defined triggers.
-		/// @return {UiInteractor} self
-		///
-		if (__this.__events.__on_hover.__hold.__active) {
-			with (__this.__events.__on_hover.__hold.__action) {
-				for (var _i = 0; _i < __size; _i++) {
-					__methods[_i]();	
-				}
-			}
-		}
-		return self;
-	};
-	static hover_hold_add_action   = function(_hover_hold_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	hover_hold_add_action(hover_hold_action, auto_bind_methods?*)
-		/// @desc	add a new action/method to the on_hover_hold stack for execution when hover_hold is triggered.
-		///			see hover_hold_add_trigger() for configuring a trigger that would execute the on_hover_hold stack.
-		/// @param	{method/function} hover_hold_action
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_hover_hold_action = method(self, _hover_hold_action);	
-		}
-		with (__this.__events.__on_hover.__hold.__action) {
-			array_push(__methods, _hover_hold_action);
-			__size++;
-		}
-		return self;	
-	};
-	static hover_hold_add_trigger  = function(_hover_hold_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	hover_hold_add_trigger(hover_hold_trigger, auto_bind_methods?*)
-		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_hold
-		///			stack should be executed. the trigger method should always return a boolean.
-		/// @param	{method/function} hover_hold_trigger
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_hover_hold_trigger = method(self, _hover_hold_trigger);	
-		}
-		with (__this.__events.__on_hover.__hold.__trigger) {
-			array_push(__methods, _hover_hold_trigger);
-			__size++;
-		}
-		return self;
-	};
-	static hover_execute_exit	   = function() {
-		/// @func	hover_execute_exit()
-		/// @desc	method to invoke for one-time-execution of the hover_exit logic bound to the
-		///			hover_on_exit stack. this will most likely not need to be manually invoked, and 
-		///			should be handled automatically based off of defined triggers.
-		/// @return {UiInteractor} self
-		///
-		with (__this.__events.__on_hover) {
-			if (__leave.__active) {
-				with (__leave.__action) {
-					for (var _i = 0; _i < __size; _i++) {
-						__methods[_i]();	
-					}
-				}
-			}
-		}
-		return self;
-	};
-	static hover_exit_add_action   = function(_hover_leave_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	hover_exit_add_action(hover_leave_action, auto_bind_methods?*)
-		/// @desc	add a new action/method to the on_hover_enter stack for execution when hover_enter is triggered.
-		///			see hover_enter_add_trigger() for configuring a trigger that would execute the on_hover_enter stack.
-		/// @param	{method/function} hover_leave_action
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_hover_leave_action = method(self, _hover_leave_action);	
-		}
-		with (__this.__events.__on_hover.__leave.__action) {
-			array_push(__methods, _hover_leave_action);
-			__size++;
-		}
-		return self;	
-	};
-	static hover_exit_add_trigger  = function(_hover_leave_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	hover_exit_add_trigger(hover_leave_trigger, auto_bind_methods?*)
-		/// @desc	add a new trigger/method used for conditional validation to determine if the hover_on_exit
-		///			stack should be executed. the trigger method should always return a boolean.
-		/// @param	{method/function} hover_leave_trigger
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_hover_leave_trigger = method(self, _hover_leave_trigger);	
-		}
-		with (__this.__events.__on_hover.__leave.__trigger) {
-			array_push(__methods, _hover_leave_trigger);
-			__size++;
-		}
-		return self;
-	};
-	
-	/// Click
-	static click_execute_pressed	  = function() {
-		/// @func	click_execute_pressed()
-		/// @desc	method to invoke for one-time-execution of the click_pressed logic bound to the
-		///			click_pressed stack. this will most likely not need to be manually invoked, and 
-		///			should be handled automatically based off of defined triggers.
-		/// @return {UiInteractor} self
-		///
-		if (__this.__events.__on_click.__pressed.__active) {
-			with (__this.__events.__on_click.__pressed.__action) {
-				for (var _i = 0; _i < __size; _i++) {
-					__methods[_i]();	
-				}
-			}
-		}
-		return self;
-	};
-	static click_pressed_add_action	  = function(_click_pressed_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	click_pressed_add_action(click_pressed_action, auto_bind_methods?*)
-		/// @desc	add a new action/method to the click_pressed stack for execution when click_pressed is triggered.
-		///			see click_pressed_add_trigger() for configuring a trigger that would execute the on_click_pressed stack.
-		/// @param	{method/function} click_pressed_action
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_click_pressed_action = method(self, _click_pressed_action);	
-		}
-		with (__this.__events.__on_click.__pressed.__action) {
-			array_push(__methods, _click_pressed_action);
-			__size++;
-		}
-		return self;	
-	};
-	static click_pressed_add_trigger  = function(_click_pressed_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	click_pressed_add_trigger(click_pressed_trigger, auto_bind_methods?*)
-		/// @desc	add a new trigger/method used for conditional validation to determine if the click_pressed
-		///			stack should be executed. the trigger method should always return a boolean.
-		/// @param	{method/function} click_pressed_trigger
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_click_pressed_trigger = method(self, _click_pressed_trigger);	
-		}
-		with (__this.__events.__on_click.__pressed.__trigger) {
-			array_push(__methods, _click_pressed_trigger);
-			__size++;
-		}
-		return self;	
-	};
-	static click_execute_down		  = function() {
-		/// @func	click_execute_down()
-		/// @desc	method to invoke for one-time-execution of the click_down logic bound to the
-		///			click_down stack. this will most likely not need to be manually invoked, and
-		/// @return {UiInteractor} self
-		///
-		if (__this.__events.__on_click.__down.__active) {
-			with (__this.__events.__down.__hold.__action) {
-				for (var _i = 0; _i < __size; _i++) {
-					__methods[_i]();	
-				}
-			}
-		}
-		return self;
-	};
-	static click_down_add_action	  = function(_click_down_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	click_down_add_action(click_down_action, auto_bind_methods?*)
-		/// @desc	add a new action/method to the click_down stack for execution when click_down is triggered.
-		///			see click_down_add_trigger() for configuring a trigger that would execute the on_click_down stack.
-		/// @param	{method/function} click_down_action
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_click_down_action = method(self, _click_down_action);	
-		}
-		with (__this.__events.__on_click.__down.__action) {
-			array_push(__methods, _click_down_action);
-			__size++;
-		}
-		return self;	
-	};
-	static click_down_add_trigger	  = function(_click_down_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	click_down_add_trigger(click_down_trigger, auto_bind_methods?*)
-		/// @desc	add a new trigger/method used for conditional validation to determine if the click_down
-		///			stack should be executed. the trigger method should always return a boolean.
-		/// @param	{method/function} click_down_trigger
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_click_down_trigger = method(self, _click_down_trigger);	
-		}
-		with (__this.__events.__on_click.__down.__trigger) {
-			array_push(__methods, _click_down_trigger);
-			__size++;
-		}
-		return self;	
-	};
-	static click_execute_released	  = function() {
-		/// @func	click_execute_released()
-		/// @desc	method to invoke for one-time-execution of the click_released logic bound to the
-		///			click_released stack. this will most likely not need to be manually invoked, and
-		/// @return {UiInteractor} self
-		///
-		if (__this.__events.__on_click.__released.__active) {
-			with (__this.__events.__on_click.__released.__action) {
-				for (var _i = 0; _i < __size; _i++) {
-					__methods[_i]();	
-				}
-			}
-		}
-		return self;
-	};
-	static click_released_add_action  = function(_click_released_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	click_released_add_action(click_released_action, auto_bind_methods?*)
-		/// @desc	add a new action/method to the click_released stack for execution when click_released is triggered.
-		///			see click_released_add_trigger() for configuring a trigger that would execute the on_click_released stack.
-		/// @param	{method/function} click_released_action
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_click_released_action = method(self, _click_released_action);	
-		}
-		with (__this.__events.__on_click.__released.__action) {
-			array_push(__methods, _click_released_action);
-			__size++;
-		}
-		return self;	
-	};
-	static click_released_add_trigger = function(_click_released_trigger, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	click_released_add_trigger(click_released_trigger, auto_bind_methods?*)
-		/// @desc	add a new trigger/method used for conditional validation to determine if the click_released
-		///			stack should be executed. the trigger method should always return a boolean.
-		/// @param	{method/function} click_released_trigger
-		/// @param	{boolean}		  auto_bind_methods?*
-		/// @return {UiInteractor}	  self
-		///
-		if (_auto_bind_method) {
-			_click_released_trigger = method(self, _click_released_trigger);	
-		}
-		with (__this.__events.__on_click.__released.__trigger) {
-			array_push(__methods, _click_released_trigger);
-			__size++;
-		}
-		return self;	
+		return __this.__render.__active;
 	};
 	
 	#endregion
