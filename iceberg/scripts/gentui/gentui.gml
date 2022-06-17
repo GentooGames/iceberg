@@ -235,7 +235,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			__yoff:	  0,
 		};
 		__events  = {
-			__on_hover:  {
+			__on_hover: {
 				__enter: {
 					__active:    true,
 					__action:    {
@@ -1032,6 +1032,46 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		__this.__render.__active = _render;
 		return self;
 	};	
+	
+	/// Events
+	static event_add_action  = function(_event_name, _event_method, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	event_add_action(event_name, event_method, auto_bind_method?*)
+		/// @param	{string}  event_name
+		/// @param	{method}  event_method
+		/// @param	{boolean} auto_bind_method?
+		/// @return	...
+		///
+		if (_auto_bind_method) {
+			_event_method = method(self, _event_method);	
+		}
+		__this.__events[$ _event_name] = { event: _event_method, triggers: [] };
+	};
+	static event_add_trigger = function(_event_name, _trigger_name = undefined, _trigger_method, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	event_add_trigger(event_name, trigger_name*, trigger_method, auto_bind_methods?)
+		/// @param	{string}  event_name
+		/// @param	{string}  trigger_name*=undefined
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} auto_bind_method?
+		/// @return	...
+		///
+		var _event_data  = __this.__events[$ _event_name];
+		if (_event_data != undefined) {
+			if (_auto_bind_method) {
+				_trigger_method = method(self, _trigger_method);	
+			}
+			array_push(_event_data.triggers, _trigger_method);
+			
+			
+			// if (_trigger_name == undefined) {
+			// 	_trigger_name = string(ptr(_trigger_method));	
+			// }
+			
+		}
+	};
+	static event_remove_trigger = function(_event_name, _trigger_name) {
+		
+	};
+	
 	
 	/// Hover
 	static hover_execute_enter	   = function() {
@@ -2492,6 +2532,7 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	render_add_action(render, true);
 };
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function UiCircle (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func UiCircle(config) : Ui(config)
 	///
