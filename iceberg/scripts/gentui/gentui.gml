@@ -185,7 +185,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	///
 	__owner = _owner;
 	__this  = {			/// <-- change default starting values here
-		__default:	{	/// <-- change default starting values here
+		__default: {	/// <-- change default starting values here
 			active:						  true,
 			x:							  0,
 			y:							  0,
@@ -209,31 +209,45 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			pin_propagate_scale_to_child: true,
 			pin_propagate_alpha_to_child: false,	
 		},
-		__actions:	{
-			__custom:	{
-				__active:	true,
-				__methods:  {},
-				__triggers: {},
-				__size:	    0,
-			},
-			__update:	{
+		__actions: {
+			__update: {
 				__active:  true,
-				__methods: [],
-				__size:	   0,
+				__count:   0,
+				__names:   [],
+				__actions: {},
 			},
-			__render:	{
+			__render: {
 				__active:  true,
-				__methods: [],
-				__size:	   0,
+				__count:   0,
+				__names:   [],
+				__actions: {},
+			},
+			__custom: {
+				__active:  true,
+				__count:   0,
+				__names:   [],
+				__actions: {},
 			},
 		},
-		__state:	{
-			__active:   true,
-			__current:  undefined,	
-			__name:	    "",
-			__states:   {},		/// <-- add on_enter, on_exit, and config to state stored here
+		__states:  {
+			__active:  true,
+			__count:   0,
+			__names:   [],
+			__current: {
+				__state: undefined,
+				__name:  "",
+			},	
+			__data:    {
+				/*	<state_name>: {
+						__name:	"",
+						__on_enter: function() {},
+						__on_loop:  function() {},
+						__on_exit:  function() {},
+					} 
+				*/
+			},
 		},
-		__config:	{
+		__config:  {
 			__current:		undefined,	/// current config struct pointer
 			__configs:		{},			/// all stored configs keyed out by config_name
 			__properties:	{},			/// stored properties for dynamic updating
@@ -241,7 +255,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			__name_start:	__UI_COMPONENT_DEFAULT_CONFIG_NAME_START,
 			__name_default:	__UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT,
 		},
-		__pin:		{
+		__pin:	   {
 			__pins:	  [],
 			__size:	  0,
 			__parent: undefined,
@@ -279,7 +293,29 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		#endregion
 		#region Action Triggers ////
 		
-		throw("add action updates here...");
+		if (__this.__actions.__custom.__active) {
+			var _action_count = __this.__actions.__custom.__count;
+			var _action_names = __this.__actions.__custom.__names;
+			var _action_data  = __this.__actions.__custom.__data;
+			for (var _i = 0; _i < _action_count; _i++) {
+				var _action_name	  = _action_names[_i];
+				var _action			  = _action_data[$ _action_name];
+				var _action_triggers  = _action.__triggers;
+				var _action_validated =  false;
+				for (var _j = 0; _j < _action_triggers.__count; _j++) {
+					var _action_trigger_name   = _action_triggers.__names[_j];
+					var _action_trigger_method = _action_triggers.__methods[$ _action_trigger_name];
+					if (_action_trigger_method()) {
+						_action_validated = true;
+						break;	
+					}
+					
+				}
+				if (_action_validated) {
+					_action.__method();	
+				}
+			}
+		}
 		
 		#endregion
 		
@@ -782,131 +818,100 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region Actions ////////////////////////
 
-	/// @NOTE: add name assignment to update and render actions, if no name passed in, stringify method pointer
-
-	/// Action - Custom
-	static action_add				= function(_action_name, _action_method, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	action_add(action_name, action_method, auto_bind_method?*)
-		/// @param	{string}  action_name
+	/// Actions - Custom
+	static action_set    = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_set(action_name, action_method, bind_to_self?*)
+		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
-		/// @param	{boolean} auto_bind_method?
-		/// @return	...
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
 		///
-		if (_auto_bind_method) {
+		if (_bind_to_self) {
 			_action_method = method(self, _action_method);	
 		}
-		__this.__actions[$ _action_name] = { 
-			action:	 _action_method, 
-			triggers: [],
-		};
+		if (action_exists(_action_name)) {
+			action_get(_action_name)
+				.set_name(_action_name)
+				.set_method(_action_method)
+			;
+		}
+		else {
+			action_new(_action_name, _action_method, _bind_to_self);
+		}
+		return self;
+	}
+	static action_new    = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_new(action_name, action_method, bind_to_self?*)
+		/// @param	{string}  action_name 
+		/// @param	{method}  action_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		if (_bind_to_self) {
+			_action_method = method(self, _action_method);	
+		}
+		with (__this.__actions.__custom) {
+			array_push(__names, _action_name);
+			__actions[$ _action_name] = new UiAction(_action_name, _action_method);
+			__count++;
+		}
+		return self;
 	};
-	static action_add_trigger		= function(_action_name, _trigger_name = undefined, _trigger_method, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	action_add_trigger(action_name, trigger_name*, trigger_method, auto_bind_methods?)
+	static action_get	 = function(_action_name) {
+		/// @func	action_get(action_name)
+		/// @param	{string} action_name
+		/// @return {UiAction} action
+		/// 
+		return __this.__actions.__custom.__actions[$ _action_name];
+	};
+	static action_exists = function(_action_name) {
+		/// @func	action_exists(action_name)
 		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name*=undefined
-		/// @param	{method}  trigger_method
-		/// @param	{boolean} auto_bind_method?
-		/// @return	...
-		///
-		var _action_data  = __this.__actions[$ _action_name];
-		if (_action_data != undefined) {
-			if (_auto_bind_method) {
-				_trigger_method = method(self, _trigger_method);	
-			}
-			array_push(_action_data.triggers, _trigger_method);
-			
-			
-			// if (_trigger_name == undefined) {
-			// 	_trigger_name = string(ptr(_trigger_method));	
-			// }
-			
-		}
-	};
-	static action_remove			= function() {};
-	static action_remove_trigger	= function() {};
-	static action_clear_triggers	= function() {};
-	static action_get				= function() {};
-	static action_get_triggers		= function() {};
-	static action_exists			= function() {};
-	static action_execute			= function() {};
-	static action_set_active		= function() {};
-
-	/// Action - Update
-	static action_update_add		= function(_update_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	update_add_action(update_action, auto_bind_methods?*)
-		/// @desc	adds a new update action into the update stack to be execute on_update()
-		/// @param	{method/function} update_action			->	method/function to be used for said "action"
-		/// @param	{boolean}		  auto_bind_methods?*	->	should the update_action method be bound to the Ui() component class automatically?
-		///														if this is disabled, then whichever binding is configured upon pass-through will be used.
-		///														see GameMaker's method() function for more information 
-		///														https://manual.yoyogames.com/GameMaker_Language/GML_Reference/Variable_Functions/method.htm
-		/// @return {Ui} self
-		///
-		if (_auto_bind_method) {
-			_update_action = method(self, _update_action);	
-		}
-		array_push(__this.__update.__methods, _update_action);	
-		__this.__update.__size++;
-		return self;
-	};
-	static action_update_remove		= function() {};
-	static action_update_clear		= function() {};
-	static action_update_get		= function() {};
-	static action_update_exists		= function() {};
-	static action_update_execute	= function() {};
-	static action_update_set_active	= function(_active) {
-		/// @func	update_set_active(active?)
-		/// @param	{boolean} active?
-		/// @desc	set whether or not the update actions should be enabled to run during the update() tick
-		/// @return {Ui} self
-		///
-		__this.__update.__active = _active;
-		return self;
-	};
-	static action_update_get_active	= function() {
-		/// @func	update_get_active()
-		/// @return {boolean} active?
-		///
-		return __this.__update.__active;
+		/// @return {boolean} action_exists?
+		/// 
+		return action_get(_action_name) != undefined;
 	};
 	
-	/// Action - Render
-	static action_render_add		= function(_render_action, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	render_add_action(render_action, auto_bind_methods?*)
-		/// @desc	add a new action/method to the render stack for execution in the render() tick.
-		/// @param	{method/function} render_action			->	method/function to be used for said "action"
-		/// @param	{boolean}		  auto_bind_methods?*	->	should the render_action method be bound to the Ui() component class automatically?
-		///														if this is disabled, then whichever binding is configured upon pass-through will be used.
-		///														see GameMaker's method() function for more information 
-		///														https://manual.yoyogames.com/GameMaker_Language/GML_Reference/Variable_Functions/method.htm
+	/// Actions - Custom : Triggers
+	static action_trigger_set	 = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_trigger_set(action_name, trigger_name, trigger_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} bind_to_self?*
 		/// @return {Ui} self
 		///
-		if (_auto_bind_method) {
-			_render_action = method(self, _render_action);	
-		}
-		array_push(__this.__render.__methods, _render_action);	
-		__this.__render.__size++;
-		return self;
+		
 	};
-	static action_render_remove		= function() {};
-	static action_render_clear		= function() {};
-	static action_render_get		= function() {};
-	static action_render_exists		= function() {};
-	static action_render_execute	= function() {};
-	static action_render_set_active	= function(_active) {
-		/// @func	render_set_active(active?)
-		/// @param	{boolean} active?
-		/// @desc	set whether or not the render actions should be enabled to run during the render() tick
+	static action_trigger_new	 = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_trigger_new(action_name, trigger_name, trigger_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} bind_to_self?*
 		/// @return {Ui} self
 		///
-		__this.__render.__active = _active;
-		return self;
-	};	
-	static action_render_get_active	= function() {
-		/// @func	render_get_active()
-		/// @return {boolean} active?
+		
+	};
+	static action_trigger_get	 = function(_action_name, _trigger_name) {
+		/// @func	action_trigger_get(action_name, trigger_name)
+		/// @param	{string}   action_name
+		/// @param	{string}   trigger_name
+		/// @return {UiAction} action_trigger
 		///
-		return __this.__render.__active;
+		if (action_exists(_action_name)) {
+			var _action = action_get(_action_name);
+			return _action.get_trigger(_trigger_name); /// might return undefined
+		}
+		return undefined;
+	};
+	static action_trigger_exists = function(_action_name, _trigger_name) {
+		/// @func	action_trigger_exists(action_name, trigger_name)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @return {boolean} trigger_exists?
+		///
+		return action_trigger_get(_action_name, _trigger_name) != undefined;
 	};
 	
 	#endregion
