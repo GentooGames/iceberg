@@ -296,29 +296,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		#endregion
 		#region Action Triggers ////
 		
-		if (__this.__actions.__custom.__active) {
-			var _action_count = __this.__actions.__custom.__count;
-			var _action_names = __this.__actions.__custom.__names;
-			var _action_data  = __this.__actions.__custom.__data;
-			for (var _i = 0; _i < _action_count; _i++) {
-				var _action_name	  = _action_names[_i];
-				var _action			  = _action_data[$ _action_name];
-				var _action_triggers  = _action.__triggers;
-				var _action_validated =  false;
-				for (var _j = 0; _j < _action_triggers.__count; _j++) {
-					var _action_trigger_name   = _action_triggers.__names[_j];
-					var _action_trigger_method = _action_triggers.__methods[$ _action_trigger_name];
-					if (_action_trigger_method()) {
-						_action_validated = true;
-						break;	
-					}
-					
-				}
-				if (_action_validated) {
-					_action.__method();	
-				}
-			}
-		}
+		
 		
 		#endregion
 		
@@ -823,7 +801,37 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	
 	#region Action Method Abstractions /////
 	
-	static __action_add		   = function(_action_context, _action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	/// Action Core
+	static __actions_update	= function(_action_context) {
+		/// @func	__actions_update(action_context)
+		/// @param	{struct} action_context
+		/// @return {Gentui} self
+		///
+		with (_action_context) {
+			if (__active) {
+				for (var _i = 0; _i < __count; _i++) {
+					var _name	  = __names[_i];
+					var _action	  = __data[$ _name];
+					var _triggers = _action.__triggers;
+					var _action_validated =  false;
+					for (var _j = 0; _j < _triggers.__count; _j++) {
+						var _action_trigger_name   = _triggers.__names[_j];
+						var _action_trigger_method = _triggers.__methods[$ _action_trigger_name];
+						if (_action_trigger_method()) {
+							_action_validated = true;
+							break;	
+						}
+					
+					}
+					if (_action_validated) {
+						_action.__method();	
+					}
+				}
+			}
+		}
+		return self;
+	};
+	static __action_add		= function(_action_context, _action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
 		/// @func	__action_add(action_context, action_name, action_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name 
@@ -844,7 +852,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static __action_get		   = function(_action_context, _action_name) {
+	static __action_get		= function(_action_context, _action_name) {
 		/// @func	__action_get(action_name)
 		/// @param	{struct}  action_context
 		/// @param	{string} action_name
@@ -854,7 +862,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			return __actions[$ _action_name];
 		}
 	};
-	static __action_exists	   = function(_action_context, _action_name) {
+	static __action_exists	= function(_action_context, _action_name) {
 		/// @func	__action_exists(action_context, action_name)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name
@@ -862,7 +870,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// 
 		return __action_get(_action_context, _action_name) != undefined;
 	};
-	static __action_destroy	   = function(_action_context, _action_name) {
+	static __action_destroy	= function(_action_context, _action_name) {
 		/// @func	__action_destroy(action_context, action_name)
 		/// @param	{struct} action_context
 		/// @param	{string} action_name
@@ -884,6 +892,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
+	
+	/// Action Core Getters & Setters
 	static __action_get_active = function(_action_context, _action_name) {
 		/// @func	__action_get_active(action_name)
 		/// @param	{struct} action_context
@@ -947,7 +957,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	}
 	
 	/// Action Triggers
-	static __action_add_trigger		   = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static __action_add_trigger		 = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
 		/// @func	__action_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name
@@ -964,7 +974,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static __action_get_trigger		   = function(_action_context, _action_name, _trigger_name) {
+	static __action_get_trigger		 = function(_action_context, _action_name, _trigger_name) {
 		/// @func	__action_get_trigger(action_name, trigger_name)
 		/// @param	{struct} action_context
 		/// @param	{string} action_name
@@ -976,7 +986,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return undefined;
 	};
-	static __action_has_trigger		   = function(_action_context, _action_name, _trigger_name) {
+	static __action_has_trigger		 = function(_action_context, _action_name, _trigger_name) {
 		/// @func	__action_has_trigger(action_name, trigger_name)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name
@@ -988,7 +998,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return false;
 	};
-	static __action_destroy_trigger	   = function(_action_context, _action_name, _trigger_name) {
+	static __action_destroy_trigger	 = function(_action_context, _action_name, _trigger_name) {
 		/// @func	__action_destroy_trigger(action_name, trigger_name)
 		/// @param	{struct} action_context
 		/// @param	{string} action_name
@@ -1000,7 +1010,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		}
 		return self;
 	};
-	static __action_destroy_triggers   = function(_action_context, _action_name) {
+	static __action_destroy_triggers = function(_action_context, _action_name) {
 		/// @func	__action_destroy_triggers(action_name)
 		/// @param	{struct} action_context
 		/// @param	{string} action_name
@@ -1012,6 +1022,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		return self;
 		
 	};
+	
+	/// Action Triggers Getters & Setters
 	static __action_get_trigger_method = function(_action_context, _action_name, _trigger_name) {
 		/// @func	__action_get_trigger_method(action_name, trigger_name)
 		/// @param	{struct}   action_context
@@ -1070,7 +1082,13 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region Custom Actions /////////////////
 	
-	static action_add		 = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	/// Actions Custom Core
+	static actions_update = function() {
+		/// @func	actions_update()
+		/// @return {Gentui} self
+		///
+	};
+	static action_add	  = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
 		/// @func	action_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
@@ -1079,27 +1097,29 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_add(__this.__actions.__custom, _action_name, _action_method, _bind_to_self);
 	};
-	static action_get		 = function(_action_name) {
+	static action_get	  = function(_action_name) {
 		/// @func	action_get(action_name)
 		/// @param	{string} action_name
 		/// @return {GentuiAction} action
 		///
 		return __action_get(__this.__actions.__custom);
 	};
-	static action_exists	 = function(_action_name) {
+	static action_exists  = function(_action_name) {
 		/// @func	action_exists(action_name)
 		/// @param	{string}  action_name
 		/// @return {boolean} action_exists?
 		/// 
 		return __action_exists(__this.__actions.__custom, _action_name);
 	};
-	static action_destroy	 = function(_action_name) {
+	static action_destroy = function(_action_name) {
 		/// @func	action_destroy(action_name)
 		/// @param	{string} action_name
 		/// @return {Ui} self
 		///
 		return __action_destroy(__this.__actions.__custom, _action_name);
 	};
+	
+	/// Actions Custom Getters & Setters
 	static action_get_active = function(_action_name) {
 		/// @func	action_get_active(action_name)
 		/// @param	{string}  action_name
@@ -1140,8 +1160,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		return __action_set_method(__this.__actions.__custom, _action_name, _action_method, _bind_to_self);
 	};
 		
-	/// Action Triggers
-	static action_add_trigger		 = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+	/// Action Custom Triggers Core
+	static action_add_trigger	   = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
 		/// @func	action_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param	{string}  trigger_name
@@ -1151,7 +1171,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_add_trigger(__this.__actions.__custom, _action_name, _trigger_name, _trigger_method, _bind_to_self);
 	};
-	static action_get_trigger		 = function(_action_name, _trigger_name) {
+	static action_get_trigger	   = function(_action_name, _trigger_name) {
 		/// @func	action_get_trigger(action_name, trigger_name)
 		/// @param	{string} action_name
 		/// @param	{string} trigger_name
@@ -1159,7 +1179,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_get_trigger(__this.__actions.__custom, _action_name, _trigger_name);
 	};
-	static action_has_trigger		 = function(_action_name, _trigger_name) {
+	static action_has_trigger	   = function(_action_name, _trigger_name) {
 		/// @func	action_has_trigger(action_name, trigger_name)
 		/// @param	{string}  action_name
 		/// @param	{string}  trigger_name
@@ -1167,7 +1187,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_has_trigger(__this.__actions.__custom, _trigger_name);
 	};
-	static action_destroy_trigger	 = function(_action_name, _trigger_name) {
+	static action_destroy_trigger  = function(_action_name, _trigger_name) {
 		/// @func	action_destroy_trigger(action_name, trigger_name)
 		/// @param	{string} action_name
 		/// @param	{string} trigger_name
@@ -1175,7 +1195,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_destroy_trigger(__this.__actions.__custom, _action_name, _trigger_name);
 	};
-	static action_destroy_triggers   = function(_action_name) {
+	static action_destroy_triggers = function(_action_name) {
 		/// @func	action_destroy_triggers(action_name)
 		/// @param	{string} action_name
 		/// @return {Ui} self
@@ -1183,6 +1203,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		return __action_destroy_triggers(__this.__actions.__custom, _action_name);
 		
 	};
+	
+	/// Action Custom Triggers Getters & Setters
 	static action_get_trigger_method = function(_action_name, _trigger_name) {
 		/// @func	action_get_trigger_method(action_name, trigger_name)
 		/// @param	{string}   action_name
@@ -1222,7 +1244,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region Update Actions /////////////////
 	
-	
+	static action_update_add = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+		
+	};
 	
 	#endregion
 	#region Render Actions /////////////////
