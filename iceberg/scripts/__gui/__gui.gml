@@ -29,9 +29,6 @@ global._gui = {
 		
 		border_mouth = new BorderTrees();
 		border_teeth = new BorderTrees();
-		border_uvula = new BorderTrees();
-		border_ribs	 = new BorderTrees();
-		border_ribbon = new BorderRibbon();
 		
 		with (border_mouth) {
 			set_color(CONFIG.color.green_lime);
@@ -41,20 +38,12 @@ global._gui = {
 			set_y_offset(-40);
 			set_color(CONFIG.color.white);
 		}
-		with (border_uvula) {
-			set_x_offset(-80);
-			set_y_offset(-40);
-			set_sprite(__spr_transition_border_silhouette_uvula);
-			set_color(CONFIG.color.red_dark);
-		}
-		with (border_ribs) {
-			set_x_offset(-100);
-			set_y_offset(-100);
-			set_color(CONFIG.color.sand);
-			set_sprite(__spr_transition_border_silhouette_bones);
-		}
 		
 		#endregion
+		
+		//script_execute(function() {
+		//	show_message("test message");
+		//});
 		
 		label = new UiLabel(,"state_start", {
 			text: "text for config start",
@@ -96,56 +85,8 @@ global._gui = {
 		
 		#region Border /////////
 		
-		//var _spring_speed = -15;
-		//if (keyboard_check_pressed(ord("1"))) {
-		//	border_teeth.bounce_width_to(200, _spring_speed);
-		//	border_mouth.bounce_width_to(230, _spring_speed);
-		//}
-		//if (keyboard_check_pressed(ord("2"))) {
-		//	border_teeth.bounce_width_to(SURF_W, _spring_speed);
-		//	border_mouth.bounce_width_to(SURF_W, _spring_speed);
-		//}
-		//if (keyboard_check_pressed(ord("3"))) {
-		//	border_teeth.bounce_height_to(100, _spring_speed);
-		//	border_mouth.bounce_height_to(130, _spring_speed);
-		//}
-		//if (keyboard_check_pressed(ord("4"))) {
-		//	border_teeth.bounce_height_to(SURF_H, _spring_speed);
-		//	border_mouth.bounce_height_to(SURF_H, _spring_speed);
-		//}
-		
-		//if (keyboard_check_pressed(vk_enter)) {
-		//	var _width  = irandom_range(50, 200);
-		//	var _height = irandom_range(50, 200);
-		//	border_teeth.spring_size(_width, _height);
-		//	border_mouth.spring_size(_width, _height);
-		//}
-		//if (keyboard_check_pressed(vk_backspace)) {
-		//	border_teeth.x.spring(_spring_speed);	
-		//	border_mouth.x.spring(_spring_speed);	
-		//}
-		//if (keyboard_check(vk_left)) {
-		//	border_teeth.adjust_x_offset(-1);
-		//	border_mouth.adjust_x_offset(-1);
-		//}
-		//if (keyboard_check(vk_right)) {
-		//	border_teeth.adjust_x_offset(1);
-		//	border_mouth.adjust_x_offset(1);
-		//}
-		//if (keyboard_check(vk_up)) {
-		//	border_teeth.adjust_y_offset(-1);
-		//	border_mouth.adjust_y_offset(-1);
-		//}
-		//if (keyboard_check(vk_down)) {
-		//	border_teeth.adjust_y_offset(1);
-		//	border_mouth.adjust_y_offset(1);
-		//}
-		
 		border_mouth.update();
 		border_teeth.update();
-		//border_uvula.update();
-		//border_ribs.update();
-		border_ribbon.update();
 		
 		#endregion
 		
@@ -172,11 +113,8 @@ global._gui = {
         if (!initialized) exit;
 		#region Border /////////
 		
-		//border_ribs.render();
-		//border_uvula.render();
 		border_teeth.render();
 		border_mouth.render();
-		border_ribbon.render();
 		
 		#endregion
 		

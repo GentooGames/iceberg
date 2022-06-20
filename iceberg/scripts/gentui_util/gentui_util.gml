@@ -1,12 +1,21 @@
+enum __EXECUTE {
+	// ...		
+}
+
 function GentuiUtilMethod(_config) constructor {
 	/// @func	GentuiUtilMethod(config)
+	/// @desc	GentuiUtilMethod is a fairly basic class that contains two primary properties:
+	///			a method, and a name. This allows for class encapsulation of a method with an 
+	///			associated name property. This is used for Action, Trigger, and State binding
+	///			with the Gentui() library, so that previously bound methods can be accessed
+	///			and modified with knowledge of just the name.
 	/// @param	{struct} config
 	/// @return {GentuiUtilMethod} self
 	///
 	__generate_data(_config);
 	
-	/// Private
-	static __generate_name = function(_name, _method) {
+	/// Private ////////////////////////////////////////////////////
+	static __generate_name					= function(_name, _method) {
 		/// @func	__generate_name(name, method)
 		/// @param	{string} name
 		/// @param	{method} method
@@ -21,7 +30,7 @@ function GentuiUtilMethod(_config) constructor {
 		__name = _name;
 		return self;
 	};
-	static __generate_data = function(_config) {
+	static __generate_data					= function(_config) {
 		/// @func	__generate_data(config)
 		/// @param	{struct} config
 		/// @return {GentuiUtilMethod} self
@@ -31,17 +40,18 @@ function GentuiUtilMethod(_config) constructor {
 		__active = _config[$ "active"] ?? true;
 		__name	 = _config[$ "name"  ] ?? "";
 		__method = _config[$ "method"] ?? undefined;
+		__data	 = _config[$ "data"  ] ?? undefined;
 		__generate_name(__name, __method);
 		return self;
 	};
-	static __update_name   = function() {
+	static __update_name					= function() {
 		/// @func	__update_name()
 		/// @return {GentuiUtilMethod} self
 		///
 		__generate_name(__name, __method);
 		return self;
 	};
-	static __update_data   = function() {
+	static __update_data					= function() {
 		/// @func	__update_data()
 		/// @return {GentuiUtilMethod} self
 		///
@@ -49,11 +59,46 @@ function GentuiUtilMethod(_config) constructor {
 		__active = _config[$ "active"] ?? __active;
 		__name	 = _config[$ "name"  ] ?? __name;
 		__method = _config[$ "method"] ?? __method;
+		__data	 = _config[$ "data"  ] ?? __data;
 		__update_name();
 		return self;
 	};
+	static __method_execute_no_data			= function() {
+		/// @func	__method_execute_no_data()
+		/// @return {any} method_return
+		///
+		return __method();
+	};
+	static __method_execute					= function() {
+		/// @func	__method_execute()
+		/// @return {any} method_return
+		///
+		return __method(__data);
+	};
+	static __method_execute_script_no_data	= function() {
+		/// @func	__method_execute_script_no_data()
+		/// @return {any} method_return
+		///
+		//return script_execute_
+	};
+	static __method_execute_script			= function() {
+		/// @func	__method_execute_script()
+		/// @return {any} method_return
+		///
+		return script_execute_ext(__method, __data);
+	};
 	
-	/// Getters
+	/// Core ///////////////////////////////////////////////////////
+	static execute = function() {
+		/// @func	execute()
+		/// @return {any} execute_return
+		///
+		//switch (__execution_type) {
+		//	
+		//};
+	};
+	
+	/// Getters ////////////////////////////////////////////////////
 	static get_config  = function() {
 		/// @func	get_config()
 		/// @return {struct} struct
@@ -84,8 +129,14 @@ function GentuiUtilMethod(_config) constructor {
 		///
 		return __method;
 	};
+	static get_data	   = function() {
+		/// @func	get_data()
+		/// @return {any} data
+		///
+		return __data;
+	};
 		
-	/// Setters
+	/// Setters ////////////////////////////////////////////////////
 	static set_config  = function(_config) {
 		/// @func	set_config(config)
 		/// @param	{struct} config
@@ -126,6 +177,14 @@ function GentuiUtilMethod(_config) constructor {
 		///
 		__method = _method;
 		__update_name();
+		return self;
+	};
+	static set_data	   = function(_data) {
+		/// @func	set_data(data)
+		/// @param	{any} data
+		/// @return {GentuiUtilMethod} self
+		///
+		__data = _data;
 		return self;
 	}
 };
