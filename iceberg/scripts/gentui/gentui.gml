@@ -150,7 +150,6 @@
 
 #macro __GENTUI_DEFAULT_CONFIG_NAME_START	  "__start__"
 #macro __GENTUI_DEFAULT_CONFIG_NAME_DEFAULT   "__default__"
-
 #macro __GENTUI_DEFAULT_UPDATE_TRIGGER_NAME   "__default__"
 #macro __GENTUI_DEFAULT_UPDATE_TRIGGER_METHOD function() { return true; }
 #macro __GENTUI_DEFAULT_RENDER_TRIGGER_NAME   "__default__"
@@ -194,28 +193,28 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	__owner = _owner;
 	__this  = {			/// <-- change default starting values here
 		__default: {	/// <-- change default starting values here
-			active:						  true,
-			x:							  0,
-			y:							  0,
-			color:						  c_white,
-			alpha:						  1.0,
-			angle:						  0,
-			scale:						  1,
-			xscale:						  1,
-			yscale:						  1,
-			width:						  0,
-			height:						  0,
-			visible:					  true,
-			thickness:					  1,
-			input_device:				  0,
-			use_gui_space:				  true,
-			auto_bind_methods:			  true,
-			state_execute_on_enter:		  true,
-			state_execute_on_exit:		  true,
-			state_on_change_sync_config:  true,
-			pin_propagate_pos_to_child:	  true,
-			pin_propagate_scale_to_child: true,
-			pin_propagate_alpha_to_child: false,	
+			active:							true,
+			x:								0,
+			y:								0,
+			color:							c_white,
+			alpha:							1.0,
+			angle:							0,
+			scale:							1,
+			xscale:							1,
+			yscale:							1,
+			width:							0,
+			height:							0,
+			visible:					    true,
+			thickness:						1,
+			input_device:				    0,
+			use_gui_space:					true,
+			auto_bind_methods:				true,
+			state_execute_on_enter:			true,
+			state_execute_on_exit:			true,
+			state_on_change_sync_config:	true,
+			pin_propagate_pos_to_child:		true,
+			pin_propagate_scale_to_child:	true,
+			pin_propagate_alpha_to_child:	false,	
 		},
 		__actions: {
 			__update: {
@@ -273,7 +272,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///			wherever the code for this component class should be updated.
 		/// @return	{Ui} self
 		///
-		if (active) {
+		if (get_active()) {
 			states_update();
 			actions_update_update();
 			actions_custom_update();
@@ -286,7 +285,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///			event, or wherever the code for this component class should be rendered.
 		/// @return	{Ui} self
 		///
-		if (active) {
+		if (get_active()) {
 			actions_render_update();
 		}
 		return self;
@@ -339,7 +338,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @func	get_active()
 		/// @return {instance/struct} owner
 		///
-		return active;
+		return __active;
 	};
 	static get_x							= function() {
 		/// @func	get_x()
@@ -350,7 +349,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 				return __parent.get_x() - (__xoff * __parent.get_xscale());	// apply parent scale to position offset
 			}
 		}
-		return x;	
+		return __x;	
 	};
 	static get_y							= function() {
 		/// @func	get_y()
@@ -361,19 +360,19 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 				return __parent.get_y() - (__yoff * __parent.get_yscale());	// apply parent scale to position offset
 			}
 		}
-		return y;	
+		return __y;	
 	};
 	static get_width						= function() {	/// @OVERRIDE
 		/// @func	get_width()
 		/// @return {real} width
 		///
-		return width * get_xscale();
+		return __width * get_xscale();
 	};
 	static get_height						= function() {	/// @OVERRIDE
 		/// @func	get_height()
 		/// @return {real} height
 		///
-		return height * get_yscale();
+		return __height * get_yscale();
 	};
 	static get_right						= function() {	/// @OVERRIDE
 		/// @func	get_right()
@@ -415,7 +414,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @func	get_color()
 		/// @return {real} color
 		///
-		return color;
+		return __color;
 	};
 	static get_alpha						= function() {
 		/// @func	get_alpha()
@@ -425,25 +424,25 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		if (__this.__pin.__parent != undefined && __pin_propagate_alpha_to_child) {
 			_parent_alpha = __this.__pin.__parent.get_alpha();
 		}
-		return alpha * _parent_alpha;
+		return __alpha * _parent_alpha;
 	};
 	static get_angle						= function() {
 		/// @func	get_angle()
 		/// @return {real} angle
 		///
-		return angle;
+		return __angle;
 	};
 	static get_xscale						= function() {
 		/// @func	get_xscale()
 		/// @return {real} xscale
 		///
-		return xscale * get_scale();
+		return __xscale * get_scale();
 	};
 	static get_yscale						= function() {
 		/// @func	get_yscale()
 		/// @return {real} yscale
 		///
-		return yscale * get_scale();
+		return __yscale * get_scale();
 	};
 	static get_scale						= function() {
 		/// @func	get_scale()
@@ -453,26 +452,26 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		if (__this.__pin.__parent != undefined && __pin_propagate_scale_to_child) {
 			_parent_scale = __this.__pin.__parent.get_scale();
 		}
-		return scale * _parent_scale;
+		return __scale * _parent_scale;
 	};
 	static get_visible						= function() {
 		/// @func	get_visible()
 		/// @return {boolean} visible
 		///
-		return visible;
+		return __visible;
 	};
 	static get_thickness					= function() {
 		/// @func	get_thickness()
 		/// @return {real} thickness
 		///
-		return thickness * get_scale();
+		return __thickness * get_scale();
 	};
 	static get_input_device					= function() {
 		/// @func	get_input_device()
 		/// @desc	input device registered for use with device_mouse_x_...
 		/// @return {real} input_device
 		///
-		return input_device;
+		return __input_device;
 	};
 	static get_use_gui_space				= function() {
 		/// @func	get_use_gui_space()
@@ -480,22 +479,23 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///			with coordinates based off of the gui_space positioning
 		/// @return {bool} use_gui_space?
 		///
-		return use_gui_space;
+		return __use_gui_space;
 	};
 	static get_mouse_xy						= function() {
 		/// @func	get_mouse_xy()
 		/// @return {struct} mouse_xy
 		///
-		if (use_gui_space) {
+		var _input_device = get_input_device();
+		if (get_use_gui_space()) {
 			return {
-				x: device_mouse_x_to_gui(input_device),
-				y: device_mouse_y_to_gui(input_device),
+				x: device_mouse_x_to_gui(_input_device),
+				y: device_mouse_y_to_gui(_input_device),
 			};
 		}
 		else {
 			return {
-				x: device_mouse_x(input_device),
-				y: device_mouse_y(input_device),
+				x: device_mouse_x(_input_device),
+				y: device_mouse_y(_input_device),
 			};
 		}
 	};
@@ -503,13 +503,13 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @func	get_state_execute_on_enter()
 		/// @return {boolean} state_execute_on_enter?
 		///
-		return state_execute_on_enter;
+		return __state_execute_on_enter;
 	};
 	static get_state_execute_on_exit		= function() {
 		/// @func	get_execute_on_exit()
 		/// @return {boolean} state_execute_on_exit?
 		///
-		return state_execute_on_exit;
+		return __state_execute_on_exit;
 	};
 	static get_pin_propagate_pos_to_child	= function() {
 		/// @func	get_pin_propagate_pos_to_child()
@@ -517,7 +517,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///			pinned children and used for their sub-positioning, so that elements stick together
 		/// @return {boolean} propagate_position_to_child?
 		///
-		return pin_propagate_pos_to_child;
+		return __pin_propagate_pos_to_child;
 	};
 	static get_pin_propagate_scale_to_child	= function() {
 		/// @func	get_pin_propagate_scale_to_child()
@@ -525,7 +525,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///			children and used for their scaling and positioning, so that elements stick/scale together
 		/// @return {boolean} propagate_scale_to_child?
 		///
-		return pin_propagate_scale_to_child;
+		return __pin_propagate_scale_to_child;
 	};
 	static get_pin_propagate_alpha_to_child	= function() {
 		/// @func	get_pin_propagate_alpha_to_child()
@@ -533,7 +533,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///			children and used for their alpha, so that elements blend/fade together
 		/// @return {boolean} propagate_alpha_to_child?
 		///
-		return pin_propagate_alpha_to_child;
+		return __pin_propagate_alpha_to_child;
 	};
 		
 	#endregion
@@ -573,7 +573,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean} active
 		/// @return {Ui} self
 		///
-		active = _active;
+		__active = _active;
 		return self;
 	};
 	static set_x							= function(_x) {
@@ -581,7 +581,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} x
 		/// @return {Ui} self
 		///
-		x = _x;
+		__x = _x;
 		return self;
 	};
 	static set_y							= function(_y) {
@@ -589,7 +589,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} y
 		/// @return {Ui} self
 		///
-		y = _y;
+		__y = _y;
 		return self;
 	};
 	static set_pos							= function(_x, _y) {
@@ -607,7 +607,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} width
 		/// @return {Ui} self
 		///
-		width = _width;
+		__width = _width;
 		return self;
 	};
 	static set_height						= function(_height) {
@@ -615,7 +615,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} height
 		/// @return {Ui} self
 		///
-		height = _height;
+		__height = _height;
 		return self;
 	};
 	static set_color						= function(_color) {
@@ -623,7 +623,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{color} color
 		/// @return {Ui} self
 		///
-		color = _color;
+		__color = _color;
 		return self;
 	};
 	static set_alpha						= function(_alpha) {
@@ -631,7 +631,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} alpha
 		/// @return {Ui} self
 		///
-		alpha = _alpha;
+		__alpha = _alpha;
 		return self;
 	};
 	static set_angle						= function(_angle) {
@@ -639,7 +639,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} angle
 		/// @return {Ui} self
 		///
-		angle = _angle;
+		__angle = _angle;
 		return self;
 	};
 	static set_xscale						= function(_xscale) {
@@ -647,7 +647,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} xscale
 		/// @return {Ui} self
 		///
-		xscale = _xscale;
+		__xscale = _xscale;
 		return self;
 	};
 	static set_yscale						= function(_yscale) {
@@ -655,7 +655,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} yscale
 		/// @return {Ui} self
 		///
-		yscale = _yscale;
+		__yscale = _yscale;
 		return self;
 	};
 	static set_scale						= function(_scale) {
@@ -663,7 +663,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} scale
 		/// @return {Ui} self
 		///
-		scale = _scale;
+		__scale = _scale;
 		return self;
 	};
 	static set_visible						= function(_visible) {
@@ -671,7 +671,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean} visible?
 		/// @return {Ui} self
 		///
-		visible = _visible;
+		__visible = _visible;
 		return self;
 	};
 	static set_thickness					= function(_thickness) {
@@ -679,7 +679,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real} thickness
 		/// @return {Ui} self
 		///
-		thickness = _thickness;
+		__thickness = _thickness;
 		return self;
 	};
 	static set_input_device					= function(_device) {
@@ -687,7 +687,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{real}		   device
 		/// @return {UiInteractor} self
 		///
-		input_device = _device;
+		__input_device = _device;
 		return self;
 	};
 	static set_use_gui_space				= function(_use_gui_space) {
@@ -695,7 +695,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean}	   use_gui_space?
 		/// @return {UiInteractor} self
 		///
-		use_gui_space = _use_gui_space;
+		__use_gui_space = _use_gui_space;
 		return self;
 	};
 	static set_state_execute_on_enter		= function(_state_execute_on_enter) {
@@ -705,7 +705,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean}	   state_execute_on_enter?
 		/// @return {UiInteractor} self
 		///
-		state_execute_on_enter = _state_execute_on_enter;
+		__state_execute_on_enter = _state_execute_on_enter;
 		return self;
 	};
 	static set_state_execute_on_exit		= function(_state_execute_on_exit) {
@@ -715,7 +715,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean}	   state_execute_on_exit?
 		/// @return {UiInteractor} self
 		///
-		state_execute_on_exit = _state_execute_on_exit;
+		__state_execute_on_exit = _state_execute_on_exit;
 		return self;
 	};
 	static set_pin_propagate_pos_to_child	= function(_pin_propagate_pos_to_child) {
@@ -723,7 +723,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean}	   pin_propagate_pos_to_child?
 		/// @return {UiInteractor} self
 		///
-		pin_propagate_pos_to_child = _pin_propagate_pos_to_child;
+		__pin_propagate_pos_to_child = _pin_propagate_pos_to_child;
 		return self;
 	};
 	static set_pin_propagate_scale_to_child	= function(_pin_propagate_scale_to_child) {
@@ -731,7 +731,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean}	   pin_propagate_scale_to_child?
 		/// @return {UiInteractor} self
 		///
-		pin_propagate_scale_to_child = _pin_propagate_scale_to_child;
+		__pin_propagate_scale_to_child = _pin_propagate_scale_to_child;
 		return self;
 	};
 	static set_pin_propagate_alpha_to_child	= function(_pin_propagate_alpha_to_child) {
@@ -739,7 +739,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean}	   pin_propagate_alpha_to_child?
 		/// @return {UiInteractor} self
 		///
-		pin_propagate_alpha_to_child = _pin_propagate_alpha_to_child;
+		__pin_propagate_alpha_to_child = _pin_propagate_alpha_to_child;
 		return self;
 	};
 			
@@ -761,6 +761,19 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {any}	 property_default_value
 		///
 		return __this.__default[$ _property_name];
+	};
+		
+	static default_get_auto_bind_methods		   = function() {
+		/// @func	default_get_auto_bind_methods()
+		/// @return {boolean} auto_bind_methods?
+		///
+		return default_get("auto_bind_methods");
+	};
+	static default_get_state_on_change_sync_config = function() {
+		/// @func	default_get_state_on_change_sync_config()
+		/// @return {boolean} sync_config_on_state_change?
+		///
+		return default_get("state_on_change_sync_config");
 	};
 	
 	#endregion
@@ -787,7 +800,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static __action_add		= function(_action_context, _action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static __action_add		= function(_action_context, _action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	__action_add(action_context, action_name, action_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name 
@@ -895,7 +908,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static __action_set_method = function(_action_context, _action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static __action_set_method = function(_action_context, _action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	__action_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name 
@@ -913,7 +926,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	}
 	
 	/// Action Triggers
-	static __action_add_trigger		 = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static __action_add_trigger		 = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	__action_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name
@@ -1004,7 +1017,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return false;
 	};
-	static __action_set_trigger_method = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static __action_set_trigger_method = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	__action_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name
@@ -1046,7 +1059,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Actions Custom Core
-	static action_add	  = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_add	  = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
@@ -1108,7 +1121,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_name(__this.__actions.__custom, _action_name, _new_name);
 	};
-	static action_set_method = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_set_method = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -1119,7 +1132,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 		
 	/// Action Custom Triggers Core
-	static action_add_trigger	   = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_add_trigger	   = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param	{string}  trigger_name
@@ -1178,7 +1191,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_get_trigger_active(__this.__actions.__custom, _action_name, _trigger_name);
 	};
-	static action_set_trigger_method = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_set_trigger_method = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param	{string}  trigger_name
@@ -1209,7 +1222,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Actions Custom Core
-	static action_update_add	 = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_update_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_update_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
@@ -1273,7 +1286,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_name(__this.__actions.__update, _action_name, _new_name);
 	};
-	static action_update_set_method	= function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_update_set_method	= function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_update_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -1294,7 +1307,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Actions Custom Core
-	static action_render_add	 = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_render_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_render_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
@@ -1358,7 +1371,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_name(__this.__actions.__render, _action_name, _new_name);
 	};
-	static action_render_set_method	= function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_render_set_method	= function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_render_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -1383,7 +1396,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_add		= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
+	static state_add		= function(_state_name, _state_method, _auto_bind_method = default_get_auto_bind_methods()) {
 		/// @func	state_add(state_name, state_method, auto_bind_methods?*)
 		/// @desc	add a new state_method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1393,7 +1406,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return state_add_ext(_state_name,, _state_method,,, _auto_bind_method);
 	};
-	static state_add_ext	= function(_state_name, _on_enter_method = undefined, _on_loop_method, _on_exit_method = undefined, _config_name = undefined, _auto_bind_method = default_get("auto_bind_methods")) {
+	static state_add_ext	= function(_state_name, _on_enter_method = undefined, _on_loop_method, _on_exit_method = undefined, _config_name = undefined, _auto_bind_method = default_get_auto_bind_methods()) {
 		/// @func	state_add_ext(state_name, on_enter_method*, on_loop_method, on_exit_method*, config_name*, auto_bind_methods?*)
 		/// @desc	add a new state_method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1430,7 +1443,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return state_change_ext(_state_name);
 	};
-	static state_change_ext	= function(_state_name, _config = undefined, _sync_config_to_state = default_get("state_on_change_sync_config")) {
+	static state_change_ext	= function(_state_name, _config = undefined, _sync_config_to_state = default_get_state_on_change_sync_config()) {
 		/// @func	state_change_ext(state_name, config*, sync_config_to_state*)
 		/// @desc	do state transition if a state exists with the given name.
 		/// @param	{string}  state_name
@@ -1519,7 +1532,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Setters ////////////////////////////
-	static state_set_current	 = function(_state_name, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
+	static state_set_current	 = function(_state_name, _config_override = undefined, _state_on_change_sync_config = default_get_state_on_change_sync_config()) {
 		/// @func	state_set_current(state_name, state_method, config_override*, state_on_change_sync_config?*)	
 		/// @desc	set the current state method to that of the passed state_name's method
 		/// @param	{string}  state_name
@@ -1591,7 +1604,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_set_on_enter	 = function(_state_name, _on_enter_method, _auto_bind_method = default_get("auto_bind_methods")) {
+	static state_set_on_enter	 = function(_state_name, _on_enter_method, _auto_bind_method = default_get_auto_bind_methods()) {
 		/// @func	state_set_on_enter(state_name, on_enter_method, auto_bind_methods?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1607,7 +1620,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_set_on_loop	 = function(_state_name, _on_loop_method, _auto_bind_method = default_get("auto_bind_methods")) {
+	static state_set_on_loop	 = function(_state_name, _on_loop_method, _auto_bind_method = default_get_auto_bind_methods()) {
 		/// @func	state_set_on_enter(state_name, on_loop_method, auto_bind_methods?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1623,7 +1636,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_set_on_exit	 = function(_state_name, _on_exit_method, _auto_bind_method = default_get("auto_bind_methods")) {
+	static state_set_on_exit	 = function(_state_name, _on_exit_method, _auto_bind_method = default_get_auto_bind_methods()) {
 		/// @func	state_set_on_enter(state_name, on_exit_method, auto_bind_methods?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1835,7 +1848,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return _config_name == config_get_current_name();
 	};
-	static config_apply_state		 = function (_state_name, _check_for_state_config = default_get("state_on_change_sync_config")) {
+	static config_apply_state		 = function (_state_name, _check_for_state_config = default_get_state_on_change_sync_config()) {
 		/// @func	config_apply_state(state_name, check_for_state_config?*)
 		/// @desc	apply the config bound to a given state. if no binding exists, default 
 		///			check for an existing config with the same state name.
@@ -2025,7 +2038,7 @@ function UiPanel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
-	outline = property_add(_config, "outline", false);
+	__outline = property_add(_config, "outline", false);
 	
 	#region Core ///////////////////
 	
@@ -2079,7 +2092,7 @@ function UiPanel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @func	get_outline()
 		/// @return {real} outline
 		///
-		return outline;
+		return __outline;
 	};
 		
 	/// Setters
@@ -2088,7 +2101,7 @@ function UiPanel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real} outline
 		/// @return {Ui} self
 		///
-		outline = _outline;
+		__outline = _outline;
 		return self;
 	};
 		
@@ -2105,12 +2118,12 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	/// @param {constant} halign*
 	/// @param {constant} valign*
 	///
-	text	   = property_add(_config, "text",		 "");
-	wrap_apply = property_add(_config, "wrap_apply", false);
-	wrap_width = property_add(_config, "wrap_width", -1);
-	line_space = property_add(_config, "line_space", -1);
-	halign	   = property_add(_config, "halign",	 fa_left);
-	valign	   = property_add(_config, "valign",	 fa_top);
+	__text		 = property_add(_config, "text",	   "");
+	__wrap_apply = property_add(_config, "wrap_apply", false);
+	__wrap_width = property_add(_config, "wrap_width", -1);
+	__line_space = property_add(_config, "line_space", -1);
+	__halign	 = property_add(_config, "halign",	   fa_left);
+	__valign	 = property_add(_config, "valign",	   fa_top);
 		
 	#region Core ///////////////////
 	
@@ -2119,12 +2132,12 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @return {UiLabel} self
 		///
 		if (has_text()) {
-			draw_set_halign(halign);
-			draw_set_valign(valign);
+			draw_set_halign(get_halign());
+			draw_set_valign(get_valign());
 			
 			var _color = get_color();
 			
-			if (wrap && wrap_width != -1) {
+			if (get_wrap_apply() && get_wrap_width() != -1) {
 				draw_text_ext_transformed_color(
 					get_x(),
 					get_y(),
@@ -2164,37 +2177,37 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @func	get_text()
 		/// @return {string} text
 		///
-		return text;
+		return __text;
 	};
 	static get_wrap_apply = function() {
 		/// @func	get_wrap_apply()
 		/// @return {bool} wrap_apply?
 		///
-		return wrap_apply;
+		return __wrap_apply;
 	};
 	static get_wrap_width = function() {
 		/// @func	get_wrap_width()
 		/// @return {real} wrap_width
 		///
-		return wrap_width;
+		return __wrap_width;
 	};
 	static get_line_space = function() {
 		/// @func	get_line_space()
 		/// @return {real} line_space
 		///
-		return line_space;
+		return __line_space;
 	};
 	static get_halign	  = function() {
 		/// @func	get_halign()
 		/// @return {constant} horizontal alignment
 		///
-		return halign;
+		return __halign;
 	};
 	static get_valign	  = function() {
 		/// @func	get_valign()
 		/// @return {constant} vertical alignment
 		///
-		return valign;
+		return __valign;
 	};
 	static get_width	  = function() {	/// @OVERRIDE
 		/// @func	get_width()
@@ -2259,7 +2272,7 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{string} text
 		/// @return {Ui} self
 		///
-		text = _text;
+		__text = _text;
 		return self;
 	};
 	static set_wrap_apply = function(_wrap_apply) {
@@ -2267,7 +2280,7 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{bool} wrap_apply?
 		/// @return {Ui} self
 		///
-		wrap_apply = _wrap_apply;
+		__wrap_apply = _wrap_apply;
 		return self;
 	};
 	static set_wrap_width = function(_wrap_width) {
@@ -2275,7 +2288,7 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real} wrap_width
 		/// @return {Ui} self
 		///
-		wrap_width = _wrap_width;
+		__wrap_width = _wrap_width;
 		return self;
 	};
 	static set_line_space = function(_line_space) {
@@ -2283,7 +2296,7 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real} line_space
 		/// @return {Ui} self
 		///
-		line_space = _line_space;
+		__line_space = _line_space;
 		return self;
 	};
 	static set_halign	  = function(_halign) {
@@ -2291,7 +2304,7 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{constant} halign
 		/// @return {Ui} self
 		///
-		halign = _halign;
+		__halign = _halign;
 		return self;
 	};
 	static set_valign	  = function(_valign) {
@@ -2299,7 +2312,7 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{constant} valign
 		/// @return {Ui} self
 		///
-		valign = _valign;
+		__valign = _valign;
 		return self;
 	};
 		
@@ -2308,7 +2321,8 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @func	has_text()
 		/// @return {boolean} has_text?
 		///
-		return text != "" && text != undefined;
+		var _text = get_text();
+		return _text != "" && _text != undefined;
 	};
 	
 	#endregion
@@ -2325,9 +2339,9 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		throw("***error in UiSprite*** sprite not defined.");	
 	}
 		
-	sprite = property_add(_config, "sprite", undefined);
-	image  = property_add(_config, "image",  0);
-	speed  = property_add(_config, "speed",  1);
+	__sprite = property_add(_config, "sprite", undefined);
+	__image  = property_add(_config, "image",  0);
+	__speed  = property_add(_config, "speed",  1);
 
 	#region Core ///////////////////
 	
@@ -2335,8 +2349,8 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @func	update()
 		/// @return {UiSprite} self
 		///
-		if (speed > 0) {
-			image += speed;
+		if (get_speed() > 0) {
+			set_image(get_image() + get_speed());
 		}
 		return self;
 	};
@@ -2366,31 +2380,31 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @func	get_sprite()
 		/// @return {real} sprite_index
 		///
-		return sprite;
+		return __sprite;
 	};
 	static get_index	= function() {
 		/// @func	get_index()
 		/// @return {real} sprite_index
 		///
-		return sprite;
+		return get_sprite();
 	};
 	static get_image	= function() {
 		/// @func	get_image()
 		/// @return {real} image_index
 		///
-		return image;	
+		return __image;	
 	};
 	static get_frame	= function() {
 		/// @func	get_frame()
 		/// @return {real} image_index
 		///
-		return image;	
+		return get_image();	
 	};
 	static get_speed	= function() {
 		/// @func	get_speed()
 		/// @return {real} image_speed
 		///
-		return speed;	
+		return __speed;	
 	};
 	static get_xoffset	= function() {
 		/// @func	get_xoffset()
@@ -2459,7 +2473,7 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real}	   sprite_index
 		/// @return {UiSprite} self
 		///
-		sprite = _sprite;
+		__sprite = _sprite;
 		return self;
 	};
 	static set_index	= function(_index) {
@@ -2467,15 +2481,14 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real}	   sprite_index
 		/// @return {UiSprite} self
 		///
-		sprite = _index;
-		return self;
+		return set_sprite(_index);
 	};
 	static set_image	= function(_image) {
 		/// @func	set_image(image)
 		/// @param	{real}	   image
 		/// @return {UiSprite} self
 		///
-		image = _image;
+		__image = _image;
 		return self;
 	};
 	static set_frame	= function(_frame) {
@@ -2483,15 +2496,14 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real}	   frame
 		/// @return {UiSprite} self
 		///
-		image = _frame;
-		return self;
+		return set_image(_frame);
 	};
 	static set_speed	= function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real}	   speed
 		/// @return {UiSprite} self
 		///
-		speed = _speed;
+		__speed = _speed;
 		return self;
 	};
 	static set_scale	= function(_scale, _yscale = _scale) {
@@ -2500,8 +2512,8 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real}	   yscale=scale
 		/// @return {UiSprite} self
 		///
-		xscale =  _scale;
-		yscale = _yscale;
+		__xscale = _scale;
+		__yscale = _yscale;
 		return self;
 	};
 	static set_angle	= function(_angle) {
@@ -2509,7 +2521,7 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		/// @param	{real}	   angle
 		/// @return {UiSprite} self
 		///
-		angle = _angle;
+		__angle = _angle;
 		return self;
 	};
 	
@@ -2662,7 +2674,7 @@ function UiLine   (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	
 	action_render_add("render_main", render, true);
 };
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function UiCircle (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func UiCircle(config) : Ui(config)
 	///
@@ -2740,5 +2752,4 @@ function UiTextbox(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	
 	action_render_add("render_main", render, true);
 };
-
 

@@ -45,7 +45,7 @@ global._gui = {
 		//	show_message("test message");
 		//});
 		
-		label = new UiLabel(,"state_start", {
+		label = new UiLabel(,, {
 			text: "text for config start",
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
@@ -61,9 +61,10 @@ global._gui = {
 		.action_update_add("update_test_1", function() {
 			set_y(get_y() + 1);	
 		})
-		//.state_add("state_test_1", function() {
-		//	set_x(get_x() + 1);	
-		//})
+		.state_add("state_test_1", function() {
+			set_x(get_x() + 1);	
+		})
+		.state_change("state_test_1")
     },    
 	update:	function() {
 		/// @func   update()
