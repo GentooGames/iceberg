@@ -186,7 +186,7 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		/// @func	update()
 		/// @return {GentuiAction} self
 		///
-		if (__active) {
+		if (get_active()) {
 			update_triggers();
 		}
 		return self;
@@ -205,7 +205,7 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 				for (var _i = 0; _i < __count; _i++) {
 					var _name	 = __names[_i];
 					var _trigger = __triggers[$ _name];
-					if (_trigger.execute()) {
+					if (_trigger.get_active() && _trigger.execute()) {
 						_validated = true;
 						break;	
 					}
