@@ -240,9 +240,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 				__state: undefined,
 				__name:  "",
 			},	
-			__data:    {
+			__states:  {
 				/*	<state_name>: {
 						__name:	"",
+						__config: "",
 						__on_enter: function() {},
 						__on_loop:  function() {},
 						__on_exit:  function() {},
@@ -276,30 +277,11 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			wherever the code for this component class should be updated.
 		/// @return	{Ui} self
 		///
-		if (!active) exit;
-		
-		#region Update Stack ///////
-		
-		if (__this.__update.__active) {
-			for (var _i = 0; _i < __this.__update.__size; _i++) {
-				__this.__update.__methods[_i]();	
-			}
+		if (active) {
+			states_update();
+			actions_update_update();
+			actions_custom_update();
 		}
-			
-		#endregion
-		#region State Machine //////
-		
-		if (__this.__state.__active) {
-			state_execute();
-		};
-		
-		#endregion
-		#region Action Triggers ////
-		
-		
-		
-		#endregion
-		
 		return self;
 	};
 	static render	  = function() {
@@ -308,18 +290,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///			event, or wherever the code for this component class should be rendered.
 		/// @return	{Ui} self
 		///
-		if (!active) exit;
-		
-		#region Render Stack ///////
-		
-		if (__visible && __this.__render.__active) {
-			for (var _i = 0; _i < __this.__render.__size; _i++) {
-				__this.__render.__methods[_i]();	
-			}
+		if (active) {
+			actions_render_update();
 		}
-			
-		#endregion
-		
 		return self;
 	};	
 	static show		  = function() {
@@ -805,7 +778,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	static __actions_update	= function(_action_context) {
 		/// @func	__actions_update(action_context)
 		/// @param	{struct} action_context
-		/// @return {Gentui} self
+		/// @return {Ui} self
 		///
 		with (_action_context) {
 			if (__active) {
@@ -1082,12 +1055,14 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region Custom Actions /////////////////
 	
-	/// Actions Custom Core
-	static actions_update = function() {
-		/// @func	actions_update()
-		/// @return {Gentui} self
+	static actions_custom_update = function() {
+		/// @func	actions_custom_update()
+		/// @return {Ui} self
 		///
+		return __actions_update(__this.__actions.__custom);
 	};
+	
+	/// Actions Custom Core
 	static action_add	  = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
 		/// @func	action_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
@@ -1138,15 +1113,15 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	action_set_active(action_name, active?)
 		/// @param	{string}  action_name
 		/// @param  {boolean} active?
-		/// @return {Gentui}  self
+		/// @return {Ui} self
 		///
 		return __action_set_active(__this.__actions.__custom, _action_name, _active);
 	};
 	static action_set_name   = function(_action_name, _new_name) {
 		/// @func	action_set_name(action_name, new_name)
-		/// @param	{string}  action_name
-		/// @param  {string}  new_name
-		/// @return {Gentui}  self
+		/// @param	{string} action_name
+		/// @param  {string} new_name
+		/// @return {Ui} self
 		///
 		return __action_set_name(__this.__actions.__custom, _action_name, _new_name);
 	};
@@ -1155,7 +1130,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
 		/// @param	{boolean} bind_to_self?*
-		/// @return {Gentui}  self
+		/// @return {Ui} self
 		///
 		return __action_set_method(__this.__actions.__custom, _action_name, _action_method, _bind_to_self);
 	};
@@ -1201,7 +1176,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return {Ui} self
 		///
 		return __action_destroy_triggers(__this.__actions.__custom, _action_name);
-		
 	};
 	
 	/// Action Custom Triggers Getters & Setters
@@ -1244,19 +1218,340 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 	#region Update Actions /////////////////
 	
-	static action_update_add = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static actions_update_update = function() {
+		/// @func	actions_update_update()
+		/// @return {Ui} self
+		///
+		return __actions_update(__this.__actions.__update);
+	};
+	
+	/// Actions Custom Core
+	static action_update_add	 = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_update_add(action_name, action_method, bind_to_self?*)
+		/// @param	{string}  action_name 
+		/// @param	{method}  action_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_add(__this.__actions.__update, _action_name, _action_method, _bind_to_self);
+	};
+	static action_update_get	 = function(_action_name) {
+		/// @func	action_update_get(action_name)
+		/// @param	{string} action_name
+		/// @return {GentuiAction} action
+		///
+		return __action_get(__this.__actions.__update);
+	};
+	static action_update_exists  = function(_action_name) {
+		/// @func	action_update_exists(action_name)
+		/// @param	{string}  action_name
+		/// @return {boolean} action_exists?
+		/// 
+		return __action_exists(__this.__actions.__update, _action_name);
+	};
+	static action_update_destroy = function(_action_name) {
+		/// @func	action_update_destroy(action_name)
+		/// @param	{string} action_name
+		/// @return {Ui} self
+		///
+		return __action_destroy(__this.__actions.__update, _action_name);
+	};
+	
+	/// Actions Custom Getters & Setters
+	static action_update_get_active = function(_action_name) {
+		/// @func	action_update_get_active(action_name)
+		/// @param	{string}  action_name
+		/// @return {boolean} active?
+		///
+		return __action_get_active(__this.__actions.__update, _action_name);
+	};
+	static action_update_get_method = function(_action_name) {
+		/// @func	action_update_get_method(action_name)
+		/// @param	{string} action_name
+		/// @return {method} method
+		///
+		return __action_get_method(__this.__actions.__update, _action_name);
+	};
+	static action_update_set_active = function(_action_name, _active) {
+		/// @func	action_update_set_active(action_name, active?)
+		/// @param	{string}  action_name
+		/// @param  {boolean} active?
+		/// @return {Ui} self
+		///
+		return __action_set_active(__this.__actions.__update, _action_name, _active);
+	};
+	static action_update_set_name   = function(_action_name, _new_name) {
+		/// @func	action_update_set_name(action_name, new_name)
+		/// @param	{string} action_name
+		/// @param  {string} new_name
+		/// @return {Ui} self
+		///
+		return __action_set_name(__this.__actions.__update, _action_name, _new_name);
+	};
+	static action_update_set_method = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_update_set_method(action_name, action_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param  {method}  action_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_set_method(__this.__actions.__update, _action_name, _action_method, _bind_to_self);
+	};
 		
+	/// Action Custom Triggers Core
+	static action_update_add_trigger	  = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_update_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_add_trigger(__this.__actions.__update, _action_name, _trigger_name, _trigger_method, _bind_to_self);
+	};
+	static action_update_get_trigger	  = function(_action_name, _trigger_name) {
+		/// @func	action_update_get_trigger(action_name, trigger_name)
+		/// @param	{string} action_name
+		/// @param	{string} trigger_name
+		/// @return {GentuiTrigger} trigger
+		///
+		return __action_get_trigger(__this.__actions.__update, _action_name, _trigger_name);
+	};
+	static action_update_has_trigger	  = function(_action_name, _trigger_name) {
+		/// @func	action_update_has_trigger(action_name, trigger_name)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @return {boolean} trigger_exists?
+		///
+		return __action_has_trigger(__this.__actions.__update, _trigger_name);
+	};
+	static action_update_destroy_trigger  = function(_action_name, _trigger_name) {
+		/// @func	action_update_destroy_trigger(action_name, trigger_name)
+		/// @param	{string} action_name
+		/// @param	{string} trigger_name
+		/// @return {Ui} self
+		///
+		return __action_destroy_trigger(__this.__actions.__update, _action_name, _trigger_name);
+	};
+	static action_update_destroy_triggers = function(_action_name) {
+		/// @func	action_update_destroy_triggers(action_name)
+		/// @param	{string} action_name
+		/// @return {Ui} self
+		///
+		return __action_destroy_triggers(__this.__actions.__update, _action_name);
+	};
+	
+	/// Action Custom Triggers Getters & Setters
+	static action_update_get_trigger_method = function(_action_name, _trigger_name) {
+		/// @func	action_update_get_trigger_method(action_name, trigger_name)
+		/// @param	{string}   action_name
+		/// @param	{string}   trigger_name
+		/// @return {UiAction} action_trigger
+		///
+		return __action_get_trigger_method(__this.__actions.__update, _action_name, _trigger_name);
+	};
+	static action_update_get_trigger_active = function(_action_name, _trigger_name) {
+		/// @func	action_update_get_trigger_active(action_name, trigger_name)
+		/// @param	{string}  action_name
+		/// @param	{method}  trigger_name
+		/// @return {boolean} active
+		///
+		return __action_get_trigger_active(__this.__actions.__update, _action_name, _trigger_name);
+	};
+	static action_update_set_trigger_method = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_update_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_set_trigger_method(__this.__actions.__update, _action_name, _trigger_name, _trigger_method, _bind_to_self);
+	};
+	static action_update_set_trigger_active = function(_action_name, _trigger_name, _active) {
+		/// @func	action_update_set_trigger_active(action_name, trigger_name, active)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{boolean} active
+		/// @return	{Ui}	  self
+		///
+		return __action_set_trigger_active(__this.__actions.__update, _action_name, _trigger_name, _active);
 	};
 	
 	#endregion
 	#region Render Actions /////////////////
 	
-	// ...
+	static actions_render_update = function() {
+		/// @func	actions_render_update()
+		/// @return {Ui} self
+		///
+		return __actions_update(__this.__actions.__render);
+	};
+	
+	/// Actions Custom Core
+	static action_render_add	 = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_render_add(action_name, action_method, bind_to_self?*)
+		/// @param	{string}  action_name 
+		/// @param	{method}  action_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_add(__this.__actions.__render, _action_name, _action_method, _bind_to_self);
+	};
+	static action_render_get	 = function(_action_name) {
+		/// @func	action_render_get(action_name)
+		/// @param	{string} action_name
+		/// @return {GentuiAction} action
+		///
+		return __action_get(__this.__actions.__render);
+	};
+	static action_render_exists  = function(_action_name) {
+		/// @func	action_render_exists(action_name)
+		/// @param	{string}  action_name
+		/// @return {boolean} action_exists?
+		/// 
+		return __action_exists(__this.__actions.__render, _action_name);
+	};
+	static action_render_destroy = function(_action_name) {
+		/// @func	action_render_destroy(action_name)
+		/// @param	{string} action_name
+		/// @return {Ui} self
+		///
+		return __action_destroy(__this.__actions.__render, _action_name);
+	};
+	
+	/// Actions Custom Getters & Setters
+	static action_render_get_active = function(_action_name) {
+		/// @func	action_render_get_active(action_name)
+		/// @param	{string}  action_name
+		/// @return {boolean} active?
+		///
+		return __action_get_active(__this.__actions.__render, _action_name);
+	};
+	static action_render_get_method = function(_action_name) {
+		/// @func	action_render_get_method(action_name)
+		/// @param	{string} action_name
+		/// @return {method} method
+		///
+		return __action_get_method(__this.__actions.__render, _action_name);
+	};
+	static action_render_set_active = function(_action_name, _active) {
+		/// @func	action_render_set_active(action_name, active?)
+		/// @param	{string}  action_name
+		/// @param  {boolean} active?
+		/// @return {Ui} self
+		///
+		return __action_set_active(__this.__actions.__render, _action_name, _active);
+	};
+	static action_render_set_name   = function(_action_name, _new_name) {
+		/// @func	action_render_set_name(action_name, new_name)
+		/// @param	{string} action_name
+		/// @param  {string} new_name
+		/// @return {Ui} self
+		///
+		return __action_set_name(__this.__actions.__render, _action_name, _new_name);
+	};
+	static action_render_set_method = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_render_set_method(action_name, action_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param  {method}  action_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_set_method(__this.__actions.__render, _action_name, _action_method, _bind_to_self);
+	};
+		
+	/// Action Custom Triggers Core
+	static action_render_add_trigger	  = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_render_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_add_trigger(__this.__actions.__render, _action_name, _trigger_name, _trigger_method, _bind_to_self);
+	};
+	static action_render_get_trigger	  = function(_action_name, _trigger_name) {
+		/// @func	action_render_get_trigger(action_name, trigger_name)
+		/// @param	{string} action_name
+		/// @param	{string} trigger_name
+		/// @return {GentuiTrigger} trigger
+		///
+		return __action_get_trigger(__this.__actions.__render, _action_name, _trigger_name);
+	};
+	static action_render_has_trigger	  = function(_action_name, _trigger_name) {
+		/// @func	action_render_has_trigger(action_name, trigger_name)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @return {boolean} trigger_exists?
+		///
+		return __action_has_trigger(__this.__actions.__render, _trigger_name);
+	};
+	static action_render_destroy_trigger  = function(_action_name, _trigger_name) {
+		/// @func	action_render_destroy_trigger(action_name, trigger_name)
+		/// @param	{string} action_name
+		/// @param	{string} trigger_name
+		/// @return {Ui} self
+		///
+		return __action_destroy_trigger(__this.__actions.__render, _action_name, _trigger_name);
+	};
+	static action_render_destroy_triggers = function(_action_name) {
+		/// @func	action_render_destroy_triggers(action_name)
+		/// @param	{string} action_name
+		/// @return {Ui} self
+		///
+		return __action_destroy_triggers(__this.__actions.__render, _action_name);
+	};
+	
+	/// Action Custom Triggers Getters & Setters
+	static action_render_get_trigger_method = function(_action_name, _trigger_name) {
+		/// @func	action_render_get_trigger_method(action_name, trigger_name)
+		/// @param	{string}   action_name
+		/// @param	{string}   trigger_name
+		/// @return {UiAction} action_trigger
+		///
+		return __action_get_trigger_method(__this.__actions.__render, _action_name, _trigger_name);
+	};
+	static action_render_get_trigger_active = function(_action_name, _trigger_name) {
+		/// @func	action_render_get_trigger_active(action_name, trigger_name)
+		/// @param	{string}  action_name
+		/// @param	{method}  trigger_name
+		/// @return {boolean} active
+		///
+		return __action_get_trigger_active(__this.__actions.__render, _action_name, _trigger_name);
+	};
+	static action_render_set_trigger_method = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
+		/// @func	action_render_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{method}  trigger_method
+		/// @param	{boolean} bind_to_self?*
+		/// @return {Ui} self
+		///
+		return __action_set_trigger_method(__this.__actions.__render, _action_name, _trigger_name, _trigger_method, _bind_to_self);
+	};
+	static action_render_set_trigger_active = function(_action_name, _trigger_name, _active) {
+		/// @func	action_render_set_trigger_active(action_name, trigger_name, active)
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @param	{boolean} active
+		/// @return	{Ui}	  self
+		///
+		return __action_set_trigger_active(__this.__actions.__render, _action_name, _trigger_name, _active);
+	};
 	
 	#endregion
 	
 	#endregion
 	#region State Machine //////////////////
+	
+	static states_update = function() {
+		/// @func	states_update()
+		/// @return {Ui} self
+		///
+		
+	};
 	
 	static state_add					= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	state_add(state_name, state_method, auto_bind_methods?*)
@@ -1266,13 +1561,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean}		  auto_bind_methods?*
 		/// @return	{Ui}			  self
 		///
-		if (!state_exists(_state_name)) {
-			if (_auto_bind_method) {
-				_state_method = method(self, _state_method);	
-			}
-			__this.__state.__states[$ _state_name] = _state_method;
-		}
-		return self;
+		
 	};
 	static state_add_on_enter			= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	state_add_on_enter(state_name, state_method, auto_bind_methods?*)
@@ -1282,13 +1571,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean}		  auto_bind_methods?*
 		/// @return	{Ui}			  self
 		///
-		if (!variable_struct_exists(__this.__state.__on_enter, _state_name)) {
-			if (_auto_bind_method) {
-				_state_method = method(self, _state_method);	
-			}
-			__this.__state.__on_enter[$ _state_name] = _state_method;
-		}
-		return self;
+		
 	};
 	static state_add_on_exit			= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	state_add_on_exit(state_name, state_method, auto_bind_methods?*)
@@ -1298,13 +1581,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean}		  auto_bind_methods?*
 		/// @return	{Ui}			  self
 		///
-		if (!variable_struct_exists(__this.__state.__on_exit, _state_name)) {
-			if (_auto_bind_method) {
-				_state_method = method(self, _state_method);	
-			}
-			__this.__state.__on_exit[$ _state_name] = _state_method;
-		}
-		return self;
+		
 	};
 	static state_add_config				= function(_state_name, _config_name) {
 		/// @func	state_add_config(state_name, config_name)
@@ -1314,10 +1591,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} config_name
 		/// @return {Ui} self
 		///
-		if (state_exists(_state_name)) {
-			__this.__state.__configs[$ _state_name] = _config_name;	
-		}
-		return self;
+		
 	};
 	static state_get					= function(_state_name) {
 		/// @func	state_get(state_name)
@@ -1325,21 +1599,18 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string}		  state_name
 		/// @return {method/function} state
 		///
-		return __this.__state.__states[$ _state_name];
 	};
 	static state_get_current			= function() {
 		/// @func	state_get_current()
 		/// @desc	get the currently executing state method
 		/// @return {method/function} state
 		///
-		return __this.__state.__current;
 	};
 	static state_get_current_name		= function() {
 		/// @func	state_get_current_name()
 		/// @desc	get the name of the currently executing state method.
 		/// @return {string} name
 		///
-		return __this.__state.__name;
 	};
 	static state_set_current			= function(_state_name, _state_method, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
 		/// @func	state_set_current(state_name, state_method, config_override*, state_on_change_sync_config?*)	
@@ -1350,20 +1621,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean} state_on_change_sync_config?=default
 		/// @return	{Ui}	  self
 		///
-		if (state_execute_on_exit) {
-			state_execute_state_on_exit(state_get_current_name());
-		}
 		
-		__this.__state.__name	 = _state_name;
-		__this.__state.__current = _state_method;
-		
-		if (state_execute_on_enter) {
-			state_execute_state_on_enter(_state_name);
-		}
-		
-		__state_sync_config(_state_name, _config_override, _state_on_change_sync_config);
-		
-		return self;
 	};
 	static state_exists					= function(_state_name) {
 		/// @func	state_exists(state_name)
@@ -1371,7 +1629,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string}  state_name
 		/// @return {boolean} state_exists?
 		///
-		return variable_struct_exists(__this.__state.__states, _state_name);
 	};
 	static state_change					= function(_state_name) {
 		/// @func	state_change(state_name)
@@ -1379,7 +1636,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} state_name
 		/// @return {Ui}	 self
 		///
-		return state_change_ext(_state_name);
 	};
 	static state_change_ext				= function(_state_name, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
 		/// @func	state_change_ext(state_name, config_override*, state_on_change_sync_config?*)
@@ -1389,20 +1645,12 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean} state_on_change_sync_config=default
 		/// @return {Ui}	  self
 		///
-		if (state_exists(_state_name)) {
-			state_set_current(_state_name, state_get(_state_name), _config_override, _state_on_change_sync_config);
-		}
-		return self;
 	};
 	static state_execute				= function() {
 		/// @func	state_execute()
 		/// @return {Ui} self
 		///
-		var _state_current  = state_get_current();
-		if (_state_current != undefined) {
-			_state_current();	
-		}
-		return self;
+		
 	};
 	static state_is						= function(_state_name) {
 		/// @func	state_is(state_name)
@@ -1410,7 +1658,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string}  state_name 
 		/// @return {boolean} state_is?
 		///
-		return _state_name == state_get_current_name();
 	};
 	static state_execute_state_on_enter = function(_state_name) {
 		/// @func	state_execute_state_on_enter(state_name)
@@ -1419,10 +1666,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} name
 		/// @return {Ui} self
 		///
-		if (variable_struct_exists(__this.__state.__on_enter, _state_name)) {
-			__this.__state.__on_enter[$ _state_name]();	
-		}
-		return self;
+		
 	};
 	static state_execute_state_on_exit  = function(_state_name) {
 		/// @func	state_execute_state_on_exit(state_name)
@@ -1431,13 +1675,10 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{string} name
 		/// @return {Ui} self
 		///
-		if (variable_struct_exists(__this.__state.__on_exit, _state_name)) {
-			__this.__state.__on_exit[$ _state_name]();	
-		}
-		return self;
+		
 	};
 	
-	static __state_sync_config			= function(_state_name, _config_override, _state_on_change_sync_config) {
+	static __state_sync_config = function(_state_name, _config_override, _state_on_change_sync_config) {
 		/// @func	__state_sync_config(state_name, config_override, state_on_change_sync_config) 
 		/// @param	{string}  state_name
 		/// @param	{string}  config_overide
@@ -1854,7 +2095,7 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		
 	#endregion
 	
-	render_add_action(render, true);
+	action_render_add("render_main", render, true);
 };
 function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLabel(config) : Ui(config)
@@ -2073,7 +2314,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	#endregion
 	
-	//render_add_action(render, true);
+	action_render_add("render_main", render, true);
 };
 function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiSprite(config) : Ui(config)
@@ -2275,8 +2516,8 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	#endregion
 	
-	update_add_action(update, true);
-	render_add_action(render, true);
+	action_update_add("update_main", render, true);
+	action_render_add("render_main", render, true);
 };
 function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLine(config) : Ui(config)
@@ -2420,7 +2661,7 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	#endregion
 	
-	render_add_action(render, true);
+	action_render_add("render_main", render, true);
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function UiCircle (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
@@ -2485,6 +2726,8 @@ function UiCircle (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 			draw_set_alpha(1.0);
 		}
 	};
+		
+	action_render_add("render_main", render, true);
 };
 function UiArc	  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// This should use the draw_circle_curve() function instead
@@ -2495,6 +2738,8 @@ function UiTextbox(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	exit; // <-- not yet ready
 	
 	static render = function() {};
+	
+	action_render_add("render_main", render, true);
 };
 
 
