@@ -1,0 +1,105 @@
+[1mdiff --git a/iceberg/iceberg.yyp b/iceberg/iceberg.yyp[m
+[1mindex b136543..1dd923d 100644[m
+[1m--- a/iceberg/iceberg.yyp[m
+[1m+++ b/iceberg/iceberg.yyp[m
+[36m@@ -174,7 +174,7 @@[m
+     {"CopyToMask":0,"filePath":"datafiles/GMLive","resourceVersion":"1.0","name":"std.ndll","resourceType":"GMIncludedFile",},[m
+   ],[m
+   "MetaData": {[m
+[31m-    "IDEVersion": "2022.3.0.624",[m
+[32m+[m[32m    "IDEVersion": "2022.5.1.16",[m
+   },[m
+   "resourceVersion": "1.5",[m
+   "name": "iceberg",[m
+[1mdiff --git a/iceberg/scripts/gentui/gentui.gml b/iceberg/scripts/gentui/gentui.gml[m
+[1mindex b61ecb6..d221e3c 100644[m
+[1m--- a/iceberg/scripts/gentui/gentui.gml[m
+[1m+++ b/iceberg/scripts/gentui/gentui.gml[m
+[36m@@ -2078,11 +2078,10 @@[m [mfunction UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N[m
+ 		///[m
+ 		var _thickness = get_thickness();[m
+ 		var _color	   = get_color();[m
+[31m-		var _p1, _p2;[m
+ 		[m
+ 		for (var _i = 0, _len = __this.__n_points; _i < _len - 1; _i++) {[m
+[31m-			_p1	= __this.__points[_i];[m
+[31m-			_p2 = __this.__points[_i + 1];[m
+[32m+[m			[32mvar _p1	= __this.__points[_i];[m
+[32m+[m			[32mvar _p2 = __this.__points[_i + 1];[m
+ 			[m
+ 			draw_line_width_color([m
+ 				_p1.get_x(),[m
+[36m@@ -2110,11 +2109,12 @@[m [mfunction UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N[m
+ 		__this.__n_points++;[m
+ 		[m
+ 		/// Update Bounding Box[m
+[31m-		if (__this.__point.__left_most   == undefined || _x < __this.__point.__left_most  ) __this.__point.__left_most   = _x;	[m
+[31m-		if (__this.__point.__right_most  == undefined || _x > __this.__point.__right_most ) __this.__point.__right_most  = _x;	[m
+[31m-		if (__this.__point.__top_most    == undefined || _y < __this.__point.__top_most   ) __this.__point.__top_most    = _y;	[m
+[31m-		if (__this.__point.__bottom_most == undefined || _y > __this.__point.__bottom_most) __this.__point.__bottom_most = _y;	[m
+[31m-		[m
+[32m+[m		[32mwith (__this.__point) {[m
+[32m+[m			[32mif (__left_most   == undefined || _x < __left_most  ) __left_most   = _x;[m[41m	[m
+[32m+[m			[32mif (__right_most  == undefined || _x > __right_most ) __right_most  = _x;[m[41m	[m
+[32m+[m			[32mif (__top_most    == undefined || _y < __top_most   ) __top_most    = _y;[m[41m	[m
+[32m+[m			[32mif (__bottom_most == undefined || _y > __bottom_most) __bottom_most = _y;[m[41m	[m
+[32m+[m		[32m}[m
+ 		return self;[m
+ 	};[m
+ 	[m
+[36m@@ -2126,37 +2126,49 @@[m [mfunction UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N[m
+ 		/// @func	get_width()[m
+ 		/// @return {real} width[m
+ 		///[m
+[31m-		return __this.__point.__right_most - __this.__point.__left_most;[m
+[32m+[m		[32mwith (__this.__point) {[m
+[32m+[m			[32mreturn __right_most - __point.__left_most;[m
+[32m+[m		[32m}[m
+ 	};[m
+ 	static get_height	= function() {	/// @OVERRIDE[m
+ 		/// @func	get_height()[m
+ 		/// @return {real} height[m
+ 		///[m
+[31m-		return __this.__point.__bottom_most - __this.__point.__top_most;[m
+[32m+[m		[32mwith (__this.__point) {[m
+[32m+[m			[32mreturn __bottom_most - __top_most;[m
+[32m+[m		[32m}[m
+ 	};[m
+ 	static get_left		= function() {	/// @OVERRIDE[m
+ 		/// @func	get_left()[m
+ 		/// @return {real} x_pos[m
+ 		///[m
+[31m-		return __this.__point.__left_most;[m
+[32m+[m		[32mwith (__this.__point) {[m
+[32m+[m			[32mreturn __left_most;[m
+[32m+[m		[32m}[m
+ 	};[m
+ 	static get_right	= function() {	/// @OVERRIDE[m
+ 		/// @func	get_right()[m
+ 		/// @return {real} x_pos[m
+ 		///[m
+[31m-		return __this.__point.__right_most;[m
+[32m+[m		[32mwith (__this.__point) {[m
+[32m+[m			[32mreturn __right_most;[m
+[32m+[m		[32m}[m
+ 	};[m
+ 	static get_top		= function() {	/// @OVERRIDE[m
+ 		/// @func	get_top()[m
+ 		/// @return {real} y_pos[m
+ 		///[m
+[31m-		return __this.__point.__top_most;[m
+[32m+[m		[32mwith (__this.__point) {[m
+[32m+[m			[32mreturn __top_most;[m
+[32m+[m		[32m}[m
+ 	};[m
+ 	static get_bottom	= function() {	/// @OVERRIDE[m
+ 		/// @func	get_bottom()[m
+ 		/// @return {real} y_pos[m
+ 		///[m
+[31m-		return __this.__point.__bottom_most;[m
+[32m+[m		[32mwith (__this.__point) {[m
+[32m+[m			[32mreturn __bottom_most;[m
+[32m+[m		[32m}[m[41m		[m
+ 	};[m
+ 	static get_center_x = function() {	/// @OVERRIDE[m
+ 		/// @func	get_center_x()[m

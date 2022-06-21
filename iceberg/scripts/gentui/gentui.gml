@@ -240,16 +240,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 				__state: undefined,
 				__name:  "",
 			},	
-			__states:  {
-				/*	<state_name>: {
-						__name:	"",
-						__config: "",
-						__on_enter: function() {},
-						__on_loop:  function() {},
-						__on_exit:  function() {},
-					} 
-				*/
-			},
+			__states:  {},
 		},
 		__config:  {
 			__current:		undefined,	/// current config struct pointer
@@ -783,22 +774,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		with (_action_context) {
 			if (__active) {
 				for (var _i = 0; _i < __count; _i++) {
-					var _name	  = __names[_i];
-					var _action	  = __data[$ _name];
-					var _triggers = _action.__triggers;
-					var _action_validated =  false;
-					for (var _j = 0; _j < _triggers.__count; _j++) {
-						var _action_trigger_name   = _triggers.__names[_j];
-						var _action_trigger_method = _triggers.__methods[$ _action_trigger_name];
-						if (_action_trigger_method()) {
-							_action_validated = true;
-							break;	
-						}
-					
-					}
-					if (_action_validated) {
-						_action.__method();	
-					}
+					var _name   = __names[_i];
+					var _action	= __actions[$ _name];
+					_action.update();
 				}
 			}
 		}
@@ -867,7 +845,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	/// Action Core Getters & Setters
-	static __action_get_active = function(_action_context, _action_name) {
+	static __action_get_active = function(_action_context, _action_name) {	
 		/// @func	__action_get_active(action_name)
 		/// @param	{struct} action_context
 		/// @return {string} action_name
@@ -1117,7 +1095,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_set_active(__this.__actions.__custom, _action_name, _active);
 	};
-	static action_set_name   = function(_action_name, _new_name) {
+	static action_set_name	 = function(_action_name, _new_name) {
 		/// @func	action_set_name(action_name, new_name)
 		/// @param	{string} action_name
 		/// @param  {string} new_name
@@ -1258,7 +1236,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	/// Actions Custom Getters & Setters
-	static action_update_get_active = function(_action_name) {
+	static action_update_get_active	= function(_action_name) {
 		/// @func	action_update_get_active(action_name)
 		/// @param	{string}  action_name
 		/// @return {boolean} active?
@@ -1272,7 +1250,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_get_method(__this.__actions.__update, _action_name);
 	};
-	static action_update_set_active = function(_action_name, _active) {
+	static action_update_set_active	= function(_action_name, _active) {
 		/// @func	action_update_set_active(action_name, active?)
 		/// @param	{string}  action_name
 		/// @param  {boolean} active?
@@ -1280,7 +1258,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_set_active(__this.__actions.__update, _action_name, _active);
 	};
-	static action_update_set_name   = function(_action_name, _new_name) {
+	static action_update_set_name	= function(_action_name, _new_name) {
 		/// @func	action_update_set_name(action_name, new_name)
 		/// @param	{string} action_name
 		/// @param  {string} new_name
@@ -1288,7 +1266,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_set_name(__this.__actions.__update, _action_name, _new_name);
 	};
-	static action_update_set_method = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_update_set_method	= function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
 		/// @func	action_update_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -1428,7 +1406,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_get_active(__this.__actions.__render, _action_name);
 	};
-	static action_render_get_method = function(_action_name) {
+	static action_render_get_method	= function(_action_name) {
 		/// @func	action_render_get_method(action_name)
 		/// @param	{string} action_name
 		/// @return {method} method
@@ -1443,7 +1421,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_set_active(__this.__actions.__render, _action_name, _active);
 	};
-	static action_render_set_name   = function(_action_name, _new_name) {
+	static action_render_set_name	= function(_action_name, _new_name) {
 		/// @func	action_render_set_name(action_name, new_name)
 		/// @param	{string} action_name
 		/// @param  {string} new_name
@@ -1451,7 +1429,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_set_name(__this.__actions.__render, _action_name, _new_name);
 	};
-	static action_render_set_method = function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
+	static action_render_set_method	= function(_action_name, _action_method, _bind_to_self = default_get("auto_bind_methods")) {
 		/// @func	action_render_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -1545,15 +1523,22 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	
 	#endregion
 	#region State Machine //////////////////
-	
-	static states_update = function() {
+
+	/// Core ///////////////////////////////
+	static states_update	= function() {
 		/// @func	states_update()
 		/// @return {Ui} self
 		///
-		
+		with (__this.__states) {
+			for (var _i = 0; _i < __count; _i++) {
+				var _name  = __names[_i];
+				var _state = __states[$ _name];
+				_state.update();
+			}
+		}
+		return self;
 	};
-	
-	static state_add					= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
+	static state_add		= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
 		/// @func	state_add(state_name, state_method, auto_bind_methods?*)
 		/// @desc	add a new state_method bound to a given state_name
 		/// @param	{string}		  state_name
@@ -1561,153 +1546,316 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean}		  auto_bind_methods?*
 		/// @return	{Ui}			  self
 		///
-		
+		return state_add_ext(_state_name,, _state_method,,, _auto_bind_method);
 	};
-	static state_add_on_enter			= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	state_add_on_enter(state_name, state_method, auto_bind_methods?*)
+	static state_add_ext	= function(_state_name, _on_enter_method = undefined, _on_loop_method, _on_exit_method = undefined, _config_name = undefined, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	state_add_ext(state_name, on_enter_method*, on_loop_method, on_exit_method*, config_name*, auto_bind_methods?*)
+		/// @desc	add a new state_method bound to a given state_name
+		/// @param	{string}		  state_name
+		/// @param	{method/function} on_enter=undefined
+		/// @param	{method/function} on_loop
+		/// @param	{method/function} on_exit=undefined
+		/// @param	{struct}		  config_name=undefined
+		/// @param	{boolean}		  auto_bind_methods?*
+		/// @return	{Ui}			  self
+		///
+		if (_auto_bind_method) {
+			_on_enter_method = method(self, _on_enter_method);	
+			_on_loop_method  = method(self, _on_loop_method);	
+			_on_exit_method  = method(self, _on_exit_method);	
+		}
+		with (__this.__states) {
+			__states[$ _state_name] = new GentuiState({
+				name:     _state_name,
+				on_enter: _on_enter_method,
+				on_loop:  _on_loop_method,
+				on_exit:  _on_exit_method,
+				config:   _config_name,
+			});
+			array_push(__names, _state_name);
+			__count++;
+		}
+		return self;
+	};
+	static state_change		= function(_state_name) {
+		/// @func	state_change(state_name)
+		/// @desc	do state transition if a state exists with the given name.
+		/// @param	{string} state_name
+		/// @return {Ui}	 self
+		///
+		return state_change_ext(_state_name);
+	};
+	static state_change_ext	= function(_state_name, _config = undefined, _sync_config_to_state = default_get("state_on_change_sync_config")) {
+		/// @func	state_change_ext(state_name, config*, sync_config_to_state*)
+		/// @desc	do state transition if a state exists with the given name.
+		/// @param	{string}  state_name
+		/// @param	{string}  config=undefined
+		/// @param	{boolean} sync_config_to_state?
+		/// @return {Ui}	  self
+		///
+		if (state_exists(_state_name)) {
+			state_set_current(_state_name, _config, _sync_config_to_state);
+		}
+		return self;
+	};
+	
+	/// Getters ////////////////////////////
+	static state_get			  = function(_state_name) {
+		/// @func	state_get(state_name)
+		/// @desc	return the method associated to the given state name that would be executed during a state update.
+		/// @param	{string}		  state_name
+		/// @return {method/function} state
+		///
+		return __this.__states.__states[$ _state_name];
+	};
+	static state_get_current	  = function() {
+		/// @func	state_get_current()
+		/// @desc	get the currently executing state method
+		/// @return {method/function} state
+		///
+		return __this.__states.__current.__state;
+	};
+	static state_get_current_name = function() {
+		/// @func	state_get_current_name()
+		/// @desc	get the name of the currently executing state method.
+		/// @return {string} name
+		///
+		return __this.__states.__current.__name;
+	};
+	static state_get_active		  = function(_state_name) {
+		/// @func	state_get_active(state_name)
+		/// @param	{string}  state_name
+		/// @return {boolean} active?
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).get_active();
+		}
+		return false;
+	};
+	static state_get_on_enter	  = function(_state_name) {
+		/// @func	state_get_on_enter(state_name)
+		/// @param	{string} state_name
+		/// @return {method} on_enter
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).get_on_enter();
+		}
+		return false;
+	};
+	static state_get_on_loop	  = function(_state_name) {
+		/// @func	state_get_on_loop(state_name)
+		/// @param	{string} state_name
+		/// @return {method} on_loop
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).get_on_loop();
+		}
+		return false;
+	};
+	static state_get_on_exit	  = function(_state_name) {
+		/// @func	state_get_on_exit(state_name)
+		/// @param	{string} state_name
+		/// @return {method} on_exit
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).get_on_exit();
+		}
+		return false;
+	};
+	static state_get_config_bind  = function(_state_name) {
+		/// @func	state_get_config_bind(state_name)
+		/// @param	{string} state_name
+		/// @return {string} config_name
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).get_config_bind();
+		}
+		return false;
+	};
+	
+	/// Setters ////////////////////////////
+	static state_set_current	 = function(_state_name, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
+		/// @func	state_set_current(state_name, state_method, config_override*, state_on_change_sync_config?*)	
+		/// @desc	set the current state method to that of the passed state_name's method
+		/// @param	{string}  state_name
+		/// @param	{string}  config_override=undefined
+		/// @param	{boolean} state_on_change_sync_config?=default
+		/// @return	{Ui}	  self
+		///
+		if (state_exists(_state_name)) {
+			/// Run Previous State Exit
+			if (state_exists(state_get_current_name())) {
+				state_execute_on_exit(state_get_current_name());
+			}
+			
+			/// Update Current State
+			__this.__states.__current.__state =  state_get(_state_name);
+			__this.__states.__current.__name  = _state_name;
+			#region Sync Config ////////////////////////////////////////
+			
+			var _config = undefined;
+			
+			/// Check For Config Override
+			if (_config_override != undefined && config_exists(_config_override)) {
+				_config = _config_override;
+			}
+			/// Check For Config Binding
+			if (_config == undefined) {
+				var _config_bind  = state_get(_state_name).get_config_bind();
+				if (_config_bind != undefined && config_exists(_config_bind)) {
+					_config = _config_bind;
+				}
+			}
+			/// Check For Config w/Same State Name
+			if (_config == undefined && _state_on_change_sync_config) {
+				if (config_exists(_state_name)) {
+					_config = _state_name;	
+				}
+			}
+			/// Assign Config If Set
+			if (_config != undefined) {
+				config_change(_config);	
+			}
+			
+			#endregion
+			
+			/// Run New State Enter
+			state_execute_on_enter(_state_name);
+		}
+		return self;
+	};
+	static state_set_name		 = function(_state_name, _new_name) {
+		/// @func	state_set_name(state_name, new_name)
+		/// @param	{string} state_name
+		/// @param	{string} new_name
+		/// @return {Ui} self
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).set_name(_new_name);
+		}
+		return self;
+	};
+	static state_set_active		 = function(_state_name, _active) {
+		/// @func	state_set_active(state_name, active?)
+		/// @param	{string}  state_name
+		/// @param	{boolean} active?
+		/// @return {Ui} self
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).set_active(_active);
+		}
+		return self;
+	};
+	static state_set_on_enter	 = function(_state_name, _on_enter_method, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	state_set_on_enter(state_name, on_enter_method, auto_bind_methods?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
-		/// @param	{method/function} state_method
+		/// @param	{method/function} on_enter_method
 		/// @param	{boolean}		  auto_bind_methods?*
 		/// @return	{Ui}			  self
 		///
-		
+		if (state_exists(_state_name)) {
+			if (_auto_bind_method) {
+				_on_enter_method = method(self, _on_enter_method);	
+			}
+			state_get(_state_name).set_on_enter(_on_enter_method);
+		}
+		return self;
 	};
-	static state_add_on_exit			= function(_state_name, _state_method, _auto_bind_method = default_get("auto_bind_methods")) {
-		/// @func	state_add_on_exit(state_name, state_method, auto_bind_methods?*)
-		/// @desc	add a new state_on_exit method bound to a given state_name
+	static state_set_on_loop	 = function(_state_name, _on_loop_method, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	state_set_on_enter(state_name, on_loop_method, auto_bind_methods?*)
+		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
-		/// @param	{method/function} state_method
+		/// @param	{method/function} on_loop_method
 		/// @param	{boolean}		  auto_bind_methods?*
 		/// @return	{Ui}			  self
 		///
-		
+		if (state_exists(_state_name)) {
+			if (_auto_bind_method) {
+				_on_loop_method = method(self, _on_loop_method);	
+			}
+			state_get(_state_name).set_on_loop(_on_loop_method);
+		}
+		return self;
 	};
-	static state_add_config				= function(_state_name, _config_name) {
-		/// @func	state_add_config(state_name, config_name)
+	static state_set_on_exit	 = function(_state_name, _on_exit_method, _auto_bind_method = default_get("auto_bind_methods")) {
+		/// @func	state_set_on_enter(state_name, on_exit_method, auto_bind_methods?*)
+		/// @desc	add a new state_on_enter method bound to a given state_name
+		/// @param	{string}		  state_name
+		/// @param	{method/function} on_exit_method
+		/// @param	{boolean}		  auto_bind_methods?*
+		/// @return	{Ui}			  self
+		///
+		if (state_exists(_state_name)) {
+			if (_auto_bind_method) {
+				_on_exit_method = method(self, _on_exit_method);	
+			}
+			state_get(_state_name).set_on_exit(_on_exit_method);
+		}
+		return self;
+	};
+	static state_set_config_bind = function(_state_name, _config_name) {
+		/// @func	state_set_config_bind(state_name, config_name)
 		/// @desc	establish a relationship between a state and a config, so that the config is
 		///			automatically updated and applied upon state transition.
 		/// @param	{string} state_name
 		/// @param	{string} config_name
 		/// @return {Ui} self
 		///
-		
+		if (state_exists(_state_name)) {
+			state_get(_state_name).set_config_bind(_config_name);
+		}
+		return self;
 	};
-	static state_get					= function(_state_name) {
-		/// @func	state_get(state_name)
-		/// @desc	return the method associated to the given state name that would be executed during a state update.
-		/// @param	{string}		  state_name
-		/// @return {method/function} state
-		///
-	};
-	static state_get_current			= function() {
-		/// @func	state_get_current()
-		/// @desc	get the currently executing state method
-		/// @return {method/function} state
-		///
-	};
-	static state_get_current_name		= function() {
-		/// @func	state_get_current_name()
-		/// @desc	get the name of the currently executing state method.
-		/// @return {string} name
-		///
-	};
-	static state_set_current			= function(_state_name, _state_method, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
-		/// @func	state_set_current(state_name, state_method, config_override*, state_on_change_sync_config?*)	
-		/// @desc	set the current state method to that of the passed state_name's method
-		/// @param	{string}  state_name
-		/// @param	{method}  state_method
-		/// @param	{string}  config_override=undefined
-		/// @param	{boolean} state_on_change_sync_config?=default
-		/// @return	{Ui}	  self
-		///
-		
-	};
-	static state_exists					= function(_state_name) {
+	
+	/// Checkers ///////////////////////////
+	static state_exists	= function(_state_name) {
 		/// @func	state_exists(state_name)
 		/// @desc	return if the given state_name has been registered as a state_method.
 		/// @param	{string}  state_name
 		/// @return {boolean} state_exists?
 		///
+		return state_get(_state_name) != undefined;
 	};
-	static state_change					= function(_state_name) {
-		/// @func	state_change(state_name)
-		/// @desc	do state transition if a state exists with the given name.
-		/// @param	{string} state_name
-		/// @return {Ui}	 self
-		///
-	};
-	static state_change_ext				= function(_state_name, _config_override = undefined, _state_on_change_sync_config = default_get("state_on_change_sync_config")) {
-		/// @func	state_change_ext(state_name, config_override*, state_on_change_sync_config?*)
-		/// @desc	do state transition if a state exists with the given name.
-		/// @param	{string}  state_name
-		/// @param	{string}  config_override=undefined
-		/// @param	{boolean} state_on_change_sync_config=default
-		/// @return {Ui}	  self
-		///
-	};
-	static state_execute				= function() {
-		/// @func	state_execute()
-		/// @return {Ui} self
-		///
-		
-	};
-	static state_is						= function(_state_name) {
+	static state_is		= function(_state_name) {
 		/// @func	state_is(state_name)
 		/// @desc	check if the current state_is the same as that of the passed in state_name
 		/// @param	{string}  state_name 
 		/// @return {boolean} state_is?
 		///
-	};
-	static state_execute_state_on_enter = function(_state_name) {
-		/// @func	state_execute_state_on_enter(state_name)
-		/// @desc	one-time encapsulation of the state_on_enter logic. this method will probably not need to be 
-		///			manually invoked, and should be executed automatically if state_execute_on_enter is toggled to true
-		/// @param	{string} name
-		/// @return {Ui} self
-		///
-		
-	};
-	static state_execute_state_on_exit  = function(_state_name) {
-		/// @func	state_execute_state_on_exit(state_name)
-		/// @desc	one-time encapsulation of the state_on_exit logic. this method will probably not need to be 
-		///			manually invoked, and should be executed automatically if state_execute_on_exit is toggled to true
-		/// @param	{string} name
-		/// @return {Ui} self
-		///
-		
+		return state_get_current_name() == _state_name;
 	};
 	
-	static __state_sync_config = function(_state_name, _config_override, _state_on_change_sync_config) {
-		/// @func	__state_sync_config(state_name, config_override, state_on_change_sync_config) 
-		/// @param	{string}  state_name
-		/// @param	{string}  config_overide
-		/// @param	{boolean} state_on_change_sync_config?
-		/// @return NA
+	/// Other //////////////////////////////
+	static state_execute_on_enter = function(_state_name) {
+		/// @func	state_execute_on_enter(state_name)
+		/// @param	{string} state_name
+		/// @return {Ui} self
 		///
-		var _config = undefined;
-		
-		/// Check For Config Override
-		if (_config_override != undefined && config_exists(_config_override)) {
-			_config = _config_override;
+		if (state_exists(_state_name)) {
+			state_get(_state_name).execute_on_enter();
 		}
-		/// Check For Config Binding
-		if (_config == undefined) {
-			var _config_bind  = __this.__state.__configs[$ _state_name];
-			if (_config_bind != undefined && config_exists(_config_bind)) {
-				_config = _config_bind;
-			}
+		return self;
+	};
+	static state_execute_on_loop  = function(_state_name) {
+		/// @func	state_execute_on_loop(state_name)
+		/// @param	{string} state_name
+		/// @return {Ui} self
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).execute_on_loop();
 		}
-		/// Check For Config w/Same State Name
-		if (_config == undefined && _state_on_change_sync_config) {
-			if (config_exists(_state_name)) {
-				_config = _state_name;	
-			}
+		return self;
+	};
+	static state_execute_on_exit  = function(_state_name) {
+		/// @func	state_execute_on_exit(state_name)
+		/// @param	{string} state_name
+		/// @return {Ui} self
+		///
+		if (state_exists(_state_name)) {
+			state_get(_state_name).execute_on_exit();
 		}
-		/// Assign Config If Set
-		if (_config != undefined) {
-			config_change(_config);	
-		}
+		return self;
 	};
 	
 	#endregion

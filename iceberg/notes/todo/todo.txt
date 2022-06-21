@@ -5,6 +5,7 @@ iceberg:
 	- "do we really need a macro for that?" if a value is only used once, maybe we shouldnt have it as a MACRO
 	- convert objc_save into global._save = {} (?)
 	- add macro pointers so that uniquely named libraries can be accessed through intuitively named references
+	- procedurally generated dungeon generator
 	
 __audio:
 	- 
@@ -42,6 +43,7 @@ __window:
 gentui:
 	- add surface support
 	- finish UiCircle()
+	- finish UiTextbox
 	- add panel fill types
 	- add component anchor configs
 	- automatic pinned children position locking

@@ -30,4 +30,3 @@ OBJECTS_INDEXES			 = compile_objects_indexes();
 #macro anymb_pressed	INPUT.mouse.button_pressed(mb_any)
 #macro anymb_released	INPUT.mouse.button_released(mb_any)
 #macro input_scroll	   (INPUT.mouse.wheel_up() - INPUT.mouse.wheel_down())
-
