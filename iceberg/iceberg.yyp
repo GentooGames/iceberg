@@ -39,7 +39,6 @@
     {"id":{"name":"__spr_tx_test","path":"sprites/__spr_tx_test/__spr_tx_test.yy",},"order":5,},
     {"id":{"name":"ENUMS","path":"scripts/ENUMS/ENUMS.yy",},"order":1,},
     {"id":{"name":"GMLive_thread","path":"scripts/GMLive_thread/GMLive_thread.yy",},"order":4,},
-    {"id":{"name":"gentui_util","path":"scripts/gentui_util/gentui_util.yy",},"order":8,},
     {"id":{"name":"__display","path":"scripts/__display/__display.yy",},"order":3,},
     {"id":{"name":"__audio","path":"scripts/__audio/__audio.yy",},"order":0,},
     {"id":{"name":"global_test_data","path":"scripts/global_test_data/global_test_data.yy",},"order":0,},
