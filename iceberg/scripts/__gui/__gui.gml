@@ -50,44 +50,6 @@ global._gui = {
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
-		.config_add("config_move_right", {
-			color: c_green,	
-		})
-		.config_add("config_move_left", {
-			color: c_red,
-			x:     100,
-			y:     100,
-		})
-		.config_add("config_override_test", {
-			color: c_teal,	
-		})
-		.state_add("state_move_right", function() {
-			set_x(get_x() + 1);	
-		})
-		.state_add("state_move_left", function() {
-			set_x(get_x() - 1);	
-		})
-		.state_set_config_bind("state_move_right", "config_move_right")
-		.state_set_config_bind("state_move_left",  "config_move_left")
-		.action_add("action_move_right", function() {
-			state_change("state_move_right");	
-		})
-		.action_add("action_move_left", function() {
-			state_change("state_move_left");	
-		})
-		.action_add_trigger("action_move_right", "vk_right", function() {
-			return keyboard_check_pressed(vk_right);	
-		})
-		.action_add_trigger("action_move_right", "vk_up", function() {
-			return keyboard_check_pressed(vk_up);	
-		})
-		.action_add_trigger("action_move_left", "vk_left", function() {
-			return keyboard_check_pressed(vk_left);	
-		})
-		.action_set_trigger_active("action_move_right", "vk_up", false)
-		.action_set_triggers_active("action_move_right", false)
-		
-		
     },    
 	update:	function() {
 		/// @func   update()

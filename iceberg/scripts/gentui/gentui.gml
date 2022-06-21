@@ -217,6 +217,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 			pin_propagate_alpha_to_child:	false,	
 		},
 		__actions: {
+			__active: true,
 			__update: {
 				__active:  true,
 				__count:   0,
@@ -1421,6 +1422,21 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 		
 	#endregion
+	
+	static actions_get_active = function(_active) {
+		/// @func	actions_get_active(active)
+		/// @return {boolean} active?
+		///
+		return __this.__actions.__active;
+	};
+	static actions_set_active = function(_active) {
+		/// @func	actions_set_active(active)
+		/// @param	{boolean} active?
+		/// @return {Ui} self
+		///
+		__this.__actions.__active = _active;
+		return self;
+	};
 	
 	#endregion
 	#region State Machine //////////////////
