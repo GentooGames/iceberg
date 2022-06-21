@@ -148,14 +148,19 @@
 #endregion
 #region default config values ///////
 
-#macro __UI_COMPONENT_DEFAULT_CONFIG_NAME_START	  "__start__"
-#macro __UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT "__default__"
+#macro __GENTUI_DEFAULT_CONFIG_NAME_START	  "__start__"
+#macro __GENTUI_DEFAULT_CONFIG_NAME_DEFAULT   "__default__"
+
+#macro __GENTUI_DEFAULT_UPDATE_TRIGGER_NAME   "__default__"
+#macro __GENTUI_DEFAULT_UPDATE_TRIGGER_METHOD function() { return true; }
+#macro __GENTUI_DEFAULT_RENDER_TRIGGER_NAME   "__default__"
+#macro __GENTUI_DEFAULT_RENDER_TRIGGER_METHOD function() { return true; }
 
 #endregion
 
 #endregion
 
-function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) constructor {
+function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) constructor {
 	/// @func  Ui(owner*, config_name*, config*)
 	/// @desc  this is the base ui component, containing all core features and functionality that is inherited and implemented
 	///		   by all other ui components. an instance of this class will have no visual representation, but can still be utilized
@@ -247,8 +252,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 			__configs:		{},			/// all stored configs keyed out by config_name
 			__properties:	{},			/// stored properties for dynamic updating
 			__name:			"",			/// current config name
-			__name_start:	__UI_COMPONENT_DEFAULT_CONFIG_NAME_START,
-			__name_default:	__UI_COMPONENT_DEFAULT_CONFIG_NAME_DEFAULT,
+			__name_start:	__GENTUI_DEFAULT_CONFIG_NAME_START,
+			__name_default:	__GENTUI_DEFAULT_CONFIG_NAME_DEFAULT,
 		},
 		__pin:	   {
 			__pins:	  [],
@@ -1211,7 +1216,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean} bind_to_self?*
 		/// @return {Ui} self
 		///
-		return __action_add(__this.__actions.__update, _action_name, _action_method, _bind_to_self);
+		__action_add(__this.__actions.__update, _action_name, _action_method, _bind_to_self);
+		__action_add_trigger(__this.__actions.__update, _action_name, __GENTUI_DEFAULT_UPDATE_TRIGGER_NAME, __GENTUI_DEFAULT_UPDATE_TRIGGER_METHOD, true);
+		return self;
 	};
 	static action_update_get	 = function(_action_name) {
 		/// @func	action_update_get(action_name)
@@ -1275,86 +1282,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return __action_set_method(__this.__actions.__update, _action_name, _action_method, _bind_to_self);
 	};
-		
-	/// Action Custom Triggers Core
-	static action_update_add_trigger	  = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
-		/// @func	action_update_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @param	{method}  trigger_method
-		/// @param	{boolean} bind_to_self?*
-		/// @return {Ui} self
-		///
-		return __action_add_trigger(__this.__actions.__update, _action_name, _trigger_name, _trigger_method, _bind_to_self);
-	};
-	static action_update_get_trigger	  = function(_action_name, _trigger_name) {
-		/// @func	action_update_get_trigger(action_name, trigger_name)
-		/// @param	{string} action_name
-		/// @param	{string} trigger_name
-		/// @return {GentuiTrigger} trigger
-		///
-		return __action_get_trigger(__this.__actions.__update, _action_name, _trigger_name);
-	};
-	static action_update_has_trigger	  = function(_action_name, _trigger_name) {
-		/// @func	action_update_has_trigger(action_name, trigger_name)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @return {boolean} trigger_exists?
-		///
-		return __action_has_trigger(__this.__actions.__update, _trigger_name);
-	};
-	static action_update_destroy_trigger  = function(_action_name, _trigger_name) {
-		/// @func	action_update_destroy_trigger(action_name, trigger_name)
-		/// @param	{string} action_name
-		/// @param	{string} trigger_name
-		/// @return {Ui} self
-		///
-		return __action_destroy_trigger(__this.__actions.__update, _action_name, _trigger_name);
-	};
-	static action_update_destroy_triggers = function(_action_name) {
-		/// @func	action_update_destroy_triggers(action_name)
-		/// @param	{string} action_name
-		/// @return {Ui} self
-		///
-		return __action_destroy_triggers(__this.__actions.__update, _action_name);
-	};
-	
-	/// Action Custom Triggers Getters & Setters
-	static action_update_get_trigger_method = function(_action_name, _trigger_name) {
-		/// @func	action_update_get_trigger_method(action_name, trigger_name)
-		/// @param	{string}   action_name
-		/// @param	{string}   trigger_name
-		/// @return {UiAction} action_trigger
-		///
-		return __action_get_trigger_method(__this.__actions.__update, _action_name, _trigger_name);
-	};
-	static action_update_get_trigger_active = function(_action_name, _trigger_name) {
-		/// @func	action_update_get_trigger_active(action_name, trigger_name)
-		/// @param	{string}  action_name
-		/// @param	{method}  trigger_name
-		/// @return {boolean} active
-		///
-		return __action_get_trigger_active(__this.__actions.__update, _action_name, _trigger_name);
-	};
-	static action_update_set_trigger_method = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
-		/// @func	action_update_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @param	{method}  trigger_method
-		/// @param	{boolean} bind_to_self?*
-		/// @return {Ui} self
-		///
-		return __action_set_trigger_method(__this.__actions.__update, _action_name, _trigger_name, _trigger_method, _bind_to_self);
-	};
-	static action_update_set_trigger_active = function(_action_name, _trigger_name, _active) {
-		/// @func	action_update_set_trigger_active(action_name, trigger_name, active)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @param	{boolean} active
-		/// @return	{Ui}	  self
-		///
-		return __action_set_trigger_active(__this.__actions.__update, _action_name, _trigger_name, _active);
-	};
 	
 	#endregion
 	#region Render Actions /////////////////
@@ -1374,7 +1301,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @param	{boolean} bind_to_self?*
 		/// @return {Ui} self
 		///
-		return __action_add(__this.__actions.__render, _action_name, _action_method, _bind_to_self);
+		__action_add(__this.__actions.__render, _action_name, _action_method, _bind_to_self);
+		__action_add_trigger(__this.__actions.__render, _action_name, __GENTUI_DEFAULT_RENDER_TRIGGER_NAME, __GENTUI_DEFAULT_RENDER_TRIGGER_METHOD, true);
+		return self;
 	};
 	static action_render_get	 = function(_action_name) {
 		/// @func	action_render_get(action_name)
@@ -1439,86 +1368,6 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		return __action_set_method(__this.__actions.__render, _action_name, _action_method, _bind_to_self);
 	};
 		
-	/// Action Custom Triggers Core
-	static action_render_add_trigger	  = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
-		/// @func	action_render_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @param	{method}  trigger_method
-		/// @param	{boolean} bind_to_self?*
-		/// @return {Ui} self
-		///
-		return __action_add_trigger(__this.__actions.__render, _action_name, _trigger_name, _trigger_method, _bind_to_self);
-	};
-	static action_render_get_trigger	  = function(_action_name, _trigger_name) {
-		/// @func	action_render_get_trigger(action_name, trigger_name)
-		/// @param	{string} action_name
-		/// @param	{string} trigger_name
-		/// @return {GentuiTrigger} trigger
-		///
-		return __action_get_trigger(__this.__actions.__render, _action_name, _trigger_name);
-	};
-	static action_render_has_trigger	  = function(_action_name, _trigger_name) {
-		/// @func	action_render_has_trigger(action_name, trigger_name)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @return {boolean} trigger_exists?
-		///
-		return __action_has_trigger(__this.__actions.__render, _trigger_name);
-	};
-	static action_render_destroy_trigger  = function(_action_name, _trigger_name) {
-		/// @func	action_render_destroy_trigger(action_name, trigger_name)
-		/// @param	{string} action_name
-		/// @param	{string} trigger_name
-		/// @return {Ui} self
-		///
-		return __action_destroy_trigger(__this.__actions.__render, _action_name, _trigger_name);
-	};
-	static action_render_destroy_triggers = function(_action_name) {
-		/// @func	action_render_destroy_triggers(action_name)
-		/// @param	{string} action_name
-		/// @return {Ui} self
-		///
-		return __action_destroy_triggers(__this.__actions.__render, _action_name);
-	};
-	
-	/// Action Custom Triggers Getters & Setters
-	static action_render_get_trigger_method = function(_action_name, _trigger_name) {
-		/// @func	action_render_get_trigger_method(action_name, trigger_name)
-		/// @param	{string}   action_name
-		/// @param	{string}   trigger_name
-		/// @return {UiAction} action_trigger
-		///
-		return __action_get_trigger_method(__this.__actions.__render, _action_name, _trigger_name);
-	};
-	static action_render_get_trigger_active = function(_action_name, _trigger_name) {
-		/// @func	action_render_get_trigger_active(action_name, trigger_name)
-		/// @param	{string}  action_name
-		/// @param	{method}  trigger_name
-		/// @return {boolean} active
-		///
-		return __action_get_trigger_active(__this.__actions.__render, _action_name, _trigger_name);
-	};
-	static action_render_set_trigger_method = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get("auto_bind_methods")) {
-		/// @func	action_render_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @param	{method}  trigger_method
-		/// @param	{boolean} bind_to_self?*
-		/// @return {Ui} self
-		///
-		return __action_set_trigger_method(__this.__actions.__render, _action_name, _trigger_name, _trigger_method, _bind_to_self);
-	};
-	static action_render_set_trigger_active = function(_action_name, _trigger_name, _active) {
-		/// @func	action_render_set_trigger_active(action_name, trigger_name, active)
-		/// @param	{string}  action_name
-		/// @param	{string}  trigger_name
-		/// @param	{boolean} active
-		/// @return	{Ui}	  self
-		///
-		return __action_set_trigger_active(__this.__actions.__render, _action_name, _trigger_name, _active);
-	};
-	
 	#endregion
 	
 	#endregion
@@ -1529,12 +1378,8 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @func	states_update()
 		/// @return {Ui} self
 		///
-		with (__this.__states) {
-			for (var _i = 0; _i < __count; _i++) {
-				var _name  = __names[_i];
-				var _state = __states[$ _name];
-				_state.update();
-			}
+		if (state_has_current()) {
+			state_get_current().update();	
 		}
 		return self;
 	};
@@ -1560,9 +1405,9 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		/// @return	{Ui}			  self
 		///
 		if (_auto_bind_method) {
-			_on_enter_method = method(self, _on_enter_method);	
-			_on_loop_method  = method(self, _on_loop_method);	
-			_on_exit_method  = method(self, _on_exit_method);	
+			if (_on_enter_method != undefined) _on_enter_method = method(self, _on_enter_method);	
+			if (_on_loop_method  != undefined) _on_loop_method  = method(self, _on_loop_method);	
+			if (_on_exit_method  != undefined) _on_exit_method  = method(self, _on_exit_method);	
 		}
 		with (__this.__states) {
 			__states[$ _state_name] = new GentuiState({
@@ -1809,7 +1654,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	};
 	
 	/// Checkers ///////////////////////////
-	static state_exists	= function(_state_name) {
+	static state_exists		 = function(_state_name) {
 		/// @func	state_exists(state_name)
 		/// @desc	return if the given state_name has been registered as a state_method.
 		/// @param	{string}  state_name
@@ -1817,13 +1662,19 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 		///
 		return state_get(_state_name) != undefined;
 	};
-	static state_is		= function(_state_name) {
+	static state_is			 = function(_state_name) {
 		/// @func	state_is(state_name)
 		/// @desc	check if the current state_is the same as that of the passed in state_name
 		/// @param	{string}  state_name 
 		/// @return {boolean} state_is?
 		///
 		return state_get_current_name() == _state_name;
+	};
+	static state_has_current = function() {
+		/// @func	state_has_current()
+		/// @return {boolean} has_current?
+		///
+		return state_get_current() != undefined;
 	};
 	
 	/// Other //////////////////////////////
@@ -2170,7 +2021,7 @@ function Ui(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_STA
 	#endregion
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
+function UiPanel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
@@ -2245,7 +2096,7 @@ function UiPanel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	action_render_add("render_main", render, true);
 };
-function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
+function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLabel(config) : Ui(config)
 	/// @param {string}	  text*
 	/// @param {bool}	  wrap*
@@ -2464,7 +2315,7 @@ function UiLabel  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	
 	action_render_add("render_main", render, true);
 };
-function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
+function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiSprite(config) : Ui(config)
 	/// @param {sprite_index} sprite*
 	/// @param {real} image*
@@ -2667,7 +2518,7 @@ function UiSprite (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	action_update_add("update_main", render, true);
 	action_render_add("render_main", render, true);
 };
-function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
+function UiLine   (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func  UiLine(config) : Ui(config)
 	///
 	#region __this /////////////////
@@ -2812,7 +2663,7 @@ function UiLine   (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 	action_render_add("render_main", render, true);
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function UiCircle (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
+function UiCircle (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func UiCircle(config) : Ui(config)
 	///
 	exit; // <-- not yet ready
@@ -2877,10 +2728,10 @@ function UiCircle (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_N
 		
 	action_render_add("render_main", render, true);
 };
-function UiArc	  (_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
+function UiArc	  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// This should use the draw_circle_curve() function instead
 };
-function UiTextbox(_owner = self, _config_name = __UI_COMPONENT_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
+function UiTextbox(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_owner, _config_name, _config) constructor {
 	/// @func UiTextbox(config) : Ui(config)
 	///
 	exit; // <-- not yet ready

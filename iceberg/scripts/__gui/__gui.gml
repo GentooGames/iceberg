@@ -50,6 +50,20 @@ global._gui = {
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
+		.config_add("config_test_1", {
+			color: c_green,	
+		})
+		.config_add("config_test_2", {
+			color: c_red,
+			x:     100,
+			y:     100,
+		})
+		.action_update_add("update_test_1", function() {
+			set_y(get_y() + 1);	
+		})
+		//.state_add("state_test_1", function() {
+		//	set_x(get_x() + 1);	
+		//})
     },    
 	update:	function() {
 		/// @func   update()
@@ -65,9 +79,9 @@ global._gui = {
 		
 		#endregion
 		
-		if (keyboard_check_pressed(ord("1"))) label.state_change("state_start");
-		if (keyboard_check_pressed(ord("2"))) label.state_change("state_2");
-		if (keyboard_check_pressed(ord("3"))) label.state_change("state_3");
+		if (keyboard_check_pressed(ord("1"))) label.config_restore_to_start();
+		if (keyboard_check_pressed(ord("2"))) label.config_change("config_test_1");
+		if (keyboard_check_pressed(ord("3"))) label.config_change("config_test_2");
 		
 		label.update();
 	},
