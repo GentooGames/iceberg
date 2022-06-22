@@ -58,7 +58,7 @@ global._transition = {
 		#region FloeEffects ////
 		
 		if (effect != undefined) {
-			effect.color = GUI.border_mouth.get_color();
+			effect.__color = GUI.border_mouth.get_color();
 			effect.update();
 		}
 		

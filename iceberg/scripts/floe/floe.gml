@@ -7,23 +7,34 @@
 
 #region about
 /*
-	written_by:__gentoo______
-	version:_____0.1.0_______
-*/ 
+	written_by:_______gentoo________
+	version:__________0.1.2_________
+	last_updated:___06/22/2022______
+*/
 #endregion
 #region change log
 
-#region version 0.1.1
+#region version 0.1.2
 /*
-	Date: 06/13/2022
-	1. Added sfx_emitters & sounds
-	2. Added general getter methods for base FloeEffect() class
+	Date: 06/22/2022
+		New Features:
+			x. integrated PubSub design pattern with event broadcasting using xdstudio's xpublisher
+		QOL:
+			x. renamed private property variables to match new naming convention, with double underscores prefix
+			x. replace literal property accessors with defined getter() methods
 */
 #endregion
-#region version 0.1.0
+#region version 0.1.1 (released)
+/*
+	Date: 06/13/2022
+		x. Added sfx_emitters & sounds
+		x. Added general getter methods for base FloeEffect() class
+*/
+#endregion
+#region version 0.1.0 (released)
 /*	
 	Date: 06/06/2022
-	1. Released first version.
+		x. Released first version.
 */
 #endregion
 
@@ -45,7 +56,7 @@
 #endregion
 #region enums
 
-enum FLOE_STATE {
+enum __FLOE_STATE {
 	HIDDEN,
 	ENTER_PREP,
 	ENTER,
@@ -68,33 +79,33 @@ enum FLOE_STATE {
 function FloeEffect() constructor {
 	/// @func FloeEffect()
 	///
-	color		=  c_black;
-	alpha		=  1.0;
-	speed		=  0.1;
-	threshold	=  0.1;
-	hold_time	= -1;
-	on_enter	= {
-		callback: undefined,
-		data:	  undefined,
+	__color		=  c_black;
+	__alpha		=  1.0;
+	__speed		=  0.1;
+	__threshold	=  0.1;
+	__hold_time	= -1;
+	__on_enter	= {
+		__callback: undefined,
+		__data:	    undefined,
 	};
-	on_change	= {
-		callback: undefined,
-		data:	  undefined,
+	__on_change	= {
+		__callback: undefined,
+		__data:	    undefined,
 	};
-	on_leave	= {
-		callback: undefined,
-		data:	  undefined,
+	__on_leave	= {
+		__callback: undefined,
+		__data:	    undefined,
 	};
-	on_end		= {
-		callback: undefined,
-		data:	  undefined,
+	__on_end	= {
+		__callback: undefined,
+		__data:	    undefined,
 	};
 	
 	#region Private ////////
 	
 	__progress	  = 0.0;
 	__target	  = 1.0;
-	__state		  = FLOE_STATE.HIDDEN;
+	__state		  = __FLOE_STATE.HIDDEN;
 	__is_reversed = false;
 	__hold_timer  = 0;
 	__padding	  = 20;	// offset to move effects offscreen for smoother animations
@@ -113,69 +124,69 @@ function FloeEffect() constructor {
 		/// @func update()
 		///
 		switch (__state) {
-			case FLOE_STATE.ENTER_PREP: {
-				if (on_enter.callback != undefined) {
-					on_enter.callback(on_enter.data);		
+			case __FLOE_STATE.ENTER_PREP: {
+				if (__on_enter.__callback != undefined) {
+					__on_enter.__callback(__on_enter.__data);		
 				}
 				if (__sfx_enter != undefined) {
 					__sfx_play_method(__sfx_emitter, __sfx_enter, 0, 0);
 				}
-				__state = FLOE_STATE.ENTER;
+				__state = __FLOE_STATE.ENTER;
 				break;	
 			}
-			case FLOE_STATE.ENTER:	{
-				__progress = lerp(__progress, __target, speed);
+			case __FLOE_STATE.ENTER:	{
+				__progress = lerp(__progress, __target, __speed);
 				
-				if (abs(__progress - __target) <= threshold) {
+				if (abs(__progress - __target) <= __threshold) {
 					__progress = __target;
-					__state	 = FLOE_STATE.CHANGE;
+					__state	   = __FLOE_STATE.CHANGE;
 				}
 				break;	
 			}
-			case FLOE_STATE.CHANGE:	{
-				if (on_change.callback != undefined) {
-					on_change.callback(on_change.data);	
+			case __FLOE_STATE.CHANGE:	{
+				if (__on_change.__callback != undefined) {
+					__on_change.__callback(__on_change.__data);	
 				}
 				if (__sfx_change != undefined) {
 					__sfx_play_method(__sfx_emitter, __sfx_change, 0, 0);
 				}
-				__hold_timer = hold_time;
-				__state = FLOE_STATE.HOLD;
+				__hold_timer = __hold_time;
+				__state		 = __FLOE_STATE.HOLD;
 				break;	
 			}
-			case FLOE_STATE.HOLD:	{
+			case __FLOE_STATE.HOLD:	{
 				if (__hold_timer > 0) {
 					__hold_timer--;	
 				}
 				else {
-					__state = FLOE_STATE.LEAVE_PREP;
+					__state = __FLOE_STATE.LEAVE_PREP;
 				}
 				break;	
 			}
-			case FLOE_STATE.LEAVE_PREP: {
-				if (on_leave.callback != undefined) {
-					on_leave.callback(on_leave.data);		
+			case __FLOE_STATE.LEAVE_PREP: {
+				if (__on_leave.__callback != undefined) {
+					__on_leave.__callback(__on_leave.__data);		
 				}	
 				if (__sfx_leave != undefined) {
 					__sfx_play_method(__sfx_emitter, __sfx_leave, 0, 0);
 				}
-				__state = FLOE_STATE.LEAVE;
+				__state = __FLOE_STATE.LEAVE;
 				break;	
 			}
-			case FLOE_STATE.LEAVE:	{
-				__progress = lerp(__progress, __target, speed);
+			case __FLOE_STATE.LEAVE:	{
+				__progress = lerp(__progress, __target, __speed);
 				
-				if (abs(__progress - __target) <= threshold) {
+				if (abs(__progress - __target) <= __threshold) {
 					__progress = __target;
-					__state	 = FLOE_STATE.END;
+					__state	   = __FLOE_STATE.END;
 				}
 				break;	
 			}
-			case FLOE_STATE.END:	{
-				if (on_end.callback != undefined) {
-					on_end.callback(on_end.data);	
+			case __FLOE_STATE.END:	{
+				if (__on_end.__callback != undefined) {
+					__on_end.__callback(__on_end.__data);	
 				}
-				__state = FLOE_STATE.HIDDEN;
+				__state = __FLOE_STATE.HIDDEN;
 				break;	
 			}
 		};
@@ -193,7 +204,7 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		color = _color;
+		__color = _color;
 		return self;
 	};
 	static set_alpha		= function(_alpha) {
@@ -201,7 +212,7 @@ function FloeEffect() constructor {
 		/// @param	{real} alpha
 		/// @return {FloeEffect} self
 		///
-		alpha = _alpha;
+		__alpha = _alpha;
 		return self;
 	};
 	static set_speed		= function(_speed) {
@@ -209,7 +220,7 @@ function FloeEffect() constructor {
 		/// @param	{real} speed
 		/// @return {FloeEffect} self
 		///
-		speed = _speed;
+		__speed = _speed;
 		return self;
 	};
 	static set_threshold	= function(_threshold) {
@@ -217,7 +228,7 @@ function FloeEffect() constructor {
 		/// @param	{real} threshold
 		/// @return {FloeEffect} self
 		///
-		threshold = _threshold;
+		__threshold = _threshold;
 		return self;
 	};
 	static set_hold_time	= function(_hold_time) {
@@ -225,7 +236,7 @@ function FloeEffect() constructor {
 		/// @param	{real} hold_time
 		/// @return {FloeEffect} self
 		///
-		hold_time = _hold_time;
+		__hold_time = _hold_time;
 		return self;
 	};
 	static set_on_enter		= function(_callback, _data) {
@@ -234,9 +245,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (on_enter) {
-			callback = _callback;
-			data	 = _data;
+		with (__on_enter) {
+			__callback = _callback;
+			__data	   = _data;
 		}
 		return self;
 	};
@@ -246,9 +257,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (on_change) {
-			callback = _callback;
-			data	 = _data;
+		with (__on_change) {
+			__callback = _callback;
+			__data	   = _data;
 		}
 		return self;
 	};
@@ -258,9 +269,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (on_leave) {
-			callback = _callback;
-			data	 = _data;
+		with (__on_leave) {
+			__callback = _callback;
+			__data	   = _data;
 		}
 		return self;
 	};
@@ -270,9 +281,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (on_end) {
-			callback = _callback;
-			data	 = _data;
+		with (__on_end) {
+			__callback = _callback;
+			__data	   = _data;
 		}
 		return self;
 	};
@@ -340,55 +351,55 @@ function FloeEffect() constructor {
 		/// @func	get_color()
 		/// @return {color} color
 		///
-		return color;
+		return __color;
 	};
 	get_alpha		  = function() {
 		/// @func	get_alpha()
 		/// @return {real} alpha
 		///
-		return alpha;
+		return __alpha;
 	};
 	get_speed		  = function() {
 		/// @func	get_speed()
 		/// @return {real} speed
 		///
-		return speed;
+		return __speed;
 	};
 	get_threshold	  = function() {
 		/// @func	get_threshold()
 		/// @return {real} threshold
 		///
-		return threshold;
+		return __threshold;
 	};
 	get_hold_time	  = function() {
 		/// @func	get_hold_time()
 		/// @return {real} hold_time
 		///
-		return hold_time;
+		return __hold_time;
 	};
 	get_on_enter	  = function() {
 		/// @func	get_on_enter()
 		/// @return {struct} on_enter
 		///
-		return on_enter;
+		return __on_enter;
 	};
 	get_on_change	  = function() {
 		/// @func	get_on_change()
 		/// @return {struct} on_change
 		///
-		return on_change;
+		return __on_change;
 	};
 	get_on_leave	  = function() {
 		/// @func	get_on_leave()
 		/// @return {struct} on_leave
 		///
-		return on_leave;
+		return __on_leave;
 	};
 	get_on_end		  = function() {
 		/// @func	get_on_end()
 		/// @return {struct} on_end
 		///
-		return on_end;
+		return __on_end;
 	};
 	get_progress	  = function() {
 		/// @func	get_progress()
@@ -445,13 +456,13 @@ function FloeEffect() constructor {
 	static enter   = function() {
 		/// @func enter()
 		///
-		__state  = FLOE_STATE.ENTER_PREP;
+		__state  = __FLOE_STATE.ENTER_PREP;
 		__target = __is_reversed ? 0 : 1;
 	};
 	static leave   = function() {
 		/// @func leave()
 		///
-		__state  = FLOE_STATE.LEAVE_PREP;
+		__state  = __FLOE_STATE.LEAVE_PREP;
 		__target = __is_reversed ? 1 : 0;
 	};
 	static reverse = function(_reverse_progress = true) {
@@ -525,51 +536,51 @@ function FloeEffectSurface() : FloeEffect() constructor {
 function FloeEffectFade() : FloeEffect() constructor {
 	/// @func FloeEffectFade()
 	///
-	threshold = 0.01;
+	__threshold = 0.01;
 	
 	static render = function() {
 		/// @func render()
 		///
-		var _alpha = alpha * __progress;
-		draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, _alpha);
+		var _alpha = __alpha * __progress;
+		draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, _alpha);
 	};	
 };
 function FloeEffectWipeLeft() : FloeEffect() constructor {
 	/// @func FloeEffectWipeLeft()
 	///
-	threshold = 0.01;
+	__threshold = 0.01;
 	
 	static render = function() {
 		/// @func render()
 		///
 		var _width = SURF_W + __padding;
 		var _x	   = _width - (_width * __progress) - (__padding * 0.5);
-		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, color, alpha);
+		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, __color, __alpha);
 	};	
 };
 function FloeEffectWipeRight() : FloeEffect() constructor {
 	/// @func FloeEffectWipeRight()
 	///
-	threshold = 0.01;
+	__threshold = 0.01;
 	
 	static render = function() {
 		/// @func render()
 		///
 		var _width = SURF_W + __padding;
 		var _x	   = -_width + (_width * __progress) - (__padding * 0.5);
-		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, color, alpha);
+		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, __color, __alpha);
 	};	
 };
 function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
 	/// @func FloeEffectCircleCenter()
 	///
-	threshold = 0.01;
+	__threshold = 0.01;
 	
 	static render = function() {
 		/// @func render()
 		///
 		render_begin(); {
-			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, alpha);
+			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, __alpha);
 			gpu_set_blendmode(bm_subtract); {
 				var _base   = SURF_H;
 				var _radius = _base - (_base * __progress);
@@ -581,7 +592,7 @@ function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
 function FloeEffectCircleTarget() : FloeEffectSurface() constructor {
 	/// @func FloeEffectCircleTarget()
 	///
-	threshold = 0.01;
+	__threshold = 0.01;
 	
 	static render = function() {
 		/// @func render()
@@ -596,13 +607,13 @@ function FloeEffectCircleTarget() : FloeEffectSurface() constructor {
 function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 	/// @func FloeEffectBorderCenter()
 	///
-	threshold = 0.01;
+	__threshold = 0.01;
 	
 	static render = function() {
 		/// @func render()
 		///
 		render_begin(); {
-			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, alpha);
+			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, ____alpha);
 			gpu_set_blendmode(bm_subtract); {
 				var _base_w =  SURF_W + __padding;
 				var _base_h =  SURF_H + __padding;
@@ -618,7 +629,7 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
 	/// @func FloeEffectBorderTarget()
 	///
-	threshold = 0.01;
+	__threshold = 0.01;
 	
 	static render = function() {
 		/// @func render()
@@ -635,22 +646,22 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	/// @param	{sprite_index} sprite
 	/// @param	{image_index } image=0
 	///
-	sprite		  = _sprite;
-	image		  = _image;
-	threshold	  =  0.005;
-	x_offset	  = -get_sprite_width()  * 0.5;		// amount sprite will be offset from origin
-	y_offset	  = -get_sprite_height() * 0.5;		// amount sprite will be offset from origin
+	__sprite	= _sprite;
+	__image		= _image;
+	__threshold	=  0.005;
+	__x_offset	= -get_sprite_width()  * 0.5;		// amount sprite will be offset from origin
+	__y_offset	= -get_sprite_height() * 0.5;		// amount sprite will be offset from origin
 	
 	/// Shadow
-	draw_shadow   = false;
-	shadow_alpha  = 1.0;
-	shadow_color  = c_black;
-	shadow_inset  = 0;	
+	__draw_shadow  = false;
+	__shadow_alpha = 1.0;
+	__shadow_color = c_black;
+	__shadow_inset = 0;	
 	
 	/// Overlay
-	overlay_edge	= true;
-	overlay_inset_x	= get_sprite_width()  * (1 / 6);	// amount that overlay surface will inset into the sprite
-	overlay_inset_y	= get_sprite_height() * (1 / 6);	// amount that overlay surface will inset into the sprite
+	__overlay_edge	  = true;
+	__overlay_inset_x = get_sprite_width()  * (1 / 6);	// amount that overlay surface will inset into the sprite
+	__overlay_inset_y = get_sprite_height() * (1 / 6);	// amount that overlay surface will inset into the sprite
 
 	#region Private ////////
 	
@@ -660,10 +671,10 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @func __validate_sprite()
 		///
 		if (!__validated) {
-			if (sprite == undefined) {
+			if (__sprite == undefined) {
 				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
 			}
-			if (!sprite_get_nineslice(sprite).enabled) {
+			if (!sprite_get_nineslice(__sprite).enabled) {
 				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
 			}
 			__validated = true;
@@ -680,40 +691,40 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		
 		var _max_w	 =  SURF_W;
 		var _max_h	 =  SURF_H;
-		var _start_w = _max_w + (-x_offset * 2);
-		var _start_h = _max_h + (-y_offset * 2);
-		var _start_x = (SURF_W - _max_w) + x_offset;
-		var _start_y = (SURF_H - _max_h) + y_offset;
+		var _start_w = _max_w + (-__x_offset * 2);
+		var _start_h = _max_h + (-__y_offset * 2);
+		var _start_x = (SURF_W - _max_w) + __x_offset;
+		var _start_y = (SURF_H - _max_h) + __y_offset;
 		
-		var _x = _start_x + ((_max_w - x_offset) * (0.5 * __progress));
-		var _y = _start_y + ((_max_h - y_offset) * (0.5 * __progress));
-		var _w = _start_w - ((_max_w - x_offset) * __progress);
-		var _h = _start_h - ((_max_h - y_offset) * __progress);
+		var _x = _start_x + ((_max_w - __x_offset) * (0.5 * __progress));
+		var _y = _start_y + ((_max_h - __y_offset) * (0.5 * __progress));
+		var _w = _start_w - ((_max_w - __x_offset) * __progress);
+		var _h = _start_h - ((_max_h - __y_offset) * __progress);
 		
 		/// Sprite Shadow
-		if (draw_shadow) {
+		if (__draw_shadow) {
 			shader_set(shdr_alpha_dither); {
-				var _shadow_x = _x +  shadow_inset;
-				var _shadow_y = _y +  shadow_inset;
-				var _shadow_w = _w - (shadow_inset * 2);
-				var _shadow_h = _h - (shadow_inset * 2);
-				draw_sprite_stretched_ext(sprite, image, _shadow_x, _shadow_y, _shadow_w, _shadow_h, shadow_color, shadow_alpha);
+				var _shadow_x = _x +  __shadow_inset;
+				var _shadow_y = _y +  __shadow_inset;
+				var _shadow_w = _w - (__shadow_inset * 2);
+				var _shadow_h = _h - (__shadow_inset * 2);
+				draw_sprite_stretched_ext(__sprite, __image, _shadow_x, _shadow_y, _shadow_w, _shadow_h, __shadow_color, __shadow_alpha);
 			} shader_reset();
 		}
 		
 		/// Primary Sprite
-		draw_sprite_stretched_ext(sprite, image, _x, _y, _w, _h, color, alpha);
+		draw_sprite_stretched_ext(__sprite, __image, _x, _y, _w, _h, __color, __alpha);
 		
 		/// Overlay Edge
-		if (overlay_edge) {
+		if (__overlay_edge) {
 			render_begin(); {
-				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, color, 1);
+				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, 1);
 				gpu_set_blendmode(bm_subtract); {
 					draw_rectangle_alt(
-						_x +  overlay_inset_x,
-						_y +  overlay_inset_y,
-						max(0, _w - (overlay_inset_x * 2)), 
-						max(0, _h - (overlay_inset_y * 2)), 
+						_x + __overlay_inset_x,
+						_y + __overlay_inset_y,
+						max(0, _w - (__overlay_inset_x * 2)), 
+						max(0, _h - (__overlay_inset_y * 2)), 
 						0, 
 						c_white, 
 						1,
@@ -730,67 +741,67 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @func get_sprite()
 		/// @return {sprite_index} sprite
 		/// 
-		return sprite;
+		return __sprite;
 	};
 	static get_sprite_width  = function() {
 		/// @func	get_sprite_width()
 		/// @return {real} sprite_width
 		///
-		return sprite_get_width(sprite);	
+		return sprite_get_width(__sprite);	
 	};
 	static get_sprite_height = function() {
 		/// @func	get_sprite_height()
 		/// @return {real} sprite_height
 		///
-		return sprite_get_height(sprite);	
+		return sprite_get_height(__sprite);	
 	};
 	static get_image		 = function() {
 		/// @func	get_image()
 		/// @return {real} image_index
 		///
-		return image;
+		return __image;
 	};
 	static get_x_offset		 = function() {
 		/// @func	get_x_offset()
 		/// @return {real} x_offset
 		///
-		return x_offset;
+		return __x_offset;
 	};
 	static get_y_offset		 = function() {
 		/// @func	get_y_offset()
 		/// @return {real} y_offset
 		///
-		return y_offset;
+		return __y_offset;
 	};
 	static get_draw_shadow	 = function() {
 		/// @func	get_draw_shadow()
 		/// @return {boolean} draw_shadow?
 		///
-		return draw_shadow;
+		return __draw_shadow;
 	};
 	static get_shadow_alpha  = function() {
 		/// @func	get_shadow_alpha()
 		/// @return {real} shadow_alpha
 		///
-		return shadow_alpha;
+		return __shadow_alpha;
 	};
 	static get_shadow_color  = function() {
 		/// @func	get_shadow_color()
 		/// @return {real} shadow_color
 		///
-		return shadow_color;	
+		return __shadow_color;	
 	};
 	static get_shadow_inset	 = function() {
 		/// @func	get_shadow_inset()
 		/// @return {real} shadow_inset
 		///
-		return shadow_inset;	
+		return __shadow_inset;	
 	};
 	static get_overlay_edge  = function() {
 		/// @func	get_overlay_edge()
 		/// @return {boolean} overlay_edge?
 		///
-		return overlay_edge;
+		return __overlay_edge;
 	};
 	
 	#endregion
@@ -801,7 +812,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{sprite_index} sprite
 		/// @return {FloeEffect} self
 		///
-		sprite = _sprite;
+		__sprite = _sprite;
 		return self;
 	};
 	static set_image		 = function(_image) {
@@ -809,7 +820,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{image_index} image
 		/// @return {FloeEffect} self
 		///
-		image = _image;
+		__image = _image;
 		return self;
 	};
 	static set_x_offset		 = function(_x_offset) {
@@ -817,7 +828,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{real} x_offset
 		/// @return {FloeEffect} self
 		///
-		x_offset = _x_offset;
+		__x_offset = _x_offset;
 		return self;
 	};
 	static set_y_offset		 = function(_y_offset) {
@@ -825,7 +836,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{real} y_offset
 		/// @return {FloeEffect} self
 		///
-		y_offset = _y_offset;
+		__y_offset = _y_offset;
 		return self;
 	};
 	static set_draw_shadow   = function(_draw_shadow) {
@@ -833,7 +844,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{boolean} draw_shadow?
 		/// @return {FloeEffect} self
 		///
-		draw_shadow = _draw_shadow;
+		__draw_shadow = _draw_shadow;
 		return self;
 	};
 	static set_shadow_alpha	 = function(_shadow_alpha) {
@@ -841,7 +852,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{real} shadow_alpha
 		/// @return {FloeEffect} self
 		///
-		shadow_alpha = _shadow_alpha;
+		__shadow_alpha = _shadow_alpha;
 		return self;
 	};
 	static set_shadow_color	 = function(_shadow_color) {
@@ -849,7 +860,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{color} shadow_color
 		/// @return {FloeEffect} self
 		///
-		shadow_color = _shadow_color;
+		__shadow_color = _shadow_color;
 		return self;
 	};
 	static set_shadow_inset	 = function(_shadow_inset) {
@@ -857,7 +868,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{real} shadow_inset
 		/// @return {FloeEffect} self
 		///
-		shadow_inset = _shadow_inset;
+		__shadow_inset = _shadow_inset;
 		return self;
 	};
 	static set_overlay_edge	 = function(_overlay_edge) {
@@ -865,7 +876,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		/// @param	{boolean} overlay_edge?
 		/// @return {FloeEffect} self
 		///
-		overlay_edge = _overlay_edge;
+		__overlay_edge = _overlay_edge;
 		return self;
 	};
 	
@@ -873,13 +884,13 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 };
 ////////////////////////////////////////////////////////////////////////////
 function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {
-	overlay_edge = true;
-	draw_shadow  = true;
-	shadow_alpha = 0.8;
-	shadow_inset = 20;
-	color		 = CONFIG.color.orange;
-	x_offset	 = -50;
-	y_offset	 = -60;
+	__overlay_edge = true;
+	__draw_shadow  = true;
+	__shadow_alpha = 0.8;
+	__shadow_inset = 20;
+	__color		   = CONFIG.color.orange;
+	__x_offset	   = -50;
+	__y_offset	   = -60;
 };
 
 

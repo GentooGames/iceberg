@@ -8,15 +8,15 @@
 #region about ///////////////////////
 /*
 	written_by:_______gentoo________
-	version:__________0.2.0_________
-	last_updated:___06/16/2022______
+	version:__________0.2.1_________
+	last_updated:___06/22/2022______
 */
 #endregion
 #region change log //////////////////
 
 #region version 0.2.*
 
-#region version 0.2.1 
+#region version 0.2.1 (released)
 /*
 	Date: 06/22/2022
 		Feature Additions:			
