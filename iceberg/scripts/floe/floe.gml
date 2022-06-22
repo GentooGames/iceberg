@@ -144,6 +144,7 @@ function FloeEffect() constructor {
 		"leave_completed",
 		"reversed",
 		"ended",
+		"reset_completed",
 	);
 
 	static update  = function() {
@@ -709,6 +710,7 @@ function FloeEffect() constructor {
 		set_running(false);
 		set_progress(0);
 		set_state(__FLOE_STATE.HIDDEN);
+		event_publish("reset_completed", self);
 	};
 		
 	#endregion
