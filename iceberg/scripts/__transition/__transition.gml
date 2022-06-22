@@ -58,7 +58,7 @@ global._transition = {
 		#region FloeEffects ////
 		
 		if (effect != undefined) {
-			effect.__color = GUI.border_mouth.get_color();
+			effect.set_color(GUI.border_mouth.get_color());
 			effect.update();
 		}
 		
@@ -91,7 +91,7 @@ global._transition = {
 		
 		/// Instantiate Effect_In()
 		effect_in = new _effect_in();
-		effect_in.set_on_leave(function() {
+		effect_in.set_callback_on_leave_method(function() {
 			effect_in.cleanup();
 			effect = effect_out;
 			effect.reverse();
@@ -104,7 +104,7 @@ global._transition = {
 		
 		/// Instantiate Effect_Out()
 		effect_out = new _effect_out();
-		effect_out.set_on_end(function() {
+		effect_out.set_callback_on_end_method(function() {
 			effect_out.cleanup();
 			effect = undefined;
 			__run_on_end();
