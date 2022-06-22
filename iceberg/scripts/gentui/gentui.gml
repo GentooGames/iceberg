@@ -371,6 +371,10 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		set_data(undefined);	// <--	wipe data after execution, so that temporarily
 								//		set data through action_send_payload() does not 
 								//		become persistent.
+								
+		var _component = get_owner();
+		_component.event_publish("action_executed", get_name());
+		
 		return _return;
 	};
 		
@@ -560,6 +564,20 @@ function GentuiTrigger(_config) : GentuiUtilMethod(_config) constructor {
 	/// @param	{struct} config
 	/// @return {GentuiTrigger} self
 	///
+	static execute_super = execute;
+	static execute		 = function() {
+		/// @func	execute(data)
+		/// @param  {any} data
+		/// @return {any} execute_return
+		///
+		var _result = execute_super();
+		if (_result) {
+			var _action	   =  get_owner();
+			var _component = _action.get_owner();
+			_component.event_publish("trigger_triggered", get_name());
+		}
+		return _result;
+	};
 };
 function GentuiState(_config) constructor {
 	/// @func	GentuiState(config)
@@ -829,7 +847,15 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};	
 	__config_init(_config_name, _config);
 	__events_init(
-		"state_change",
+		"activated", 
+		"deactivated",
+		"show_toggled",
+		"hide_toggled",
+		"state_changed",
+		"config_changed",
+		"pin_parent_assigned",
+		"action_executed",
+		"trigger_triggered",
 	);
 		
 	#region Core ///////////////////////////
@@ -864,6 +890,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {Ui} self
 		///
 		set_visible(true);
+		event_publish("show_toggled");
 		return self;
 	};
 	static hide		  = function() {
@@ -872,6 +899,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {Ui} self
 		///
 		set_visible(false);
+		event_publish("hide_toggled");
 		return self;
 	};
 	static activate   = function() {
@@ -880,6 +908,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {Ui} self
 		///
 		set_active(true);
+		event_publish("activated");
 		return self;
 	};
 	static deactivate = function() {
@@ -888,6 +917,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {Ui} self
 		///
 		set_active(false);
+		event_publish("deactivated");
 		return self;
 	};
 	
@@ -1358,8 +1388,11 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		if (_bind_to_self) {
 			_action_method = method(self, _action_method);	
 		}
+			
+		var _component = self;
 		with (_action_context) {
 			__actions[$ _action_name] = new GentuiAction({
+				owner:  _component,
 				name:   _action_name,
 				method: _action_method,
 			});
@@ -2115,7 +2148,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		if (state_exists(_state_name)) {
 			state_set_current(_state_name, _config, _sync_config_to_state);
-			event_publish("state_change", _state_name);
+			event_publish("state_changed", _state_name);
 		}
 		return self;
 	};
@@ -2412,6 +2445,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		__this.__pin.__xoff   = _parent.get_x() - get_x();
 		__this.__pin.__yoff   = _parent.get_y() - get_y();
 		__this.__pin.__parent = _parent;
+		event_publish("pin_parent_assigned", _parent);
 		return self;
 	};
 		
@@ -2501,6 +2535,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		if (config_exists(_config_name)) {
 			config_set_current(_config_name, config_get(_config_name));
+			event_publish("config_changed", _config_name);
 		}
 		return self;
 	};
@@ -2741,7 +2776,6 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {boolean} mouse_touching?
 		///
 		var _mxy = get_mouse_xy();
-		log("mxy.x: {0}, mxy.y: {1}, x: {2}, y: {3}", _mxy.x, _mxy.y, x, y);
 		return (
 			_mxy.x >= get_left() && _mxy.x <= get_right() &&
 			_mxy.y >= get_top()  && _mxy.y <= get_bottom()
@@ -3359,6 +3393,10 @@ function UiLine   (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 			add_point(_point.x, _point.y);
 		}
 	}
+		
+	__events_init(
+		"point_added"
+	);
 	
 	#endregion
 	#region Core ///////////////////
@@ -3407,6 +3445,8 @@ function UiLine   (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 			if (__top_most    == undefined || _y < __top_most   ) __top_most    = _y;	
 			if (__bottom_most == undefined || _y > __bottom_most) __bottom_most = _y;	
 		}
+		
+		event_publish("point_added", { x: _x, y: _y });
 		
 		return self;
 	};
