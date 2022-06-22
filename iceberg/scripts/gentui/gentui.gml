@@ -245,10 +245,14 @@ function GentuiUtilMethod(_config) constructor {
 	
 	/// Core ///////////////////////////////////////////////////////
 	static execute = function() {
-		/// @func	execute()
+		/// @func	execute(data)
+		/// @param  {any} data
 		/// @return {any} execute_return
 		///
-		return __method();
+		var _method = get_method();
+		var _data	= get_data();
+		
+		return _method(_data);
 	};
 	
 	/// Getters ////////////////////////////////////////////////////
@@ -355,8 +359,8 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		/// @func	update_triggers()
 		/// @return	{GentuiAction} self
 		///
-		var _validated = false;
-		var _return	   = undefined;
+		var _validated	  = false;
+		var _trigger_name = undefined;
 		
 		with (__triggers) {
 			if (__active) {
@@ -364,10 +368,9 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 					var _name	 = __names[_i];
 					var _trigger = __triggers[$ _name];
 					if (_trigger.get_active()) {
-						_return	   = _trigger.execute();
-						show_debug_message("return: " + string(_return));
-						if (_return != false) {
-							_validated = true;
+						if (_trigger.execute()) {
+							_validated	  =  true;
+							_trigger_name = _name;
 							break;	
 						}
 					}
@@ -375,7 +378,7 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 			}
 		}
 		if (_validated) {
-			execute(_return);
+			execute();
 		}
 		return self;
 	};
@@ -386,8 +389,10 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		/// @return {GentuiAction} self
 		///
 		if (!has_trigger(_trigger_name)) {
+			var _action = self;
 			with (__triggers) {
 				__triggers[$ _trigger_name] = new GentuiTrigger({
+					owner:  _action,
 					name:	_trigger_name,
 					method: _trigger_method,
 				});
@@ -465,6 +470,16 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		}
 		return undefined;
 	};
+	static get_trigger_data	   = function(_trigger_name) {
+		/// @func	get_trigger_data(trigger_name)
+		/// @param	{string} trigger_name
+		/// @return {method} method
+		///
+		if (has_trigger(_trigger_name)) {
+			return get_trigger(_trigger_name).get_data();
+		}
+		return undefined;
+	};
 		
 	/// Setters ////////////////////////////////////////////////////////
 	static set_triggers_active = function(_active) {
@@ -487,13 +502,24 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		return self;
 	};
 	static set_trigger_method  = function(_trigger_name, _trigger_method) {
-		/// @func	set_trigger_active(trigger_name, active?)
+		/// @func	set_trigger_active(trigger_name, trigger_method)
 		/// @param	{string} trigger_name
 		/// @param	{method} method
 		/// @return {GentuiAction} self
 		///
 		if (has_trigger(_trigger_name)) {
 			get_trigger(_trigger_name).set_method(_trigger_method);
+		}
+		return self;
+	};
+	static set_trigger_data	   = function(_trigger_name, _trigger_data) {
+		/// @func	set_trigger_data(trigger_name, trigger_data)
+		/// @param	{string} trigger_name
+		/// @param	{method} method
+		/// @return {GentuiAction} self
+		///
+		if (has_trigger(_trigger_name)) {
+			get_trigger(_trigger_name).set_data(_trigger_data);
 		}
 		return self;
 	};
@@ -514,6 +540,7 @@ function GentuiTrigger(_config) : GentuiUtilMethod(_config) constructor {
 	/// @param	{struct} config
 	/// @return {GentuiTrigger} self
 	///
+	
 };
 function GentuiState(_config) constructor {
 	/// @func	GentuiState(config)
@@ -1521,6 +1548,18 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return undefined;
 	};
+	static __action_get_trigger_data	= function(_action_context, _action_name, _trigger_name) {
+		/// @func	__action_get_trigger_data(action_context, action_name, trigger_name)
+		/// @param	{struct}  action_context
+		/// @param	{string}  action_name
+		/// @param	{string}  trigger_name
+		/// @return {boolean} triggers_active?
+		///
+		if (__action_exists(_action_context, _action_name)) {
+			return __action_get(_action_context, _action_name).get_trigger_data(_trigger_name);
+		}
+		return false;
+	};
 	static __action_get_trigger_active  = function(_action_context, _action_name, _trigger_name) {
 		/// @func	__action_get_trigger_active(action_name, trigger_name)
 		/// @param	{struct}  action_context
@@ -1544,6 +1583,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return false;
 	};
+	
 	static __action_set_trigger_method  = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	__action_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{struct}  action_context
@@ -1558,6 +1598,19 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 				_trigger_method = method(self, _trigger_method);	
 			}
 			__action_get(_action_context, _action_name).set_trigger_method(_trigger_name, _trigger_method);
+		}
+		return self;
+	};
+	static __action_set_trigger_data	= function(_action_context, _action_name, _trigger_name, _trigger_data) {
+		/// @func	__action_set_trigger_data(action_context, action_name, trigger_name, trigger_data) 
+		/// @param	{struct} action_context
+		/// @param	{string} action_name
+		/// @param	{string} trigger_name
+		/// @param	{any}	 trigger_data
+		/// @return {Ui}	 self
+		///
+		if (__action_exists(_action_context, _action_name)) {
+			__action_get(_action_context, _action_name).set_trigger_data(_trigger_name, _trigger_data);
 		}
 		return self;
 	};
@@ -1613,7 +1666,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{string} action_name
 		/// @return {GentuiAction} action
 		///
-		return __action_get(__this.__actions.__custom);
+		return __action_get(__this.__actions.__custom, _action_name);
 	};
 	static action_exists  = function(_action_name) {
 		/// @func	action_exists(action_name)
@@ -1723,6 +1776,14 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_get_trigger_method(__this.__actions.__custom, _action_name, _trigger_name);
 	};
+	static action_get_trigger_data	  = function(_action_name, _trigger_name) {
+		/// @func	action_get_trigger_data(action_name, trigger_name)
+		/// @param	{string}   action_name
+		/// @param	{string}   trigger_name
+		/// @return {UiAction} action_trigger
+		///
+		return __action_get_trigger_data(__this.__actions.__custom, _action_name, _trigger_name);
+	};
 	static action_get_trigger_active  = function(_action_name, _trigger_name) {
 		/// @func	action_get_trigger_active(action_name, trigger_name)
 		/// @param	{string}  action_name
@@ -1738,6 +1799,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_get_triggers_active(__this.__actions.__custom);
 	};
+	
 	static action_set_trigger_method  = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{string}  action_name
@@ -1747,6 +1809,15 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {Ui} self
 		///
 		return __action_set_trigger_method(__this.__actions.__custom, _action_name, _trigger_name, _trigger_method, _bind_to_self);
+	};
+	static action_set_trigger_data	  = function(_action_name, _trigger_name, _trigger_data) {
+		/// @func	action_set_trigger_data(action_name, trigger_name, trigger_data) 
+		/// @param	{string} action_name
+		/// @param	{string} trigger_name
+		/// @param	{any}	 trigger_data
+		/// @return {Ui}	 self
+		///
+		return __action_set_trigger_data(__this.__actions.__custom, _action_name, _trigger_name, _trigger_data);
 	};
 	static action_set_trigger_active  = function(_action_name, _trigger_name, _active) {
 		/// @func	action_set_trigger_active(action_name, trigger_name, active)
@@ -1765,7 +1836,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_triggers_active(__this.__actions.__custom, _action_name, _active);
 	};
-	
+			
 	#endregion
 	#region Update Actions /////////////////
 	
@@ -1825,6 +1896,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_get_method(__this.__actions.__update, _action_name);
 	};
+	
 	static action_update_set_active	= function(_action_name, _active) {
 		/// @func	action_update_set_active(action_name, active?)
 		/// @param	{string}  action_name
@@ -1910,6 +1982,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_get_method(__this.__actions.__render, _action_name);
 	};
+	
 	static action_render_set_active = function(_action_name, _active) {
 		/// @func	action_render_set_active(action_name, active?)
 		/// @param	{string}  action_name

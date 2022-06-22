@@ -41,20 +41,22 @@ global._gui = {
 		
 		#endregion
 		
-		//script_execute(function() {
-		//	show_message("test message");
-		//});
+		static _is_true = function(_value) {
+			
+		};
 		
 		label = new UiLabel(,,{
 			text: "text for config start",
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
-		.action_add("action_test", function(_triggerer) {
-			show_debug_message("triggerer: " + string(_triggerer));
+		.action_add("action_test", function(_instance) {
+			show_debug_message("instance: " + string(_instance));
 		})
-		.action_add_trigger("action_test", "trigger_test", function() {
-			return get_text();
+		.action_add_trigger("action_test", "trigger_on_player_collide", function() {
+			var _instance = collision_circle(0, 0, 100, obj_player, false, false);
+			other.set_data("hey");
+			return true;
 		})
     },    
 	update:	function() {
