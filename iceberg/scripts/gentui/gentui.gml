@@ -19,7 +19,7 @@
 #region version 0.2.1 
 /*
 	Date: 06/22/2022
-		Feature Additions:
+		Feature Additions:			
 			x.	abstracted actions and triggers. previously, a few set contexts existed in which the action/triggers were defined.
 				these included for example: "hover_action_add()" "hover_trigger_add()"; however, this functionality does not need
 				to be context sensitive and specific to the hover action. instead, we can generalize a simple action/trigger binding
@@ -27,6 +27,7 @@
 			x.	ability to have triggers send data to the corresponding action, through the method: action_send_payload(). as a result
 				actions can now take a data parameter, and if action_send_payload() is invoked inside of the trigger method, then the
 				action will have that value passed in as its parameter.
+			x.	added events with PubSub support. see events methods.
 			x.	new methods for interacting with previously defined configs:
 					x.	config_set_value(config_name, value_name, value);
 					x.	config_get_value(config_name, value_name);
