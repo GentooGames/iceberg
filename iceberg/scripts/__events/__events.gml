@@ -1,15 +1,12 @@
-global._event = {};
-#macro EVENT   global._event
-////////////////////////////////
 #macro PUBLISHER EVENT.publisher
 #macro PUBLISH   PUBLISHER.publish
 #macro SUBSCRIBE PUBLISHER.subscribe
 #macro UNSUB     PUBLISHER.unsubscribe
 
-EVENT = {
+global._event = {
     initialized: false,
-    publisher: new Publisher(),
-	
+    publisher:	 new Publisher(),
+	////////////////////////////////
     setup:  function() {
         /// @func   setup()
 		/// @desc	...
@@ -85,5 +82,5 @@ EVENT = {
         ///
         if (!initialized) exit;
 	},
-}
-
+};
+#macro EVENT global._event

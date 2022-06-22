@@ -2699,11 +2699,22 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		var _property_names = variable_struct_get_names(_config); 
 		for (var _i = 0, _len = array_length(_property_names); _i < _len; _i++) {
-			var _property_name    = _property_names[_i];
-			var _property_setter  = __this.__config.__properties[$ _property_name].setter;
-			if (_property_setter != undefined) {
-				_property_setter(_config[$ _property_name]);
+			
+			var _property_name   = _property_names[_i];
+			var _property_value  = _config[$ _property_name];
+			var _property_setter =  undefined;
+			
+			/// If Setter Method Exists, Use Setter Method
+			if (variable_struct_exists(__this.__config.__properties, _property_name)) {
+				_property_setter = __this.__config.__properties[$ _property_name].setter;
+				if (_property_setter != undefined) {
+					_property_setter(_property_value);
+				}
 			}
+			/// Manually Assign Value
+			//if (_property_setter == undefined) {
+			//	variable_struct_set(self, "__" + _property_name, _property_value);
+			//}
 		}	
 		return self;
 	};
@@ -2834,8 +2845,8 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	/// @param {constant} halign*
 	/// @param {constant} valign*
 	///
-	__text		 = __property_add(_config, "text",		 "");
-	__wrap_apply = __property_add(_config, "wrap_apply", false);
+	__text		 = __property_add(_config, "text",		  "");
+	__wrap_apply = __property_add(_config, "wrap_apply",  false);
 	__wrap_width = __property_add(_config, "wrap_width", -1);
 	__line_space = __property_add(_config, "line_space", -1);
 	__halign	 = __property_add(_config, "halign",	  fa_left);

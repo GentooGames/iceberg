@@ -46,22 +46,6 @@ global._gui = {
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
-		.config_add("config_1", {
-			data: 100,
-		})
-		.set_properties("config_1", {
-			test: "hello there",	
-		})
-		.action_add("action_test", function(_instance) {
-			show_debug_message("instance: " + string(_instance));
-		})
-		.action_add_trigger("action_test", "trigger_on_player_collide", function() {
-			var _instance = collision_circle(0, 0, 100, obj_player, false, false);
-			action_send_payload(_instance);
-			return true;
-		})
-		label.config_change("config_1");
-		show_message(label.test);
     },    
 	update:	function() {
 		/// @func   update()
