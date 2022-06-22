@@ -828,6 +828,9 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		},
 	};	
 	__config_init(_config_name, _config);
+	__events_init(
+		"state_change",
+	);
 		
 	#region Core ///////////////////////////
 	
@@ -2112,6 +2115,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		if (state_exists(_state_name)) {
 			state_set_current(_state_name, _config, _sync_config_to_state);
+			event_publish("state_change", _state_name);
 		}
 		return self;
 	};
@@ -2796,13 +2800,14 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		__this.__events.__publisher.publish(_event_name, _data);
 		return self;
 	};
-	static event_subscribe		   = function(_event_name, _callback) {
-		/// @func	event_subscribe(event_name, callback)
-		/// @param	{string} event_name
-		/// @param	{method} callback_method
-		/// @return {Ui}	 self
+	static event_subscribe		   = function(_event_name, _callback, _weak_reference = false) {
+		/// @func	event_subscribe(event_name, callback, weak_reference?)
+		/// @param	{string}  event_name
+		/// @param	{method}  callback_method
+		/// @param	{boolean} weak_reference?=false
+		/// @return {Ui}	  self
 		///
-		__this.__events.__publisher.subscribe(_event_name, _callback);
+		__this.__events.__publisher.subscribe(_event_name, _callback, _weak_reference);
 		return self;
 	};
 	static event_unsubscribe	   = function(_event_name, _force = false) {
@@ -2822,6 +2827,15 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		__this.__events.__publisher.clear_channel(_event_name);
 		return self;
 	};
+	
+	static __events_init		   = function() {
+		/// @func	__events_init()
+		/// @return NA
+		///
+		for (var _i = 0; _i < argument_count; _i++) {
+			event_register(argument[_i]);	
+		}
+	};	
 	
 	#endregion
 };
