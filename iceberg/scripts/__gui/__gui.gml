@@ -40,11 +40,7 @@ global._gui = {
 		}
 		
 		#endregion
-		
-		static _is_true = function(_value) {
-			
-		};
-		
+	
 		label = new UiLabel(,,{
 			text: "text for config start",
 			x: SURF_W * 0.5,
@@ -55,7 +51,7 @@ global._gui = {
 		})
 		.action_add_trigger("action_test", "trigger_on_player_collide", function() {
 			var _instance = collision_circle(0, 0, 100, obj_player, false, false);
-			other.set_data("hey");
+			action_set_payload(_instance);
 			return true;
 		})
     },    

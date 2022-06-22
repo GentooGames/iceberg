@@ -122,9 +122,6 @@
 #region upcoming features ///////////
 /*	
 	- add different method execution techniques for GentuiUtilMethods() classes and GentuiState()
-	- add parameters to triggers and events. for example: 
-		- in the trigger check, if an instance caused the trigger, have that instance id be passed to the event so that 
-		  the event could then act on that instance
 	- set_properties() should take a config_name param for config binding?
 	- check if set_properties() method should be implementing property_add()	
 	
@@ -367,12 +364,10 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 				for (var _i = 0; _i < __count; _i++) {
 					var _name	 = __names[_i];
 					var _trigger = __triggers[$ _name];
-					if (_trigger.get_active()) {
-						if (_trigger.execute()) {
-							_validated	  =  true;
-							_trigger_name = _name;
-							break;	
-						}
+					if (_trigger.get_active() && _trigger.execute()) {
+						_validated	  =  true;
+						_trigger_name = _name;
+						break;	
 					}
 				}
 			}
@@ -1326,7 +1321,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	
 	#region Action Method Abstractions /////
 	
-	/// Action Core
+	/// Action: Core
 	static __actions_update	= function(_action_context) {
 		/// @func	__actions_update(action_context)
 		/// @param	{struct} action_context
@@ -1405,7 +1400,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return self;
 	};
 	
-	/// Action Core Getters & Setters
+	/// Action: Getters & Setters
 	static __action_get_active = function(_action_context, _action_name) {	
 		/// @func	__action_get_active(action_name)
 		/// @param	{struct} action_context
@@ -1535,7 +1530,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		
 	};
 	
-	/// Action Triggers Getters & Setters
+	/// Action Triggers: Getters & Setters
 	static __action_get_trigger_method  = function(_action_context, _action_name, _trigger_name) {
 		/// @func	__action_get_trigger_method(action_name, trigger_name)
 		/// @param	{struct}   action_context
@@ -1650,7 +1645,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __actions_update(__this.__actions.__custom);
 	};
 	
-	/// Actions Custom Core
+	/// Actions Custom: Core
 	static action_add	  = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
@@ -1683,7 +1678,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __action_destroy(__this.__actions.__custom, _action_name);
 	};
 	
-	/// Actions Custom Getters & Setters
+	/// Actions Custom: Getters & Setters
 	static action_get_active = function(_action_name) {
 		/// @func	action_get_active(action_name)
 		/// @param	{string}  action_name
@@ -1724,7 +1719,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __action_set_method(__this.__actions.__custom, _action_name, _action_method, _bind_to_self);
 	};
 		
-	/// Action Custom Triggers Core
+	/// Action Custom: Triggers Core
 	static action_add_trigger	   = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{string}  action_name
@@ -1767,7 +1762,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __action_destroy_triggers(__this.__actions.__custom, _action_name);
 	};
 	
-	/// Action Custom Triggers Getters & Setters
+	/// Action Custom: Triggers Getters & Setters
 	static action_get_trigger_method  = function(_action_name, _trigger_name) {
 		/// @func	action_get_trigger_method(action_name, trigger_name)
 		/// @param	{string}   action_name
@@ -1836,6 +1831,21 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_triggers_active(__this.__actions.__custom, _action_name, _active);
 	};
+	
+	/// Action Custom: Triggers Util
+	static action_set_payload = function(_data) {
+		/// @func	action_set_payload(data)
+		/// @param	{any} data
+		/// @return {Ui}  self
+		///
+		/// the method bound to the trigger gets run inside of the GentuiAction class. when this method runs,
+		/// the "other" context becomes a reference to the GentuiAction class, meaning that we can now invoke 
+		/// methods associated to that Action, such as: set_data()
+		with (other) {
+			set_data(_data);	
+		}
+		return self;
+	};
 			
 	#endregion
 	#region Update Actions /////////////////
@@ -1847,7 +1857,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __actions_update(__this.__actions.__update);
 	};
 	
-	/// Actions Custom Core
+	/// Actions Update: Core
 	static action_update_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_update_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
@@ -1881,7 +1891,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __action_destroy(__this.__actions.__update, _action_name);
 	};
 	
-	/// Actions Custom Getters & Setters
+	/// Actions Update: Getters & Setters
 	static action_update_get_active	= function(_action_name) {
 		/// @func	action_update_get_active(action_name)
 		/// @param	{string}  action_name
@@ -1933,7 +1943,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __actions_update(__this.__actions.__render);
 	};
 	
-	/// Actions Custom Core
+	/// Actions Render: Core
 	static action_render_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
 		/// @func	action_render_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
@@ -1967,7 +1977,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __action_destroy(__this.__actions.__render, _action_name);
 	};
 	
-	/// Actions Custom Getters & Setters
+	/// Actions Render: Getters & Setters
 	static action_render_get_active = function(_action_name) {
 		/// @func	action_render_get_active(action_name)
 		/// @param	{string}  action_name
