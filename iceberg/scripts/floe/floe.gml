@@ -5,23 +5,25 @@
 //////////////////////$(º)>//
 #region docs, info & configs
 
-#region about
+#region about //////////////////////
 /*
 	written_by:_______gentoo________
 	version:__________0.1.2_________
 	last_updated:___06/22/2022______
 */
 #endregion
-#region change log
+#region change log /////////////////
 
 #region version 0.1.2
 /*
 	Date: 06/22/2022
 		New Features:
-			x. integrated PubSub design pattern with event broadcasting using xdstudio's xpublisher
+			x.	integrated PubSub design pattern with event broadcasting using xdstudio's xpublisher
 		QOL:
-			x. renamed private property variables to match new naming convention, with double underscores prefix
-			x. replace literal property accessors with defined getter() methods
+			x.	renamed private property variables to match new naming convention, with double underscores prefix
+			x.	replace literal property accessors with defined getter() methods
+		Bugs:
+			x.	fixed "bug" where getter methods were not being declared as static
 */
 #endregion
 #region version 0.1.1 (released)
@@ -39,12 +41,12 @@
 #endregion
 
 #endregion
-#region docs & help
+#region docs & help ////////////////
 
 /// ...
 
 #endregion
-#region upcoming features
+#region upcoming features //////////
 /*	
 	- different interpolation types/methods
 	- optimize performance through not drawing the surface every frame
@@ -54,7 +56,7 @@
 		- pixelation
 */
 #endregion
-#region enums
+#region enums //////////////////////
 
 enum __FLOE_STATE {
 	HIDDEN,
@@ -68,7 +70,7 @@ enum __FLOE_STATE {
 };
 
 #endregion
-#region default config values
+#region default config values //////
 
 /// ...
 
@@ -79,123 +81,168 @@ enum __FLOE_STATE {
 function FloeEffect() constructor {
 	/// @func FloeEffect()
 	///
+	__padding	=  20;		// offset to move effects offscreen for smoother animations
 	__color		=  c_black;
 	__alpha		=  1.0;
 	__speed		=  0.1;
 	__threshold	=  0.1;
-	__hold_time	= -1;
-	__on_enter	= {
-		__callback: undefined,
-		__data:	    undefined,
+	__hold_time = -1;
+	__this		= {
+		__control:	 {
+			__state:	   __FLOE_STATE.HIDDEN,
+			__progress:	   0.0,
+			__target:	   1.0,
+			__is_reversed: false,
+			__hold_timer:  0,
+		},
+		__callbacks: {
+			__on_enter:	 {
+				__method: undefined,
+				__data:	  undefined,
+			},
+			__on_change: {
+				__method: undefined,
+				__data:	  undefined,
+			},
+			__on_leave:  {
+				__method: undefined,
+				__data:	  undefined,
+			},
+			__on_end:	 {
+				__method: undefined,
+				__data:	  undefined,
+			},	
+		},
+		__audio:	 {
+			__emitter: audio_emitter_create(),
+			__method:  audio_play_sound_on,
+			__sounds:  {
+				__enter:  undefined,
+				__change: undefined,
+				__leave:  undefined,
+			},
+		},
 	};
-	__on_change	= {
-		__callback: undefined,
-		__data:	    undefined,
-	};
-	__on_leave	= {
-		__callback: undefined,
-		__data:	    undefined,
-	};
-	__on_end	= {
-		__callback: undefined,
-		__data:	    undefined,
-	};
-	
-	#region Private ////////
-	
-	__progress	  = 0.0;
-	__target	  = 1.0;
-	__state		  = __FLOE_STATE.HIDDEN;
-	__is_reversed = false;
-	__hold_timer  = 0;
-	__padding	  = 20;	// offset to move effects offscreen for smoother animations
-	
-	/// Audio
-	__sfx_emitter	  = audio_emitter_create();
-	__sfx_play_method = audio_play_sound_on;	// change pointer for custom audio playing method
-	__sfx_enter		  = undefined;
-	__sfx_change	  = undefined;
-	__sfx_leave		  = undefined;
-	
-	#endregion
-	#region Internal ///////
-	
+
 	static update  = function() {
-		/// @func update()
+		/// @func	update()
+		/// @return {FloeEffect} self
 		///
-		switch (__state) {
-			case __FLOE_STATE.ENTER_PREP: {
-				if (__on_enter.__callback != undefined) {
-					__on_enter.__callback(__on_enter.__data);		
+		var _self = self;
+		with (__this) {
+			switch (__control.__state) {
+				case __FLOE_STATE.ENTER_PREP: {
+					with (__callbacks.__on_enter) {
+						if (__method != undefined) {
+							__method(__data);		
+						}
+					}
+					with (__audio) {
+						if (__sounds.__enter != undefined) {
+							__method(__emitter, __sounds.__enter, 0, 0);
+						}
+					}
+					__control.__state = __FLOE_STATE.ENTER;
+					break;	
 				}
-				if (__sfx_enter != undefined) {
-					__sfx_play_method(__sfx_emitter, __sfx_enter, 0, 0);
-				}
-				__state = __FLOE_STATE.ENTER;
-				break;	
-			}
-			case __FLOE_STATE.ENTER:	{
-				__progress = lerp(__progress, __target, __speed);
+				case __FLOE_STATE.ENTER: {
+					var _speed	   = _self.__speed;
+					var _threshold = _self.__threshold;
+					
+					with (__control) {
+						__progress = lerp(__progress, __target, _speed);
 				
-				if (abs(__progress - __target) <= __threshold) {
-					__progress = __target;
-					__state	   = __FLOE_STATE.CHANGE;
+						if (abs(__progress - __target) <= _threshold) {
+							__progress = __target;
+							__state	   = __FLOE_STATE.CHANGE;
+						}
+					}
+					break;	
 				}
-				break;	
-			}
-			case __FLOE_STATE.CHANGE:	{
-				if (__on_change.__callback != undefined) {
-					__on_change.__callback(__on_change.__data);	
+				case __FLOE_STATE.CHANGE: {
+					var _hold_time = _self.__hold_time;
+					
+					with (__callbacks.__on_change) {
+						if (__method != undefined) {
+							__method(__data);	
+						}
+					}
+					with (__audio) {
+						if (__sounds.__change != undefined) {
+							__method(__emitter, __sounds.__change, 0, 0);
+						}
+					}
+					with (__control) {
+						__hold_timer = _hold_time;
+						__state		 = __FLOE_STATE.HOLD;
+					}
+					break;	
 				}
-				if (__sfx_change != undefined) {
-					__sfx_play_method(__sfx_emitter, __sfx_change, 0, 0);
+				case __FLOE_STATE.HOLD:	{
+					with (__control) {
+						if (__hold_timer > 0) {
+							__hold_timer--;	
+						}
+						else {
+							__state = __FLOE_STATE.LEAVE_PREP;
+						}
+					}
+					break;	
 				}
-				__hold_timer = __hold_time;
-				__state		 = __FLOE_STATE.HOLD;
-				break;	
-			}
-			case __FLOE_STATE.HOLD:	{
-				if (__hold_timer > 0) {
-					__hold_timer--;	
+				case __FLOE_STATE.LEAVE_PREP: {
+					with (__callbacks.__on_leave) {
+						if (__method != undefined) {
+							__method(__data);		
+						}	
+					}
+					with (__audio) {
+						if (__sounds.__leave != undefined) {
+							__method(__emitter, __sounds.__leave, 0, 0);
+						}
+					}
+					__control.__state = __FLOE_STATE.LEAVE;
+					break;	
 				}
-				else {
-					__state = __FLOE_STATE.LEAVE_PREP;
-				}
-				break;	
-			}
-			case __FLOE_STATE.LEAVE_PREP: {
-				if (__on_leave.__callback != undefined) {
-					__on_leave.__callback(__on_leave.__data);		
-				}	
-				if (__sfx_leave != undefined) {
-					__sfx_play_method(__sfx_emitter, __sfx_leave, 0, 0);
-				}
-				__state = __FLOE_STATE.LEAVE;
-				break;	
-			}
-			case __FLOE_STATE.LEAVE:	{
-				__progress = lerp(__progress, __target, __speed);
+				case __FLOE_STATE.LEAVE: {
+					var _speed	   = _self.__speed;
+					var _threshold = _self.__threshold;
+					
+					with (__control) {
+						__progress = lerp(__progress, __target, _speed);
 				
-				if (abs(__progress - __target) <= __threshold) {
-					__progress = __target;
-					__state	   = __FLOE_STATE.END;
+						if (abs(__progress - __target) <= _threshold) {
+							__progress = __target;
+							__state	   = __FLOE_STATE.END;
+						}
+					}
+					break;	
 				}
-				break;	
-			}
-			case __FLOE_STATE.END:	{
-				if (__on_end.__callback != undefined) {
-					__on_end.__callback(__on_end.__data);	
+				case __FLOE_STATE.END: {
+					with (__callbacks.__on_end) {
+						if (__method != undefined) {
+							__method(__data);	
+						}
+					}
+					__control.__state = __FLOE_STATE.HIDDEN;
+					break;	
 				}
-				__state = __FLOE_STATE.HIDDEN;
-				break;	
-			}
-		};
+			};
+		}
+		return self;
 	};
 	static cleanup = function() {
-		audio_emitter_free(__sfx_emitter);
+		/// @func	cleanup()
+		/// @return {FloeEffect} self
+		///
+		with (__this.__audio) {
+			if (audio_emitter_exists(__emitter)) {
+				audio_emitter_free(__emitter);
+				__emitter = undefined;
+			}
+		}
+		return self
 	};
 	
-	#endregion
 	#region Setters ////////
 		
 	static set_color		= function(_color) {
@@ -245,9 +292,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (__on_enter) {
-			__callback = _callback;
-			__data	   = _data;
+		with (__this.__callbacks.__on_enter) {
+			__method = _callback;
+			__data	 = _data;
 		}
 		return self;
 	};
@@ -257,9 +304,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (__on_change) {
-			__callback = _callback;
-			__data	   = _data;
+		with (__this.__callbacks.__on_change) {
+			__method = _callback;
+			__data	 = _data;
 		}
 		return self;
 	};
@@ -269,9 +316,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (__on_leave) {
-			__callback = _callback;
-			__data	   = _data;
+		with (__this.__callbacks.__on_leave) {
+			__method = _callback;
+			__data	 = _data;
 		}
 		return self;
 	};
@@ -281,9 +328,9 @@ function FloeEffect() constructor {
 		/// @param	{any} data=undefined
 		/// @return {FloeEffect} self
 		///
-		with (__on_end) {
-			__callback = _callback;
-			__data	   = _data;
+		with (__this.__callbacks.__on_end) {
+			__method = _callback;
+			__data	 = _data;
 		}
 		return self;
 	};
@@ -292,7 +339,7 @@ function FloeEffect() constructor {
 		/// @param	{real} progress
 		/// @return {FloeEffect} self
 		///
-		__progress = _progress;
+		__this.__control.__progress = _progress;
 		return self;
 	};
 	static set_target		= function(_target) {
@@ -300,7 +347,7 @@ function FloeEffect() constructor {
 		/// @param	{real} target
 		/// @return {FloeEffect} self
 		///
-		__target = _target;
+		__this.__control.__target = _target;
 		return self;
 	};
 	static set_state		= function(_state) {
@@ -308,7 +355,7 @@ function FloeEffect() constructor {
 		/// @param	{enum} state
 		/// @return {FloeEffect} self
 		///
-		__state = _state;
+		__this.__control.__state = _state;
 		return self;
 	};
 	static set_is_reversed	= function(_is_reversed) {
@@ -316,165 +363,135 @@ function FloeEffect() constructor {
 		/// @param	{boolean} is_reversed?
 		/// @return {FloeEffect} self
 		///
-		__is_reversed = _is_reversed;
-		return self;
-	};
-	static set_sound_enter	= function(_sound) {
-		/// @func	set_sound_enter(sound)
-		/// @param	{sound_id} sound
-		/// @return {FloeEffect} self
-		///
-		__sfx_enter = _sound;
-		return self;
-	};
-	static set_sound_change	= function(_sound) {
-		/// @func	set_sound_change(sound)
-		/// @param	{sound_id} sound
-		/// @return {FloeEffect} self
-		///
-		__sfx_change = _sound;
-		return self;
-	};
-	static set_sound_leave	= function(_sound) {
-		/// @func	set_sound_leave(sound)
-		/// @param	{sound_id} sound
-		/// @return {FloeEffect} self
-		///
-		__sfx_leave = _sound;
+		__this.__control.__is_reversed = _is_reversed;
 		return self;
 	};
 	
 	#endregion
 	#region Getters ////////
 	
-	get_color		  = function() {
+	static get_color		 = function() {
 		/// @func	get_color()
 		/// @return {color} color
 		///
 		return __color;
 	};
-	get_alpha		  = function() {
+	static get_alpha		 = function() {
 		/// @func	get_alpha()
 		/// @return {real} alpha
 		///
 		return __alpha;
 	};
-	get_speed		  = function() {
+	static get_speed		 = function() {
 		/// @func	get_speed()
 		/// @return {real} speed
 		///
 		return __speed;
 	};
-	get_threshold	  = function() {
+	static get_threshold	 = function() {
 		/// @func	get_threshold()
 		/// @return {real} threshold
 		///
 		return __threshold;
 	};
-	get_hold_time	  = function() {
+	static get_hold_time	 = function() {
 		/// @func	get_hold_time()
 		/// @return {real} hold_time
 		///
 		return __hold_time;
 	};
-	get_on_enter	  = function() {
+	static get_on_enter		 = function() {
 		/// @func	get_on_enter()
 		/// @return {struct} on_enter
 		///
-		return __on_enter;
+		return __this.__callbacks.__on_enter;
 	};
-	get_on_change	  = function() {
+	static get_on_change	 = function() {
 		/// @func	get_on_change()
 		/// @return {struct} on_change
 		///
-		return __on_change;
+		return __this.__callbacks.__on_change;
 	};
-	get_on_leave	  = function() {
+	static get_on_leave		 = function() {
 		/// @func	get_on_leave()
 		/// @return {struct} on_leave
 		///
-		return __on_leave;
+		return __this.__callbacks.__on_leave;
 	};
-	get_on_end		  = function() {
+	static get_on_end		 = function() {
 		/// @func	get_on_end()
 		/// @return {struct} on_end
 		///
-		return __on_end;
+		return __this.__callbacks.__on_end;
 	};
-	get_progress	  = function() {
+	static get_progress		 = function() {
 		/// @func	get_progress()
 		/// @return {real} progress
 		///
-		return __progress;
+		return __this.__control.__progress;
 	};
-	get_target		  = function() {
+	static get_target		 = function() {
 		/// @func	get_target()
 		/// @return {real} target
 		///
-		return __target;
+		return __this.__control.__target;
 	};
-	get_state		  = function() {
+	static get_state		 = function() {
 		/// @func	get_state()
 		/// @return {enum} state
 		///
-		return __state;
+		return __this.__control.__state;
 	};
-	get_is_reversed   = function() {
+	static get_is_reversed   = function() {
 		/// @func	get_is_reversed()
 		/// @return {boolean} is_reversed?
 		///
-		return __is_reversed;
+		return __this.__control.__is_reversed;
 	};
-	get_audio_emitter = function() {
+	static get_audio_emitter = function() {
 		/// @func	get_audio_emitter()
 		/// @return {emitter_id} audio_emitter
 		///
-		return __sfx_emitter;
-	};
-	get_sfx_on_enter  = function() {
-		/// @func	get_sfx_on_enter()
-		/// @return {audio_id} sfx_on_enter
-		///
-		return __sfx_enter;
-	};
-	get_sfx_on_change = function() {
-		/// @func	get_sfx_on_change()
-		/// @return {audio_id} sfx_on_change
-		///
-		return __sfx_change;
-	};
-	get_sfx_on_leave  = function() {
-		/// @func	get_sfx_on_leave()
-		/// @return {audio_id} sfx_on_leave
-		///
-		return __sfx_leave;
+		return __this.__audio.__emitter;
 	};
 	
 	#endregion
 	#region Actions ////////
 	
 	static enter   = function() {
-		/// @func enter()
+		/// @func	enter()
+		/// @return {FloeEffect} self
 		///
-		__state  = __FLOE_STATE.ENTER_PREP;
-		__target = __is_reversed ? 0 : 1;
+		with (__this.__control) {
+			__state  = __FLOE_STATE.ENTER_PREP;
+			__target = __is_reversed ? 0 : 1;
+		}
+		return self;
 	};
 	static leave   = function() {
-		/// @func leave()
+		/// @func	leave()
+		/// @return {FloeEffect} self
 		///
-		__state  = __FLOE_STATE.LEAVE_PREP;
-		__target = __is_reversed ? 1 : 0;
+		with (__this.__control) {
+			__state  = __FLOE_STATE.LEAVE_PREP;
+			__target = __is_reversed ? 1 : 0;
+		}
+		return self;
 	};
 	static reverse = function(_reverse_progress = true) {
 		/// @func	reverse(reverse_progress?*)
 		/// @param	{bool} reverse_progress=true
+		/// @return {FloeEffect} self
 		///
-		__is_reversed = !__is_reversed;
-		__target	  = 1 - __target;
+		with (__this.__control) {
+			__is_reversed = !__is_reversed;
+			__target	  = 1 - __target;
 		
-		if (_reverse_progress) {
-			__progress = 1 - __progress;
+			if (_reverse_progress) {
+				__progress = 1 - __progress;
+			}
 		}
+		return self;
 	};
 		
 	#endregion
@@ -482,53 +499,65 @@ function FloeEffect() constructor {
 function FloeEffectSurface() : FloeEffect() constructor {
 	/// @func FloeEffectSurface()
 	///
-	__surface = surface_create(SURF_W, SURF_H);
-	
-	#region Internal ///////
+	with (__this) {
+		__surface = {
+			__surface: surface_create(SURF_W, SURF_H),
+		};
+	}
 	
 	static cleanup_super = cleanup;
 	static cleanup		 = function() {
-		/// @func cleanup()
+		/// @func	cleanup()
+		/// @return {FloeEffect} self
 		///
 		cleanup_super();
-		if (surface_exists(__surface)) {
-			surface_free(__surface);
+		
+		with (__this.__surface) {
+			if (surface_exists(__surface)) {
+				surface_free(__surface);
+			}
+			__surface = undefined;
 		}
-		__surface = undefined;
+		return self;
 	};
 	static render_begin  = function() {
-		/// @func render_begin()
+		/// @func	render_begin()
+		/// @return {FloeEffect} self
 		///
-		if (!surface_exists(__surface)) {
-			__surface = surface_create(SURF_W, SURF_H);
+		with (__this.__surface) {
+			if (!surface_exists(__surface)) {
+				__surface = surface_create(SURF_W, SURF_H);
+			}
+			surface_set_target(__surface); 
+			draw_clear_alpha(c_black, 0.0);
 		}
-		surface_set_target(__surface); 
-		draw_clear_alpha(c_black, 0.0);
+		return self;
 	};
 	static render_end    = function(_surface_shader_method) {
 		/// @func	render_end(surface_shader_method*)
 		/// @param	{shader} surface_shader_method
+		/// @return {FloeEffect} self
 		///
 		surface_reset_target();	
 		
 		if (_surface_shader_method != undefined) {
 			_surface_shader_method();	
 		}
-		draw_surface(__surface, 0, 0);
+		draw_surface(__this.__surface.__surface, 0, 0);
 		
 		if (_surface_shader_method != undefined) {
 			shader_reset();	
 		}
+		return self;
 	};
 		
-	#endregion
 	#region Getters ////////
 	
 	static get_surface = function() {
 		/// @func	get_surface()
 		/// @return {surface_id} surface
 		///
-		return __surface;
+		return __this.__surface.__surface;
 	};
 		
 	#endregion
@@ -539,10 +568,12 @@ function FloeEffectFade() : FloeEffect() constructor {
 	__threshold = 0.01;
 	
 	static render = function() {
-		/// @func render()
+		/// @func	render()
+		/// @return {FloeEffect}
 		///
-		var _alpha = __alpha * __progress;
+		var _alpha = __alpha * __this.__control.__progress;
 		draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, _alpha);
+		return self;
 	};	
 };
 function FloeEffectWipeLeft() : FloeEffect() constructor {
@@ -551,11 +582,13 @@ function FloeEffectWipeLeft() : FloeEffect() constructor {
 	__threshold = 0.01;
 	
 	static render = function() {
-		/// @func render()
+		/// @func	render()
+		/// @return {FloeEffect} 
 		///
 		var _width = SURF_W + __padding;
-		var _x	   = _width - (_width * __progress) - (__padding * 0.5);
+		var _x	   = _width - (_width * __this.__control.__progress) - (__padding * 0.5);
 		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, __color, __alpha);
+		return self;
 	};	
 };
 function FloeEffectWipeRight() : FloeEffect() constructor {
@@ -564,11 +597,13 @@ function FloeEffectWipeRight() : FloeEffect() constructor {
 	__threshold = 0.01;
 	
 	static render = function() {
-		/// @func render()
+		/// @func	render()
+		/// @return {FloeEffect} self
 		///
 		var _width = SURF_W + __padding;
-		var _x	   = -_width + (_width * __progress) - (__padding * 0.5);
+		var _x	   = -_width + (_width * __this.__control.__progress) - (__padding * 0.5);
 		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, __color, __alpha);
+		return self;
 	};	
 };
 function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
@@ -577,16 +612,19 @@ function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
 	__threshold = 0.01;
 	
 	static render = function() {
-		/// @func render()
+		/// @func	render()
+		/// @return {FloeEffect} self
 		///
 		render_begin(); {
 			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, __alpha);
 			gpu_set_blendmode(bm_subtract); {
 				var _base   = SURF_H;
-				var _radius = _base - (_base * __progress);
+				var _radius = _base - (_base * __this.__control.__progress);
 				draw_circle_color(SURF_W * 0.5, SURF_H * 0.5, _radius, c_white, c_white, false);
 			} gpu_set_blendmode(bm_normal);
 		} render_end();
+		
+		return self;
 	};	
 };
 function FloeEffectCircleTarget() : FloeEffectSurface() constructor {
@@ -610,20 +648,23 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 	__threshold = 0.01;
 	
 	static render = function() {
-		/// @func render()
+		/// @func	render()
+		/// @return {FloeEffect} self
 		///
 		render_begin(); {
-			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, ____alpha);
+			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, __color, __alpha);
 			gpu_set_blendmode(bm_subtract); {
 				var _base_w =  SURF_W + __padding;
 				var _base_h =  SURF_H + __padding;
-				var _width	= _base_w - (_base_w * __progress);
-				var _height = _base_h - (_base_h * __progress);
+				var _width	= _base_w - (_base_w * __this.__control.__progress);
+				var _height = _base_h - (_base_h * __this.__control.__progress);
 				var _x		= (_base_w - _width ) * 0.5 - (__padding * 0.5);
 				var _y		= (_base_h - _height) * 0.5 - (__padding * 0.5);
 				draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
 			} gpu_set_blendmode(bm_normal);
 		} render_end();
+		
+		return self;
 	};	
 };
 function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
@@ -632,13 +673,16 @@ function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
 	__threshold = 0.01;
 	
 	static render = function() {
-		/// @func render()
+		/// @func	render()
+		/// @return {FloeEffect} self
 		///
 		render_begin();
 		
 		/// ...
 		
 		render_end();
+		
+		return self;
 	};	
 };
 function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() constructor {
@@ -649,8 +693,8 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	__sprite	= _sprite;
 	__image		= _image;
 	__threshold	=  0.005;
-	__x_offset	= -get_sprite_width()  * 0.5;		// amount sprite will be offset from origin
-	__y_offset	= -get_sprite_height() * 0.5;		// amount sprite will be offset from origin
+	__x_offset	= -get_sprite_width()  * 0.5;	// amount sprite will be offset from origin
+	__y_offset	= -get_sprite_height() * 0.5;	// amount sprite will be offset from origin
 	
 	/// Shadow
 	__draw_shadow  = false;
@@ -665,19 +709,19 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 
 	#region Private ////////
 	
-	__validated	= false;
+	__this.__control.__sprite_validated = false;
 	
 	static __validate_sprite = function() {
 		/// @func __validate_sprite()
 		///
-		if (!__validated) {
+		if (!__this.__control.__sprite_validated) {
 			if (__sprite == undefined) {
 				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
 			}
 			if (!sprite_get_nineslice(__sprite).enabled) {
 				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
 			}
-			__validated = true;
+			__this.__control.__sprite_validated = true;
 		}
 	};
 	
@@ -696,10 +740,10 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 		var _start_x = (SURF_W - _max_w) + __x_offset;
 		var _start_y = (SURF_H - _max_h) + __y_offset;
 		
-		var _x = _start_x + ((_max_w - __x_offset) * (0.5 * __progress));
-		var _y = _start_y + ((_max_h - __y_offset) * (0.5 * __progress));
-		var _w = _start_w - ((_max_w - __x_offset) * __progress);
-		var _h = _start_h - ((_max_h - __y_offset) * __progress);
+		var _x = _start_x + ((_max_w - __x_offset) * (0.5 * __this.__control.__progress));
+		var _y = _start_y + ((_max_h - __y_offset) * (0.5 * __this.__control.__progress));
+		var _w = _start_w - ((_max_w - __x_offset) * __this.__control.__progress);
+		var _h = _start_h - ((_max_h - __y_offset) * __this.__control.__progress);
 		
 		/// Sprite Shadow
 		if (__draw_shadow) {
@@ -883,7 +927,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	#endregion
 };
 ////////////////////////////////////////////////////////////////////////////
-function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {
+function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {	// <-- custom implementation example. remove
 	__overlay_edge = true;
 	__draw_shadow  = true;
 	__shadow_alpha = 0.8;

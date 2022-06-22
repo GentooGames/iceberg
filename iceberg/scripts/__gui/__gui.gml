@@ -40,7 +40,7 @@ global._gui = {
 		}
 		
 		#endregion
-	
+		
 		label = new UiLabel(,,{
 			text: "text for config start",
 			x: SURF_W * 0.5,
@@ -53,7 +53,6 @@ global._gui = {
         /// @return NA
         ///
         if (!initialized) exit;
-		
 		#region Border /////////
 		
 		border_mouth.update();

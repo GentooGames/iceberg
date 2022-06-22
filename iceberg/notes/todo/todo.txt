@@ -1,5 +1,7 @@
 iceberg:
 	- PUBSUB system everywhere!!!
+		- rework so that not everything is at a global level
+			- faster performance, but more memory overhead
 	- organize and abstract global._gui{} into a more modular system similar to global._transition{}
 		- create an array of borders that is iterated through and updated
 		- expose ways for new borders to be created and destroyed dynamically	
