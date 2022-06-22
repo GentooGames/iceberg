@@ -127,7 +127,7 @@ global._transition = {
 		/// @func	__is_transitioning()
 		/// @return {bool} is_transitioning
 		/// 
-		return effect != undefined;
+		return effect != undefined && effect.is_running();
 	},
 	__set_on_start:		function(_callback, _data) {
 		/// @func	__set_on_start(callback, data*)

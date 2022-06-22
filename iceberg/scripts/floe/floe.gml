@@ -95,6 +95,7 @@ function FloeEffect() constructor {
 	__hold_time = -1;
 	__this		=  {
 		__control:	 {
+			__running:	   false,
 			__state:	   __FLOE_STATE.HIDDEN,
 			__progress:	   0.0,
 			__target:	   1.0,
@@ -162,7 +163,8 @@ function FloeEffect() constructor {
 					var _play_method = get_audio_play_method();
 					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
 				}
-				event_publish("enter_started");
+				event_publish("enter_started", self);
+				set_running(true);
 				set_state(__FLOE_STATE.ENTER);
 				break;	
 			}
@@ -173,13 +175,13 @@ function FloeEffect() constructor {
 				
 				if (abs(_progress - _target) <= get_threshold()) {
 					set_progress(_target);
-					event_publish("enter_completed");
+					event_publish("enter_completed", self);
 					set_state(__FLOE_STATE.CHANGE_PREP);
 				}
 				break;	
 			}
 			case __FLOE_STATE.CHANGE_PREP: {
-				event_publish("change_started");
+				event_publish("change_started", self);
 				set_state(__FLOE_STATE.CHANGE);
 				break;	
 			}
@@ -196,12 +198,12 @@ function FloeEffect() constructor {
 					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
 				}
 				__this.__control.__hold_timer = get_hold_time();
-				event_publish("change_completed");
+				event_publish("change_completed", self);
 				set_state(__FLOE_STATE.HOLD_PREP);
 				break;	
 			}
 			case __FLOE_STATE.HOLD_PREP: {
-				event_publish("hold_started");
+				event_publish("hold_started", self);
 				set_state(__FLOE_STATE.HOLD);
 				break;	
 			}
@@ -210,7 +212,7 @@ function FloeEffect() constructor {
 					__this.__control.__hold_timer--;
 				}
 				else {
-					event_publish("hold_completed");
+					event_publish("hold_completed", self);
 					set_state(__FLOE_STATE.LEAVE_PREP);
 				}
 				break;	
@@ -227,7 +229,7 @@ function FloeEffect() constructor {
 					var _play_method = get_audio_play_method();
 					_play_method(get_audio_emitter(), _leave_sound, 0, 0);
 				}
-				event_publish("leave_started");
+				event_publish("leave_started", self);
 				set_state(__FLOE_STATE.LEAVE);
 				break;	
 			}
@@ -238,7 +240,7 @@ function FloeEffect() constructor {
 				
 				if (abs(_progress - _target) <= get_threshold()) {
 					set_progress(_target);
-					event_publish("leave_completed");
+					event_publish("leave_completed", self);
 					set_state(__FLOE_STATE.END);
 				}
 				break;	
@@ -249,7 +251,8 @@ function FloeEffect() constructor {
 				if (_on_end != undefined) {
 					_on_end(get_callback_on_end_data());		
 				}
-				event_publish("ended");
+				event_publish("ended", self);
+				set_running(false);
 				set_state(__FLOE_STATE.HIDDEN);
 				break;	
 			}
@@ -268,8 +271,180 @@ function FloeEffect() constructor {
 		return self
 	};
 	
+	#region Getters ////////
+	
+	static get_running					 = function() {
+		/// @func	get_running()
+		/// @return {boolean} is_running?
+		///
+		return __this.__control.__running;
+	};
+	static get_padding					 = function() {
+		/// @func	get_padding()
+		/// @return {real} padding
+		///
+		return __padding;
+	};
+	static get_color					 = function() {
+		/// @func	get_color()
+		/// @return {color} color
+		///
+		return __color;
+	};
+	static get_alpha					 = function() {
+		/// @func	get_alpha()
+		/// @return {real} alpha
+		///
+		return __alpha;
+	};
+	static get_speed					 = function() {
+		/// @func	get_speed()
+		/// @return {real} speed
+		///
+		return __speed;
+	};
+	static get_threshold				 = function() {
+		/// @func	get_threshold()
+		/// @return {real} threshold
+		///
+		return __threshold;
+	};
+	static get_hold_time				 = function() {
+		/// @func	get_hold_time()
+		/// @return {real} hold_time
+		///
+		return __hold_time;
+	};
+	static get_progress					 = function() {
+		/// @func	get_progress()
+		/// @return {real} progress
+		///
+		return __this.__control.__progress;
+	};
+	static get_target					 = function() {
+		/// @func	get_target()
+		/// @return {real} target
+		///
+		return __this.__control.__target;
+	};
+	static get_state					 = function() {
+		/// @func	get_state()
+		/// @return {enum} state
+		///
+		return __this.__control.__state;
+	};
+	static get_audio_emitter			 = function() {
+		/// @func	get_audio_emitter()
+		/// @return {emitter_id} audio_emitter
+		///
+		return __this.__audio.__emitter;
+	};
+	static get_audio_play_method		 = function() {
+		/// @func	get_audio_play_method()
+		/// @return {method} play_method
+		///
+		return __this.__audio.__method;
+	};
+	static get_audio_sound_enter		 = function() {
+		/// @func	get_audio_sound_enter()
+		/// @return {sound_id} sound_enter
+		/// 
+		with (__this.__audio.__sounds) {
+			return __enter;	
+		}
+	};
+	static get_audio_sound_change		 = function() {
+		/// @func	get_audio_sound_change()
+		/// @return {sound_id} sound_change
+		/// 
+		with (__this.__audio.__sounds) {
+			return __change;	
+		}
+	};
+	static get_audio_sound_leave		 = function() {
+		/// @func	get_audio_sound_leave()
+		/// @return {sound_id} sound_leave
+		/// 
+		with (__this.__audio.__sounds) {
+			return __leave;	
+		}
+	};
+	static get_callback_on_enter_method  = function() {
+		/// @func	get_callback_on_enter_method()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_enter) {
+			return __method;
+		}
+	};
+	static get_callback_on_enter_data	 = function() {
+		/// @func	get_callback_on_enter_data()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_enter) {
+			return __data;
+		}
+	};
+	static get_callback_on_change_method = function() {
+		/// @func	get_callback_on_change_method()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_change) {
+			return __method;
+		}
+	};
+	static get_callback_on_change_data	 = function() {
+		/// @func	get_callback_on_change_data()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_change) {
+			return __data;
+		}
+	};
+	static get_callback_on_leave_method  = function() {
+		/// @func	get_callback_on_leave_method()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_leave) {
+			return __method;
+		}
+	};
+	static get_callback_on_leave_data	 = function() {
+		/// @func	get_callback_on_leave_data()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_leave) {
+			return __data;
+		}
+	};
+	static get_callback_on_end_method	 = function() {
+		/// @func	get_callback_on_end_method()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_end) {
+			return __method;
+		}
+	};
+	static get_callback_on_end_data		 = function() {
+		/// @func	get_callback_on_end_data()
+		/// @return {struct} on_enter
+		///
+		with (__this.__callbacks.__on_end) {
+			return __data;
+		}
+	};
+	
+	#endregion
 	#region Setters ////////
 		
+	static set_running					 = function(_running) {
+		/// @func	set_running(running?)
+		/// @param	{boolean} is_running?
+		/// @return {FloeEffect} self
+		///
+		__this.__control.__running = _running;
+		return self;
+	};
 	static set_padding					 = function(_padding) {
 		/// @func	set_padding(padding)
 		/// @param	{real} padding
@@ -476,161 +651,13 @@ function FloeEffect() constructor {
 	};
 	
 	#endregion
-	#region Getters ////////
+	#region Checkers ///////
 	
-	static get_padding					 = function() {
-		/// @func	get_padding()
-		/// @return {real} padding
+	static is_running = function() {
+		/// @func	is_running()
+		/// @return {boolean} is_running?
 		///
-		return __padding;
-	};
-	static get_color					 = function() {
-		/// @func	get_color()
-		/// @return {color} color
-		///
-		return __color;
-	};
-	static get_alpha					 = function() {
-		/// @func	get_alpha()
-		/// @return {real} alpha
-		///
-		return __alpha;
-	};
-	static get_speed					 = function() {
-		/// @func	get_speed()
-		/// @return {real} speed
-		///
-		return __speed;
-	};
-	static get_threshold				 = function() {
-		/// @func	get_threshold()
-		/// @return {real} threshold
-		///
-		return __threshold;
-	};
-	static get_hold_time				 = function() {
-		/// @func	get_hold_time()
-		/// @return {real} hold_time
-		///
-		return __hold_time;
-	};
-	static get_progress					 = function() {
-		/// @func	get_progress()
-		/// @return {real} progress
-		///
-		return __this.__control.__progress;
-	};
-	static get_target					 = function() {
-		/// @func	get_target()
-		/// @return {real} target
-		///
-		return __this.__control.__target;
-	};
-	static get_state					 = function() {
-		/// @func	get_state()
-		/// @return {enum} state
-		///
-		return __this.__control.__state;
-	};
-	static get_audio_emitter			 = function() {
-		/// @func	get_audio_emitter()
-		/// @return {emitter_id} audio_emitter
-		///
-		return __this.__audio.__emitter;
-	};
-	static get_audio_play_method		 = function() {
-		/// @func	get_audio_play_method()
-		/// @return {method} play_method
-		///
-		return __this.__audio.__method;
-	};
-	static get_audio_sound_enter		 = function() {
-		/// @func	get_audio_sound_enter()
-		/// @return {sound_id} sound_enter
-		/// 
-		with (__this.__audio.__sounds) {
-			return __enter;	
-		}
-	};
-	static get_audio_sound_change		 = function() {
-		/// @func	get_audio_sound_change()
-		/// @return {sound_id} sound_change
-		/// 
-		with (__this.__audio.__sounds) {
-			return __change;	
-		}
-	};
-	static get_audio_sound_leave		 = function() {
-		/// @func	get_audio_sound_leave()
-		/// @return {sound_id} sound_leave
-		/// 
-		with (__this.__audio.__sounds) {
-			return __leave;	
-		}
-	};
-	static get_callback_on_enter_method  = function() {
-		/// @func	get_callback_on_enter_method()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_enter) {
-			return __method;
-		}
-	};
-	static get_callback_on_enter_data	 = function() {
-		/// @func	get_callback_on_enter_data()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_enter) {
-			return __data;
-		}
-	};
-	static get_callback_on_change_method = function() {
-		/// @func	get_callback_on_change_method()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_change) {
-			return __method;
-		}
-	};
-	static get_callback_on_change_data	 = function() {
-		/// @func	get_callback_on_change_data()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_change) {
-			return __data;
-		}
-	};
-	static get_callback_on_leave_method  = function() {
-		/// @func	get_callback_on_leave_method()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_leave) {
-			return __method;
-		}
-	};
-	static get_callback_on_leave_data	 = function() {
-		/// @func	get_callback_on_leave_data()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_leave) {
-			return __data;
-		}
-	};
-	static get_callback_on_end_method	 = function() {
-		/// @func	get_callback_on_end_method()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_end) {
-			return __method;
-		}
-	};
-	static get_callback_on_end_data		 = function() {
-		/// @func	get_callback_on_end_data()
-		/// @return {struct} on_enter
-		///
-		with (__this.__callbacks.__on_end) {
-			return __data;
-		}
+		return get_running();
 	};
 	
 	#endregion
@@ -672,8 +699,16 @@ function FloeEffect() constructor {
 			var _progress = 1 - get_progress();
 			set_progress(_progress);
 		}
-		event_publish("reversed");
+		event_publish("reversed", self);
 		return self;
+	};
+	static reset   = function() {
+		/// @func	reset()
+		/// @return {FloeEffect} self
+		///
+		set_running(false);
+		set_progress(0);
+		set_state(__FLOE_STATE.HIDDEN);
 	};
 		
 	#endregion
