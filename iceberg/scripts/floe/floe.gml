@@ -62,7 +62,9 @@ enum __FLOE_STATE {
 	HIDDEN,
 	ENTER_PREP,
 	ENTER,
+	CHANGE_PREP,
 	CHANGE,
+	HOLD_PREP,
 	HOLD,
 	LEAVE_PREP,
 	LEAVE,
@@ -72,7 +74,11 @@ enum __FLOE_STATE {
 #endregion
 #region default config values //////
 
-/// ...
+#macro __FLOE_PUBLISHER Publisher		// <-- this system utilizes a PubSub design pattern. you can replace
+										// the existing implementation with a custom implementation by first
+										// changing this class reference, and then updating the Events methods.
+										// if you decide to intended publisher, make sure to have the following
+										// asset included in your project: https://xdstudios.itch.io/xpublisher
 
 #endregion
 
@@ -122,7 +128,22 @@ function FloeEffect() constructor {
 				__leave:  undefined,
 			},
 		},
+		__events:	 {
+			__publisher: new __FLOE_PUBLISHER(),
+		},
 	};
+	__events_init(
+		"enter_started",
+		"enter_completed",
+		"change_started",
+		"change_completed",
+		"hold_started",
+		"hold_completed",
+		"leave_started",
+		"leave_completed",
+		"reversed",
+		"ended",
+	);
 
 	static update  = function() {
 		/// @func	update()
@@ -141,6 +162,7 @@ function FloeEffect() constructor {
 					var _play_method = get_audio_play_method();
 					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
 				}
+				event_publish("enter_started");
 				set_state(__FLOE_STATE.ENTER);
 				break;	
 			}
@@ -151,8 +173,14 @@ function FloeEffect() constructor {
 				
 				if (abs(_progress - _target) <= get_threshold()) {
 					set_progress(_target);
-					set_state(__FLOE_STATE.CHANGE);
+					event_publish("enter_completed");
+					set_state(__FLOE_STATE.CHANGE_PREP);
 				}
+				break;	
+			}
+			case __FLOE_STATE.CHANGE_PREP: {
+				event_publish("change_started");
+				set_state(__FLOE_STATE.CHANGE);
 				break;	
 			}
 			case __FLOE_STATE.CHANGE: {
@@ -168,6 +196,12 @@ function FloeEffect() constructor {
 					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
 				}
 				__this.__control.__hold_timer = get_hold_time();
+				event_publish("change_completed");
+				set_state(__FLOE_STATE.HOLD_PREP);
+				break;	
+			}
+			case __FLOE_STATE.HOLD_PREP: {
+				event_publish("hold_started");
 				set_state(__FLOE_STATE.HOLD);
 				break;	
 			}
@@ -176,6 +210,7 @@ function FloeEffect() constructor {
 					__this.__control.__hold_timer--;
 				}
 				else {
+					event_publish("hold_completed");
 					set_state(__FLOE_STATE.LEAVE_PREP);
 				}
 				break;	
@@ -192,6 +227,7 @@ function FloeEffect() constructor {
 					var _play_method = get_audio_play_method();
 					_play_method(get_audio_emitter(), _leave_sound, 0, 0);
 				}
+				event_publish("leave_started");
 				set_state(__FLOE_STATE.LEAVE);
 				break;	
 			}
@@ -202,6 +238,7 @@ function FloeEffect() constructor {
 				
 				if (abs(_progress - _target) <= get_threshold()) {
 					set_progress(_target);
+					event_publish("leave_completed");
 					set_state(__FLOE_STATE.END);
 				}
 				break;	
@@ -212,6 +249,7 @@ function FloeEffect() constructor {
 				if (_on_end != undefined) {
 					_on_end(get_callback_on_end_data());		
 				}
+				event_publish("ended");
 				set_state(__FLOE_STATE.HIDDEN);
 				break;	
 			}
@@ -634,9 +672,81 @@ function FloeEffect() constructor {
 			var _progress = 1 - get_progress();
 			set_progress(_progress);
 		}
+		event_publish("reversed");
 		return self;
 	};
 		
+	#endregion
+	#region Events /////////
+	
+	static __events_init		   = function() {
+		/// @func	__events_init()
+		/// @return NA
+		///
+		for (var _i = 0; _i < argument_count; _i++) {
+			event_register(argument[_i]);	
+		}
+	};	
+	static event_get_publisher	   = function() {
+		/// @func	event_get_publisher()
+		/// @return {Publisher} publisher
+		///
+		return __this.__events.__publisher;
+	};
+	static event_register		   = function() {
+		/// @func	event_register(event_name_1, ..., event_name_n)
+		/// @param	{string} event_name
+		/// @return	{Ui} self
+		///
+		for (var _i = 0; _i < argument_count; _i++) {
+			event_get_publisher().register_channel(argument[_i]);
+		}
+		return self;
+	};
+	static event_registered		   = function(_event_name) {
+		/// @func	event_registered(event_name)
+		/// @param	{string}  event_name
+		/// @return {boolean} event_is_registered?
+		///
+		return event_get_publisher().has_registered_channel(_event_name);
+	};
+	static event_publish		   = function(_event_name, _data = undefined) {
+		/// @func	 event_publish(event_name, data*)
+		/// @param	{string} event_name
+		/// @param	{any}    data=undefined
+		/// @return {Ui}	 self
+		///
+		event_get_publisher().publish(_event_name, _data);
+		return self;
+	};
+	static event_subscribe		   = function(_event_name, _callback, _weak_reference = false) {
+		/// @func	event_subscribe(event_name, callback, weak_reference?)
+		/// @param	{string}  event_name
+		/// @param	{method}  callback_method
+		/// @param	{boolean} weak_reference?=false
+		/// @return {Ui}	  self
+		///
+		event_get_publisher().subscribe(_event_name, _callback, _weak_reference);
+		return self;
+	};
+	static event_unsubscribe	   = function(_event_name, _force = false) {
+		/// @func	event_unsubscribe(event_name, force?*)
+		/// @param	{string}  event_name
+		/// @parma	{boolean} force?=false
+		/// @return {Ui} self
+		///
+		event_get_publisher().unsubscribe(_event_name, _force);
+		return self;
+	};
+	static event_clear_subscribers = function(_event_name) {
+		/// @func	event_clear_subscribers(event_name)
+		/// @param	{string} event_name
+		/// @return {Ui} self
+		///
+		event_get_publisher().clear_channel(_event_name);
+		return self;
+	};
+	
 	#endregion
 };
 function FloeEffectSurface() : FloeEffect() constructor {

@@ -78,7 +78,9 @@ serializer:
 			with a more encapsulated implementation
 		- also allows us to methodically handle edge cases and error throwing through an implicit
 			type checker, etc.
-	
+FloeEffects:
+	- ...
+
 border:
 	- add particle_emitters
 	- add sfx_emitters
