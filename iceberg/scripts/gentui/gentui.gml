@@ -16,19 +16,28 @@
 
 #region version 0.2.*
 
-#region version 0.2.1
+#region version 0.2.1 
 /*
-	Date: xx/xx/2022
+	Date: 06/22/2022
 		Feature Additions:
 			x.	abstracted actions and triggers. previously, a few set contexts existed in which the action/triggers were defined.
 				these included for example: "hover_action_add()" "hover_trigger_add()"; however, this functionality does not need
 				to be context sensitive and specific to the hover action. instead, we can generalize a simple action/trigger binding
 				that can be defined however desired.
-			x.	NEW COMPONENT: added UiCircle() implementing draw_circle_curve() functionality
-			x.	NEW COMPONENT: added UiTextbox() 
+			x.	ability to have triggers send data to the corresponding action, through the method: action_send_payload(). as a result
+				actions can now take a data parameter, and if action_send_payload() is invoked inside of the trigger method, then the
+				action will have that value passed in as its parameter.
+			x.	new methods for interacting with previously defined configs:
+					x.	config_set_value(config_name, value_name, value);
+					x.	config_get_value(config_name, value_name);
+					x.	config_remove_value(config_name, value_name);
+		QOL:
+			x.	refactored and restuctured actions, triggers, and states
+			x.	abstracted actions, triggers, and states into new GentuiUtilMethod() classes, so that each of these objects are 
+				encapsulated in a way that is easier to manage/interact with.
 */
 #endregion
-#region version 0.2.0
+#region version 0.2.0 (released)
 /*
 	Date: 06/15/2022
 		Bug Fixes:
@@ -82,7 +91,7 @@
 #endregion
 #region version 0.1.*
 
-#region version 0.1.1
+#region version 0.1.1 (released)
 /*	
 	Date: 05/26/2022
 	1. components now propagate their alpha values down to pinned children components
@@ -97,7 +106,7 @@
 	5. draw_rectangle_width_color removed from global scope and integrated into base Ui() component.
 */
 #endregion
-#region version 0.1.0
+#region version 0.1.0 (released)
 /*	
 	Date: 05/24/2022
 	1. FINISHED FIRST ITERATION! WOO!
@@ -120,24 +129,24 @@
 */
 #endregion
 #region upcoming features ///////////
-/*	
-	- add different method execution techniques for GentuiUtilMethods() classes and GentuiState()
-	- set_properties() should take a config_name param for config binding?
-	- check if set_properties() method should be implementing property_add()	
-	
+/*		
+	- NEW COMPONENT: added UiCircle() implementing draw_circle_curve() functionality
+	- NEW COMPONENT: added UiArc() implementing draw_circle_curve() functionality
+	- NEW COMPONENT: added UiTextbox() 
+	- add sprite support to panels
+	- add dithering effects to components
+	- add support for UI components to render contents to a surface
+		- only update surface contents when necessary, and bake children surfaces onto parent
+	- setup component angle support
+		- propagate parent angle to children components
+		- have mouse click detection and interactions respond to different angles
 	- replace properties with GProps(); however, do not create a dependency to that system, instead, re-implement the basic functionality 
 		- this will allow our new values to have lerp and spring motion
 		- setup configs so that they can lerp to their newly assigned property values
 	- ability to have parent components implement child components' update() and render() methods automatically
 		- additionally, setup corresponding depth system for custom depth sorting if automatic updates and renders are used
-	
 	- improve performance with draw_rectangle_alt, draw_line_alt utilizing one pixel sprite
 		- dynamically generate one pixel sprite using surface, sprite_save, etc
-	- add support for UI components to render contents to a surface
-		- only update surface contents when necessary, and bake children surfaces onto parent
-	- propagate parent angle to children components
-		- have mouse click detection and interactions respond to different angles. currently not supported!
-		
 	- docs & help
 */
 #endregion
@@ -1086,27 +1095,6 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	#endregion
 	#region Setters ////////////////////////
 		
-	static set_properties					= function(_properties_struct) {
-		/// @func	set_properties(properties_struct)
-		/// @desc	ui components are designed to be modular and lightweight, as a result, this method can be used
-		///			to declare and instantiate additional properties that should be associated with this component.
-		///			this also prevents the initially passed in config struct, from being bloated and having to account
-		///			for all possible passed in values, as we can instead, pass in added values after-the-fact using this 
-		///			method.
-		/// @param  {struct} properties
-		/// @return {Ui}	 self
-		///
-		var _names = variable_struct_get_names(_properties_struct);
-		var _count = array_length(_names);
-		var _name, _value;
-		
-		for (var _i = 0; _i < _count; _i++) {
-			_name  = _names[_i];
-			_value = _properties_struct[$ _name];
-			variable_struct_set(self, _name, _value);
-		}
-		return self;
-	};
 	static set_owner						= function(_owner) {
 		/// @func	set_owner(owner)
 		/// @param	{instance/struct} owner
@@ -2415,8 +2403,9 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 		
 	#endregion
-	#region Configs ////////////////////////
+	#region Configs & Properties ///////////
 	
+	/// Configs ////////////////////////////////////////////////////////////////
 	static config_add				 = function(_config_name, _config_struct) {
 		/// @func	config_add(config_name, config)
 		/// @param	{string} config_name
@@ -2457,7 +2446,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		__this.__config.__name	  = _config_name;
 		__this.__config.__current = _config_struct;
-		properties_update(_config_struct);
+		__properties_update(_config_struct);
 		return self;
 	};
 	static config_get_start			 = function() {
@@ -2536,7 +2525,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @return {Ui} self
 		///
 		if (_restore_all_properties) {
-			properties_update(config_get_default());	// wipe all values to default first
+			__properties_update(config_get_default());	// wipe all values to default first
 		}
 		return config_change(config_get_start_name());
 	};
@@ -2546,47 +2535,38 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return config_change(config_get_default_name());
 	};
-	
-	static property_add				 = function(_config_in, _property_name, _default_value, _add_to_start_config = true) {
-		/// @func	property_add(config_in, property_name, default_value, add_to_start_config?*)
-		/// @param	{struct}  config_in
-		/// @param	{string}  property_name
-		/// @param	{any}	  default_value
-		/// @param	{boolean} add_to_start_config=true
-		/// @return {any}	  value
+	static config_set_value			 = function(_config_name, _value_name, _value) {
+		/// @func	config_set_value(config_name, value_name, value) 
+		/// @param	{string} config_name
+		/// @param	{string} value_name
+		/// @param	{any}	 value
+		/// @return {Ui}	 self
 		///
-		/// Get Property Value
-		var _value = _default_value;
-		if (_config_in !=  undefined) {
-			_value = _config_in[$ _property_name] ?? _default_value;
+		if (config_exists(_config_name)) {
+			variable_struct_set(config_get(_config_name), _value_name, _value);
 		}
-		/// Add Property To Start Struct?
-		if (_add_to_start_config) {
-			config_get_start()[$ _property_name] = _value;
-		}
-		/// Store Property Setter() For Dynamic Updates In properties_update()
-		__this.__config.__properties[$ _property_name] = {
-			setter: variable_struct_get(self, "set_" + _property_name),	
-		};
-		/// Store Default Property
-		default_set(_property_name, _default_value);
-		
-		return _value;
+		return self;
 	};
-	static properties_update		 = function(_config = config_get_current()) {
-		/// @func	properties_update(config*)
-		/// @desc	assign the values of the given config_struct to self ui component.
-		/// @param	{struct} config=config_get_current()
-		/// @return {Ui} self
+	static config_get_value			 = function(_config_name, _value_name) {
+		/// @func	config_get_value(config_name, value_name)
+		/// @param	{string} config_name
+		/// @param	{string} value_name
+		/// @return {any}	 value
 		///
-		var _property_names = variable_struct_get_names(_config); 
-		for (var _i = 0, _len = array_length(_property_names); _i < _len; _i++) {
-			var _property_name    = _property_names[_i];
-			var _property_setter  = __this.__config.__properties[$ _property_name].setter;
-			if (_property_setter != undefined) {
-				_property_setter(_config[$ _property_name]);
-			}
-		}	
+		if (config_exists(_config_name)) {
+			return variable_struct_get(config_get(_config_name), _value_name);
+		}
+		return undefined;
+	};
+	static config_remove_value		 = function(_config_name, _value_name) {
+		/// @func	config_remove_value(config_name, value_name) 
+		/// @param	{string} config_name
+		/// @param	{string} value_name
+		/// @return {Ui}	 self
+		///
+		if (config_exists(_config_name)) {
+			variable_struct_remove(config_get(_config_name), _value_name);
+		}
 		return self;
 	};
 	
@@ -2634,7 +2614,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		__config_stash_properties(_config_start_struct);
 		
 		/// Invoke Default So That All Properties Are At Least Set Once
-		properties_update(_config_default_struct);
+		__properties_update(_config_default_struct);
 		config_set_current(_config_start_name, _config_start_struct);	/// <-- will automatically update properties to start_struct
 	};
 	static __config_stash_properties = function(_config_struct) {
@@ -2650,8 +2630,82 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 			if (_property_default == undefined) {
 				_property_default = _property_value;	
 			}
-			property_add(_config_struct, _property_name, _property_default, false);
+			__property_add(_config_struct, _property_name, _property_default, false);
 		}
+	};
+		
+	/// Properties /////////////////////////////////////////////////////////////
+	static set_properties	   = function(_properties_struct) {
+		/// @func	set_properties(properties_struct)
+		/// @desc	ui components are designed to be modular and lightweight, as a result, this method can be used
+		///			to declare and instantiate additional properties that should be associated with this component.
+		///			this also prevents the initially passed in config struct, from being bloated and having to account
+		///			for all possible passed in values, as we can instead, pass in added values after-the-fact using this 
+		///			method.
+		/// @param  {struct} properties
+		/// @return {Ui}	 self
+		///
+		var _names  = variable_struct_get_names(_properties_struct);
+		var _count  = array_length(_names);
+		var _name, _value;
+		
+		/// Set Properties
+		for (var _i = 0; _i < _count; _i++) {
+			_name  = _names[_i];
+			_value = _properties_struct[$ _name];
+			variable_struct_set(self, _name, _value);
+		}
+		return self;
+	};
+	static __property_add	   = function(_config_in, _property_name, _default_value, _add_to_start_config = true) {
+		/// @func	__property_add(config_in, property_name, default_value, add_to_start_config?*)
+		/// @desc	any property added using this method needs to have a correlated setter() method with the 
+		///			proper naming convention. as a result, this method should only be used to initialize
+		///			static properties.
+		/// @param	{struct}  config_in
+		/// @param	{string}  property_name
+		/// @param	{any}	  default_value
+		/// @param	{boolean} add_to_start_config=true
+		/// @return {any}	  value
+		///
+		/// CANNOT BE USED IF A PREVIOUSLY DEFINED SETTER METHOD DOES NOT EXIST
+		///
+		/// Get Property Value
+		var _value = _default_value;
+		if (_config_in !=  undefined) {
+			_value = _config_in[$ _property_name] ?? _default_value;
+		}
+		/// Add Property To Start Struct?
+		if (_add_to_start_config) {
+			config_get_start()[$ _property_name] = _value;
+		}
+		/// Store Property Setter() For Dynamic Updates In __properties_update()
+		__this.__config.__properties[$ _property_name] = {
+			setter: variable_struct_get(self, "set_" + _property_name),	
+		};
+		/// Store Default Property
+		default_set(_property_name, _default_value);
+		
+		return _value;
+	};
+	static __properties_update = function(_config = config_get_current()) {
+		/// @func	__properties_update(config*)
+		/// @desc	given a config struct, iterate through each value, and use the previously defined
+		///			associated setter() method to set the current value into self: the Ui component.
+		/// @param	{struct} config=config_get_current()
+		/// @return {Ui} self
+		///
+		/// CANNOT BE USED IF A PREVIOUSLY DEFINED SETTER METHOD DOES NOT EXIST
+		///
+		var _property_names = variable_struct_get_names(_config); 
+		for (var _i = 0, _len = array_length(_property_names); _i < _len; _i++) {
+			var _property_name    = _property_names[_i];
+			var _property_setter  = __this.__config.__properties[$ _property_name].setter;
+			if (_property_setter != undefined) {
+				_property_setter(_config[$ _property_name]);
+			}
+		}	
+		return self;
 	};
 	
 	#endregion
@@ -2700,7 +2754,7 @@ function UiPanel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
-	__outline = property_add(_config, "outline", false);
+	__outline = __property_add(_config, "outline", false);
 	
 	#region Core ///////////////////
 	
@@ -2780,12 +2834,12 @@ function UiLabel  (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	/// @param {constant} halign*
 	/// @param {constant} valign*
 	///
-	__text		 = property_add(_config, "text",	   "");
-	__wrap_apply = property_add(_config, "wrap_apply", false);
-	__wrap_width = property_add(_config, "wrap_width", -1);
-	__line_space = property_add(_config, "line_space", -1);
-	__halign	 = property_add(_config, "halign",	   fa_left);
-	__valign	 = property_add(_config, "valign",	   fa_top);
+	__text		 = __property_add(_config, "text",		 "");
+	__wrap_apply = __property_add(_config, "wrap_apply", false);
+	__wrap_width = __property_add(_config, "wrap_width", -1);
+	__line_space = __property_add(_config, "line_space", -1);
+	__halign	 = __property_add(_config, "halign",	  fa_left);
+	__valign	 = __property_add(_config, "valign",	  fa_top);
 		
 	#region Core ///////////////////
 	
@@ -3001,9 +3055,9 @@ function UiSprite (_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 		throw("***error in UiSprite*** sprite not defined.");	
 	}
 		
-	__sprite = property_add(_config, "sprite", undefined);
-	__image  = property_add(_config, "image",  0);
-	__speed  = property_add(_config, "speed",  1);
+	__sprite = __property_add(_config, "sprite", undefined);
+	__image  = __property_add(_config, "image",  0);
+	__speed  = __property_add(_config, "speed",  1);
 
 	#region Core ///////////////////
 	
