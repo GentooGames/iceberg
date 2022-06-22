@@ -127,6 +127,7 @@
 		  the event could then act on that instance
 	- set_properties() should take a config_name param for config binding?
 	- check if set_properties() method should be implementing property_add()	
+	
 	- replace properties with GProps(); however, do not create a dependency to that system, instead, re-implement the basic functionality 
 		- this will allow our new values to have lerp and spring motion
 		- setup configs so that they can lerp to their newly assigned property values
@@ -355,20 +356,26 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		/// @return	{GentuiAction} self
 		///
 		var _validated = false;
+		var _return	   = undefined;
+		
 		with (__triggers) {
 			if (__active) {
 				for (var _i = 0; _i < __count; _i++) {
 					var _name	 = __names[_i];
 					var _trigger = __triggers[$ _name];
-					if (_trigger.get_active() && _trigger.execute()) {
-						_validated = true;
-						break;	
+					if (_trigger.get_active()) {
+						_return	   = _trigger.execute();
+						show_debug_message("return: " + string(_return));
+						if (_return != false) {
+							_validated = true;
+							break;	
+						}
 					}
 				}
 			}
 		}
 		if (_validated) {
-			execute();
+			execute(_return);
 		}
 		return self;
 	};

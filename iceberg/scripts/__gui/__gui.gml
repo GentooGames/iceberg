@@ -50,6 +50,12 @@ global._gui = {
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
+		.action_add("action_test", function(_triggerer) {
+			show_debug_message("triggerer: " + string(_triggerer));
+		})
+		.action_add_trigger("action_test", "trigger_test", function() {
+			return get_text();
+		})
     },    
 	update:	function() {
 		/// @func   update()
