@@ -51,7 +51,7 @@ global._gui = {
 		})
 		.action_add_trigger("action_test", "trigger_on_player_collide", function() {
 			var _instance = collision_circle(0, 0, 100, obj_player, false, false);
-			action_set_payload(_instance);
+			action_send_payload(_instance);
 			return true;
 		})
     },    

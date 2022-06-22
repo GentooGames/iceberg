@@ -241,15 +241,13 @@ function GentuiUtilMethod(_config) constructor {
 	};
 	
 	/// Core ///////////////////////////////////////////////////////
-	static execute = function() {
+	static execute = function() {	/// @OVERRIDE
 		/// @func	execute(data)
 		/// @param  {any} data
 		/// @return {any} execute_return
 		///
 		var _method = get_method();
-		var _data	= get_data();
-		
-		return _method(_data);
+		return _method(get_data());
 	};
 	
 	/// Getters ////////////////////////////////////////////////////
@@ -339,7 +337,7 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		__triggers: {},
 	};
 	
-	static update = function() {
+	static update  = function() {
 		/// @func	update()
 		/// @return {GentuiAction} self
 		///
@@ -347,6 +345,18 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 			update_triggers();
 		}
 		return self;
+	};
+	static execute = function() {	/// @OVERIDE
+		/// @func	execute(data)
+		/// @param  {any} data
+		/// @return {any} execute_return
+		///
+		var _method =  get_method();
+		var _return = _method(get_data());
+		set_data(undefined);	// <--	wipe data after execution, so that temporarily
+								//		set data through action_send_payload() does not 
+								//		become persistent.
+		return _return;
 	};
 		
 	#region Triggers ///////////
@@ -535,7 +545,6 @@ function GentuiTrigger(_config) : GentuiUtilMethod(_config) constructor {
 	/// @param	{struct} config
 	/// @return {GentuiTrigger} self
 	///
-	
 };
 function GentuiState(_config) constructor {
 	/// @func	GentuiState(config)
@@ -1833,8 +1842,8 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Action Custom: Triggers Util
-	static action_set_payload = function(_data) {
-		/// @func	action_set_payload(data)
+	static action_send_payload = function(_data) {
+		/// @func	action_send_payload(data)
 		/// @param	{any} data
 		/// @return {Ui}  self
 		///
