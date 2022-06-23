@@ -1,9 +1,3 @@
-#macro __TRANSITION_DEFAULT_EFFECT_IN	FloeEffectBorderTrees
-#macro __TRANSITION_DEFAULT_EFFECT_OUT	__TRANSITION_DEFAULT_EFFECT_IN
-#macro __TRANSITION_DEFAULT_WAIT		false	// if true, then TRANSITION.complete() must be manually invoked
-
-#macro ROOM_FIRST rm_test
-
 global._transition = { 
     initialized: false,
 	#region Internal ///////
@@ -18,6 +12,11 @@ global._transition = {
 		
         log("<FLOE> setup()");
 		initialized = true;
+		
+		#endregion
+		#region State Machine //
+		
+		fsm = new SnowState();
 		
 		#endregion
 		#region FloeEffects/////

@@ -1,5 +1,7 @@
 iceberg:
-	- PUBSUB system everywhere!!!
+	- rework transition system to use state machine
+	- remove objc_game initializations from state machine
+	- PUBSUB system 
 		- rework so that not everything is at a global level
 			- faster performance, but more memory overhead
 	- organize and abstract global._gui{} into a more modular system similar to global._transition{}
@@ -8,19 +10,7 @@ iceberg:
 	- convert objc_save into global._save = {} (?)
 	- add macro pointers so that uniquely named libraries can be accessed through intuitively named references
 	- procedurally generated dungeon generator
-	
-__audio:
-	- 
-
-__clocks:
-	- replace iota with time_source(?)
-
-__display:
-	... 
-	
-__events:
-	- add PUBSUB to EVERYTHING!!!! make all new systems easily exposable through our global pubsub system
-	- reevaluate if we can remove manual event registration now that auto_register is setup in the publisher
+	- replace iota with gm_time_source
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width
@@ -28,13 +18,12 @@ __gui:
 	- once nearly finalized, replace __sfx_play_method to use AUDIO.play()
 	
 __input:
-	- ...
-	
-__particles:
-	- ...
+	- checkout jujus new input system
 	
 __transition:
 	- add particle_emitters to FloeEffects
+		- ^ this here is probably not going to be achievable in a purly abstracted/dynamic way, so 
+			instead, expose ways to inject custom update methods that would make for easy particle plugin
 
 __unit_tests:
 	- WRITE UNIT TESTS FOR ICEBERG!!!!
@@ -53,9 +42,10 @@ gentui:
 	
 orderly: 
 	- rework callback handling and normalize to standard
+	- update property naming convention to match new standard
 	
 gstat:
-	- add priority to state processign order
+	- add priority to stat processign order
 	
 gprop:
 	- abstract interpolation "algorithm" using Builder Design Pattern
@@ -78,10 +68,3 @@ serializer:
 			with a more encapsulated implementation
 		- also allows us to methodically handle edge cases and error throwing through an implicit
 			type checker, etc.
-FloeEffects:
-	- ...
-
-border:
-	- add particle_emitters
-	- add sfx_emitters
-

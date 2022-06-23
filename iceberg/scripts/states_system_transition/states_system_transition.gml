@@ -1,0 +1,1 @@
+#macro STATE_SYSTEM_TRANSITION_IDLE "state_system_transition_idle"
