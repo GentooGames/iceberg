@@ -27,7 +27,7 @@ setup_game	  = function() {
 	#endregion
 	#region States /////////
 	
-	state_start = STATE_CONTROLLER_GAME_INIT;
+	state_start = STATE_CONTROLLER_GAME_MAIN;
 	fsm = new WeeState();
 	fsm.set_default_draw(state_controller_game_draw_default);
 	fsm.add(STATE_CONTROLLER_GAME_MAIN, state_controller_game_main())

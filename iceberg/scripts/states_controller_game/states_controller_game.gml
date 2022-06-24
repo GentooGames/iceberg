@@ -1,5 +1,10 @@
 #macro STATE_CONTROLLER_GAME_MAIN "state_controller_game_main"
 
+function state_controller_game_draw_default() {
+	/// @func	state_controller_game_draw_default()
+	/// @return NA
+	///
+};
 function state_controller_game_main() {
 	/// @func	state_controller_game_main()
 	/// @return {struct} state_data

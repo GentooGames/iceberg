@@ -1,6 +1,7 @@
 global._transition = { 
     initialized: false,
-	////////////////////
+	
+	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
 		/// @desc	...
@@ -13,11 +14,19 @@ global._transition = {
 		initialized = true;
 		
 		#endregion
+		#region Room ///////////////
+		
+		room_target		= undefined;
+		room_hold		= false;	// should the room be held until manual exit execution?
+		room_holding	= false;	// is the room currently holding?
+		room_to_release = false;	// is the room ready to be released?
+
+		#endregion
 		#region State Machine //////
 		
 		state_start = STATE_SYSTEM_TRANSITION_IDLE;
 		fsm = new SnowState(state_start);
-		fsm.set_default_draw(state_system_transition_draw_default);
+		fsm.event_set_default_function("draw", state_system_transition_draw_default);
 		fsm.add(STATE_SYSTEM_TRANSITION_IDLE,		   state_system_transition_idle())
 		   .add(STATE_SYSTEM_TRANSITION_TRANSITIONING, state_system_transition_transitioning())
 		   .add(STATE_SYSTEM_TRANSITION_CHANGE,		   state_system_transition_change())
@@ -29,9 +38,26 @@ global._transition = {
 		#endregion
 		#region Floe Effects ///////
 		
-		effect_in  = undefined;
-		effect_out = undefined;
-		effect	   = undefined;
+		effect_default = FloeEffectFade;
+		effect_in	   = undefined;
+		effect_out	   = undefined;
+		effect		   = undefined;
+		
+		#endregion
+		#region Events /////////////
+				
+		/// Transition Publisher
+		publisher = new Publisher();
+		event_register(
+			"enter_started",
+			"enter_completed",
+			"change_started",
+			"change_completed",
+			"hold_started",
+			"hold_completed",
+			"exit_started",
+			"exit_completed",
+		);
 		
 		#endregion
     },
@@ -41,7 +67,14 @@ global._transition = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////
+		////////////////////////////
+		if (keyboard_check_pressed(ord("R"))) {
+			TRANSITION.restart({
+				room_target: room,
+				effect:		 FloeEffectFade,
+				room_hold:   true,
+			});
+		}
 		fsm.step();
 	},
 	render: function() {
@@ -50,33 +83,43 @@ global._transition = {
         /// @return NA
         ///
         if (!initialized) exit;
-		////////////////////
+		////////////////////////////
 		fsm.draw();
 	},
-	////////////////////
-	goto:			   function() {
-		/// @func   goto()
-        /// @return 
+	
+	/// Core ///////////////////////
+	goto:			   function(_data = {}) {
+		/// @func   goto(data*)
+		/// @param	{struct} data
+        /// @return {struct} self
         ///
-		
+		if (start_transition_is_ready()) {
+			room_target	= _data[$ "room_target"];
+			effect_in	= _data[$ "effect"	   ] ?? (_data[$ "effect_in" ] ?? effect_default);
+			effect_out	= _data[$ "effect"	   ] ?? (_data[$ "effect_out"] ?? effect_default);
+			room_hold   = _data[$ "room_hold"  ] ?? room_hold; 
+			start_transition();
+		}
+		return self;
 	},
     goto_next:		   function(_data = {}) {
         /// @func   goto_next()
-        /// @return 
+		/// @param	{struct} data
+        /// @return NA
         ///
-		
     },
     goto_previous:	   function(_data = {}) {
         /// @func   goto_previous()
-        /// @return 
+		/// @param	{struct} data
+        /// @return NA
         ///
-		
     },
-    restart:		   function(_data) {
-        /// @func   restart()
-        /// @return 
+    restart:		   function(_data = {}) {
+        /// @func   restart(data)
+		/// @param	{struct} data
+        /// @return NA
         ///
-		
+		goto(_data);
     },
     get_room_next:	   function(_room = room) {
         /// @func   get_room_next()
@@ -100,6 +143,136 @@ global._transition = {
         }
         throw("<ERROR in FLOE.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
     },
+	
+	/// Transitions ////////////////
+	start_transition_is_ready:	function() {
+		/// @func	start_transition_is_ready()
+		/// @return {boolean} is_ready?
+		///
+		return !is_transitioning();
+	},
+	start_transition:			function() {
+		/// @func	start_transition()
+		/// @return {struct} self
+		///
+		fsm.change(STATE_SYSTEM_TRANSITION_TRANSITIONING);
+		return self;
+	},
+	end_transition_is_ready:	function() {
+		/// @func	end_transition_is_ready()
+		/// @return {boolean} is_ready?
+		///
+		return (is_transitioning() 
+			&& !room_hold
+			&&	room_holding 
+			&&  room_to_release
+		);
+	},
+	end_transition:				function() {
+		/// @func	end_transition()
+		/// @return {struct} self
+		///
+		room_holding = false;
+		fsm.change(STATE_SYSTEM_TRANSITION_ENDING);
+		return self;
+	},
+	is_transitioning:			function() {
+		/// @func	is_transitioning()
+		/// @return	{boolean} is_transitioning?
+		///
+		return !fsm.state_is(STATE_SYSTEM_TRANSITION_IDLE);
+	},
+	
+	/// Events /////////////////////
+	get_event_publisher:	 function() {
+		/// @func	get_event_publisher()
+		/// @return {Publisher} publisher
+		///
+		return publisher;
+	},
+	event_register:			 function() {
+		/// @func	event_register(event_name_1, ..., event_name_n)
+		/// @param	{string} event_name
+		/// @return	{Ui} self
+		///
+		for (var _i = 0; _i < argument_count; _i++) {
+			get_event_publisher().register_channel(argument[_i]);
+		}
+		return self;
+	},
+	event_registered:		 function(_event_name) {
+		/// @func	event_registered(event_name)
+		/// @param	{string}  event_name
+		/// @return {boolean} event_is_registered?
+		///
+		return get_event_publisher().has_registered_channel(_event_name);
+	},
+	event_publish:			 function(_event_name, _data = undefined) {
+		/// @func	 event_publish(event_name, data*)
+		/// @param	{string} event_name
+		/// @param	{any}    data=undefined
+		/// @return {Ui}	 self
+		///
+		get_event_publisher().publish(_event_name, _data);
+		return self;
+	},
+	event_subscribe:		 function(_event_name, _callback, _weak_reference = false) {
+		/// @func	event_subscribe(event_name, callback, weak_reference?)
+		/// @param	{string}  event_name
+		/// @param	{method}  callback_method
+		/// @param	{boolean} weak_reference?=false
+		/// @return {Ui}	  self
+		///
+		get_event_publisher().subscribe(_event_name, _callback, _weak_reference);
+		return self;
+	},
+	event_unsubscribe:		 function(_event_name, _force = false) {
+		/// @func	event_unsubscribe(event_name, force?*)
+		/// @param	{string}  event_name
+		/// @parma	{boolean} force?=false
+		/// @return {Ui} self
+		///
+		get_event_publisher().unsubscribe(_event_name, _force);
+		return self;
+	},
+	event_clear_subscribers: function(_event_name) {
+		/// @func	event_clear_subscribers(event_name)
+		/// @param	{string} event_name
+		/// @return {Ui} self
+		///
+		get_event_publisher().clear_channel(_event_name);
+		return self;
+	},
 };
 #macro TRANSITION global._transition
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

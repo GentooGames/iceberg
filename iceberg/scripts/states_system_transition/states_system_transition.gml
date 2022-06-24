@@ -8,6 +8,9 @@ function state_system_transition_draw_default() {
 	/// @func	state_system_transition_draw_default()
 	/// @return NA
 	///
+	if (effect != undefined) {
+		effect.render();	
+	}
 };
 function state_system_transition_idle() {
 	/// @func	state_system_transition_idle()
@@ -24,9 +27,28 @@ function state_system_transition_transitioning() {
 	/// @return {struct} state_data
 	///
 	return {
-		enter: function() {},
-		step:  function() {},
-		leave: function() {},
+		enter: function() {
+			log("transition_enter_started");
+			event_publish("enter_started");
+			
+			effect = new effect_in()
+				.event_subscribe("enter_completed", function() {
+					log("effect_enter_completed");
+					fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
+				})
+				.set_callback_on_leave_method(method(effect, function() {
+					log("effect cleanup -- frome on_leave callback");	/// <-- this does not need to be here anymore, but it should be hitting. why not?
+					//cleanup();
+				}))
+				.enter()
+		},
+		step:  function() {
+			effect.update();
+		},
+		leave: function() {
+			log("transition_enter_completed");
+			event_publish("enter_completed");
+		},
 	};
 };
 function state_system_transition_change() {
@@ -34,9 +56,20 @@ function state_system_transition_change() {
 	/// @return {struct} state_data
 	///
 	return {
-		enter: function() {},
-		step:  function() {},
-		leave: function() {},
+		enter: function() {
+			log("transition_change_started");
+			event_publish("change_started");
+			
+			room_goto(room_target);	// <-- move to state.leave?
+			fsm.change(STATE_SYSTEM_TRANSITION_HOLD);
+		},
+		step:  function() {
+			effect.update();
+		},
+		leave: function() {
+			log("transition_change_completed");
+			event_publish("change_completed");
+		},
 	};
 };
 function state_system_transition_hold() {
@@ -44,9 +77,30 @@ function state_system_transition_hold() {
 	/// @return {struct} state_data
 	///
 	return {
-		enter: function() {},
-		step:  function() {},
-		leave: function() {},
+		enter: function() {
+			log("transition_hold_started");
+			event_publish("hold_started");
+			
+			effect.event_subscribe("hold_completed", function() {
+				log("effect_hold_completed");
+				room_to_release = true;
+				
+				if (end_transition_is_ready()) {
+					end_transition();
+				}
+			});
+			room_holding = true;
+		},
+		step:  function() {
+			effect.update();
+		},
+		leave: function() {
+			log("transition_hold_completed");
+			event_publish("hold_completed");
+			
+			effect.cleanup();
+			effect_in = undefined;
+		},
 	};
 };
 function state_system_transition_ending() {
@@ -54,9 +108,28 @@ function state_system_transition_ending() {
 	/// @return {struct} state_data
 	///
 	return {
-		enter: function() {},
-		step:  function() {},
-		leave: function() {},
+		enter: function() {
+			log("transition_exit_started");
+			event_publish("exit_started");
+			
+			effect = new effect_out()
+				.event_subscribe("enter_completed", function() {
+					log("effect enter_completed");
+					fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
+				})
+				.reverse()
+				.enter()
+		},
+		step:  function() {
+			effect.update();
+		},
+		leave: function() {
+			log("transition_exit_completed");
+			event_publish("exit_completed");
+			
+			effect.cleanup();
+			effect_out = undefined;
+		},
 	};
 };
 
