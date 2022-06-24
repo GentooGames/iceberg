@@ -138,6 +138,8 @@
 #endregion
 #region upcoming features ///////////
 /*		
+	- integrate custom actions and triggers into pubsub. should broadcast events, at least the triggers
+	- consider removeing action callbacks entirely? in favor of pubsub?
 	- NEW COMPONENT: added UiCircle() implementing draw_circle_curve() functionality
 	- NEW COMPONENT: added UiArc() implementing draw_circle_curve() functionality
 	- NEW COMPONENT: added UiTextbox() 

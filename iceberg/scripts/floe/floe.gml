@@ -94,10 +94,7 @@ function FloeEffect() constructor {
 	__threshold	=  0.1;
 	__hold_time = -1;
 	__this		=  {
-		__config:	 {
-			__auto_bind_methods_to_self: false,
-		},
-		__control:	 {
+		__control: {
 			__running:	   false,
 			__state:	   __FLOE_STATE.HIDDEN,
 			__progress:	   0.0,
@@ -105,25 +102,7 @@ function FloeEffect() constructor {
 			__is_reversed: false,
 			__hold_timer:  0,
 		},
-		__callbacks: {
-			__on_enter:	 {
-				__method: undefined,
-				__data:	  undefined,
-			},
-			__on_change: {
-				__method: undefined,
-				__data:	  undefined,
-			},
-			__on_leave:  {
-				__method: undefined,
-				__data:	  undefined,
-			},
-			__on_end:	 {
-				__method: undefined,
-				__data:	  undefined,
-			},	
-		},
-		__audio:	 {
+		__audio:   {
 			__emitter: audio_emitter_create(),
 			__method:  audio_play_sound_on,
 			__sounds:  {
@@ -132,7 +111,7 @@ function FloeEffect() constructor {
 				__leave:  undefined,
 			},
 		},
-		__events:	 {
+		__events:  {
 			__publisher: new __FLOE_PUBLISHER(),
 		},
 	};
@@ -156,12 +135,7 @@ function FloeEffect() constructor {
 		///
 		switch (get_state()) {
 			case __FLOE_STATE.ENTER_PREP: {
-				/// Execute On Enter Callback
-				var _on_enter  = get_callback_on_enter_method();
-				if (_on_enter != undefined) {
-					_on_enter(get_callback_on_enter_data());		
-				}
-				/// Play On Enter Sound
+				/// Play Sound
 				var _enter_sound  = get_audio_sound_enter();
 				if (_enter_sound != undefined) {
 					var _play_method = get_audio_play_method();
@@ -190,11 +164,6 @@ function FloeEffect() constructor {
 				break;	
 			}
 			case __FLOE_STATE.CHANGE: {
-				/// Execute On Change Callback
-				var _on_change  = get_callback_on_change_method();
-				if (_on_change != undefined) {
-					_on_change(get_callback_on_change_data());		
-				}
 				/// Play On Change Sound
 				var _change_sound  = get_audio_sound_enter();
 				if (_change_sound != undefined) {
@@ -222,11 +191,6 @@ function FloeEffect() constructor {
 				break;	
 			}
 			case __FLOE_STATE.LEAVE_PREP: {
-				/// Execute On Leave Callback
-				var _on_leave  = get_callback_on_leave_method();
-				if (_on_leave != undefined) {
-					_on_leave(get_callback_on_leave_data());		
-				}
 				/// Play On Change Sound
 				var _leave_sound  = get_audio_sound_leave();
 				if (_leave_sound != undefined) {
@@ -250,11 +214,6 @@ function FloeEffect() constructor {
 				break;	
 			}
 			case __FLOE_STATE.END: {
-				/// Execute On End Callback
-				var _on_end  = get_callback_on_end_method();
-				if (_on_end != undefined) {
-					_on_end(get_callback_on_end_data());		
-				}
 				event_publish("ended", self);
 				set_running(false);
 				set_state(__FLOE_STATE.HIDDEN);
@@ -441,7 +400,7 @@ function FloeEffect() constructor {
 	#endregion
 	#region Setters ////////////////
 		
-	static set_running					 = function(_running) {
+	static set_running			  = function(_running) {
 		/// @func	set_running(running?)
 		/// @param	{boolean} is_running?
 		/// @return {FloeEffect} self
@@ -449,7 +408,7 @@ function FloeEffect() constructor {
 		__this.__control.__running = _running;
 		return self;
 	};
-	static set_padding					 = function(_padding) {
+	static set_padding			  = function(_padding) {
 		/// @func	set_padding(padding)
 		/// @param	{real} padding
 		/// @param	{any} data=undefined
@@ -458,7 +417,7 @@ function FloeEffect() constructor {
 		__padding = _padding;
 		return self;
 	};
-	static set_color					 = function(_color) {
+	static set_color			  = function(_color) {
 		/// @func	set_color(color)
 		/// @param	{color} color
 		/// @param	{any} data=undefined
@@ -467,7 +426,7 @@ function FloeEffect() constructor {
 		__color = _color;
 		return self;
 	};
-	static set_alpha					 = function(_alpha) {
+	static set_alpha			  = function(_alpha) {
 		/// @func	set_alpha(alpha)
 		/// @param	{real} alpha
 		/// @return {FloeEffect} self
@@ -475,7 +434,7 @@ function FloeEffect() constructor {
 		__alpha = _alpha;
 		return self;
 	};
-	static set_speed					 = function(_speed) {
+	static set_speed			  = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real} speed
 		/// @return {FloeEffect} self
@@ -483,7 +442,7 @@ function FloeEffect() constructor {
 		__speed = _speed;
 		return self;
 	};
-	static set_threshold				 = function(_threshold) {
+	static set_threshold		  = function(_threshold) {
 		/// @func	set_threshold(threshold)
 		/// @param	{real} threshold
 		/// @return {FloeEffect} self
@@ -491,7 +450,7 @@ function FloeEffect() constructor {
 		__threshold = _threshold;
 		return self;
 	};
-	static set_hold_time				 = function(_hold_time) {
+	static set_hold_time		  = function(_hold_time) {
 		/// @func	set_hold_time(hold_time)
 		/// @param	{real} hold_time
 		/// @return {FloeEffect} self
@@ -499,7 +458,7 @@ function FloeEffect() constructor {
 		__hold_time = _hold_time;
 		return self;
 	};
-	static set_progress					 = function(_progress) {
+	static set_progress			  = function(_progress) {
 		/// @func	set_progress(progress)
 		/// @param	{real} progress
 		/// @return {FloeEffect} self
@@ -507,7 +466,7 @@ function FloeEffect() constructor {
 		__this.__control.__progress = _progress;
 		return self;
 	};
-	static set_target					 = function(_target) {
+	static set_target			  = function(_target) {
 		/// @func	set_target(target)
 		/// @param	{real} target
 		/// @return {FloeEffect} self
@@ -515,7 +474,7 @@ function FloeEffect() constructor {
 		__this.__control.__target = _target;
 		return self;
 	};
-	static set_state					 = function(_state) {
+	static set_state			  = function(_state) {
 		/// @func	set_state(state)
 		/// @param	{enum} state
 		/// @return {FloeEffect} self
@@ -523,7 +482,7 @@ function FloeEffect() constructor {
 		__this.__control.__state = _state;
 		return self;
 	};
-	static set_audio_emitter			 = function(_emitter) {
+	static set_audio_emitter	  = function(_emitter) {
 		/// @func	set_audio_emitter(emitter)
 		/// @param	{audio_emitter} emitter
 		/// @return {FloeEffect} self
@@ -533,7 +492,7 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_audio_play_method		 = function(_method) {
+	static set_audio_play_method  = function(_method) {
 		/// @func	set_audio_play_method(method)
 		/// @param	{method} play_method
 		/// @return {FloeEffect} self
@@ -543,7 +502,7 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_audio_sound_enter		 = function(_sound) {
+	static set_audio_sound_enter  = function(_sound) {
 		/// @func	set_audio_sound_enter(sound)
 		/// @param	{sound_id} sound
 		/// @return {FloeEffect} self
@@ -553,7 +512,7 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_audio_sound_change		 = function(_sound) {
+	static set_audio_sound_change = function(_sound) {
 		/// @func	set_audio_sound_change(sound)
 		/// @param	{sound_id} sound
 		/// @return {FloeEffect} self
@@ -563,109 +522,13 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_audio_sound_leave		 = function(_sound) {
+	static set_audio_sound_leave  = function(_sound) {
 		/// @func	set_audio_sound_leave(sound)
 		/// @param	{sound_id} sound
 		/// @return {FloeEffect} self
 		/// 
 		with (__this.__audio.__sounds) {
 			__leave = _sound;
-		}
-		return self;
-	};
-	static set_callback_on_enter_method  = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
-		/// @func	set_callback_on_enter_method(method, auto_bind_to_self?*)
-		/// @param	{method}  method
-		/// @param	{boolean} auto_bind_to_self?*=false
-		/// @return {FloeEffect} self
-		///
-		if (_auto_bind_to_self) {
-			_method = method(self, _method);	
-		}
-		with (__this.__callbacks.__on_enter) {
-			__method = _method;
-		}
-		return self;
-	};
-	static set_callback_on_enter_data	 = function(_data) {
-		/// @func	set_callback_on_enter_data(data)
-		/// @param	{any} data
-		/// @return {FloeEffect} self
-		///
-		with (__this.__callbacks.__on_enter) {
-			__data = _data;
-		}
-		return self;
-	};
-	static set_callback_on_change_method = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
-		/// @func	set_callback_on_change_method(method)
-		/// @param	{method}  method
-		/// @param	{boolean} auto_bind_to_self?*=false
-		/// @return {FloeEffect} self
-		///
-		if (_auto_bind_to_self) {
-			_method = method(self, _method);	
-		}
-		with (__this.__callbacks.__on_change) {
-			__method = _method;
-		}
-		return self;
-	};
-	static set_callback_on_change_data	 = function(_data) {
-		/// @func	set_callback_on_change_data(data)
-		/// @param	{any} data
-		/// @return {FloeEffect} self
-		///
-		with (__this.__callbacks.__on_change) {
-			__data = _data;
-		}
-		return self;
-	};
-	static set_callback_on_leave_method  = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
-		/// @func	set_callback_on_leave_method(method)
-		/// @param	{method}  method
-		/// @param	{boolean} auto_bind_to_self?*=false
-		/// @return {FloeEffect} self
-		///
-		if (_auto_bind_to_self) {
-			_method = method(self, _method);	
-		}
-		with (__this.__callbacks.__on_leave) {
-			__method = _method;
-		}
-		return self;
-	};
-	static set_callback_on_leave_data	 = function(_data) {
-		/// @func	set_callback_on_leave_data(data)
-		/// @param	{any} data
-		/// @return {FloeEffect} self
-		///
-		with (__this.__callbacks.__on_leave) {
-			__data = _data;
-		}
-		return self;
-	};
-	static set_callback_on_end_method	 = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
-		/// @func	set_callback_on_end_method(method)
-		/// @param	{method}  method
-		/// @param	{boolean} auto_bind_to_self?*=false
-		/// @return {FloeEffect} self
-		///
-		if (_auto_bind_to_self) {
-			_method = method(self, _method);	
-		}
-		with (__this.__callbacks.__on_end) {
-			__method = _method;
-		}
-		return self;
-	};
-	static set_callback_on_end_data		 = function(_data) {
-		/// @func	set_callback_on_end_data(data)
-		/// @param	{any} data
-		/// @return {FloeEffect} self
-		///
-		with (__this.__callbacks.__on_end) {
-			__data = _data;
 		}
 		return self;
 	};
@@ -817,16 +680,6 @@ function FloeEffect() constructor {
 			get_event_publisher().clear_channel(_event_name);
 		}
 		return self;
-	};
-	
-	#endregion
-	#region Config /////////////////
-	
-	static __config_get_auto_bind_to_self = function() {
-		/// @func	__config_get_auto_bind_to_self()
-		///	@return {boolean} auto_bind_to_methods_to_self?
-		///
-		return __this.__config.__auto_bind_methods_to_self;
 	};
 	
 	#endregion

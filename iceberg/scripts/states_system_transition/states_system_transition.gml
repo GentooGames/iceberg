@@ -112,7 +112,3 @@ function state_system_transition_ending() {
 	};
 };
 
-
-
-
-
