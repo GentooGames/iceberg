@@ -85,6 +85,8 @@ enum __FLOE_STATE {
 
 #endregion
 
+//// SETUP AUTOMATIC METHOD BINDING!!!
+
 function FloeEffect() constructor {
 	/// @func FloeEffect()
 	///
@@ -265,7 +267,6 @@ function FloeEffect() constructor {
 		/// @func	cleanup()
 		/// @return {FloeEffect} self
 		///
-		log("effect cleanup -- called from cleanup()");
 		var _emitter = get_audio_emitter();
 		if (audio_emitter_exists(_emitter)) {
 			audio_emitter_free(_emitter);

@@ -68,14 +68,13 @@ global._transition = {
         ///
         if (!initialized) exit;
 		////////////////////////////
+		fsm.step();
+		
 		if (keyboard_check_pressed(ord("R"))) {
 			TRANSITION.restart({
-				room_target: room,
-				effect:		 FloeEffectFade,
-				room_hold:   true,
+				room_hold: true,
 			});
 		}
-		fsm.step();
 	},
 	render: function() {
 		/// @func   render()
@@ -88,38 +87,36 @@ global._transition = {
 	},
 	
 	/// Core ///////////////////////
-	goto:			   function(_data = {}) {
-		/// @func   goto(data*)
-		/// @param	{struct} data
-        /// @return {struct} self
+	goto:			   function(_room, _data = undefined) {
+		/// @func   goto(room, data*)
+		/// @param	{room_index} room
+		/// @param	{struct}	 data=undefined
+        /// @return {struct}	 self
         ///
 		if (start_transition_is_ready()) {
-			room_target	= _data[$ "room_target"];
-			effect_in	= _data[$ "effect"	   ] ?? (_data[$ "effect_in" ] ?? effect_default);
-			effect_out	= _data[$ "effect"	   ] ?? (_data[$ "effect_out"] ?? effect_default);
-			room_hold   = _data[$ "room_hold"  ] ?? room_hold; 
+			set_transition_data(_room, _data);
 			start_transition();
 		}
 		return self;
 	},
-    goto_next:		   function(_data = {}) {
+    goto_next:		   function(_data) {
         /// @func   goto_next()
 		/// @param	{struct} data
         /// @return NA
         ///
     },
-    goto_previous:	   function(_data = {}) {
+    goto_previous:	   function(_data) {
         /// @func   goto_previous()
 		/// @param	{struct} data
         /// @return NA
         ///
     },
-    restart:		   function(_data = {}) {
+    restart:		   function(_data) {
         /// @func   restart(data)
 		/// @param	{struct} data
         /// @return NA
         ///
-		goto(_data);
+		goto(room, _data);
     },
     get_room_next:	   function(_room = room) {
         /// @func   get_room_next()
@@ -145,20 +142,20 @@ global._transition = {
     },
 	
 	/// Transitions ////////////////
-	start_transition_is_ready:	function() {
+	start_transition_is_ready: function() {
 		/// @func	start_transition_is_ready()
 		/// @return {boolean} is_ready?
 		///
 		return !is_transitioning();
 	},
-	start_transition:			function() {
+	start_transition:		   function() {
 		/// @func	start_transition()
 		/// @return {struct} self
 		///
 		fsm.change(STATE_SYSTEM_TRANSITION_TRANSITIONING);
 		return self;
 	},
-	end_transition_is_ready:	function() {
+	end_transition_is_ready:   function() {
 		/// @func	end_transition_is_ready()
 		/// @return {boolean} is_ready?
 		///
@@ -168,7 +165,7 @@ global._transition = {
 			&&  room_to_release
 		);
 	},
-	end_transition:				function() {
+	end_transition:			   function() {
 		/// @func	end_transition()
 		/// @return {struct} self
 		///
@@ -176,12 +173,26 @@ global._transition = {
 		fsm.change(STATE_SYSTEM_TRANSITION_ENDING);
 		return self;
 	},
-	is_transitioning:			function() {
+	is_transitioning:		   function() {
 		/// @func	is_transitioning()
 		/// @return	{boolean} is_transitioning?
 		///
 		return !fsm.state_is(STATE_SYSTEM_TRANSITION_IDLE);
 	},
+	set_transition_data:	   function(_room, _data = undefined) {
+		/// @func	set_transition_data(room, data*)
+		/// @param	{room_index} room
+		/// @param	{struct}	 data=undefined
+		/// @return {struct}	 self
+		///
+		room_target	= _room;
+		if (_data != undefined) {
+			effect_in  = _data[$ "effect"	] ?? (_data[$ "effect_in" ] ?? effect_default);
+			effect_out = _data[$ "effect"	] ?? (_data[$ "effect_out"] ?? effect_default);
+			room_hold  = _data[$ "room_hold"] ?? room_hold; 
+		}
+		return self;
+	},	
 	
 	/// Events /////////////////////
 	get_event_publisher:	 function() {

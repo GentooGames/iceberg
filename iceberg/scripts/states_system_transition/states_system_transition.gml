@@ -28,12 +28,10 @@ function state_system_transition_transitioning() {
 	///
 	return {
 		enter: function() {
-			log("transition_enter_started");
 			event_publish("enter_started");
 			
 			effect = new effect_in()
 				.event_subscribe("enter_completed", function() {
-					log("effect_enter_completed");
 					fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
 				})
 				.set_callback_on_leave_method(method(effect, function() {
@@ -46,7 +44,6 @@ function state_system_transition_transitioning() {
 			effect.update();
 		},
 		leave: function() {
-			log("transition_enter_completed");
 			event_publish("enter_completed");
 		},
 	};
@@ -57,7 +54,6 @@ function state_system_transition_change() {
 	///
 	return {
 		enter: function() {
-			log("transition_change_started");
 			event_publish("change_started");
 			
 			room_goto(room_target);	// <-- move to state.leave?
@@ -67,7 +63,6 @@ function state_system_transition_change() {
 			effect.update();
 		},
 		leave: function() {
-			log("transition_change_completed");
 			event_publish("change_completed");
 		},
 	};
@@ -78,13 +73,10 @@ function state_system_transition_hold() {
 	///
 	return {
 		enter: function() {
-			log("transition_hold_started");
 			event_publish("hold_started");
 			
 			effect.event_subscribe("hold_completed", function() {
-				log("effect_hold_completed");
 				room_to_release = true;
-				
 				if (end_transition_is_ready()) {
 					end_transition();
 				}
@@ -95,9 +87,7 @@ function state_system_transition_hold() {
 			effect.update();
 		},
 		leave: function() {
-			log("transition_hold_completed");
 			event_publish("hold_completed");
-			
 			effect.cleanup();
 			effect_in = undefined;
 		},
@@ -109,12 +99,10 @@ function state_system_transition_ending() {
 	///
 	return {
 		enter: function() {
-			log("transition_exit_started");
 			event_publish("exit_started");
 			
 			effect = new effect_out()
 				.event_subscribe("enter_completed", function() {
-					log("effect enter_completed");
 					fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
 				})
 				.reverse()
@@ -124,9 +112,7 @@ function state_system_transition_ending() {
 			effect.update();
 		},
 		leave: function() {
-			log("transition_exit_completed");
 			event_publish("exit_completed");
-			
 			effect.cleanup();
 			effect_out = undefined;
 		},
