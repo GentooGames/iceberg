@@ -1,6 +1,9 @@
 global._transition = { 
     initialized: false,
 	
+	/// wire up SAVE_CONTROLLER invokation on room change
+	/// setup transition callbacks
+	
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()

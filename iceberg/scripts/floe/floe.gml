@@ -80,12 +80,9 @@ enum __FLOE_STATE {
 											// changing this class reference, and then updating the Events methods.
 											// if you decide to intended publisher, make sure to have the following
 											// asset included in your project: https://xdstudios.itch.io/xpublisher
-
 #endregion
 
 #endregion
-
-//// SETUP AUTOMATIC METHOD BINDING!!!
 
 function FloeEffect() constructor {
 	/// @func FloeEffect()
@@ -97,6 +94,9 @@ function FloeEffect() constructor {
 	__threshold	=  0.1;
 	__hold_time = -1;
 	__this		=  {
+		__config:	 {
+			__auto_bind_methods_to_self: false,
+		},
 		__control:	 {
 			__running:	   false,
 			__state:	   __FLOE_STATE.HIDDEN,
@@ -275,7 +275,7 @@ function FloeEffect() constructor {
 		return self;
 	};
 	
-	#region Getters ////////
+	#region Getters ////////////////
 	
 	static get_running					 = function() {
 		/// @func	get_running()
@@ -439,7 +439,7 @@ function FloeEffect() constructor {
 	};
 	
 	#endregion
-	#region Setters ////////
+	#region Setters ////////////////
 		
 	static set_running					 = function(_running) {
 		/// @func	set_running(running?)
@@ -573,11 +573,15 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_callback_on_enter_method  = function(_method) {
-		/// @func	set_callback_on_enter_method(method)
-		/// @param	{method} method
+	static set_callback_on_enter_method  = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
+		/// @func	set_callback_on_enter_method(method, auto_bind_to_self?*)
+		/// @param	{method}  method
+		/// @param	{boolean} auto_bind_to_self?*=false
 		/// @return {FloeEffect} self
 		///
+		if (_auto_bind_to_self) {
+			_method = method(self, _method);	
+		}
 		with (__this.__callbacks.__on_enter) {
 			__method = _method;
 		}
@@ -593,11 +597,15 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_callback_on_change_method = function(_method) {
+	static set_callback_on_change_method = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
 		/// @func	set_callback_on_change_method(method)
-		/// @param	{method} method
+		/// @param	{method}  method
+		/// @param	{boolean} auto_bind_to_self?*=false
 		/// @return {FloeEffect} self
 		///
+		if (_auto_bind_to_self) {
+			_method = method(self, _method);	
+		}
 		with (__this.__callbacks.__on_change) {
 			__method = _method;
 		}
@@ -613,11 +621,15 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_callback_on_leave_method  = function(_method) {
+	static set_callback_on_leave_method  = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
 		/// @func	set_callback_on_leave_method(method)
-		/// @param	{method} method
+		/// @param	{method}  method
+		/// @param	{boolean} auto_bind_to_self?*=false
 		/// @return {FloeEffect} self
 		///
+		if (_auto_bind_to_self) {
+			_method = method(self, _method);	
+		}
 		with (__this.__callbacks.__on_leave) {
 			__method = _method;
 		}
@@ -633,11 +645,15 @@ function FloeEffect() constructor {
 		}
 		return self;
 	};
-	static set_callback_on_end_method	 = function(_method) {
+	static set_callback_on_end_method	 = function(_method, _auto_bind_to_self = __config_get_auto_bind_to_self()) {
 		/// @func	set_callback_on_end_method(method)
-		/// @param	{method} method
+		/// @param	{method}  method
+		/// @param	{boolean} auto_bind_to_self?*=false
 		/// @return {FloeEffect} self
 		///
+		if (_auto_bind_to_self) {
+			_method = method(self, _method);	
+		}
 		with (__this.__callbacks.__on_end) {
 			__method = _method;
 		}
@@ -655,7 +671,7 @@ function FloeEffect() constructor {
 	};
 	
 	#endregion
-	#region Checkers ///////
+	#region Checkers ///////////////
 	
 	static is_running = function() {
 		/// @func	is_running()
@@ -665,7 +681,7 @@ function FloeEffect() constructor {
 	};
 	
 	#endregion
-	#region Actions ////////
+	#region Actions ////////////////
 	
 	static enter   = function() {
 		/// @func	enter()
@@ -717,7 +733,7 @@ function FloeEffect() constructor {
 	};
 		
 	#endregion
-	#region Events /////////
+	#region Events /////////////////
 	
 	static __events_init		   = function() {
 		/// @func	__events_init()
@@ -801,6 +817,16 @@ function FloeEffect() constructor {
 			get_event_publisher().clear_channel(_event_name);
 		}
 		return self;
+	};
+	
+	#endregion
+	#region Config /////////////////
+	
+	static __config_get_auto_bind_to_self = function() {
+		/// @func	__config_get_auto_bind_to_self()
+		///	@return {boolean} auto_bind_to_methods_to_self?
+		///
+		return __this.__config.__auto_bind_methods_to_self;
 	};
 	
 	#endregion

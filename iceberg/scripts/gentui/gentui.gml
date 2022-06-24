@@ -16,6 +16,13 @@
 
 #region version 0.2.*
 
+#region version 0.2.2
+/*
+	Date: 06/22/2022
+		QOL:
+			x.	renamed auto_bind_methods to auto_bind_methods_to_self for more explicit naming intention
+*/
+#endregion
 #region version 0.2.1 (released)
 /*
 	Date: 06/22/2022
@@ -79,7 +86,7 @@
 			x.	renamed click_*() methods to click_execute_*()
 			x.	renamed set_propegate_*() methods to set_pin_propegate_*()
 			x.	renamed propegate_*() to propagate_*() fixing spelling error
-			x.	renamed auto_bind to auto_bind_methods
+			x.	renamed auto_bind to auto_bind_methods_to_self
 			x.	renamed pin_propagate_pos to pin_propagate_pos_to_child
 			x.	renamed pin_propagate_scale	to pin_propagate_scale_to_child
 			x.	renamed pin_propagate_alpha	to pin_propagate_alpha_to_child
@@ -789,7 +796,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 			thickness:						1,
 			input_device:				    0,
 			use_gui_space:					true,
-			auto_bind_methods:				true,
+			auto_bind_methods_to_self:				true,
 			state_execute_on_enter:			true,
 			state_execute_on_exit:			true,
 			state_on_change_sync_config:	true,
@@ -1342,11 +1349,11 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __this.__default[$ _property_name];
 	};
 		
-	static default_get_auto_bind_methods		   = function() {
-		/// @func	default_get_auto_bind_methods()
-		/// @return {boolean} auto_bind_methods?
+	static default_get_auto_bind_methods_to_self		   = function() {
+		/// @func	default_get_auto_bind_methods_to_self()
+		/// @return {boolean} auto_bind_methods_to_self?
 		///
-		return default_get("auto_bind_methods");
+		return default_get("auto_bind_methods_to_self");
 	};
 	static default_get_state_on_change_sync_config = function() {
 		/// @func	default_get_state_on_change_sync_config()
@@ -1379,7 +1386,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static __action_add		= function(_action_context, _action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static __action_add		= function(_action_context, _action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	__action_add(action_context, action_name, action_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name 
@@ -1490,7 +1497,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static __action_set_method = function(_action_context, _action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static __action_set_method = function(_action_context, _action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	__action_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name 
@@ -1508,7 +1515,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	}
 	
 	/// Action Triggers
-	static __action_add_trigger		 = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static __action_add_trigger		 = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	__action_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name
@@ -1623,7 +1630,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return false;
 	};
 	
-	static __action_set_trigger_method  = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static __action_set_trigger_method  = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	__action_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{struct}  action_context
 		/// @param	{string}  action_name
@@ -1690,7 +1697,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Actions Custom: Core
-	static action_add	  = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_add	  = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
@@ -1753,7 +1760,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_name(__this.__actions.__custom, _action_name, _new_name);
 	};
-	static action_set_method = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_set_method = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -1764,7 +1771,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 		
 	/// Action Custom: Triggers Core
-	static action_add_trigger	   = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_add_trigger	   = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_add_trigger(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param	{string}  trigger_name
@@ -1839,7 +1846,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		return __action_get_triggers_active(__this.__actions.__custom);
 	};
 	
-	static action_set_trigger_method  = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_set_trigger_method  = function(_action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_set_trigger_method(action_name, trigger_name, trigger_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param	{string}  trigger_name
@@ -1902,7 +1909,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Actions Update: Core
-	static action_update_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_update_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_update_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
@@ -1967,7 +1974,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_name(__this.__actions.__update, _action_name, _new_name);
 	};
-	static action_update_set_method	= function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_update_set_method	= function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_update_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -1988,7 +1995,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Actions Render: Core
-	static action_render_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_render_add	 = function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_render_add(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name 
 		/// @param	{method}  action_method
@@ -2053,7 +2060,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		///
 		return __action_set_name(__this.__actions.__render, _action_name, _new_name);
 	};
-	static action_render_set_method	= function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods()) {
+	static action_render_set_method	= function(_action_name, _action_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
 		/// @func	action_render_set_method(action_name, action_method, bind_to_self?*)
 		/// @param	{string}  action_name
 		/// @param  {method}  action_method
@@ -2093,25 +2100,25 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_add		= function(_state_name, _state_method, _auto_bind_method = default_get_auto_bind_methods()) {
-		/// @func	state_add(state_name, state_method, auto_bind_methods?*)
+	static state_add		= function(_state_name, _state_method, _auto_bind_method = default_get_auto_bind_methods_to_self()) {
+		/// @func	state_add(state_name, state_method, auto_bind_methods_to_self?*)
 		/// @desc	add a new state_method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} state_method
-		/// @param	{boolean}		  auto_bind_methods?*
+		/// @param	{boolean}		  auto_bind_methods_to_self?*
 		/// @return	{Ui}			  self
 		///
 		return state_add_ext(_state_name,, _state_method,,, _auto_bind_method);
 	};
-	static state_add_ext	= function(_state_name, _on_enter_method = undefined, _on_loop_method, _on_exit_method = undefined, _config_name = undefined, _auto_bind_method = default_get_auto_bind_methods()) {
-		/// @func	state_add_ext(state_name, on_enter_method*, on_loop_method, on_exit_method*, config_name*, auto_bind_methods?*)
+	static state_add_ext	= function(_state_name, _on_enter_method = undefined, _on_loop_method, _on_exit_method = undefined, _config_name = undefined, _auto_bind_method = default_get_auto_bind_methods_to_self()) {
+		/// @func	state_add_ext(state_name, on_enter_method*, on_loop_method, on_exit_method*, config_name*, auto_bind_methods_to_self?*)
 		/// @desc	add a new state_method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} on_enter=undefined
 		/// @param	{method/function} on_loop
 		/// @param	{method/function} on_exit=undefined
 		/// @param	{struct}		  config_name=undefined
-		/// @param	{boolean}		  auto_bind_methods?*
+		/// @param	{boolean}		  auto_bind_methods_to_self?*
 		/// @return	{Ui}			  self
 		///
 		if (_auto_bind_method) {
@@ -2302,12 +2309,12 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_set_on_enter	 = function(_state_name, _on_enter_method, _auto_bind_method = default_get_auto_bind_methods()) {
-		/// @func	state_set_on_enter(state_name, on_enter_method, auto_bind_methods?*)
+	static state_set_on_enter	 = function(_state_name, _on_enter_method, _auto_bind_method = default_get_auto_bind_methods_to_self()) {
+		/// @func	state_set_on_enter(state_name, on_enter_method, auto_bind_methods_to_self?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} on_enter_method
-		/// @param	{boolean}		  auto_bind_methods?*
+		/// @param	{boolean}		  auto_bind_methods_to_self?*
 		/// @return	{Ui}			  self
 		///
 		if (state_exists(_state_name)) {
@@ -2318,12 +2325,12 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_set_on_loop	 = function(_state_name, _on_loop_method, _auto_bind_method = default_get_auto_bind_methods()) {
-		/// @func	state_set_on_enter(state_name, on_loop_method, auto_bind_methods?*)
+	static state_set_on_loop	 = function(_state_name, _on_loop_method, _auto_bind_method = default_get_auto_bind_methods_to_self()) {
+		/// @func	state_set_on_enter(state_name, on_loop_method, auto_bind_methods_to_self?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} on_loop_method
-		/// @param	{boolean}		  auto_bind_methods?*
+		/// @param	{boolean}		  auto_bind_methods_to_self?*
 		/// @return	{Ui}			  self
 		///
 		if (state_exists(_state_name)) {
@@ -2334,12 +2341,12 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		}
 		return self;
 	};
-	static state_set_on_exit	 = function(_state_name, _on_exit_method, _auto_bind_method = default_get_auto_bind_methods()) {
-		/// @func	state_set_on_enter(state_name, on_exit_method, auto_bind_methods?*)
+	static state_set_on_exit	 = function(_state_name, _on_exit_method, _auto_bind_method = default_get_auto_bind_methods_to_self()) {
+		/// @func	state_set_on_enter(state_name, on_exit_method, auto_bind_methods_to_self?*)
 		/// @desc	add a new state_on_enter method bound to a given state_name
 		/// @param	{string}		  state_name
 		/// @param	{method/function} on_exit_method
-		/// @param	{boolean}		  auto_bind_methods?*
+		/// @param	{boolean}		  auto_bind_methods_to_self?*
 		/// @return	{Ui}			  self
 		///
 		if (state_exists(_state_name)) {

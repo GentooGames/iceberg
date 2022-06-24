@@ -29,15 +29,10 @@ function state_system_transition_transitioning() {
 	return {
 		enter: function() {
 			event_publish("enter_started");
-			
 			effect = new effect_in()
 				.event_subscribe("enter_completed", function() {
 					fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
 				})
-				.set_callback_on_leave_method(method(effect, function() {
-					log("effect cleanup -- frome on_leave callback");	/// <-- this does not need to be here anymore, but it should be hitting. why not?
-					//cleanup();
-				}))
 				.enter()
 		},
 		step:  function() {
@@ -55,7 +50,6 @@ function state_system_transition_change() {
 	return {
 		enter: function() {
 			event_publish("change_started");
-			
 			room_goto(room_target);	// <-- move to state.leave?
 			fsm.change(STATE_SYSTEM_TRANSITION_HOLD);
 		},
@@ -74,7 +68,6 @@ function state_system_transition_hold() {
 	return {
 		enter: function() {
 			event_publish("hold_started");
-			
 			effect.event_subscribe("hold_completed", function() {
 				room_to_release = true;
 				if (end_transition_is_ready()) {
@@ -100,7 +93,6 @@ function state_system_transition_ending() {
 	return {
 		enter: function() {
 			event_publish("exit_started");
-			
 			effect = new effect_out()
 				.event_subscribe("enter_completed", function() {
 					fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
@@ -114,6 +106,7 @@ function state_system_transition_ending() {
 		leave: function() {
 			event_publish("exit_completed");
 			effect.cleanup();
+			effect	   = undefined;
 			effect_out = undefined;
 		},
 	};
