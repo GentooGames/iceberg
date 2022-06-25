@@ -11,6 +11,7 @@ iceberg:
 	- procedurally generated dungeon generator
 	- replace iota with gm_time_source
 	- remove callbacks from save controller and replace with pubsub?
+	- recheckout gprop? normalize prop naming and methods
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width

@@ -4,9 +4,7 @@ enum INTERP {
 	LERP,	
 };
 
-#macro __GPROP_ID_DELINEATOR							"."
-#macro __GPROP_DEFAULT_INTERP_ON_COMPLETE_PUBLISH		true
-#macro __GPROP_DEFAULT_INTERP_ON_COMPLETE_EVENT_SUFFIX "interp_completed"
+#macro __GPROP_ID_DELINEATOR "."
 
 function GProp(_data) constructor {
 	/// @func	GProp(data)
@@ -33,6 +31,8 @@ function GProp(_data) constructor {
 		speed		= __SPRING_DEFAULT_SPEED;
 		spring_main	= new Spring(tension, dampening);
 	};
+		
+	EventObject();
 	
 	#region Public /////////
 	
@@ -151,7 +151,7 @@ function GProp(_data) constructor {
 		value = get_target();
 		return self;
 	};
-	static spring = function(_speed = __GPROP_DEFAULT_SPRING_SPEED) {
+	static spring = function(_speed = springs.speed) { // <-- replace springs.speed with default value getter
 		/// @func	spring()
 		/// @return {GProp} self
 		///
@@ -164,7 +164,7 @@ function GProp(_data) constructor {
 	#endregion
 	#region Private ////////
 	
-	static __interp_update_const				= function() {
+	static __interp_update_const	= function() {
 		/// @func __interp_update_const()
 		///
 		if (get() - value <= interp.speed) {
@@ -172,12 +172,12 @@ function GProp(_data) constructor {
 		}
 		/// @TODO: add in smoothing?
 	};
-	static __interp_update_lerp					= function() {
+	static __interp_update_lerp		= function() {
 		/// @func __interp_update_lerp()
 		///
 		value = lerp(value, get_target(), interp.speed);
 	};
-	static __interp_check_complete				= function() {
+	static __interp_check_complete	= function() {
 		/// @func __interp_check_complete()
 		///
 		if (abs(value - get()) <= interp.threshold) {
@@ -189,7 +189,7 @@ function GProp(_data) constructor {
 			interp.complete = false;	
 		}
 	};
-	static __interp_complete					= function() {
+	static __interp_complete		= function() {
 		/// @func __interp_complete()
 		///
 		with (interp.on_complete) {
@@ -199,16 +199,14 @@ function GProp(_data) constructor {
 		}
 		interp.complete = true;
 		
-		if (__GPROP_DEFAULT_INTERP_ON_COMPLETE_PUBLISH) {
-			PUBLISH(__interp_get_event_name_on_complete(), { id: other });
-		}
+		event_publish(__interp_get_event_name() + "_interp_completed", { id: other });
 	};
-	static __interp_get_event_name_on_complete	= function() {
-		/// @func __interp_get_event_name_on_complete()
+	static __interp_get_event_name	= function() {
+		/// @func __interp_get_event_name()
 		///
-		return __unique_id_get() + __GPROP_DEFAULT_INTERP_ON_COMPLETE_EVENT_SUFFIX;
+		return __unique_id_get();
 	};
-	static __unique_id_get						= function() {
+	static __unique_id_get			= function() {
 		/// @func	__unique_id_get()
 		/// @return {string} id
 		///
@@ -225,12 +223,10 @@ function GProp(_data) constructor {
 	
 	#endregion
 	
-	if (__GPROP_DEFAULT_INTERP_ON_COMPLETE_PUBLISH) {
-		if (!PUBLISHER.has_registered_channel(__interp_get_event_name_on_complete())) {
-			PUBLISHER.register_channel(__interp_get_event_name_on_complete());	
-		}
+	if (!event_registered(__interp_get_event_name() + "_interp_completed")) {
+		event_register(__interp_get_event_name() + "_interp_completed");	
 	}
 };	
-#macro Prop GProp
+
 
 

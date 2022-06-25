@@ -95,7 +95,7 @@ _update_zoom   = function() {
 	/// @event: zoom complete
 	if (dist_thresh(zoom, zoom_to, 0.01, true)) {
 		if (!zoom_complete) {
-			PUBLISH("camera_zoom_completed");
+			event_publish("zoom_completed");
 			zoom_complete = true;
 		}
 	}
@@ -314,8 +314,3 @@ zoom_out = function(_increment) {
 	zoom_to = clamp(zoom - _increment, preset.zoom.min, preset.zoom.max);
 }
 	
-#region Events /////////////
-
-
-
-#endregion

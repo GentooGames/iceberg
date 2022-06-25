@@ -88,5 +88,9 @@ CLOCK_STABLE.variable_interpolate("pos_x",	   "iota_pos_x");
 CLOCK_STABLE.variable_interpolate("pos_y",	   "iota_pos_y");
 CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );
 
-// pubsub events
-publisher = new Publisher();
+// events
+EventObject();
+event_register(
+	"zoom_completed",
+);
+

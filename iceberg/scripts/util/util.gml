@@ -1539,3 +1539,51 @@ function new_callback(_callback, _data = undefined) {
 };
 
 #endregion
+#region isometric
+
+function iso_ijk_to_x(_iso_width, _i, _j, _k) {
+	/// @func   iso_ijk_to_x(iso_width, i, j, k)
+	/// @parma	{real} iso_width
+	/// @param  {real} i
+	/// @param  {real} j
+	/// @param	{real} k
+	/// @return {real} x
+	///
+	return (_i - _j) * (_iso_width * 0.5);
+};
+function iso_ijk_to_y(_iso_height, _i, _j, _k) {
+	/// @func   iso_ijk_to_y(iso_height, i, j, k)
+	/// @param	{real} iso_height
+	/// @param  {real} i
+	/// @param  {real} j
+	/// @param	{real} k
+	/// @return {real} y
+	///
+	var _y = (_i + _j) * (_iso_height * 0.5);
+	var _z = _k * (_iso_height * 1.0);
+	return _y - _z;
+};
+function iso_xy_to_i(_iso_width, _iso_height, _x, _y) {
+	/// @func   iso_xy_to_i(iso_width, iso_height, x, y)
+	/// @desc   convert given world coordinates to board coordinates.
+	/// @param	{real} iso_width
+	/// @param	{real} iso_height
+	/// @param  {real} x
+	/// @param  {real} y
+	/// @return {real} i
+	///
+	return floor(((_x / (_iso_width * 0.5) + (_y / (_iso_height * 0.5))) * 0.5) + 0.5);
+};
+function iso_xy_to_j(_iso_width, _iso_height, _x, _y) {
+	/// @func   iso_xy_to_j(iso_width, iso_height, x, y)
+	/// @desc   convert given world coordinates to board coordinates.
+	/// @param	{real} iso_width
+	/// @param	{real} iso_height
+	/// @param  {real} x
+	/// @param  {real} y
+	/// @return {real} j
+	///
+	return floor(((_y / (_iso_height * 0.5) - (_x / (_iso_width  * 0.5))) * 0.5) + 0.5);
+};
+
+#endregion
