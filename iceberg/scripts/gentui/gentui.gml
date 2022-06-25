@@ -169,12 +169,11 @@
 #macro __GENTUI_DEFAULT_RENDER_TRIGGER_NAME   "__default__"
 #macro __GENTUI_DEFAULT_RENDER_TRIGGER_METHOD function() { return true; }
 
-#macro __GENTUI_PUBLISHER_ENABLED	true		// <-- to disable, set this to false, and set __GENTUI_PUBLISHER to undefined
-#macro __GENTUI_PUBLISHER			Publisher	// <-- this system utilizes a PubSub design pattern. you can replace
-												// the existing implementation with a custom implementation by first
-												// changing this class reference, and then updating the Events methods.
-												// if you decide to intended publisher, make sure to have the following
-												// asset included in your project: https://xdstudios.itch.io/xpublisher
+#macro __GENTUI_PUBLISHER	Publisher	// <-- this system utilizes a PubSub design pattern. you can replace
+										// the existing implementation with a custom implementation by first
+										// changing this class reference, and then updating the Events methods.
+										// if you decide to intended publisher, make sure to have the following
+										// asset included in your project: https://xdstudios.itch.io/xpublisher
 
 #endregion
 
@@ -2814,10 +2813,8 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @func	__events_init()
 		/// @return {Ui} self
 		///
-		if (__GENTUI_PUBLISHER_ENABLED) {
-			for (var _i = 0; _i < argument_count; _i++) {
-				event_register(argument[_i]);	
-			}
+		for (var _i = 0; _i < argument_count; _i++) {
+			event_register(argument[_i]);	
 		}
 		return self;
 	};	
@@ -2832,10 +2829,8 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{string} event_name
 		/// @return	{Ui} self
 		///
-		if (__GENTUI_PUBLISHER_ENABLED) {
-			for (var _i = 0; _i < argument_count; _i++) {
-				get_event_publisher().register_channel(argument[_i]);
-			}
+		for (var _i = 0; _i < argument_count; _i++) {
+			get_event_publisher().register_channel(argument[_i]);
 		}
 		return self;
 	};
@@ -2844,10 +2839,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{string}  event_name
 		/// @return {boolean} event_is_registered?
 		///
-		if (__GENTUI_PUBLISHER_ENABLED) {
-			return get_event_publisher().has_registered_channel(_event_name);
-		}
-		return false;
+		return get_event_publisher().has_registered_channel(_event_name);
 	};
 	static event_publish		   = function(_event_name, _data = undefined) {
 		/// @func	 event_publish(event_name, data*)
@@ -2865,9 +2857,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{boolean} weak_reference?=false
 		/// @return {Ui}	  self
 		///
-		if (__GENTUI_PUBLISHER_ENABLED) {
-			get_event_publisher().subscribe(_event_name, _callback, _weak_reference);
-		}
+		get_event_publisher().subscribe(_event_name, _callback, _weak_reference);
 		return self;
 	};
 	static event_unsubscribe	   = function(_event_name, _force = false) {
@@ -2876,9 +2866,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @parma	{boolean} force?=false
 		/// @return {Ui} self
 		///
-		if (__GENTUI_PUBLISHER_ENABLED) {
-			get_event_publisher().unsubscribe(_event_name, _force);
-		}
+		get_event_publisher().unsubscribe(_event_name, _force);
 		return self;
 	};
 	static event_clear_subscribers = function(_event_name) {
@@ -2886,9 +2874,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @param	{string} event_name
 		/// @return {Ui} self
 		///
-		if (__GENTUI_PUBLISHER_ENABLED) {
-			get_event_publisher().clear_channel(_event_name);
-		}
+		get_event_publisher().clear_channel(_event_name);
 		return self;
 	};
 	
