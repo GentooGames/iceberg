@@ -1,7 +1,7 @@
 /// @desc Methods
 event_inherited();
 
-#region Saving
+#region Saving /////////////
 
 save_room			  = function() {
 	/// @func save_room()
@@ -102,7 +102,7 @@ save_to_disk_complete = function() {
 };
 
 #endregion
-#region Loading
+#region Loading ////////////
 
 load_room				= function() {
 	/// @func load_room()
@@ -196,7 +196,7 @@ load_from_disk_complete = function() {
 };
 
 #endregion
-#region File System
+#region File System ////////
 
 get_filename				= function(_save_slot = save_slot) {
 	/// @func  get_filename(save_slot*)
@@ -280,7 +280,7 @@ save_file_validated			= function() {
 };
 
 #endregion
-#region Util 
+#region Util ///////////////
 
 stash_save_object	= function(_save_object = id) {
 	/// @func  stash_save_object(save_object*)

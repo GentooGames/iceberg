@@ -19,6 +19,7 @@ event_id = "save";
 	- SaveObject and serializer auto binding handling?
 	- Serialize & Deserialize 
 		- arrays, structs, constructors, ds_lists, ds_maps, ds_queues, buffers
+	- remove callbacks? INTEGRATE PUBSUB
 */
 #macro __SC_CONTROLLER				SAVE
 #macro __SC_SAVE_FILE_GROUP			"default"
@@ -81,6 +82,16 @@ setup_save	  = function() {
 	load_on_success = undefined;		// on_success callback
 	load_on_fail	= undefined;		// on_fail callback
 	load_buffer		= buffer_create(1, buffer_grow, 1);
+	
+	#endregion
+	#region Events /////////
+	
+	/// Replace With Better/More Integrated PubSub Implementation
+	TRANSITION.event_subscribe("hold_started", function() {
+		save_game(,, function() {
+			TRANSITION.end_transition();
+		});
+	});
 	
 	#endregion
 	save_file_begin_validation(room_goto_next);
@@ -174,9 +185,10 @@ render	 = function() {
 
 #endregion
 
-test_number = 100;
-test_name	= "Gentoo";
 
+/*
+test_number		= 100;
+test_name		= "Gentoo";
 test_serializer = new Serializer(
 	id, 
 	[
@@ -185,5 +197,3 @@ test_serializer = new Serializer(
 		/// new SerializerType("buffer_name", VAR_TYPE.BUFFER)
 	]
 );
-
-

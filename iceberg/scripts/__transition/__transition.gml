@@ -74,7 +74,9 @@ global._transition = {
 		
 		if (keyboard_check_pressed(ord("R"))) {
 			TRANSITION.restart({
-				room_hold: true,
+				room_hold:  true,
+				effect_in:  FloeEffectFade,
+				effect_out: FloeEffectBorderTrees
 			});
 		}
 	},
@@ -104,43 +106,45 @@ global._transition = {
     goto_next:		   function(_data) {
         /// @func   goto_next()
 		/// @param	{struct} data
-        /// @return NA
+        /// @return {struct} self
         ///
+		return goto(get_room_next(), _data);
     },
     goto_previous:	   function(_data) {
         /// @func   goto_previous()
 		/// @param	{struct} data
-        /// @return NA
+        /// @return {struct} self
         ///
+		return goto(get_room_previous(), _data);
     },
     restart:		   function(_data) {
         /// @func   restart(data)
 		/// @param	{struct} data
-        /// @return NA
+        /// @return {struct} self
         ///
-		goto(room, _data);
+		return goto(room, _data);
     },
     get_room_next:	   function(_room = room) {
         /// @func   get_room_next()
-        /// @param  
-        /// @return 
+        /// @param  {room_index} room
+        /// @return {room_index} room_next
         ///
         var _next_room = _room + 1;
         if (room_exists(_next_room)) {
             return _next_room;
         }
-        throw("<ERROR in FLOE.get_room_next()>:room with index " + string(_next_room) + " does not exist.");
+        throw("<ERROR in TRANSITION.get_room_next()>:room with index " + string(_next_room) + " does not exist.");
     },
     get_room_previous: function(_room = room) {
         /// @func   get_room_previous()
-        /// @param  
-        /// @return 
+        /// @param  {room_index} room
+        /// @return {room_index} room_previous
         ///
         var _previous_room = _room - 1;
         if (room_exists(_previous_room)) {
             return _previous_room;
         }
-        throw("<ERROR in FLOE.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
+        throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
     },
 	
 	/// Transitions ////////////////
@@ -258,32 +262,4 @@ global._transition = {
 	},
 };
 #macro TRANSITION global._transition
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

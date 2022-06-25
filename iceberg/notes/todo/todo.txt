@@ -1,9 +1,8 @@
 iceberg:
-	- rework transition system to use state machine
-	- remove objc_game initializations from state machine
 	- PUBSUB system 
 		- rework so that not everything is at a global level
 			- faster performance, but more memory overhead
+		- potentially remove callbacks?
 	- organize and abstract global._gui{} into a more modular system similar to global._transition{}
 		- create an array of borders that is iterated through and updated
 		- expose ways for new borders to be created and destroyed dynamically	
@@ -11,6 +10,7 @@ iceberg:
 	- add macro pointers so that uniquely named libraries can be accessed through intuitively named references
 	- procedurally generated dungeon generator
 	- replace iota with gm_time_source
+	- remove callbacks from save controller and replace with pubsub?
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width

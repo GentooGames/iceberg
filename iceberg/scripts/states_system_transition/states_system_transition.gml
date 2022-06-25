@@ -106,8 +106,8 @@ function state_system_transition_ending() {
 		leave: function() {
 			event_publish("exit_completed");
 			effect.cleanup();
-			effect	   = undefined;
 			effect_out = undefined;
+			effect	   = undefined;
 		},
 	};
 };
