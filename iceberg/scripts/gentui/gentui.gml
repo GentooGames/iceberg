@@ -21,6 +21,7 @@
 	Date: 06/22/2022
 		QOL:
 			x.	renamed auto_bind_methods to auto_bind_methods_to_self for more explicit naming intention
+			x.	a Publisher instance is now required, and no longer optional
 */
 #endregion
 #region version 0.2.1 (released)
