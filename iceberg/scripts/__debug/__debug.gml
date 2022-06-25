@@ -37,37 +37,6 @@ DEBUG = {
         if (!DEBUGGING)   exit
 		if (!initialized) exit;
 		
-		//if (INPUT.keyboard.button_pressed(ord("R"))) {	// room restart
-		//	TRANSITION.restart({
-		//		wait:		true,
-		//		on_change:	new_callback(function() {
-		//			SAVE.save_game(,, function() {
-		//				TRANSITION.complete();
-		//			});
-		//		})
-		//	});
-		//}
-		//if (INPUT.keyboard.button_pressed(ord("O"))) {	// room goto next
-		//	TRANSITION.goto_previous({
-		//		wait:		true,
-		//		on_change:	new_callback(function() {
-		//			SAVE.save_game(,, function() {
-		//				TRANSITION.complete();
-		//			});
-		//		})
-		//	});
-		//}
-		//if (INPUT.keyboard.button_pressed(ord("P"))) {	// room goto previous
-		//	TRANSITION.goto_next({
-		//		wait:		true,
-		//		on_change:	new_callback(function() {
-		//			SAVE.save_game(,, function() {
-		//				TRANSITION.complete();
-		//			});
-		//		}),
-		//	});
-		//}
-		
         if (INPUT.keyboard.button_pressed(vk_f11))   {
 			WINDOW.toggle_fullscreen();
 		}

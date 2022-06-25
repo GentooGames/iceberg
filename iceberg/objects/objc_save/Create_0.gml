@@ -187,5 +187,3 @@ test_serializer = new Serializer(
 );
 
 
-
-

@@ -46,6 +46,14 @@ global._gui = {
 			x: SURF_W * 0.5,
 			y: SURF_H * 0.5,
 		})
+		.action_add("mouse_clicked_action", function(_data) {
+			show_message("mouse_clicked -- " + string(_data));
+		})
+		.action_add_trigger("mouse_clicked_action", "mouse_clicked_trigger", function() {
+			//// THIS IS COMPONENT SCOPED!
+			var _result = (mouse_touching() && mouse_check_button_pressed(mb_left));
+			return action_set_trigger_result(_result, { x: mouse_x, y: mouse_y });
+		})
     },    
 	update:	function() {
 		/// @func   update()

@@ -362,6 +362,10 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		__count:    0,
 		__triggers: {},
 	};
+		
+	/// Register Trigger PubSub Event
+	var _component = get_owner();
+	_component.event_register( "action_executed_" + get_name());
 	
 	static update  = function() {
 		/// @func	update()
@@ -373,8 +377,7 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		return self;
 	};
 	static execute = function() {	/// @OVERIDE
-		/// @func	execute(data)
-		/// @param  {any} data
+		/// @func	execute()
 		/// @return {any} execute_return
 		///
 		var _method =  get_method();
@@ -382,9 +385,8 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		set_data(undefined);	// <--	wipe data after execution, so that temporarily
 								//		set data through action_send_payload() does not 
 								//		become persistent.
-								
 		var _component = get_owner();
-		_component.event_publish("action_executed", get_name());
+		_component.event_publish("action_executed_" + get_name(), self);
 		
 		return _return;
 	};
@@ -396,24 +398,16 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 		/// @func	update_triggers()
 		/// @return	{GentuiAction} self
 		///
-		var _validated	  = false;
-		var _trigger_name = undefined;
-		
 		with (__triggers) {
 			if (__active) {
 				for (var _i = 0; _i < __count; _i++) {
 					var _name	 = __names[_i];
 					var _trigger = __triggers[$ _name];
-					if (_trigger.get_active() && _trigger.execute()) {
-						_validated	  =  true;
-						_trigger_name = _name;
-						break;	
+					if (_trigger.get_active()) {
+						_trigger.execute();
 					}
 				}
 			}
-		}
-		if (_validated) {
-			execute();
 		}
 		return self;
 	};
@@ -434,6 +428,10 @@ function GentuiAction(_config) : GentuiUtilMethod(_config) constructor {
 				array_push(__names, _trigger_name);
 				__count++;
 			}
+			/// Register Trigger PubSub Event
+			var _component = get_owner();
+			_component.event_register( "trigger_executed_" + _trigger_name);
+			_component.event_subscribe("trigger_executed_" + _trigger_name, method(self, execute));
 		}
 		return self;
 	};
@@ -585,7 +583,7 @@ function GentuiTrigger(_config) : GentuiUtilMethod(_config) constructor {
 		if (_result) {
 			var _action	   =  get_owner();
 			var _component = _action.get_owner();
-			_component.event_publish("trigger_triggered", get_name());
+			_component.event_publish("trigger_executed_" + get_name());
 		}
 		return _result;
 	};
@@ -1886,18 +1884,11 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	
 	/// Action Custom: Triggers Util
-	static action_send_payload = function(_data) {
-		/// @func	action_send_payload(data)
-		/// @param	{any} data
-		/// @return {Ui}  self
+	static action_set_trigger_result  = function(_result, _data) {
+		/// @func	action_set_trigger_result(result, data)
 		///
-		/// the method bound to the trigger gets run inside of the GentuiAction class. when this method runs,
-		/// the "other" context becomes a reference to the GentuiAction class, meaning that we can now invoke 
-		/// methods associated to that Action, such as: set_data()
-		with (other) {
-			set_data(_data);	
-		}
-		return self;
+		other.set_data(_data);
+		return _result;
 	};
 			
 	#endregion
