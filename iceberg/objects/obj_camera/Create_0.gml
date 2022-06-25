@@ -12,8 +12,7 @@ event_user(METHODS);
 cam	    = camera_create();
 viewmat = null;
 projmat = null;
-
-preset = {
+preset  = {
     zoom: {
         intro: 1.0,
         base:  0.3,
@@ -88,3 +87,6 @@ CLOCK_STABLE.add_cycle_method(function() {
 CLOCK_STABLE.variable_interpolate("pos_x",	   "iota_pos_x");
 CLOCK_STABLE.variable_interpolate("pos_y",	   "iota_pos_y");
 CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );
+
+// pubsub events
+publisher = new Publisher();

@@ -850,23 +850,9 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 			__xoff:	  0,
 			__yoff:	  0,
 		},
-		__events:  {
-			__publisher: new __GENTUI_PUBLISHER(),
-		},
 	};	
 	__config_init(_config_name, _config);
-	__events_init(
-		"activated", 
-		"deactivated",
-		"show_toggled",
-		"hide_toggled",
-		"state_changed",
-		"config_changed",
-		"pin_parent_assigned",
-		"action_executed",
-		"trigger_triggered",
-	);
-		
+	
 	#region Core ///////////////////////////
 	
 	static update	  = function() {
@@ -2810,74 +2796,18 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	#endregion
 	#region Events /////////////////////////
 	
-	static __events_init		   = function() {
-		/// @func	__events_init()
-		/// @return {Ui} self
-		///
-		for (var _i = 0; _i < argument_count; _i++) {
-			event_register(argument[_i]);	
-		}
-		return self;
-	};	
-	static get_event_publisher	   = function() {
-		/// @func	get_event_publisher()
-		/// @return {Publisher} publisher
-		///
-		return __this.__events.__publisher;
-	};
-	static event_register		   = function() {
-		/// @func	event_register(event_name_1, ..., event_name_n)
-		/// @param	{string} event_name
-		/// @return	{Ui} self
-		///
-		for (var _i = 0; _i < argument_count; _i++) {
-			get_event_publisher().register_channel(argument[_i]);
-		}
-		return self;
-	};
-	static event_registered		   = function(_event_name) {
-		/// @func	event_registered(event_name)
-		/// @param	{string}  event_name
-		/// @return {boolean} event_is_registered?
-		///
-		return get_event_publisher().has_registered_channel(_event_name);
-	};
-	static event_publish		   = function(_event_name, _data = undefined) {
-		/// @func	 event_publish(event_name, data*)
-		/// @param	{string} event_name
-		/// @param	{any}    data=undefined
-		/// @return {Ui}	 self
-		///
-		get_event_publisher().publish(_event_name, _data);
-		return self;
-	};
-	static event_subscribe		   = function(_event_name, _callback, _weak_reference = false) {
-		/// @func	event_subscribe(event_name, callback, weak_reference?)
-		/// @param	{string}  event_name
-		/// @param	{method}  callback_method
-		/// @param	{boolean} weak_reference?=false
-		/// @return {Ui}	  self
-		///
-		get_event_publisher().subscribe(_event_name, _callback, _weak_reference);
-		return self;
-	};
-	static event_unsubscribe	   = function(_event_name, _force = false) {
-		/// @func	event_unsubscribe(event_name, force?*)
-		/// @param	{string}  event_name
-		/// @parma	{boolean} force?=false
-		/// @return {Ui} self
-		///
-		get_event_publisher().unsubscribe(_event_name, _force);
-		return self;
-	};
-	static event_clear_subscribers = function(_event_name) {
-		/// @func	event_clear_subscribers(event_name)
-		/// @param	{string} event_name
-		/// @return {Ui} self
-		///
-		get_event_publisher().clear_channel(_event_name);
-		return self;
-	};
+	EventObject();
+	event_register(
+		"activated", 
+		"deactivated",
+		"show_toggled",
+		"hide_toggled",
+		"state_changed",
+		"config_changed",
+		"pin_parent_assigned",
+		"action_executed",
+		"trigger_triggered",
+	);
 	
 	#endregion
 };

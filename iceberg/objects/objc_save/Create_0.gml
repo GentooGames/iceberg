@@ -20,6 +20,7 @@ event_id = "save";
 	- Serialize & Deserialize 
 		- arrays, structs, constructors, ds_lists, ds_maps, ds_queues, buffers
 	- remove callbacks? INTEGRATE PUBSUB
+	- does SaveObject need to be a constructor?
 */
 #macro __SC_CONTROLLER				SAVE
 #macro __SC_SAVE_FILE_GROUP			"default"

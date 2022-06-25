@@ -313,3 +313,9 @@ zoom_out = function(_increment) {
     ///
 	zoom_to = clamp(zoom - _increment, preset.zoom.min, preset.zoom.max);
 }
+	
+#region Events /////////////
+
+
+
+#endregion
