@@ -20,7 +20,8 @@ function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) cons
 			},
 			function(_asset_name) { // read  translation
 				return asset_get_index(_asset_name);	
-			})	
+			}
+		)	
 		
 	#endregion
 		
@@ -115,14 +116,16 @@ function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) cons
 	
 	__save_object_on_init();
 };
-function EventObject(_context = self) {
+function EventObject(_context = self, _name = "") {
 	/// @func	EventObject(context*)
 	/// @param	{struct/instance} context=self
+	/// @param	{string}		  name=""
 	/// @return {struct/instance} context
 	///
 	with (_context) {
 		/// Create A Publisher Instance
-		__publisher = new Publisher();
+		__publisher =  new Publisher();
+		__name		= _name;
 		
 		/// Associated Event Methods
 		get_event_publisher		= method(self, function() {
@@ -131,13 +134,30 @@ function EventObject(_context = self) {
 			///
 			return __publisher;
 		});
-		event_register			= method(self, function() {
-			/// @func	event_register(event_name_1, ..., event_name_n)
-			/// @param	{string} event_name
-			/// @return	{Ui} self
+		get_event_context_name	= method(self, function() {
+			/// @func	get_event_context_name()
+			/// @return {string} name
 			///
-			for (var _i = 0; _i < argument_count; _i++) {
-				get_event_publisher().register_channel(argument[_i]);
+			return __name;
+		});
+		event_register			= method(self, function(_event_array, _push_to_global = false) {
+			/// @func	event_register(event_array, push_to_global?)
+			/// @param	{array} event_array
+			/// @parma	{bool}  push_to_global?=false
+			/// @return	{Ui}	self
+			///
+			/// Cast And Normalize Argument To Array
+			if (!is_array(_event_array)) {
+				_event_array = [_event_array];	
+			}
+			/// Register Each Channel
+			var _publisher = get_event_publisher();
+			for (var _i = 0, _len = array_length(_event_array); _i < _len; _i++) {
+				_publisher.register_channel(_event_array[_i]);
+			}
+			/// Send To Global?
+			if (_push_to_global) {
+				PUBLISHER.register(_event_array, false);
 			}
 			return self;
 		});
@@ -146,15 +166,26 @@ function EventObject(_context = self) {
 			/// @param	{string}  event_name
 			/// @return {boolean} event_is_registered?
 			///
-			return get_event_publisher().has_registered_channel(_event_name);
+			var _publisher = get_event_publisher();
+			return _publisher.has_registered_channel(_event_name);
 		});
-		event_publish			= method(self, function(_event_name, _data = undefined) {
-			/// @func	 event_publish(event_name, data*)
+		event_publish			= method(self, function(_event_name, _data_struct = undefined, _push_to_global = false) {
+			/// @func	 event_publish(event_name, data_struct*, push_to_global?*)
 			/// @param	{string} event_name
-			/// @param	{any}    data=undefined
+			/// @param	{struct} data_struct=undefined
+			/// @param	{bool}	 push_to_global?=false
 			/// @return {Ui}	 self
 			///
-			get_event_publisher().publish(_event_name, _data);
+			var _publisher = get_event_publisher();
+			_publisher.publish(_event_name, _data_struct);
+			
+			if (_push_to_global) {
+				if (_data_struct == undefined) {
+					_data_struct = {};	
+				}
+				_data_struct[$ "id"] = self;
+				PUBLISHER.publish(get_event_context_name() + "_" + _event_name, _data_struct, false);
+			}
 			return self;
 		});
 		event_subscribe			= method(self, function(_event_name, _callback, _weak_reference = false) {
@@ -164,7 +195,8 @@ function EventObject(_context = self) {
 			/// @param	{boolean} weak_reference?=false
 			/// @return {Ui}	  self
 			///
-			get_event_publisher().subscribe(_event_name, _callback, _weak_reference);
+			var _publisher = get_event_publisher();
+			_publisher.subscribe(_event_name, _callback, _weak_reference);
 			return self;
 		});
 		event_unsubscribe		= method(self, function(_event_name, _force = false) {
@@ -173,7 +205,8 @@ function EventObject(_context = self) {
 			/// @parma	{boolean} force?=false
 			/// @return {Ui} self
 			///
-			get_event_publisher().unsubscribe(_event_name, _force);
+			var _publisher = get_event_publisher();
+			_publisher.unsubscribe(_event_name, _force);
 			return self;
 		});
 		event_clear_subscribers = method(self, function(_event_name) {
@@ -181,7 +214,8 @@ function EventObject(_context = self) {
 			/// @param	{string} event_name
 			/// @return {Ui} self
 			///
-			get_event_publisher().clear_channel(_event_name);
+			var _publisher = get_event_publisher();
+			_publisher.clear_channel(_event_name);
 			return self;
 		});	
 	}

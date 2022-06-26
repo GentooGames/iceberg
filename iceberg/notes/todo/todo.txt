@@ -3,15 +3,22 @@ iceberg:
 		- rework so that not everything is at a global level
 			- faster performance, but more memory overhead
 		- potentially remove callbacks?
+	- recheckout gprop? normalize prop naming and methods
+	- setup input mouse_wheel events
+	- create objp_entity to test event inheritence
+	- way for object to clear all subscriptions,
+		- should re-store into an array on event init
+	
+	
+	
+	
+	
 	- organize and abstract global._gui{} into a more modular system similar to global._transition{}
 		- create an array of borders that is iterated through and updated
 		- expose ways for new borders to be created and destroyed dynamically	
 	- convert objc_save into global._save = {} (?)
-	- add macro pointers so that uniquely named libraries can be accessed through intuitively named references
-	- procedurally generated dungeon generator
 	- replace iota with gm_time_source
 	- remove callbacks from save controller and replace with pubsub?
-	- recheckout gprop? normalize prop naming and methods
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width
@@ -69,3 +76,6 @@ serializer:
 			with a more encapsulated implementation
 		- also allows us to methodically handle edge cases and error throwing through an implicit
 			type checker, etc.
+
+EXTRA EXTRA:
+	- procedurally generated dungeon generator

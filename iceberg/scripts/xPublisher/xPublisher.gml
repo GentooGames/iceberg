@@ -73,6 +73,7 @@ function Publisher() constructor {
 	/// @returns {Subscriber}
 	static subscribe = function(_channel, _callback, _releaseRef = true) {
 		
+		// Check for autoRegister?
 		if (!variable_struct_exists(__channels, _channel)) {
 			// Ignore if there is no event registered under 'eventName'
 			if (!__autoRegister) {

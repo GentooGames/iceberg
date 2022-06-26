@@ -12,10 +12,10 @@ function state_controller_game_main() {
 	return {
 		enter: function() {},
 		step:  function() {
+			PUBLISHER.update();
 			AUDIO.update();
 			CLOCKS.update();
 			DISPLAY.update();
-			EVENT.update();
 			GUI.update();
 			INPUT.update();
 			PARTICLES.update();

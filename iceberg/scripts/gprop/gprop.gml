@@ -32,7 +32,7 @@ function GProp(_data) constructor {
 		spring_main	= new Spring(tension, dampening);
 	};
 		
-	EventObject();
+	EventObject(, "gprop");
 	
 	#region Public /////////
 	

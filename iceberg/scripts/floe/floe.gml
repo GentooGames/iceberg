@@ -581,8 +581,8 @@ function FloeEffect() constructor {
 	#endregion
 	#region Events /////////////////
 	
-	EventObject();	/// <-- creates Publisher and methods
-	event_register(
+	EventObject(, "floe");	/// <-- creates Publisher and methods
+	event_register([
 		"enter_started",
 		"enter_completed",
 		"change_started",
@@ -594,7 +594,7 @@ function FloeEffect() constructor {
 		"reversed",
 		"ended",
 		"reset_completed",
-	);
+	]);
 	
 	#endregion
 };

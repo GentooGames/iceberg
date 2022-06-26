@@ -2796,8 +2796,8 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	#endregion
 	#region Events /////////////////////////
 	
-	EventObject();
-	event_register(
+	EventObject(, "gentui");
+	event_register([
 		"activated", 
 		"deactivated",
 		"show_toggled",
@@ -2807,7 +2807,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		"pin_parent_assigned",
 		"action_executed",
 		"trigger_triggered",
-	);
+	]);
 	
 	#endregion
 };

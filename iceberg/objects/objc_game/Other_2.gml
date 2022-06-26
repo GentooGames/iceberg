@@ -20,16 +20,17 @@ log("<OBJC_GAME> Setting Up Data Files...");
 #region Custom Systems /////
 
 log("<OBJC_GAME> Setting Up Core Systems...");
+/// @NOTE: abstract this so that order is only needed to be set once
+PUBLISHER.setup();	/// <-- should be first
 AUDIO.setup();
 CLOCKS.setup();
 DISPLAY.setup();
-EVENT.setup();
 GUI.setup();
 INPUT.setup();
 PARTICLES.setup();
 TRANSITION.setup();
 WINDOW.setup();
-DEBUG.setup();
+DEBUG.setup();		/// <-- should be last
 			
 #endregion
 #region Unit Tests /////////
@@ -41,6 +42,7 @@ UNIT_TEST.run_tests();
 #region Instances //////////
 			
 log("<OBJC_GAME> Spawning Game Controllers...");
+GAME.setup();
 //camera_create_instance();
 //global._camera = new Camera(0, 0, 0, false);
 //#macro CAMERA global._camera
@@ -48,5 +50,3 @@ log("<OBJC_GAME> Spawning Game Controllers...");
 instance_create_layer(0, 0, "Controllers", objc_save).setup();
 
 #endregion
-
-setup();

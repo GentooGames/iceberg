@@ -89,8 +89,8 @@ CLOCK_STABLE.variable_interpolate("pos_y",	   "iota_pos_y");
 CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );
 
 // events
-EventObject();
-event_register(
+EventObject(, "camera");
+event_register([
 	"zoom_completed",
-);
+]);
 

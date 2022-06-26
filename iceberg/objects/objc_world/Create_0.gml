@@ -8,110 +8,39 @@ event_inherited();
 event_user(METHODS);
 event_user(EVENTS);
 
-setup_world	   = function() {
-	/// @func	setup_world()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (initialized) exit;
-	#region ----------------
-	
-	setup_controller();
-	
-	#endregion
-};
-teardown_world = function() {
-	/// @func	teardown_world()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	teardown_controller();
-	
-	#endregion
-};
-rebuild_world  = function() {
-	/// @func	rebuild_world()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	teardown_world();
-	setup_world();
-};
-update_world   = function() {
-	/// @func	update_world()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	update_controller();
-	
-	#endregion
-};
-render_world   = function() {
-	/// @func	render_world()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	render_controller();
-	
-	#endregion
-	render_bg();
-};
-
-#region @OVERRIDE 
-
-setup	 = function() {
+setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	setup_world();
-};
-teardown = function() {
+	if (!initialized) {}
+	return id;
+});
+teardown = method_inherit(teardown, function() {
 	/// @func	teardown()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	teardown_world();
-};
-rebuild  = function() {
+	if (initialized) {}
+	return id;
+});
+rebuild  = method_inherit(rebuild,	function() {
 	/// @func	rebuild()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	rebuild_world();
-};
-update	 = function() {
+	if (initialized) {}
+	return id;
+});
+update	 = method_inherit(update,	function() {
 	/// @func	update()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	update_world();
-};
-render	 = function() {
-	/// @func	render()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	if (initialized) {}
+	return id;
+});
+render	 = method_inherit(render,	function() {
+	/// @func	render_save()
+	/// @return {instance} id
 	///
-	render_world();
-};
-	
-#endregion
+	if (initialized) {}
+	return id;
+});
+

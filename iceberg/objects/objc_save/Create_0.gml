@@ -44,148 +44,82 @@ enum __SC_STATE {
 	SAVING,
 }
 
-setup_save	  = function() {
-	/// @func	setup_save()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (initialized) exit;
-	#region ----------------
-	
-	setup_controller();
-	
-	#endregion
-	#region States /////////
-	
-	state = -1;
-	
-	#endregion
-	#region Save File //////
-
-	save_slot			= __SC_SAVE_SLOT_DEFAULT;
-	save_on_file_ready	= undefined;
-	
-	#endregion
-	#region Saving /////////
-
-	save_objects	= [];
-	save_data		= data_new_empty();	// struct containing save data that will be written to disk
-	save_async_id	= undefined;		// async return value used to validate in async event
-	save_on_success	= undefined;		// on_success callback
-	save_on_fail	= undefined;		// on_fail callback
-	
-	#endregion
-	#region Loading ////////
-
-	load_data		= data_new_empty();	// data loaded from disk. structured the same as save_data
-	load_async_id	= undefined;		// async return value used to validate in async event
-	load_on_success = undefined;		// on_success callback
-	load_on_fail	= undefined;		// on_fail callback
-	load_buffer		= buffer_create(1, buffer_grow, 1);
-	
-	#endregion
-	#region Events /////////
-	
-	/// Replace With Better/More Integrated PubSub Implementation
-	TRANSITION.event_subscribe("hold_started", function() {
-		save_game(,, function() {
-			TRANSITION.end_transition();
-		});
-	});
-	
-	#endregion
-	save_file_begin_validation(room_goto_next);
-};
-teardown_save = function() {
-	/// @func	teardown_save()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	teardown_controller();
-	
-	#endregion
-};
-rebuild_save  = function() {
-	/// @func	rebuild_save()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	teardown_save();
-	setup_save();
-};
-update_save   = function() {
-	/// @func	update_save()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	update_controller();
-	
-	#endregion
-};
-render_save   = function() {
-	/// @func	render_save()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	render_controller();
-	
-	#endregion
-};
-
-#region @OVERRIDE
-
-setup	 = function() {
+setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	setup_save();
-};
-teardown = function() {
+	if (!initialized) {
+		#region States /////////
+	
+		state = -1;
+	
+		#endregion
+		#region Save File //////
+
+		save_slot			= __SC_SAVE_SLOT_DEFAULT;
+		save_on_file_ready	= undefined;
+	
+		#endregion
+		#region Saving /////////
+
+		save_objects	= [];
+		save_data		= data_new_empty();	// struct containing save data that will be written to disk
+		save_async_id	= undefined;		// async return value used to validate in async event
+		save_on_success	= undefined;		// on_success callback
+		save_on_fail	= undefined;		// on_fail callback
+	
+		#endregion
+		#region Loading ////////
+
+		load_data		= data_new_empty();	// data loaded from disk. structured the same as save_data
+		load_async_id	= undefined;		// async return value used to validate in async event
+		load_on_success = undefined;		// on_success callback
+		load_on_fail	= undefined;		// on_fail callback
+		load_buffer		= buffer_create(1, buffer_grow, 1);
+	
+		#endregion
+		#region Events /////////
+	
+		TRANSITION.event_subscribe("hold_started", function() {
+			save_game(,, function() {
+				TRANSITION.end_transition();
+			});
+		});
+	
+		#endregion
+		
+		save_file_begin_validation(room_goto_next);
+	}
+	return id;
+});
+teardown = method_inherit(teardown, function() {
 	/// @func	teardown()
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	teardown_save();
-};
-rebuild  = function() {
+	if (initialized) {}
+	return id;
+});
+rebuild  = method_inherit(rebuild,	function() {
 	/// @func	rebuild()
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	rebuild_save();
-};
-update	 = function() {
+	if (initialized) {}
+	return id;
+});
+update	 = method_inherit(update,	function() {
 	/// @func	update()
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	update_save();
-};
-render	 = function() {
-	/// @func	render()
-	/// @return NA
-	/// @tested false
+	if (initialized) {}
+	return id;
+});
+render	 = method_inherit(render,	function() {
+	/// @func	render_save()
+	/// @return {instance} id
 	///
-	render_save();
-};
-
-#endregion
-
+	if (initialized) {}
+	return id;
+});
 
 /*
 test_number		= 100;

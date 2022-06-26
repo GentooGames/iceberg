@@ -48,14 +48,14 @@ function method_inherit(_method_parent, _method_child) {
 	/// @return {method} method
 	/// @author GlebTsereteli
 	///
-    var _bridge = {
-        method_parent: _method_parent, 
-        method_child:  _method_child, 
-        bridge: self,
+    var _child  = self;
+	var _bridge = {
+        method_parent: method(method_get_self(_method_parent), _method_parent), 
+        method_child:  method(_child, _method_child),
     };
     return method(_bridge, function() {
-        method_parent();
-        method(bridge, method_child)();
+		method_parent();
+        method_child();
     });
 };
 
@@ -1536,6 +1536,26 @@ function new_callback(_callback, _data = undefined) {
 		callback: _callback,
 		data: _data,
 	};
+};
+function instance_get_name_dynamic(_instance) {
+	/// @func	instance_get_name_dynamic(instance)
+	/// @param	{struct/instance} instance
+	/// @return {string} name
+	///
+	if (is_struct(_instance)) {
+		var _struct = instanceof(_instance);	// will return constructor name or just "struct"
+		
+	}
+	else {
+		return object_get_name(_instance.object_index);
+	}
+};
+function method_get_name_dynamic(_method) {
+	/// @func	method_get_name_dynamic(method)
+	/// @param	{method} method
+	/// @return {string} name
+	///
+	return string(ptr(_method));
 };
 
 #endregion

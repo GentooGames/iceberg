@@ -13,134 +13,69 @@ event_id = "game";
 /// Game Instances, Libraries, & Data Files Loaded In "Game Start" ///
 //////////////////////////////////////////////////////////////////////
 
-setup_game	  = function() {
-	/// @func	setup_game()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (initialized) exit;
-	#region ----------------
-	
-	setup_controller();
-	
-	#endregion
-	#region States /////////
-	
-	state_start = STATE_CONTROLLER_GAME_MAIN;
-	fsm = new WeeState();
-	fsm.set_default_draw(state_controller_game_draw_default);
-	fsm.add(STATE_CONTROLLER_GAME_MAIN, state_controller_game_main())
-	;
-	fsm.change(state_start);
-	
-	#endregion
-};
-teardown_game = function() {
-	/// @func	teardown_game()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region States /////////
-	
-	fsm = null;
-	
-	#endregion
-	#region ----------------
-	
-	teardown_controller();
-	
-	#endregion
-};
-rebuild_game  = function() {
-	/// @func	rebuild_game()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	teardown_game();
-	setup_game();
-};
-update_game	  = function() {
-	/// @func	update_game()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	update_controller();
-	
-	#endregion
-	#region States /////////
-	
-	fsm.step();		
-	
-	#endregion
-};
-render_game	  = function() {
-	/// @func	render_game()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	render_controller();
-	
-	#endregion
-	#region States /////////
-	
-	fsm.draw();
-	
-	#endregion
-};
-
-#region @OVERRIDE 
-
-setup	 = function() {
+setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	setup_game();
-};
-teardown = function() {
-	/// @func	teardown()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	teardown_game();
-};
-rebuild	 = function() {
-	/// @func	rebuild()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	rebuild_game();
-}
-update	 = function() {
-	/// @func	update()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	update_game();
-};
-render	 = function() {
-	/// @func	render()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	render_game();
-};
+	//if (!initialized) {
+		#region States /////
 	
-#endregion
+		state_start = STATE_CONTROLLER_GAME_MAIN;
+		fsm = new WeeState();
+		fsm.set_default_draw(state_controller_game_draw_default);
+		fsm.add(STATE_CONTROLLER_GAME_MAIN, state_controller_game_main())
+		;
+		fsm.change(state_start);
+	
+		#endregion
+	//}
+	log("game.setup");
+	return id;
+});
+teardown = method_inherit(teardown, function() {
+	/// @func	teardown()
+	/// @return {instance} id
+	///
+	if (initialized) {
+		#region States /////
+	
+		fsm = null;
+	
+		#endregion
+	}
+	return id;
+});
+rebuild  = method_inherit(rebuild,  function() {
+	/// @func	rebuild()
+	/// @return {instance} id
+	///
+	if (initialized) {}
+	return id;
+});
+update	 = method_inherit(update,   function() {
+	/// @func	update()
+	/// @return {instance} id
+	///
+	if (initialized) {
+		#region States /////
+	
+		fsm.step();		
+	
+		#endregion
+	}
+	return id;
+});
+render	 = method_inherit(render,   function() {
+	/// @func	render()
+	/// @return {instance} id
+	///
+	if (initialized) {
+		#region States /////
+	
+		fsm.draw();
+	
+		#endregion
+	}
+	return id;
+});
+	

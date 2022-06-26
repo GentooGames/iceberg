@@ -1,62 +1,50 @@
 /// @desc METHODS
 
-#region General ////////
-
-activate	 = function() {
+activate	   = function() {
 	/// @func	activate()
-	/// @desc	...
-	/// @return NA
+	/// @return {instance} id
 	///
-	if (active) return;
-	////////////////////
-	active = true;
-	instance_activate_object(id);
+	if (!active) {
+		active = true;
+		instance_activate_object(id);
+		event_publish("activated",, true);
+	}
+	return id;
 };
-deactivate	 = function() {
+deactivate	   = function() {
 	/// @func	deactivate()
-	/// @desc	...
-	/// @return NA
+	/// @return {instance} id
 	///
-	if (!active) return;
-	////////////////////
-	active = false;
-	instance_deactivate_object(id);
+	if (active) {
+		active = false;
+		instance_deactivate_object(id);
+		event_publish("deactivated",, true);
+	}
+	return id;
 };
-destroy		 = function() {
+destroy		   = function() {
 	/// @func	destroy()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	if (destroyed) return;
-	////////////////////////
-	if (!active) activate();
-	on_destroyed({ id: id });
-	teardown();
-	instance_destroy();
-	destroyed = true;
+	if (!destroyed) {
+		activate();
+		teardown();
+		instance_destroy();
+		destroyed = true;
+		event_publish("destroyed",, true);
+	}
+	return id;
 };
-is_destroyed = function() {
+is_destroyed   = function() {
 	/// @func	is_destroyed()
-	/// @desc	...
-	/// @return destroyed? -> {bool}
-	/// @tested false
+	/// @return {boolean} is_destroyed?
 	///
 	return destroyed;
 };
-	
-#endregion
-#region Util ///////////
-
-i_am = function(_id) {
-	/// @func	i_am(id)
-	/// @param	id -> {real}
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+mouse_touching = function() {	/// @OVERRIDE
+	/// @func	mouse_touching()
+	/// @return {boolean} mouse_touching?
 	///
-	return _id == id;
+	return false;	// <-- false always returned here, because objp_object is abstract
+					// override this method in any children objects that can interact.
 };
-	
-#endregion
-
