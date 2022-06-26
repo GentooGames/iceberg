@@ -29,9 +29,9 @@ setup	 = method_inherit(,function() {
 	
 		EventObject(, event_id);
 		event_register([
-			"setup",
-			"teardown",
-			"rebuild",
+			"setup_completed",
+			"teardown_completed",
+			"rebuild_completed",
 			"activated",
 			"deactivated",
 			"destroyed",
@@ -40,13 +40,12 @@ setup	 = method_inherit(,function() {
 		INPUT.event_subscribe("mouse_button_pressed",  on_mouse_button_pressed);
 		INPUT.event_subscribe("mouse_button",		   on_mouse_button);
 		INPUT.event_subscribe("mouse_button_released", on_mouse_button_released);
-		event_publish("setup");
 		
 		#endregion
 	}
 	return id;	
 	
-}, function() { initialized = true; });
+}, function() { setup_complete(); });
 teardown = method_inherit(,function() {
 	/// @func	teardown()
 	/// @return {instance} id
@@ -55,20 +54,16 @@ teardown = method_inherit(,function() {
 		#region Events /////////
 	
 		//clear_subscriptions();
-		event_publish("teardown");
 	
 		#endregion
-		#region ----------------
 	
 		active	  = true;
 		destroyed = false;
 		rendering = true;
-	
-		#endregion
 	}
 	return id;
 	
-}, function() { initialized = false; });
+}, function() { teardown_complete(); });
 rebuild  = method_inherit(,function() {
 	/// @func	rebuild()
 	/// @return {instance} id
@@ -76,22 +71,26 @@ rebuild  = method_inherit(,function() {
 	if (initialized) {
 		teardown();
 		setup();
-		event_publish("rebuild");
 	}
 	return id;
-});
+	
+}, function() { rebuild_complete(); });
 update	 = method_inherit(,function() {
 	/// @func	update()
 	/// @return {instance} id
 	/// 
-	if (initialized) {}
+	if (initialized) {
+		/// ...
+	}
 	return id;
 });
 render	 = method_inherit(,function() {
 	/// @func	render()
 	/// @return {instance} id
 	/// 
-	if (initialized) {}
+	if (initialized) {
+		/// ...
+	}
 	return id;
 });
 	

@@ -1,6 +1,30 @@
 /// @desc METHODS
 
-activate	   = function() {
+setup_complete	  = function() {
+	/// @func	setup_complete()
+	/// @return {instance} id
+	///
+	initialized = true;
+	event_publish("setup_completed");
+	return id;
+};
+teardown_complete = function() {
+	/// @func	teardown_complete()
+	/// @return {instance} id
+	///
+	initialized = false;
+	event_publish("teardown_completed");
+	return id;
+};
+rebuild_complete  = function() {
+	/// @func	rebuild_complete()
+	/// @return {instance} id
+	///
+	event_publish("rebuild_completed");
+	return id;
+};
+
+activate		  = function() {
 	/// @func	activate()
 	/// @return {instance} id
 	///
@@ -11,7 +35,7 @@ activate	   = function() {
 	}
 	return id;
 };
-deactivate	   = function() {
+deactivate		  = function() {
 	/// @func	deactivate()
 	/// @return {instance} id
 	///
@@ -22,7 +46,7 @@ deactivate	   = function() {
 	}
 	return id;
 };
-destroy		   = function() {
+destroy			  = function() {
 	/// @func	destroy()
 	/// @return {instance} id
 	///
@@ -35,13 +59,13 @@ destroy		   = function() {
 	}
 	return id;
 };
-is_destroyed   = function() {
+is_destroyed	  = function() {
 	/// @func	is_destroyed()
 	/// @return {boolean} is_destroyed?
 	///
 	return destroyed;
 };
-mouse_touching = function() {	/// @OVERRIDE
+mouse_touching	  = function() {	/// @OVERRIDE
 	/// @func	mouse_touching()
 	/// @return {boolean} mouse_touching?
 	///

@@ -54,8 +54,7 @@ rebuild  = method_inherit(rebuild,	function() {
 	/// @return {instance} id
 	///
 	if (initialized) {
-		teardown();
-		setup();
+		/// ...
 	}
 	return id;
 });

@@ -48,7 +48,9 @@ rebuild  = method_inherit(rebuild,  function() {
 	/// @func	rebuild()
 	/// @return {instance} id
 	///
-	if (initialized) {}
+	if (initialized) {
+		/// ...
+	}
 	return id;
 });
 update	 = method_inherit(update,   function() {
