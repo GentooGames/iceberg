@@ -67,7 +67,8 @@ teardown = method_inherit(,function() {
 		#endregion
 	}
 	return id;
-});
+	
+}, function() { initialized = false; });
 rebuild  = method_inherit(,function() {
 	/// @func	rebuild()
 	/// @return {instance} id

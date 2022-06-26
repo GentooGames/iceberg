@@ -11,132 +11,78 @@ event_user(METHODS);
 event_user(EVENTS);
 event_id = "player";
 
-setup_player    = function() {
-	/// @func	setup_player()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (initialized) exit;
-	#region ----------------
-	
-	setup_object();
-	
-	#endregion
-	#region Interactions ///
-	
-	has_camera_control = true;  // can interact with camera
-	can_interact_hard  = true;  // can execute actions and selections on board/board-instances
-	can_interact_soft  = true;  // can hover and view real-time board/board-instance properties
-	
-	#endregion
-	#region States /////////
-	
-	fsm = new WeeState();
-	fsm.set_default_draw(state_player_draw_default);
-	fsm.add(STATE_PLAYER_IDLE, state_player_idle())
-	;
-	fsm.change(STATE_PLAYER_IDLE);
-	
-	#endregion
-};
-teardown_player = function() {
-	/// @func	teardown_player()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region States /////////
-	
-	fsm = null;
-	
-	#endregion
-	#region ----------------
-	
-	teardown_object();
-	
-	#endregion
-};
-rebuild_player  = function() {
-	/// @func	rebuild_player()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	teardown_player();
-	setup_player();
-};
-update_player	= function() {
-	/// @func	update_player()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	update_object();
-	
-	#endregion
-	#region States /////////
-	
-	fsm.step();	
-	
-	#endregion
-};
-render_player	= function() {
-	/// @func	render_player()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	if (!initialized) exit;
-	#region ----------------
-	
-	render_object();
-	
-	#endregion
-	#region States /////////
-	
-	fsm.draw();	
-	
-	#endregion
-};
-
-#region @OVERRIDE
-
-setup	 = function() {
+setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
+	/// @return {instance} id
 	///
-	setup_player();
-};
-teardown = function() {
-	/// @func	teardown()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	teardown_player();
-};
-update	 = function() {
-	/// @func	update()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	update_player();
-};
-render	 = function() {
-	/// @func	render()
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	render_player();
-};
+	if (!initialized) {
+		#region Interactions ///
 	
-#endregion
+		has_camera_control = true;  // can interact with camera
+		can_interact_hard  = true;  // can execute actions and selections on board/board-instances
+		can_interact_soft  = true;  // can hover and view real-time board/board-instance properties
+	
+		#endregion
+		#region States /////////
+	
+		fsm = new WeeState();
+		fsm.set_default_draw(state_player_draw_default);
+		fsm.add(STATE_PLAYER_IDLE, state_player_idle())
+		;
+		fsm.change(STATE_PLAYER_IDLE);
+	
+		#endregion
+	}
+	return id;
+});
+teardown = method_inherit(teardown,	function() {
+	/// @func	teardown()
+	/// @return {instance} id
+	///
+	if (initialized) {
+		#region States /////////
+	
+		fsm = null;
+	
+		#endregion
+	}
+	return id;
+	
+});
+rebuild  = method_inherit(rebuild,	function() {
+	/// @func	rebuild()
+	/// @return {instance} id
+	///
+	if (initialized) {
+		teardown();
+		setup();
+	}
+	return id;
+});
+update   = method_inherit(update,	function() {
+	/// @func	update()
+	/// @return {instance} id
+	///
+	if (initialized) {
+		#region States /////////
+	
+		fsm.step();	
+	
+		#endregion
+	}
+	return id;
+});
+render   = method_inherit(render,	function() {
+	/// @func	render()
+	/// @return {instance} id
+	///
+	if (initialized) {
+		#region States /////////
+	
+		fsm.draw();	
+	
+		#endregion
+	}
+	return id;
+});
+	

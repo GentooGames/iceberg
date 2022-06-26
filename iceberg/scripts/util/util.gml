@@ -53,19 +53,17 @@ function method_inherit(_method_parent = undefined, _method_child = undefined, _
 	///
 	var _inherit_depth = 1;
 	
-	#region Method Child
+	#region Method Child ///////////
 	
 	var _method_child_owner = self;
-	
 	if (_method_child != undefined) {
 		_method_child  = method(_method_child_owner, _method_child);
 	}
 	
 	#endregion
-	#region Method Parent
+	#region Method Parent //////////
 	
 	var _method_parent_owner = self;
-	
 	if (_method_parent != undefined) {
 		_method_parent_owner = method_get_self(_method_parent); 
 		if (is_struct(_method_parent_owner)) {
@@ -75,10 +73,9 @@ function method_inherit(_method_parent = undefined, _method_child = undefined, _
 	}
 	
 	#endregion
-	#region Method Callbacks
+	#region Method Callbacks ///////
 	
 	var _callbacks = [];
-	
 	if (is_struct(_method_parent_owner)) {
 		_callbacks = _method_parent_owner.callbacks;
 	}

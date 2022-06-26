@@ -1,4 +1,5 @@
 iceberg:
+	- re-evaluate if rebuild() should be inherited. might be executing twice?
 	- PUBSUB system 
 		- rework so that not everything is at a global level
 			- faster performance, but more memory overhead
