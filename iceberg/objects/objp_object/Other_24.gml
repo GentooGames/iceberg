@@ -1,8 +1,20 @@
 /// @desc EVENTS
 
-#region DO NOT OVERRIDE ////////
+#region General 
 
-on_mouse_button_pressed	 = function(_data) {
+on_destroyed = method_inherit(,function(_data) {
+	/// @func	on_destroyed(data)
+	/// @param	{struct}   data
+	/// @return {instance} id
+	///
+	return id;
+	
+}, function() { event_publish("destroyed"); });
+
+#endregion
+#region Input 
+
+on_mouse_button_pressed			= method_inherit(,function(_data) { /// encapsulation
 	/// @func	on_mouse_button_pressed(mouse_data)
 	/// @param	{struct}   data
 	/// @return	{instance} id
@@ -15,8 +27,32 @@ on_mouse_button_pressed	 = function(_data) {
 		}
 	}
 	return id;
-};
-on_mouse_button			 = function(_data) {
+});
+on_mouse_left_button_pressed	= method_inherit(,function(_data) {
+	/// @func	on_mouse_left_button_pressed(data)
+	/// @param	{struct}   data
+	/// @return {instance} id
+	///
+	return id;
+	
+}, function() { event_publish("mouse_left_button_pressed"); });
+on_mouse_right_button_pressed   = method_inherit(,function(_data) {
+	/// @func	on_mouse_right_button_pressed(data)
+	/// @param	{struct}   data
+	/// @return {instance} id
+	///
+	return id;
+	
+}, function() { event_publish("mouse_right_button_pressed"); });
+on_mouse_middle_button_pressed  = method_inherit(,function(_data) {
+	/// @func	on_mouse_middle_button_pressed(data)
+	/// @param	{struct}   data
+	/// @return {instance} id
+	///
+	return id;
+	
+}, function() { event_publish("mouse_middle_button_pressed"); });
+on_mouse_button					= method_inherit(,function(_data) { /// encapsulation
 	/// @func	on_mouse_button(data)
 	/// @param	{struct}   data
 	/// @return	{instance} id
@@ -29,8 +65,32 @@ on_mouse_button			 = function(_data) {
 		}
 	}
 	return id;
-};
-on_mouse_button_released = function(_data) {
+});
+on_mouse_left_button			= method_inherit(,function(_data) {
+	/// @func	on_mouse_left_button(data)
+	/// @param	{struct}   data
+	/// @return {instance} id
+	///
+	return id;
+	
+}, function() { event_publish("mouse_left_button"); });
+on_mouse_right_button		    = method_inherit(,function(_data) {
+	/// @func	on_mouse_right_button(data)
+	/// @param	{struct}   data
+	/// @return {instance} id
+	///
+	return id;
+	
+}, function() { event_publish("mouse_right_button"); });
+on_mouse_middle_button		    = method_inherit(,function(_data) {
+	/// @func	on_mouse_middle_button(data)
+	/// @param	{struct}   data
+	/// @return {instance} id
+	///
+	return id;
+	
+}, function() { event_publish("mouse_middle_button"); });
+on_mouse_button_released		= method_inherit(,function(_data) { /// encapsulation
 	/// @func	on_mouse_button_released(data)
 	/// @param	{struct}   data
 	/// @return	{instance} id
@@ -43,177 +103,30 @@ on_mouse_button_released = function(_data) {
 		}
 	}
 	return id;
-};
-
-#endregion
-#region @OVERRIDE //////////////
-
-#region General ////////////////
-
-on_destroyed = function(_data) {
-	/// @func	on_destroyed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	return on_object_destroyed(_data);
-};
-
-#endregion
-#region Input //////////////////
-
-on_mouse_left_button_pressed	= function(_data) {
-	/// @func	on_mouse_left_button_pressed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	return on_object_mouse_left_button_pressed();
-};
-on_mouse_right_button_pressed	= function(_data) {
-	/// @func	on_mouse_right_button_pressed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	return on_object_mouse_right_button_pressed();
-};
-on_mouse_middle_button_pressed	= function(_data) {
-	/// @func	on_mouse_middle_button_pressed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	return on_object_mouse_middle_button_pressed();
-};
-on_mouse_left_button			= function(_data) {
-	/// @func	on_mouse_left_button(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	return on_object_mouse_left_button();
-};
-on_mouse_right_button			= function(_data) {
-	/// @func	on_mouse_right_button(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	return on_object_mouse_right_button();
-};
-on_mouse_middle_button			= function(_data) {
-	/// @func	on_mouse_middle_button(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	return on_object_mouse_middle_button();
-};
-on_mouse_left_button_released	= function(_data) {
+});
+on_mouse_left_button_released   = method_inherit(,function(_data) {
 	/// @func	on_mouse_left_button_released(data)
 	/// @param	{struct}   data
-	/// @return	{instance} id
+	/// @return {instance} id
 	///
-	return on_object_mouse_left_button_released();
-};
-on_mouse_right_button_released	= function(_data) {
+	return id;
+	
+}, function() { event_publish("mouse_left_button_released"); });
+on_mouse_right_button_released  = method_inherit(,function(_data) {
 	/// @func	on_mouse_right_button_released(data)
 	/// @param	{struct}   data
 	/// @return	{instance} id
 	///
-	return on_object_mouse_right_button_released();
-};
-on_mouse_middle_button_released	= function(_data) {
+	return id;
+	
+}, function() { event_publish("mouse_right_button_released"); });
+on_mouse_middle_button_released = method_inherit(,function(_data) {
 	/// @func	on_mouse_middle_button_released(data)
 	/// @param	{struct}   data
 	/// @return	{instance} id
 	///
-	return on_object_mouse_middle_button_released();
-};
-
-#endregion
-
-#endregion
-////////////////////////////////
-#region General ////////////////
-
-on_object_destroyed = function(_data) {
-	/// @func	on_object_destroyed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("destroyed", _data.id);
 	return id;
-};
-
-#endregion
-#region Input //////////////////
-
-on_object_mouse_left_button_pressed	   = function(_data) {
-	/// @func	on_object_mouse_left_button_pressed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_left_button_pressed");
-	return id;
-};
-on_object_mouse_right_button_pressed   = function(_data) {
-	/// @func	on_object_mouse_right_button_pressed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_right_button_pressed");
-	return id;
-};
-on_object_mouse_middle_button_pressed  = function(_data) {
-	/// @func	on_object_mouse_middle_button_pressed(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_middle_button_pressed");
-	return id;
-};
-on_object_mouse_left_button			   = function(_data) {
-	/// @func	on_object_mouse_left_button(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_left_button");
-	return id;
-};
-on_object_mouse_right_button		   = function(_data) {
-	/// @func	on_object_mouse_right_button(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_right_button");
-	return id;
-};
-on_object_mouse_middle_button		   = function(_data) {
-	/// @func	on_object_mouse_middle_button(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_middle_button");
-	return id;
-};
-on_object_mouse_left_button_released   = function(_data) {
-	/// @func	on_object_mouse_left_button_released(data)
-	/// @param	{struct}   data
-	/// @return {instance} id
-	///
-	event_publish("mouse_left_button_released");
-	return id;
-};
-on_object_mouse_right_button_released  = function(_data) {
-	/// @func	on_object_mouse_right_button_released(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_right_button_released");
-	return id;
-};
-on_object_mouse_middle_button_released = function(_data) {
-	/// @func	on_object_mouse_middle_button_released(data)
-	/// @param	{struct}   data
-	/// @return	{instance} id
-	///
-	event_publish("mouse_middle_button_released");
-	return id;
-};
+	
+}, function() { event_publish("mouse_middle_button_released"); });
 
 #endregion
