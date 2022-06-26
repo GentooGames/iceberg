@@ -41,21 +41,75 @@ function string_build(_format) {
 	}
 	return _output;
 };
-function method_inherit(_method_parent, _method_child) {
-	/// @func	method_inherit(method_parent, method_child)
-	/// @param	{method} method_parent
-	/// @param	{method} method_child
+function method_inherit(_method_parent = undefined, _method_child = undefined, _callback = undefined) {
+	/// @func	method_inherit(method_parent*, method_child*, callback*)
+	/// @desc	rather than needing to setup complex method inheritance through initialization of extra
+	///			methods, this function serves as an encapsulation to do so with one-line execution.
+	/// @param	{method} method_parent=undefined
+	/// @param	{method} method_child=undefined
+	/// @param	{method} callback=undefined
 	/// @return {method} method
-	/// @author GlebTsereteli
+	/// @author GlebTsereteli & _gentoo_
 	///
-    var _child  = self;
+	var _inherit_depth = 1;
+	
+	#region Method Child
+	
+	var _method_child_owner = self;
+	
+	if (_method_child != undefined) {
+		_method_child  = method(_method_child_owner, _method_child);
+	}
+	
+	#endregion
+	#region Method Parent
+	
+	var _method_parent_owner = self;
+	
+	if (_method_parent != undefined) {
+		_method_parent_owner = method_get_self(_method_parent); 
+		if (is_struct(_method_parent_owner)) {
+			_inherit_depth = _method_parent_owner.inherit_depth + 1;
+		}
+		_method_parent = method(_method_parent_owner, _method_parent);
+	}
+	
+	#endregion
+	#region Method Callbacks
+	
+	var _callbacks = [];
+	
+	if (is_struct(_method_parent_owner)) {
+		_callbacks = _method_parent_owner.callbacks;
+	}
+	if (_callback != undefined) {
+		_callback  = method(method_get_self(_callback), _callback);
+	}
+	array_push(_callbacks, _callback); // push even if undefined, so that len matches inherit depth
+	
+	#endregion
+	
+	/// Stash Local Var References Through Temp Struct Binding
 	var _bridge = {
-        method_parent: method(method_get_self(_method_parent), _method_parent), 
-        method_child:  method(_child, _method_child),
+		inherit_depth: _inherit_depth,
+        method_parent: _method_parent,
+        method_child:  _method_child,
+		callbacks:	   _callbacks,
     };
     return method(_bridge, function() {
-		method_parent();
-        method_child();
+		if (method_parent != undefined) method_parent();
+        if (method_child  != undefined) method_child();
+		
+		/// Execute Callbacks If At End Of Chain
+		var _n_callbacks = array_length(callbacks);
+		if (inherit_depth == _n_callbacks) {
+			for (var _i = 0; _i < _n_callbacks; _i++) {
+				var _callback  = callbacks[_i];
+				if (_callback != undefined) {
+					_callback();
+				}
+			}
+		}
     });
 };
 

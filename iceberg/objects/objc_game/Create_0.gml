@@ -17,7 +17,7 @@ setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
 	/// @return {instance} id
 	///
-	//if (!initialized) {
+	if (!initialized) {
 		#region States /////
 	
 		state_start = STATE_CONTROLLER_GAME_MAIN;
@@ -28,8 +28,7 @@ setup	 = method_inherit(setup,	function() {
 		fsm.change(state_start);
 	
 		#endregion
-	//}
-	log("game.setup");
+	}
 	return id;
 });
 teardown = method_inherit(teardown, function() {
@@ -78,4 +77,6 @@ render	 = method_inherit(render,   function() {
 	}
 	return id;
 });
-	
+
+
+

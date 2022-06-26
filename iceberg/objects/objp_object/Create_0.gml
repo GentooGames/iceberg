@@ -13,11 +13,11 @@ active		= true;
 destroyed	= false;
 rendering	= true;
 
-setup	 = function() {
+setup	 = method_inherit(,function() {
 	/// @func	setup()
 	/// @return {instance} id
 	///
-	//if (!initialized) {
+	if (!initialized) {
 		#region ------------
 	
 		active	  = true;
@@ -37,20 +37,17 @@ setup	 = function() {
 			"destroyed",
 		]);
 		
-		event_subscribe("setup",	method(id, function() { initialized = true;  })); // initialized only to be modified after inherited_methods execute
-		event_subscribe("teardown", method(id, function() { initialized = false; })); // initialized only to be modified after inherited_methods execute
 		INPUT.event_subscribe("mouse_button_pressed",  on_mouse_button_pressed);
 		INPUT.event_subscribe("mouse_button",		   on_mouse_button);
 		INPUT.event_subscribe("mouse_button_released", on_mouse_button_released);
-	
 		event_publish("setup");
 		
 		#endregion
-	//}
-	log("object.setup");
-	return id;
-};
-teardown = function() {
+	}
+	return id;	
+	
+}, function() { initialized = true; });
+teardown = method_inherit(,function() {
 	/// @func	teardown()
 	/// @return {instance} id
 	///
@@ -70,29 +67,32 @@ teardown = function() {
 		#endregion
 	}
 	return id;
-};
-rebuild  = function() {
+});
+rebuild  = method_inherit(,function() {
 	/// @func	rebuild()
 	/// @return {instance} id
 	///
 	if (initialized) {
 		teardown();
 		setup();
+		event_publish("rebuild");
 	}
 	return id;
-};
-update	 = function() {
+});
+update	 = method_inherit(,function() {
 	/// @func	update()
 	/// @return {instance} id
 	/// 
 	if (initialized) {}
 	return id;
-};
-render	 = function() {
+});
+render	 = method_inherit(,function() {
 	/// @func	render()
 	/// @return {instance} id
 	/// 
 	if (initialized) {}
 	return id;
-};
+});
 	
+	
+

@@ -13,8 +13,9 @@ setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
 	/// @return {instance} 
 	///
-	if (!initialized) {}
-	log("controller.setup");
+	if (!initialized) {
+		/// ...
+	}
 	return id;
 });
 teardown = method_inherit(teardown, function() {
@@ -45,4 +46,6 @@ render	 = method_inherit(render,	function() {
 	if (initialized) {}
 	return id;
 });
+
+
 
