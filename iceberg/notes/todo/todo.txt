@@ -1,6 +1,6 @@
 iceberg:
-	- recheckout gprop? normalize prop naming and methods
-	- setup input mouse_wheel events
+	- standardize GProp method implementation
+		- make sure that spring setters are not just setting local value, but also spring's actual value
 	- create objp_entity to test event inheritence
 	- way for object to clear all subscriptions,
 		- should re-store into an array on event init

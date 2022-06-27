@@ -13,11 +13,11 @@ function state_controller_game_main() {
 		enter: function() {},
 		step:  function() {
 			AUDIO.update();
-			CLOCKS.update();
+			CLOCK.update();
 			DISPLAY.update();
 			GUI.update();
 			INPUT.update();
-			PARTICLES.update();
+			PARTICLE.update();
 			TRANSITION.update();
 			DEBUG.update();
 		},

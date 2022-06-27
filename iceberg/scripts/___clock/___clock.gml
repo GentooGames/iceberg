@@ -14,7 +14,7 @@ global.___system_clock = {
         if (!initialized) {
 			#region ----------------
 		
-	        log("<CLOCKS> setup()");
+	        log("<CLOCK> setup()");
 			initialized = true;
 		
 			#endregion

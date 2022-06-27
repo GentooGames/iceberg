@@ -23,11 +23,11 @@ log("<OBJC_GAME> Setting Up Core Systems...");
 /// @NOTE: abstract this so that order is only needed to be set once
 PUBLISHER.setup();	/// <-- should be first
 AUDIO.setup();
-CLOCKS.setup();
+CLOCK.setup();
 DISPLAY.setup();
 GUI.setup();
 INPUT.setup();
-PARTICLES.setup();
+PARTICLE.setup();
 TRANSITION.setup();
 WINDOW.setup();
 DEBUG.setup();		/// <-- should be last

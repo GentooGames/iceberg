@@ -15,14 +15,11 @@ function GProp(_data) constructor {
 	value   = _data[$ "value" ] ?? 0.0;
 	offset  = _data[$ "offset"] ?? 0.0;
 	target  = _data[$ "target"] ?? value;
-	interp  = {}; with (interp ) {
+	interp  = {}; with (interp) {
 		type		= _data[$ "interp_type"		  ] ?? INTERP.LERP;
 		speed		= _data[$ "interp_speed"	  ] ?? 0.1;
 		threshold	= _data[$ "interp_threshold"  ] ?? 0.0;
-		on_complete	= _data[$ "interp_on_complete"] ?? {
-			callback:	_data[$ "interp_on_complete_callback"	  ] ?? undefined,
-			data:		_data[$ "interp_on_complete_callback_data"] ?? undefined,
-		};
+		on_complete	= _data[$ "interp_on_complete"] ?? undefined;
 		complete	=  false;
 	};
 	springs = {}; with (springs) {
@@ -31,15 +28,15 @@ function GProp(_data) constructor {
 		speed		= __SPRING_DEFAULT_SPEED;
 		spring_main	= new Spring(tension, dampening);
 	};
-		
-	EventObject(, "gprop");
+	EventObject(,"gprop");
 	
 	#region Public /////////
 	
 	#region Internal ///////
 	
 	static update = function() {
-		/// @func update()
+		/// @func	update()
+		/// @return {Gprop} self
 		///
 		if (interp.type != INTERP.NONE) {
 			switch (interp.type) {
@@ -49,47 +46,63 @@ function GProp(_data) constructor {
 			__interp_check_complete();
 		}
 		springs.spring_main.update();
+		return self;
 	};
 	
 	#endregion
 	#region Getters ////////
 	
-	static get_raw	  = function() {
+	static get_name				  = function() {};
+	static get_raw				  = function() {
 		/// @func	get_raw()
 		/// @return {any} value
 		///
 		return value;
 	};
-	static get		  = function() {
+	static get					  = function() {
 		/// @func	get()	
 		/// @return {any} value
 		///
 		return get_raw() + get_spring();
 	};
-	static get_total  = get;
-	static get_target = function() {
+	static get_total			  = get;
+	static get_target			  = function() {
 		/// @func	get_target()
 		/// @return {any} target
 		///
 		return target + get_offset();
 	};
-	static get_offset = function() {
+	static get_offset			  = function() {
 		/// @func	get_offset()
 		/// @return {any} offset
 		///
 		return offset;
 	};
-	static get_spring = function() {
+	static get_interp_type		  = function() {};
+	static get_interp_speed		  = function() {};
+	static get_interp_threshold   = function() {};
+	static get_interp_on_complete = function() {};
+	static get_spring			  = function() {
 		/// @func	get_spring()
+		/// @return {real} spring.val
+		///
+		return springs.spring_main;
+	};
+	static get_spring_value		  = function() {
+		/// @func	get_spring_value()
 		/// @return {real} spring.val
 		///
 		return springs.spring_main.get();
 	};
+	static get_spring_tension	  = function() {};
+	static get_spring_dampening	  = function() {};
+	static get_spring_speed		  = function() {};
 		
 	#endregion
 	#region Setters ////////
 	
-	static set_value  = function(_value) {
+	static set_name				  = function(_name) {};
+	static set_value			  = function(_value) {
 		/// @func	set_value(value)
 		/// @param	{any} value
 		///	@return {GProp} self
@@ -98,8 +111,8 @@ function GProp(_data) constructor {
 		target =  value;
 		return self;
 	};
-	static set		  = set_value;
-	static set_target = function(_target) {
+	static set					  = set_value;
+	static set_target			  = function(_target) {
 		/// @func	set_target(target)
 		/// @param	{real} target
 		///	@return {GProp} self
@@ -107,7 +120,7 @@ function GProp(_data) constructor {
 		target = _target;
 		return self;
 	};
-	static set_offset = function(_offset) {
+	static set_offset			  = function(_offset) {
 		/// @func	set_offset(offset)
 		/// @param	{real} offset
 		///	@return {GProp} self
@@ -115,8 +128,11 @@ function GProp(_data) constructor {
 		offset = _offset;
 		return self;
 	};
-		
-	static set_spring_tension   = function(_tension) {
+	static set_interp_type		  = function(_interp_type) {};
+	static set_interp_speed		  = function(_interp_speed) {};
+	static set_interp_threshold   = function(_interp_threshold) {};
+	static set_interp_on_complete = function(_on_complete) {};
+	static set_spring_tension     = function(_tension) {
 		/// @func	set_spring_tensions(tension)
 		/// @param	{real} tension
 		/// @return {GProp} self
@@ -124,7 +140,7 @@ function GProp(_data) constructor {
 		springs.tension = _tension;
 		return self;
 	};
-	static set_spring_dampening = function(_dampening) {
+	static set_spring_dampening   = function(_dampening) {
 		/// @func	set_spring_dampening(dampening)
 		/// @param	{real} dampening
 		/// @return {GProp} self
@@ -132,7 +148,7 @@ function GProp(_data) constructor {
 		springs.dampening = _dampening;
 		return self;
 	};
-	static set_spring_speed		= function(_speed) {
+	static set_spring_speed		  = function(_speed) {
 		/// @func	set_spring_speed(speed)
 		/// @param	{real} speed
 		/// @return {GProp} self
@@ -194,7 +210,7 @@ function GProp(_data) constructor {
 		///
 		with (interp.on_complete) {
 			if (callback != undefined) {
-				callback(data);	
+				callback();	
 			}
 		}
 		interp.complete = true;

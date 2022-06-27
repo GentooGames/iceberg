@@ -18,7 +18,7 @@ function Border(_sprite) constructor {
 		speed	  = __SPRING_DEFAULT_SPEED;
 	};
 	particles = {} with (particles) {
-		system	= PARTICLES.get_system();
+		system	= PARTICLE.get_system();
 		emitter	= part_emitter_create(system);
 	};
 	audio	  = {} with (audio) {
