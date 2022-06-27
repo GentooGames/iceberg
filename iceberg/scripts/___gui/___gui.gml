@@ -1,4 +1,4 @@
-global.___gui_system = {
+global.___system_gui = {
     initialized: false,
 	
 	/// Internal ///////////////////
@@ -107,7 +107,7 @@ global.___gui_system = {
     gui_to_world_x: function() { /* need to implement... */ },
     gui_to_world_y: function() { /* need to implement... */ },
 };
-#macro GUI global.___gui_system
+#macro GUI global.___system_gui
 
 #macro SURF_W surface_get_width(application_surface)
 #macro SURF_H surface_get_height(application_surface)

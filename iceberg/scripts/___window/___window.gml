@@ -1,4 +1,4 @@
-global.___window_system = {
+global.___system_window = {
     initialized: false,
 	
 	/// Internal ///////////////////
@@ -80,4 +80,4 @@ global.___window_system = {
 		return self;
     },
 };
-#macro WINDOW global.___window_system
+#macro WINDOW global.___system_window

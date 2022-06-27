@@ -1,6 +1,6 @@
 #macro RUN_TESTS 0 
 
-global.___unit_test_system = {
+global.___system_unit_test = {
     test_suites: {
         object_onCreate: {
             run:      true,
@@ -18,7 +18,7 @@ global.___unit_test_system = {
     },
     run_tests: test_builder,
 };
-#macro UNIT_TEST global.___unit_test_system
+#macro UNIT_TEST global.___system_unit_test
 
 #region object_onCreate
 

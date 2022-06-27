@@ -1,4 +1,4 @@
-global.___transition_system = { 
+global.___system_transition = { 
     initialized: false,
 	
 	/// Internal ///////////////////
@@ -45,7 +45,7 @@ global.___transition_system = {
 			#endregion
 			#region Events /////////////
 		
-			EventObject(, "transition");	/// <-- creates Publisher and methods
+			EventObject(,"transition");
 			event_register([
 				"enter_started",
 				"enter_completed",
@@ -206,5 +206,5 @@ global.___transition_system = {
         throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
     },
 };
-#macro TRANSITION global.___transition_system
+#macro TRANSITION global.___system_transition
 

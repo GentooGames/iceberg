@@ -27,11 +27,11 @@ global.___system_clock = {
         clock_ui.set_update_frequency(_frequency);
         clock_tutorial.set_update_frequency(_frequency);
         
-        #macro CLOCK_STABLE   CLOCKS.clock_stable
-        #macro CLOCK_CAMERA   CLOCKS.clock_camera
-        #macro CLOCK_ACTION   CLOCKS.clock_action
-        #macro CLOCK_UI 	  CLOCKS.clock_ui
-        #macro CLOCK_TUTORIAL CLOCKS.clock_tutorial
+        #macro CLOCK_STABLE   CLOCK.clock_stable
+        #macro CLOCK_CAMERA   CLOCK.clock_camera
+        #macro CLOCK_ACTION   CLOCK.clock_action
+        #macro CLOCK_UI 	  CLOCK.clock_ui
+        #macro CLOCK_TUTORIAL CLOCK.clock_tutorial
     },
     update: function() {
         /// @func   update()
@@ -47,5 +47,5 @@ global.___system_clock = {
         CLOCK_TUTORIAL.tick();
     },
 };
-#macro CLOCKS global.___system_clock
+#macro CLOCK global.___system_clock
 

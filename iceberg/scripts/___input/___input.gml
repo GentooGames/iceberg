@@ -1,58 +1,63 @@
-global.___input_system = {
+global.___system_input = {
     initialized: false,
 	
 	/// Internal ///////////
     setup:  function() {
         /// @func   setup()
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (!initialized) {
+			#region ----------------
 		
-        log("<INPUT> setup()");
-        initialized = true;
+	        log("<INPUT> setup()");
+	        initialized = true;
 		
-		#endregion
-		#region Events /////////
+			#endregion
+			#region Events /////////
 		
-		EventObject(, "input");
-		event_register([
-			/// mouse_button_pressed
-			"mouse_button_pressed",
-			"mouse_left_button_pressed",
-	        "mouse_right_button_pressed",
-	        "mouse_middle_button_pressed",  
+			EventObject(,"input");
+			event_register([
+				/// mouse_button_pressed
+				"mouse_button_pressed",
+				"mouse_left_button_pressed",
+		        "mouse_right_button_pressed",
+		        "mouse_middle_button_pressed",  
 			
-			/// mouse_button
-			"mouse_button",
-			"mouse_left_button",
-	        "mouse_right_button",
-	        "mouse_middle_button",  
+				/// mouse_button
+				"mouse_button",
+				"mouse_left_button",
+		        "mouse_right_button",
+		        "mouse_middle_button",  
 			
-			/// mouse_button_released
-			"mouse_button_released",
-			"mouse_left_button_released",
-	        "mouse_right_button_released",
-	        "mouse_middle_button_released",  
+				/// mouse_button_released
+				"mouse_button_released",
+				"mouse_left_button_released",
+		        "mouse_right_button_released",
+		        "mouse_middle_button_released",  
 			
-			/// mouse_wheel
-			/// ...
+				/// mouse_wheel
+				"mouse_wheel_up",
+				"mouse_wheel_down",
 			
-			/// keyboard_button_*
-			"keyboard_button_pressed",
-			"keyboard_button",
-			"keyboard_button_released",
-		]);
+				/// keyboard_button_*
+				"keyboard_button_pressed",
+				"keyboard_button",
+				"keyboard_button_released",
+			]);
 		
-		#endregion
+			#endregion
+		}
+		return self;
     },
     update: function() {
         /// @func   update()
-        /// @return NA
+        /// @return {struct} self
         /// 
-		if (!initialized) exit;
-		__update_mouse_events();
-		__update_keyboard_events();
+		if (initialized) {
+			__update_mouse_events();
+			__update_keyboard_events();
+		}
+		return self;
     },
     
 	/// Core ///////////////
@@ -81,17 +86,17 @@ global.___input_system = {
             ///
 			return device_mouse_check_button_released(get_device(), _button);
         },
-        wheel_down:      function() {
-            /// @func   wheel_down()
-            /// @return NA
-            ///
-            return mouse_wheel_down();
-        },
         wheel_up:        function() {
             /// @func   wheel_up()
-            /// @return NA
+            /// @return {boolean} mouse_wheel_up
             ///
             return mouse_wheel_up();
+        },
+		wheel_down:      function() {
+            /// @func   wheel_down()
+            /// @return {boolean} mouse_wheel_down
+            ///
+            return mouse_wheel_down();
         },
         
         /// Getters ////////////////////////
@@ -213,7 +218,22 @@ global.___input_system = {
 				y_gui:	INPUT.mouse.get_y_gui(),
 			});	
 		}
-			
+		if (mouse.wheel_up()) {
+			event_publish("mouse_wheel_up", {
+				x:		INPUT.mouse.get_x(),
+				y:		INPUT.mouse.get_y(),
+				x_gui:	INPUT.mouse.get_x_gui(),
+				y_gui:	INPUT.mouse.get_y_gui(),	
+			});
+		}
+		if (mouse.wheel_down()) {
+			event_publish("mouse_wheel_down", {
+				x:		INPUT.mouse.get_x(),
+				y:		INPUT.mouse.get_y(),
+				x_gui:	INPUT.mouse.get_x_gui(),
+				y_gui:	INPUT.mouse.get_y_gui(),	
+			});
+		}
 		return self;
 	},
 	__update_keyboard_events: function() {
@@ -235,11 +255,10 @@ global.___input_system = {
 				button: keyboard_key,
 			});
 		}
-			
 		return self;
 	},
 };
-#macro INPUT global.___input_system
+#macro INPUT global.___system_input
 
 #macro mouse_x_gui INPUT.mouse.get_x_gui()
 #macro mouse_y_gui INPUT.mouse.get_y_gui()

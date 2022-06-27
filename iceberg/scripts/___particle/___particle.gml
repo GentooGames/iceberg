@@ -1,36 +1,42 @@
-global.___particles_system = {
+global.___system_particle = {
     initialized: false,
-	system:	part_system_create(),
+	system:		 part_system_create(),
 
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (!initialized) {
+			#region ----------------
 		
-        log("<PARTICLE> setup()");
-        initialized = true;
+	        log("<PARTICLE> setup()");
+	        initialized = true;
 		
-		#endregion
+			#endregion
+			#region Events /////////
+			
+			EventObject(,"particle");
+			//event_register([]);
+			
+			#endregion
+		}
+		return self;
     },
 	update:	function() {
 		/// @func   update()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (!initialized) exit;
+        if (initialized) {}
+		return self;
 	},
 	
 	/// Getters ////////////////////
     get_system: function() {
         /// @func   get_system()
-		/// @desc	...
-        /// @return system -> {part_system}
+        /// @return {system_index} system
         ///
         return system;
     },
 };
-#macro PARTICLES global.___particles_system
+#macro PARTICLE global.___system_particle
