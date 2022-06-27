@@ -4,102 +4,109 @@ global.___system_gui = {
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (!initialized) {
+			#region ----------------
 		
-        log("<GUI> setup()");
-        initialized = true;
+	        log("<GUI> setup()");
+	        initialized = true;
 			
-		#endregion
-		#region Resolution /////
+			#endregion
+			#region Resolution /////
 		
-		width_base  = 1600;
-		height_base = 900;
+			width_base  = 1600;
+			height_base = 900;
 		
-		#endregion
-		#region Font ///////////
+			#endregion
+			#region Events /////////
+			
+			EventObject(,"gui");
+			//event_register([]);
+			
+			#endregion
+			#region Font ///////////
 		
-		font_default = -1;
+			font_default = -1;
 		
-		#endregion
-		#region Border /////////
+			#endregion
+			#region Border /////////
 		
-		border_mouth = new BorderTrees();
-		border_teeth = new BorderTrees();
+			border_mouth = new BorderTrees();
+			border_teeth = new BorderTrees();
 		
-		with (border_mouth) {
-			set_color(CONFIG.color.green_lime);
+			with (border_mouth) {
+				set_color(CONFIG.color.green_lime);
+			}
+			with (border_teeth) {
+				set_x_offset(-80);
+				set_y_offset(-40);
+				set_color(CONFIG.color.white);
+			}
+		
+			#endregion
+		
+			label = new UiLabel(,,{
+				text: "text for config start",
+				x: SURF_W * 0.5,
+				y: SURF_H * 0.5,
+			})
+			.action_add("mouse_clicked_action", function(_data) {
+				show_message("mouse_clicked -- " + string(_data));
+			})
+			.action_add_trigger("mouse_clicked_action", "mouse_clicked_trigger", function() {
+				var _result = (mouse_touching() && mouse_check_button_pressed(mb_left));
+				return action_set_trigger_result(_result, { x: mouse_x, y: mouse_y });
+			})
 		}
-		with (border_teeth) {
-			set_x_offset(-80);
-			set_y_offset(-40);
-			set_color(CONFIG.color.white);
-		}
-		
-		#endregion
-		
-		label = new UiLabel(,,{
-			text: "text for config start",
-			x: SURF_W * 0.5,
-			y: SURF_H * 0.5,
-		})
-		.action_add("mouse_clicked_action", function(_data) {
-			show_message("mouse_clicked -- " + string(_data));
-		})
-		.action_add_trigger("mouse_clicked_action", "mouse_clicked_trigger", function() {
-			var _result = (mouse_touching() && mouse_check_button_pressed(mb_left));
-			return action_set_trigger_result(_result, { x: mouse_x, y: mouse_y });
-		})
+		return self;
     },    
 	update:	function() {
 		/// @func   update()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (!initialized) exit;
-		#region Border /////////
+        if (initialized) {
+			#region Border /////////
 		
-		border_mouth.update();
-		border_teeth.update();
+			border_mouth.update();
+			border_teeth.update();
 		
-		#endregion
+			#endregion
 				
-		label.update();
+			label.update();
+		}
+		return self;
 	},
 	render: function() {
 		/// @func   update()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (!initialized) exit;
-		#region Border /////////
+        if (initialized) {
+			#region Border /////////
 		
-		border_teeth.render();
-		border_mouth.render();
+			border_teeth.render();
+			border_mouth.render();
 		
-		#endregion
-		
-		label.render();
+			#endregion
+			
+			label.render();
+		}
+		return self;
 	},
 	
 	/// Core ///////////////////////
     world_to_gui_x: function(_x) {
     	/// @func	world_to_gui_x(x)
-    	/// @param	x_world {real}
-		/// @desc	convert a given x(world) coordinate, return the associated x(gui) coordinate.
-    	/// @return x_gui	{real}
+    	/// @param	{real} x_world
+    	/// @return {real} x_gui
     	///
     	var _scaled_ratio = SURF_W / CAMERA.get_width();
     	return (_x - CAMERA.left) * _scaled_ratio;
     },
     world_to_gui_y: function(_y) {
     	/// @func	world_to_gui_y(y)
-    	/// @desc	convert a given y(world) coordinate, return the associated y(gui) coordinate.
-    	/// @param	y_world {real}
-    	/// @return y_gui	{real}
+		/// @param	{real} y_world
+    	/// @return {real} y_gui
     	///
     	var _scaled_ratio = SURF_H / CAMERA.get_height();
     	return (_y - CAMERA.top) * _scaled_ratio;

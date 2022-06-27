@@ -4,37 +4,42 @@ global.___system_display = {
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (!initialized) {
+			#region ----------------
 		
-        log("<DISPLAY> setup()");
-        initialized = true;
+	        log("<DISPLAY> setup()");
+	        initialized = true;
 		
-		#endregion
+			#endregion
+			#region Events /////////
+			
+			EventObject(,"display");
+			//event_register([]);
+			
+			#endregion
+		}
+		return self;
     },
 	update:	function() {
 		/// @func   update()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (!initialized) exit;
+        if (initialized) {}
+		return self;
 	},
 	
 	/// Getters ////////////////////
     get_width:  function() {
         /// @func   get_width()
-		/// @desc	...
-        /// @return width {real}
+        /// @return {real} width
         ///
         return display_get_width();
     },
     get_height: function() {
         /// @func   get_height()
-		/// @desc	...
-        /// @return height {real}
+        /// @return {real} height
         ///
         return display_get_height();
     },

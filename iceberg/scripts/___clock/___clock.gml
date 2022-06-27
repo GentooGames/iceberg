@@ -9,42 +9,52 @@ global.___system_clock = {
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (!initialized) {
+			#region ----------------
 		
-        log("<CLOCKS> setup()");
-		initialized = true;
+	        log("<CLOCKS> setup()");
+			initialized = true;
 		
-		#endregion
+			#endregion
+			#region Clocks /////////
+			
+	        static _frequency = 60;
+	        clock_stable.set_update_frequency(_frequency);
+	        clock_camera.set_update_frequency(_frequency);
+	        clock_action.set_update_frequency(_frequency);
+	        clock_ui.set_update_frequency(_frequency);
+	        clock_tutorial.set_update_frequency(_frequency);
         
-        static _frequency = 60;
-        clock_stable.set_update_frequency(_frequency);
-        clock_camera.set_update_frequency(_frequency);
-        clock_action.set_update_frequency(_frequency);
-        clock_ui.set_update_frequency(_frequency);
-        clock_tutorial.set_update_frequency(_frequency);
-        
-        #macro CLOCK_STABLE   CLOCK.clock_stable
-        #macro CLOCK_CAMERA   CLOCK.clock_camera
-        #macro CLOCK_ACTION   CLOCK.clock_action
-        #macro CLOCK_UI 	  CLOCK.clock_ui
-        #macro CLOCK_TUTORIAL CLOCK.clock_tutorial
+	        #macro CLOCK_STABLE   CLOCK.clock_stable
+	        #macro CLOCK_CAMERA   CLOCK.clock_camera
+	        #macro CLOCK_ACTION   CLOCK.clock_action
+	        #macro CLOCK_UI 	  CLOCK.clock_ui
+	        #macro CLOCK_TUTORIAL CLOCK.clock_tutorial
+			
+			#endregion
+			#region Events /////////
+			
+			EventObject(,"clock");
+			//event_register([]);
+			
+			#endregion
+		}
+		return self;
     },
     update: function() {
         /// @func   update()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (!initialized) exit;
-		
-        CLOCK_STABLE.tick();
-        CLOCK_CAMERA.tick();
-        CLOCK_ACTION.tick();
-        CLOCK_UI.tick();
-        CLOCK_TUTORIAL.tick();
+        if (initialized) {
+	        CLOCK_STABLE.tick();
+	        CLOCK_CAMERA.tick();
+	        CLOCK_ACTION.tick();
+	        CLOCK_UI.tick();
+	        CLOCK_TUTORIAL.tick();
+		}
+		return self;
     },
 };
 #macro CLOCK global.___system_clock

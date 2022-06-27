@@ -7,49 +7,44 @@ global.___system_debug = {
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
-		/// @desc	...
-        /// @return NA
-		/// @tested false
+        /// @return {struct} self
         /// 
-        if (!DEBUGGING)  exit;
-		if (initialized) exit;
-		show_debug_overlay(true);
-		#region ----------------
+        if (DEBUGGING && !initialized) {
+			#region ----------------
 		
-        log("<DEBUG> setup()");
-		initialized = true;	
+	        log("<DEBUG> setup()");
+			initialized = true;	
+			show_debug_overlay(true);
 		
-		#endregion
-		#region gm_live ////////
+			#endregion
+			#region gm_live ////////
 		
 		instance_create_depth(0, 0, 0, obj_gmlive);
 		
 		#endregion
+		}
+		return self;
     },
     update: function() {
         /// @func   update()
-		/// @desc	...
-        /// @return NA
-		/// @tested false
+		/// @return {struct} self
         ///
-        if (!DEBUGGING)   exit
-		if (!initialized) exit;
-		
-        if (INPUT.keyboard.button_pressed(vk_f11))   {
-			WINDOW.toggle_fullscreen();
+        if (DEBUGGING && initialized) {
+	        if (INPUT.keyboard.button_pressed(vk_f11))   {
+				WINDOW.toggle_fullscreen();
+			}
 		}
+		return self;
     },
     render: function() {
         /// @func   render()
-		/// @desc	...
-        /// @return NA
-		/// @tested false
+        /// @return {struct} self
         ///
-        if (!DEBUGGING)   exit
-		if (!initialized) exit;
-		
-		var _y = GUI_H - 30;
-		draw_text(10, _y, room_get_name(room));
+        if (DEBUGGING && initialized) {
+			var _y = GUI_H - 30;
+			draw_text(10, _y, room_get_name(room));
+		}
+		return self;
     },
 };
 #macro DEBUG global.___system_debug

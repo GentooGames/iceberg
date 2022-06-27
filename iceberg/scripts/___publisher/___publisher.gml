@@ -4,24 +4,29 @@ global.___system_publisher = {
 	/// Internal ///////////////////
     setup: function() {
         /// @func   setup()
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (initialized) {
+			#region ----------------
 		
-        log("<PUBLISHER> setup()");
-		initialized = true;
+	        log("<PUBLISHER> setup()");
+			initialized = true;
 		
-		#endregion
-		
-		EventObject(,"publisher");
-		get_publisher	  = get_event_publisher;
-		register		  = event_register;			
-		registered		  = event_registered;			
-		publish			  = event_publish;				
-		subscribe		  = event_subscribe;			
-		unsubscribe		  = event_unsubscribe;			
-		clear_subscribers = event_clear_subscribers;	
+			#endregion
+			#region Events /////////
+			
+			EventObject(,"publisher");
+			get_publisher	  = get_event_publisher;
+			register		  = event_register;			
+			registered		  = event_registered;			
+			publish			  = event_publish;				
+			subscribe		  = event_subscribe;			
+			unsubscribe		  = event_unsubscribe;			
+			clear_subscribers = event_clear_subscribers;	
+			
+			#endregion
+		}
+		return self;
     },
 };
 #macro PUBLISHER global.___system_publisher
