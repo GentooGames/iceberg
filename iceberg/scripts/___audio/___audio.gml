@@ -30,6 +30,7 @@ global.___system_audio = {
 				"played",
 				"stopped",
 				"all_stopped",
+				"pitch_assigned",
 				"emitter_gain_assigned",
 				"emitter_pitch_assigned",
 			]);
@@ -86,7 +87,7 @@ global.___system_audio = {
 		/// @param	{real}			range_max=1.1
         /// @return {audio_index}	audio_inst
         ///
-        audio_sound_pitch(_audio_id, random_range(_range_min, _range_max));
+        set_pitch(_audio_id, random_range(_range_min, _range_max));
         return play(_emitter_id, _audio_id, _loops, _priority);
     },
 	play_mod_array: function(_emitter_id, _audio_ids, _loops, _priority = 0, _range_min = 0.9, _range_max = 1.1) {
@@ -114,6 +115,7 @@ global.___system_audio = {
         /// @return {struct}	  self
         ///
     	audio_stop_sound(_audio_id);
+		event_publish("stopped", _audio_id);
 		return self;
     },
 	stop_array:		function(_audio_ids) {
@@ -122,7 +124,7 @@ global.___system_audio = {
         /// @return {struct} self
         ///
 		for (var _i = 0, _len = array_length(_audio_ids); _i < _len; _i++) {
-    		audio_stop_sound(_audio_ids[_i]);
+    		stop(_audio_ids[_i]);
 		}
 		return self;
 	},
@@ -131,10 +133,21 @@ global.___system_audio = {
         /// @return {struct} self
         ///
         audio_stop_all();
+		event_publish("all_stopped");
 		return self;
     },
     
 	/// Setters ////////////
+	set_pitch:         function(_sound_id, _pitch) {
+        /// @func   set_pitch(sound_id, pitch)
+        /// @param  sound_id {sound}
+        /// @param  pitch    {real}
+        /// @return {struct} self
+        ///
+        audio_sound_pitch(_sound_id, _pitch);
+		event_publish("pitch_assigned", { sound: _sound_id, pitch: _pitch });
+		return self;
+    },
     set_emitter_gain:  function(_emitter_id, _gain) {
         /// @func   set_emitter_gain(emitter_id, gain)
         /// @param  emitter_id {emitter}
@@ -142,6 +155,7 @@ global.___system_audio = {
         /// @return {struct} self
         ///
         audio_emitter_gain(_emitter_id, _gain);	
+		event_publish("emitter_gain_assigned", { emitter: _emitter_id, gain: _gain });
 		return self;
     },
     set_emitter_pitch: function(_emitter_id, _pitch) {
@@ -151,15 +165,7 @@ global.___system_audio = {
         /// @return {struct} self
         ///
         audio_emitter_pitch(_emitter_id, _pitch);	
-		return self;
-    },
-    set_pitch:         function(_sound_id, _pitch) {
-        /// @func   set_pitch(sound_id, pitch)
-        /// @param  sound_id {sound}
-        /// @param  pitch    {real}
-        /// @return {struct} self
-        ///
-        audio_sound_pitch(_sound_id, _pitch);
+		event_publish("emitter_pitch_assigned", { emitter: _emitter_id, pitch: _pitch });
 		return self;
     },
     

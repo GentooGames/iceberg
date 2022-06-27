@@ -56,7 +56,7 @@ function state_system_transition_change() {
 				? "room_restarted"
 				: "room_changed";
 			room_goto(room_target);		
-			event_publish(_event_name);	
+			event_publish(_event_name, room_target);	
 			
 			fsm.change(STATE_SYSTEM_TRANSITION_HOLD);
 		},
