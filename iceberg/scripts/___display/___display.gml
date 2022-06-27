@@ -1,6 +1,7 @@
 global.___system_display = {
     initialized:  false,
-	
+
+	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
 		/// @desc	...
@@ -22,6 +23,7 @@ global.___system_display = {
         if (!initialized) exit;
 	},
 	
+	/// Getters ////////////////////
     get_width:  function() {
         /// @func   get_width()
 		/// @desc	...

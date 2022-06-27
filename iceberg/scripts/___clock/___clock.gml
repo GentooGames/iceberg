@@ -6,6 +6,7 @@ global.___system_clock = {
     clock_ui:		new iota_clock(), // ui overlays and action frames
     clock_tutorial: new iota_clock(), // tutorial entities
 	
+	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
 		/// @desc	...

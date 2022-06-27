@@ -12,7 +12,6 @@ function state_controller_game_main() {
 	return {
 		enter: function() {},
 		step:  function() {
-			PUBLISHER.update();
 			AUDIO.update();
 			CLOCKS.update();
 			DISPLAY.update();

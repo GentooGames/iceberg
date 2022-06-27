@@ -1,9 +1,4 @@
 iceberg:
-	- integrate method_inherit() into object events
-	- PUBSUB system 
-		- rework so that not everything is at a global level
-			- faster performance, but more memory overhead
-		- potentially remove callbacks?
 	- recheckout gprop? normalize prop naming and methods
 	- setup input mouse_wheel events
 	- create objp_entity to test event inheritence

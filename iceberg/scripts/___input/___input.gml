@@ -142,7 +142,7 @@ global.___input_system = {
 			return device;
 		},
 			
-		/// Other //////////////////////////
+		/// Util ///////////////////////////
 		to_string: function(_button_index) {
 			/// @func	to_string(button_index)
 			/// @param	{mb}	 button_index

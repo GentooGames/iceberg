@@ -1,7 +1,7 @@
 global.___gui_system = {
     initialized: false,
-	#region Internal ///////
 	
+	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
 		/// @desc	...
@@ -85,9 +85,7 @@ global.___gui_system = {
 		label.render();
 	},
 	
-	#endregion
-	#region Public /////////
-	
+	/// Core ///////////////////////
     world_to_gui_x: function(_x) {
     	/// @func	world_to_gui_x(x)
     	/// @param	x_world {real}
@@ -108,8 +106,6 @@ global.___gui_system = {
     },
     gui_to_world_x: function() { /* need to implement... */ },
     gui_to_world_y: function() { /* need to implement... */ },
-	
-	#endregion
 };
 #macro GUI global.___gui_system
 

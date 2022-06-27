@@ -27,7 +27,7 @@ setup	 = method_inherit(,function() {
 		#endregion
 		#region Events /////
 	
-		EventObject(, event_id);
+		EventObject(,event_id);
 		event_register([
 			"setup_completed",
 			"teardown_completed",

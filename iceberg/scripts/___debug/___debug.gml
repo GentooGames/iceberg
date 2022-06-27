@@ -3,7 +3,8 @@
 
 global.___system_debug = {
 	initialized:  false,
-	
+
+	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
 		/// @desc	...

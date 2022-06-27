@@ -80,8 +80,7 @@ global.___system_audio = {
         audio_stop_all();
     },
     
-    #region Setters ////////
-    
+	/// Setters ////////////
     set_emitter_gain:  function(_emitter_id, _gain) {
         /// @func   set_emitter_gain(emitter_id, gain)
         /// @param  emitter_id {emitter}
@@ -110,9 +109,7 @@ global.___system_audio = {
         audio_sound_pitch(_sound_id, _pitch);
     },
     
-    #endregion
-    #region Checkers ///////
-    
+    /// Checkers ///////////
     is_playing:       function(_sound_id) {
         /// @func   is_playing()
         /// @param  sound_id {sound}
@@ -137,8 +134,6 @@ global.___system_audio = {
     	}
     	return false;
     },
-    
-    #endregion
 };
 #macro AUDIO global.___system_audio
 

@@ -1,7 +1,8 @@
 global.___particles_system = {
     initialized: false,
 	system:	part_system_create(),
-	
+
+	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
 		/// @desc	...
@@ -23,6 +24,7 @@ global.___particles_system = {
         if (!initialized) exit;
 	},
 	
+	/// Getters ////////////////////
     get_system: function() {
         /// @func   get_system()
 		/// @desc	...

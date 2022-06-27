@@ -121,29 +121,7 @@ global.___transition_system = {
         ///
 		return goto(room, _data);
     },
-    get_room_next:	   function(_room = room) {
-        /// @func   get_room_next()
-        /// @param  {room_index} room
-        /// @return {room_index} room_next
-        ///
-        var _next_room = _room + 1;
-        if (room_exists(_next_room)) {
-            return _next_room;
-        }
-        throw("<ERROR in TRANSITION.get_room_next()>:room with index " + string(_next_room) + " does not exist.");
-    },
-    get_room_previous: function(_room = room) {
-        /// @func   get_room_previous()
-        /// @param  {room_index} room
-        /// @return {room_index} room_previous
-        ///
-        var _previous_room = _room - 1;
-        if (room_exists(_previous_room)) {
-            return _previous_room;
-        }
-        throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
-    },
-	
+		
 	/// Transitions ////////////////
 	start_transition_is_ready: function() {
 		/// @func	start_transition_is_ready()
@@ -196,6 +174,30 @@ global.___transition_system = {
 		}
 		return self;
 	},	
+		
+	/// Getters ////////////////////
+    get_room_next:	   function(_room = room) {
+        /// @func   get_room_next()
+        /// @param  {room_index} room
+        /// @return {room_index} room_next
+        ///
+        var _next_room = _room + 1;
+        if (room_exists(_next_room)) {
+            return _next_room;
+        }
+        throw("<ERROR in TRANSITION.get_room_next()>:room with index " + string(_next_room) + " does not exist.");
+    },
+    get_room_previous: function(_room = room) {
+        /// @func   get_room_previous()
+        /// @param  {room_index} room
+        /// @return {room_index} room_previous
+        ///
+        var _previous_room = _room - 1;
+        if (room_exists(_previous_room)) {
+            return _previous_room;
+        }
+        throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
+    },
 };
 #macro TRANSITION global.___transition_system
 
