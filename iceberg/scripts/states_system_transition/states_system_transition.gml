@@ -50,7 +50,14 @@ function state_system_transition_change() {
 	return {
 		enter: function() {
 			event_publish("change_started");
-			room_goto(room_target);	// <-- move to state.leave?
+			
+			/// Move To state.leave?
+			var _event_name = (room_target == room)
+				? "room_restarted"
+				: "room_changed";
+			room_goto(room_target);		
+			event_publish(_event_name);	
+			
 			fsm.change(STATE_SYSTEM_TRANSITION_HOLD);
 		},
 		step:  function() {

@@ -4,87 +4,94 @@ global.___transition_system = {
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region --------------------
+        if (!initialized) {
+			#region --------------------
 		
-        log("<FLOE> setup()");
-		initialized = true;
+	        log("<FLOE> setup()");
+			initialized = true;
 		
-		#endregion
-		#region Room ///////////////
+			#endregion
+			#region Room ///////////////
 		
-		room_target		= undefined;
-		room_hold		= false;	// should the room be held until manual exit execution?
-		room_holding	= false;	// is the room currently holding?
-		room_to_release = false;	// is the room ready to be released?
+			room_target		= undefined;
+			room_hold		= false;	// should the room be held until manual exit execution?
+			room_holding	= false;	// is the room currently holding?
+			room_to_release = false;	// is the room ready to be released?
 
-		#endregion
-		#region State Machine //////
+			#endregion
+			#region State Machine //////
 		
-		state_start = STATE_SYSTEM_TRANSITION_IDLE;
-		fsm = new SnowState(state_start);
-		fsm.event_set_default_function("draw", state_system_transition_draw_default);
-		fsm.add(STATE_SYSTEM_TRANSITION_IDLE,		   state_system_transition_idle())
-		   .add(STATE_SYSTEM_TRANSITION_TRANSITIONING, state_system_transition_transitioning())
-		   .add(STATE_SYSTEM_TRANSITION_CHANGE,		   state_system_transition_change())
-		   .add(STATE_SYSTEM_TRANSITION_HOLD,		   state_system_transition_hold())
-		   .add(STATE_SYSTEM_TRANSITION_ENDING,		   state_system_transition_ending())
-		;
-		fsm.change(state_start);
+			state_start = STATE_SYSTEM_TRANSITION_IDLE;
+			fsm = new SnowState(state_start);
+			fsm.event_set_default_function("draw", state_system_transition_draw_default);
+			fsm.add(STATE_SYSTEM_TRANSITION_IDLE,		   state_system_transition_idle())
+			   .add(STATE_SYSTEM_TRANSITION_TRANSITIONING, state_system_transition_transitioning())
+			   .add(STATE_SYSTEM_TRANSITION_CHANGE,		   state_system_transition_change())
+			   .add(STATE_SYSTEM_TRANSITION_HOLD,		   state_system_transition_hold())
+			   .add(STATE_SYSTEM_TRANSITION_ENDING,		   state_system_transition_ending())
+			;
+			fsm.change(state_start);
 		
-		#endregion
-		#region Floe Effects ///////
+			#endregion
+			#region Floe Effects ///////
 		
-		effect_default = FloeEffectFade;
-		effect_in	   = undefined;
-		effect_out	   = undefined;
-		effect		   = undefined;
+			effect_default = FloeEffectFade;
+			effect_in	   = undefined;
+			effect_out	   = undefined;
+			effect		   = undefined;
 		
-		#endregion
-		#region Events /////////////
+			#endregion
+			#region Events /////////////
 		
-		EventObject(, "transition");	/// <-- creates Publisher and methods
-		event_register([
-			"enter_started",
-			"enter_completed",
-			"change_started",
-			"change_completed",
-			"hold_started",
-			"hold_completed",
-			"exit_started",
-			"exit_completed",
-		]);
+			EventObject(, "transition");	/// <-- creates Publisher and methods
+			event_register([
+				"enter_started",
+				"enter_completed",
+				"change_started",
+				"change_completed",
+				"hold_started",
+				"hold_completed",
+				"exit_started",
+				"exit_completed",
+				"room_changed",
+				"room_restarted",
+			]);
 		
-		#endregion
+			#endregion
+		}
+		return self;
     },
 	update:	function() {
 		/// @func   update()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (!initialized) exit;
-		////////////////////////////
-		fsm.step();
+        if (initialized) {
+			#region State Machine //////
+			
+			fsm.step();
+			
+			#endregion
 		
-		if (keyboard_check_pressed(ord("R"))) {
-			TRANSITION.restart({
-				room_hold:  true,
-				effect_in:  FloeEffectFade,
-				effect_out: FloeEffectBorderTrees
-			});
+			if (keyboard_check_pressed(ord("R"))) {
+				TRANSITION.restart({
+					room_hold:  true,
+					effect_in:  FloeEffectFade,
+					effect_out: FloeEffectBorderTrees
+				});
+			}
 		}
+		return self;
 	},
 	render: function() {
 		/// @func   render()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (!initialized) exit;
-		////////////////////////////
-		fsm.draw();
+		if (initialized) {
+			fsm.draw();
+		}
+		return self;
 	},
 	
 	/// Core ///////////////////////
