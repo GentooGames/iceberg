@@ -4,31 +4,32 @@ global.___window_system = {
 	/// Internal ///////////////////
     setup:  function() {
         /// @func   setup()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (!initialized) {
+			#region ----------------
 		
-        log("<WINDOW> setup()");
-        initialized = true;
+	        log("<WINDOW> setup()");
+	        initialized = true;
 		
-		#endregion
-		
+			#endregion
+			#region Events /////////
+			
+			EventObject(,"window");
+			event_register([
+				"fullscreen_assigned",
+				"position_assigned",
+			]);
+			
+			#endregion
+		}
+		return self;
     },
-	update: function() {
-		/// @func   update()
-		/// @desc	...
-        /// @return NA
-        ///
-        if (!initialized) exit;
-	},
 	
 	/// Core ///////////////////////
 	toggle_fullscreen:	function() {
 		/// @func   toggle_fullscreen()
-		/// @desc	...
-        /// @return NA
+        /// @return {struct} self
         ///
 		set_fullscreen(!get_fullscreen());
 	},
@@ -36,22 +37,19 @@ global.___window_system = {
 	/// Getters ////////////////////
     get_width:		function() {
         /// @func   get_width()
-		/// @desc	...
-        /// @return width -> {real}
+        /// @return {real} width
         ///
         return window_get_width();
     },
     get_height:		function() {
         /// @func   get_height()
-		/// @desc	...
-        /// @return height -> {real}
+        /// @return {real} height
         ///
         return window_get_height();
     },
     get_fullscreen:	function() {
         /// @func   get_fullscreen()
-		/// @desc	...
-        /// @return fullscreen -> {bool}
+        /// @return {bool} is_fullscreen?
         ///
         return window_get_fullscreen();
     },
@@ -59,9 +57,8 @@ global.___window_system = {
 	/// Setters ////////////////////
     set_fullscreen: function(_fullscreen) {
         /// @func   set_fullscreen(fullscreen?)
-        /// @param  fullscreen? -> {bool}
-		/// @desc	...
-        /// @return NA
+        /// @return {bool} is_fullscreen?
+        /// @return {struct} self
         ///
         window_set_fullscreen(_fullscreen);
 		//var _w = _fullscreen ? display_get_width()  : GUI.width_base;
@@ -69,15 +66,18 @@ global.___window_system = {
 		//log("fullscreen: {2}, w:{0}, h:{1}", _w, _h, _fullscreen);
 		//surface_resize(application_surface, _w, _h);
 		//display_set_gui_size(_w, _h);
+		event_publish("fullscreen_assigned", _fullscreen);
+		return self;
     },
     set_position:   function(_x, _y) {
         /// @func   set_position(x, y)
-        /// @param  x -> {real}
-        /// @param  y -> {real}
-		/// @desc	...
-        /// @return NA
+        /// @param  {real} x
+        /// @param  {real} y
+        /// @return {struct} self
         ///
         window_set_position(_x, _y);  
+		event_publish("position_assigned", { x: _x, y: _y });
+		return self;
     },
 };
 #macro WINDOW global.___window_system

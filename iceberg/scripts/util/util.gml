@@ -790,7 +790,7 @@ function struct_load_from_buffer(_filename) {
 function buffer_compressed_encoded_to_struct(_buffer, _destroy_buffer = true) {
 	/// @func   buffer_compressed_encoded_to_struct(buffer, destroy_buffer?*)
 	/// @param  {buffer} buffer
-	/// @param  {bool}   destroy_buffer?=true
+	/// @param  {bool}   destroy_buffer=true
 	/// @return {struct} struct
 	///
 	/// Decompress Buffer

@@ -143,7 +143,7 @@ function EventObject(_context = self, _name = "") {
 		event_register			= method(self, function(_event_array, _push_to_global = false) {
 			/// @func	event_register(event_array, push_to_global?)
 			/// @param	{array} event_array
-			/// @parma	{bool}  push_to_global?=false
+			/// @parma	{bool}  push_to_global=false
 			/// @return	{Ui}	self
 			///
 			/// Cast And Normalize Argument To Array
@@ -173,7 +173,7 @@ function EventObject(_context = self, _name = "") {
 			/// @func	 event_publish(event_name, payload*, push_to_global?*)
 			/// @param	{string} event_name
 			/// @param	{any}	 payload=undefined
-			/// @param	{bool}	 push_to_global?=false
+			/// @param	{bool}	 push_to_global=false
 			/// @return {Ui}	 self
 			///
 			/*	<data_struct>: {
@@ -197,7 +197,7 @@ function EventObject(_context = self, _name = "") {
 			/// @func	event_subscribe(event_name, callback, weak_reference?)
 			/// @param	{string}  event_name
 			/// @param	{method}  callback_method
-			/// @param	{boolean} weak_reference?=false
+			/// @param	{boolean} weak_reference=false
 			/// @return {Ui}	  self
 			///
 			var _publisher = get_event_publisher();
@@ -207,7 +207,7 @@ function EventObject(_context = self, _name = "") {
 		event_unsubscribe		= method(self, function(_event_name, _force = false) {
 			/// @func	event_unsubscribe(event_name, force?*)
 			/// @param	{string}  event_name
-			/// @parma	{boolean} force?=false
+			/// @parma	{boolean} force=false
 			/// @return {Ui} self
 			///
 			var _publisher = get_event_publisher();

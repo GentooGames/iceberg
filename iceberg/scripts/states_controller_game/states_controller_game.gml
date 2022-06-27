@@ -19,7 +19,6 @@ function state_controller_game_main() {
 			INPUT.update();
 			PARTICLES.update();
 			TRANSITION.update();
-			WINDOW.update();
 			DEBUG.update();
 		},
 		leave: function() {},

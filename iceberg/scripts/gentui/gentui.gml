@@ -2221,7 +2221,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 		/// @desc	set the current state method to that of the passed state_name's method
 		/// @param	{string}  state_name
 		/// @param	{string}  config_override=undefined
-		/// @param	{boolean} state_on_change_sync_config?=default
+		/// @param	{boolean} state_on_change_sync_config=default
 		/// @return	{Ui}	  self
 		///
 		if (state_exists(_state_name)) {
@@ -2557,7 +2557,7 @@ function Ui(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _c
 	};
 	static config_restore_to_start	 = function(_restore_all_properties = true) {
 		/// @func	config_restore_to_start(restore_all_properties?*)
-		/// @param	{bool} restore_all_properties?=true
+		/// @param	{bool} restore_all_properties=true
 		/// @return {Ui} self
 		///
 		if (_restore_all_properties) {
