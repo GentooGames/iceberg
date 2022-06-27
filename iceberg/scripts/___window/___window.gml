@@ -14,6 +14,7 @@ global.___window_system = {
         initialized = true;
 		
 		#endregion
+		
     },
 	update: function() {
 		/// @func   update()

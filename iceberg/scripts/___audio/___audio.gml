@@ -12,35 +12,38 @@ global.___system_audio = {
         /// @func   setup()
         /// @return {struct} self
         ///
-        if (initialized) exit;
-		#region ----------------
+        if (!initialized) {
+			#region ----------------
 		
-        log("<AUDIO> setup()");
-		initialized = true;
+	        log("<AUDIO> setup()");
+			initialized = true;
 		
-		audio_falloff_set_model(audio_falloff_linear_distance);
-        audio_master_gain(0);
-        audio_listener_orientation(0, 1, 0, 0, 0, 1);  
+			audio_falloff_set_model(audio_falloff_linear_distance);
+	        audio_master_gain(0);
+	        audio_listener_orientation(0, 1, 0, 0, 0, 1);  
 		
-		#endregion
-		#region Events /////////
+			#endregion
+			#region Events /////////
 		
-		EventObject(,"audio");
-		event_register([
-			"played",
-			"stopped",
-			"all_stopped",
-			"emitter_gain_assigned",
-			"emitter_pitch_assigned",
-		]);
+			EventObject(,"audio");
+			event_register([
+				"played",
+				"stopped",
+				"all_stopped",
+				"emitter_gain_assigned",
+				"emitter_pitch_assigned",
+			]);
 		
-		#endregion
+			#endregion
+		}
+		return self;
     },
 	update:	function() {
 		/// @func   update()
         /// @return {struct} self
         ///
-        if (!initialized) exit;
+        if (initialized) {};
+		return self;
 	},
 		
 	/// Core ///////////////
@@ -139,6 +142,7 @@ global.___system_audio = {
         /// @return {struct} self
         ///
         audio_emitter_gain(_emitter_id, _gain);	
+		return self;
     },
     set_emitter_pitch: function(_emitter_id, _pitch) {
         /// @func   set_emitter_pitch(emitter_id, pitcj)
@@ -147,6 +151,7 @@ global.___system_audio = {
         /// @return {struct} self
         ///
         audio_emitter_pitch(_emitter_id, _pitch);	
+		return self;
     },
     set_pitch:         function(_sound_id, _pitch) {
         /// @func   set_pitch(sound_id, pitch)
@@ -155,6 +160,7 @@ global.___system_audio = {
         /// @return {struct} self
         ///
         audio_sound_pitch(_sound_id, _pitch);
+		return self;
     },
     
     /// Checkers ///////////
