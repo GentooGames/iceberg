@@ -199,7 +199,7 @@ function GProp(_data) constructor {
 		}
 		interp.complete = true;
 		
-		event_publish(__interp_get_event_name() + "_interp_completed", { id: other });
+		event_publish(__interp_get_event_name() + "_interp_completed", other);
 	};
 	static __interp_get_event_name	= function() {
 		/// @func __interp_get_event_name()

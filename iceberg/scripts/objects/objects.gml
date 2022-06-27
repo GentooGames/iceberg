@@ -10,20 +10,3 @@ function camera_create_instance(_x = 0, _y = 0) {
 	/// _camera.setup();
 	return _camera;
 };
-
-/*
-function unit_create_instance(_x, _y) {
-	/// @func unit_create_instance()
-	///
-	var _unit = instance_create_depth(_x, _y, 0, obj_unit);
-	_unit.event_publish("created",, true);
-	return _unit;
-};
-
-with (objc_battle) {
-	PUBLISHER.subscribe("unit_created", function(_data) {
-		array_push(units, _data.id);	
-	});
-}
-obj_unit.event_subscribe("created", function() {});
-PUBLISHER.subscribe("unit_created", function() {});

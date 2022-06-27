@@ -30,7 +30,7 @@ function state_system_transition_transitioning() {
 		enter: function() {
 			event_publish("enter_started");
 			effect = new effect_in()
-				.event_subscribe("enter_completed", function() {
+				.event_subscribe("enter_completed", function(_data) {
 					fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
 				})
 				.enter()
@@ -68,7 +68,7 @@ function state_system_transition_hold() {
 	return {
 		enter: function() {
 			event_publish("hold_started");
-			effect.event_subscribe("hold_completed", function() {
+			effect.event_subscribe("hold_completed", function(_data) {
 				room_to_release = true;
 				if (end_transition_is_ready()) {
 					end_transition();
@@ -94,7 +94,7 @@ function state_system_transition_ending() {
 		enter: function() {
 			event_publish("exit_started");
 			effect = new effect_out()
-				.event_subscribe("enter_completed", function() {
+				.event_subscribe("enter_completed", function(_data) {
 					fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
 				})
 				.reverse()

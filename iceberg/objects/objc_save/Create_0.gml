@@ -80,7 +80,7 @@ setup	 = method_inherit(setup,	function() {
 		#endregion
 		#region Events /////////
 	
-		TRANSITION.event_subscribe("hold_started", function() {
+		TRANSITION.event_subscribe("hold_started", function(_data) {
 			save_game(,, function() {
 				TRANSITION.end_transition();
 			});

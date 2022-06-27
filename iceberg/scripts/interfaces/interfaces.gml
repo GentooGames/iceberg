@@ -169,21 +169,26 @@ function EventObject(_context = self, _name = "") {
 			var _publisher = get_event_publisher();
 			return _publisher.has_registered_channel(_event_name);
 		});
-		event_publish			= method(self, function(_event_name, _data_struct = undefined, _push_to_global = false) {
-			/// @func	 event_publish(event_name, data_struct*, push_to_global?*)
+		event_publish			= method(self, function(_event_name, _payload = undefined, _push_to_global = false) {
+			/// @func	 event_publish(event_name, payload*, push_to_global?*)
 			/// @param	{string} event_name
-			/// @param	{struct} data_struct=undefined
+			/// @param	{any}	 payload=undefined
 			/// @param	{bool}	 push_to_global?=false
 			/// @return {Ui}	 self
 			///
-			var _publisher = get_event_publisher();
+			/*	<data_struct>: {
+					id:		 self,
+					payload: any,
+				}
+			*/
+			var _publisher   = get_event_publisher();
+			var _data_struct = {
+				id:		  self,
+				payload: _payload,
+			}
 			_publisher.publish(_event_name, _data_struct);
 			
 			if (_push_to_global) {
-				if (_data_struct == undefined) {
-					_data_struct = {};	
-				}
-				_data_struct[$ "id"] = self;
 				PUBLISHER.publish(get_event_context_name() + "_" + _event_name, _data_struct, false);
 			}
 			return self;
