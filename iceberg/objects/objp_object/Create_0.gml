@@ -44,8 +44,8 @@ setup	 = method_inherit(,function() {
 		#endregion
 	}
 	return id;	
-	
-}, function() { setup_complete(); });
+	/// v== callback
+},	function() { setup_callback(); });
 teardown = method_inherit(,function() {
 	/// @func	teardown()
 	/// @return {instance} id
@@ -62,8 +62,8 @@ teardown = method_inherit(,function() {
 		rendering = true;
 	}
 	return id;
-	
-}, function() { teardown_complete(); });
+	/// v== callback
+},	function() { teardown_callback(); });
 rebuild  = method_inherit(,function() {
 	/// @func	rebuild()
 	/// @return {instance} id
@@ -73,8 +73,8 @@ rebuild  = method_inherit(,function() {
 		setup();
 	}
 	return id;
-	
-}, function() { rebuild_complete(); });
+	/// v== callback
+},	function() { rebuild_callback(); });
 update	 = method_inherit(,function() {
 	/// @func	update()
 	/// @return {instance} id
