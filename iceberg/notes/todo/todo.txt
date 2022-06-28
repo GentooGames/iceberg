@@ -1,6 +1,7 @@
 iceberg:
 	- standardize GProp method implementation
 		- make sure that spring setters are not just setting local value, but also spring's actual value
+	- REPLACE IOTA WITH TIMESOURCES!!!!
 	- create objp_entity to test event inheritence
 	- way for object to clear all subscriptions,
 		- should re-store into an array on event init
