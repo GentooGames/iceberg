@@ -227,5 +227,3 @@ function EventObject(_context = self, _name = "") {
 	return _context;
 };
 
-
-

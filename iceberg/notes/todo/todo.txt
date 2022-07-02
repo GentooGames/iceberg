@@ -1,10 +1,13 @@
 iceberg:
-	- standardize GProp method implementation
+	- standardize FluidProperty method implementation
 		- make sure that spring setters are not just setting local value, but also spring's actual value
 	- REPLACE IOTA WITH TIMESOURCES!!!!
 	- create objp_entity to test event inheritence
 	- way for object to clear all subscriptions,
 		- should re-store into an array on event init
+	
+	- add a did_transition flag for state transitions?
+		- similar to the did_destroy flag, this would allow us to check if a state transition has been registered in this frame?
 	
 	- organize and abstract global._gui{} into a more modular system similar to global._transition{}
 		- create an array of borders that is iterated through and updated
@@ -13,6 +16,7 @@ iceberg:
 	- replace iota with gm_time_source
 	- remove callbacks from save controller and replace with pubsub?
 	- should object event methods, utilizing method_inherit, do their event_publish() in the callback?
+	- standardize undefined & null. use just one --> probably just undefined
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width
@@ -49,7 +53,7 @@ orderly:
 gstat:
 	- add priority to stat processign order
 	
-gprop:
+FluidProperty:
 	- abstract interpolation "algorithm" using Builder Design Pattern
 		
 serializer:

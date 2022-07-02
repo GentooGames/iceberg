@@ -1,14 +1,19 @@
-enum INTERP {
+enum FLUID_INTERP_STRATEGY {
 	NONE,
 	CONST,
 	LERP,	
 };
 
-#macro __GPROP_ID_DELINEATOR "."
+#macro __FLUID_PROPERTY_ID_DELINEATOR "."
 
-function GProp(_data) constructor {
-	/// @func	GProp(data)
+function FluidProperty(_data) constructor {
+	/// @func	FluidProperty(data)
 	/// @param	{struct} data
+	/// @return {FluidProperty} self
+	/// @desc	FluidProperty is a class abstraction for generalized property variables.
+	///			The goal is to create an easy way to modulate property values and interpolate
+	///			the current property value to a given target value, with additive springs, 
+	///			offset values, and swappable interpolation strategies.
 	///
 	owner   =  other;
 	name    = _data[$ "name"  ] ?? "";
@@ -28,7 +33,7 @@ function GProp(_data) constructor {
 		speed		= __SPRING_DEFAULT_SPEED;
 		spring_main	= new Spring(tension, dampening);
 	};
-	EventObject(,"gprop");
+	EventObject(,"FluidProperty");
 	
 	#region Public /////////
 	
@@ -36,7 +41,7 @@ function GProp(_data) constructor {
 	
 	static update = function() {
 		/// @func	update()
-		/// @return {Gprop} self
+		/// @return {FluidProperty} self
 		///
 		if (interp.type != INTERP.NONE) {
 			switch (interp.type) {
@@ -105,7 +110,7 @@ function GProp(_data) constructor {
 	static set_value			  = function(_value) {
 		/// @func	set_value(value)
 		/// @param	{any} value
-		///	@return {GProp} self
+		///	@return {FluidProperty} self
 		///
 		value  = _value + offset;
 		target =  value;
@@ -115,7 +120,7 @@ function GProp(_data) constructor {
 	static set_target			  = function(_target) {
 		/// @func	set_target(target)
 		/// @param	{real} target
-		///	@return {GProp} self
+		///	@return {FluidProperty} self
 		///
 		target = _target;
 		return self;
@@ -123,7 +128,7 @@ function GProp(_data) constructor {
 	static set_offset			  = function(_offset) {
 		/// @func	set_offset(offset)
 		/// @param	{real} offset
-		///	@return {GProp} self
+		///	@return {FluidProperty} self
 		///	
 		offset = _offset;
 		return self;
@@ -135,7 +140,7 @@ function GProp(_data) constructor {
 	static set_spring_tension     = function(_tension) {
 		/// @func	set_spring_tensions(tension)
 		/// @param	{real} tension
-		/// @return {GProp} self
+		/// @return {FluidProperty} self
 		///
 		springs.tension = _tension;
 		return self;
@@ -143,7 +148,7 @@ function GProp(_data) constructor {
 	static set_spring_dampening   = function(_dampening) {
 		/// @func	set_spring_dampening(dampening)
 		/// @param	{real} dampening
-		/// @return {GProp} self
+		/// @return {FluidProperty} self
 		///
 		springs.dampening = _dampening;
 		return self;
@@ -151,7 +156,7 @@ function GProp(_data) constructor {
 	static set_spring_speed		  = function(_speed) {
 		/// @func	set_spring_speed(speed)
 		/// @param	{real} speed
-		/// @return {GProp} self
+		/// @return {FluidProperty} self
 		///
 		springs.speed = _speed;
 		return self;
@@ -162,14 +167,14 @@ function GProp(_data) constructor {
 	
 	static snap	  = function() {
 		/// @func	snap()
-		///	@return {GProp} self
+		///	@return {FluidProperty} self
 		///
 		value = get_target();
 		return self;
 	};
 	static spring = function(_speed = springs.speed) { // <-- replace springs.speed with default value getter
 		/// @func	spring()
-		/// @return {GProp} self
+		/// @return {FluidProperty} self
 		///
 		springs.spring_main.fire(_speed);
 		return self;	
@@ -234,7 +239,7 @@ function GProp(_data) constructor {
 		else {
 			var _prefix = object_get_name(owner.object_index);
 		}
-		return _prefix + __GPROP_ID_DELINEATOR + "prop" + __GPROP_ID_DELINEATOR + name + __GPROP_ID_DELINEATOR;
+		return _prefix + __FLUID_PROPERTY_ID_DELINEATOR + "prop" + __FLUID_PROPERTY_ID_DELINEATOR + name + __FLUID_PROPERTY_ID_DELINEATOR;
 	};
 	
 	#endregion
@@ -243,6 +248,3 @@ function GProp(_data) constructor {
 		event_register(__interp_get_event_name() + "_interp_completed");	
 	}
 };	
-
-
-

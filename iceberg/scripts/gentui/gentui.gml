@@ -151,7 +151,7 @@
 	- setup component angle support
 		- propagate parent angle to children components
 		- have mouse click detection and interactions respond to different angles
-	- replace properties with GProps(); however, do not create a dependency to that system, instead, re-implement the basic functionality 
+	- replace properties with FluidProperty(); however, do not create a dependency to that system, instead, re-implement the basic functionality 
 		- this will allow our new values to have lerp and spring motion
 		- setup configs so that they can lerp to their newly assigned property values
 	- ability to have parent components implement child components' update() and render() methods automatically
@@ -3536,3 +3536,17 @@ function UiTextbox(_owner = self, _config_name = __GENTUI_DEFAULT_CONFIG_NAME_ST
 	
 	action_render_add("render_main", render, true);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

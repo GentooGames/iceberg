@@ -34,7 +34,7 @@
     {"id":{"name":"GMLive_compiler","path":"scripts/GMLive_compiler/GMLive_compiler.yy",},"order":1,},
     {"id":{"name":"___debug","path":"scripts/___debug/___debug.yy",},"order":2,},
     {"id":{"name":"tweeners","path":"scripts/tweeners/tweeners.yy",},"order":0,},
-    {"id":{"name":"gprop","path":"scripts/gprop/gprop.yy",},"order":4,},
+    {"id":{"name":"FluidProperty","path":"scripts/FluidProperty/FluidProperty.yy",},"order":4,},
     {"id":{"name":"shdr_water","path":"shaders/shdr_water/shdr_water.yy",},"order":5,},
     {"id":{"name":"__spr_tx_test","path":"sprites/__spr_tx_test/__spr_tx_test.yy",},"order":5,},
     {"id":{"name":"ENUMS","path":"scripts/ENUMS/ENUMS.yy",},"order":1,},
@@ -176,7 +176,7 @@
     {"CopyToMask":0,"filePath":"datafiles/GMLive","resourceVersion":"1.0","name":"std.ndll","resourceType":"GMIncludedFile",},
   ],
   "MetaData": {
-    "IDEVersion": "2022.5.1.16",
+    "IDEVersion": "2022.6.0.23",
   },
   "resourceVersion": "1.5",
   "name": "iceberg",

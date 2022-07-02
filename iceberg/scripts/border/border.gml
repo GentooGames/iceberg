@@ -3,11 +3,11 @@ function Border(_sprite) constructor {
 	/// @func	Border(sprite)
 	/// @param	{sprite_index} sprite
 	///
-	x		  =  new GProp({ name: "x",	     value: 0	   });
-	y		  =  new GProp({ name: "y",	     value: 0	   });
-	width	  =  new GProp({ name: "width",  value: SURF_W });
-	height	  =  new GProp({ name: "height", value: SURF_H });
-	alpha	  =  new GProp({ name: "alpha",  value: 1	   });
+	x		  =  new FluidProperty({ name: "x",	     value: 0	   });
+	y		  =  new FluidProperty({ name: "y",	     value: 0	   });
+	width	  =  new FluidProperty({ name: "width",  value: SURF_W });
+	height	  =  new FluidProperty({ name: "height", value: SURF_H });
+	alpha	  =  new FluidProperty({ name: "alpha",  value: 1	   });
 	sprite	  = _sprite;
 	image	  =  0;
 	color	  =  c_white;

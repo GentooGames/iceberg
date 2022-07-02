@@ -6,7 +6,7 @@
     "path": "folders/scripts/libraries/gentoo.yy",
   },
   "resourceVersion": "1.0",
-  "name": "gprop",
+  "name": "FluidProperty",
   "tags": [],
   "resourceType": "GMScript",
 }
