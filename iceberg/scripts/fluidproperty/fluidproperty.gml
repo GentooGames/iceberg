@@ -3,7 +3,6 @@ enum FLUID_INTERP_STRATEGY {
 	CONST,
 	LERP,	
 };
-
 #macro __FLUID_PROPERTY_ID_DELINEATOR "."
 
 function FluidProperty(_data) constructor {
@@ -20,8 +19,8 @@ function FluidProperty(_data) constructor {
 	value   = _data[$ "value" ] ?? 0.0;
 	offset  = _data[$ "offset"] ?? 0.0;
 	target  = _data[$ "target"] ?? value;
-	interp  = {}; with (interp) {
-		type		= _data[$ "interp_type"		  ] ?? INTERP.LERP;
+	interp  = {}; with (interp ) {
+		type		= _data[$ "interp_type"		  ] ?? FLUID_INTERP_STRATEGY.LERP;
 		speed		= _data[$ "interp_speed"	  ] ?? 0.1;
 		threshold	= _data[$ "interp_threshold"  ] ?? 0.0;
 		on_complete	= _data[$ "interp_on_complete"] ?? undefined;
@@ -43,10 +42,10 @@ function FluidProperty(_data) constructor {
 		/// @func	update()
 		/// @return {FluidProperty} self
 		///
-		if (interp.type != INTERP.NONE) {
+		if (interp.type != FLUID_INTERP_STRATEGY.NONE) {
 			switch (interp.type) {
-				case INTERP.CONST: __interp_update_const(); break;
-				case INTERP.LERP:  __interp_update_lerp();  break;	
+				case FLUID_INTERP_STRATEGY.CONST: __interp_update_const(); break;
+				case FLUID_INTERP_STRATEGY.LERP:  __interp_update_lerp();  break;	
 			};
 			__interp_check_complete();
 		}

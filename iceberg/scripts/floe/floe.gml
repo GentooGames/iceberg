@@ -112,7 +112,7 @@ function FloeEffect() constructor {
 		},
 	};
 	
-	static update  = function() {
+	static update   = function() {
 		/// @func	update()
 		/// @return {FloeEffect} self
 		///
@@ -205,8 +205,8 @@ function FloeEffect() constructor {
 		};
 		return self;
 	};
-	static cleanup = function() {
-		/// @func	cleanup()
+	static teardown = function() {
+		/// @func	teardown()
 		/// @return {FloeEffect} self
 		///
 		var _emitter = get_audio_emitter();
@@ -605,12 +605,12 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		__surface: surface_create(SURF_W, SURF_H),
 	};
 	
-	static cleanup_super = cleanup;
-	static cleanup		 = function() {
-		/// @func	cleanup()
+	static teardown_super = teardown;
+	static teardown		  = function() {
+		/// @func	teardown()
 		/// @return {FloeEffect} self
 		///
-		cleanup_super();
+		teardown_super();
 		
 		var _surface = get_surface();
 		if (surface_exists(_surface)) {
@@ -620,7 +620,7 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		
 		return self;
 	};
-	static render_begin  = function() {
+	static render_begin   = function() {
 		/// @func	render_begin()
 		/// @return {FloeEffect} self
 		///
@@ -634,7 +634,7 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		draw_clear_alpha(c_black, 0.0);
 		return self;
 	};
-	static render_end    = function(_surface_shader_method) {
+	static render_end     = function(_surface_shader_method) {
 		/// @func	render_end(surface_shader_method*)
 		/// @param	{shader} surface_shader_method
 		/// @return {FloeEffect} self

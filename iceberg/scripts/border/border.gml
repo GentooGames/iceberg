@@ -155,7 +155,9 @@ function Border(_sprite) constructor {
 		
 		return self;
 	};
-	static cleanup		  = function() {
+	static teardown		  = function() {
+		/// @func teardown()
+		///
 		if (surface_exists(__surface)) {
 			surface_free(__surface);	
 		}
@@ -870,7 +872,7 @@ function BorderRibbon() constructor {
 	#endregion
 	#region Internal ///////////
 	
-	static update  = function() {
+	static update	= function() {
 		/// @func update()
 		///
 		exit;
@@ -890,7 +892,7 @@ function BorderRibbon() constructor {
 			adjust_precision(1);
 		}
 	};
-	static render  = function() {	
+	static render	= function() {	
 		/// @func render()
 		///
 		gpu_set_tex_repeat(true);
@@ -914,8 +916,8 @@ function BorderRibbon() constructor {
 			__debug_render_path();		
 		}
 	};
-	static cleanup = function() {
-		/// @func cleanup()
+	static teardown = function() {
+		/// @func teardown()
 		///
 		path_delete(path);	
 		__path = undefined;

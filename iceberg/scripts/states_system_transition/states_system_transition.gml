@@ -88,7 +88,7 @@ function state_system_transition_hold() {
 		},
 		leave: function() {
 			event_publish("hold_completed");
-			effect.cleanup();
+			effect.teardown();
 			effect_in = undefined;
 		},
 	};
@@ -112,7 +112,7 @@ function state_system_transition_ending() {
 		},
 		leave: function() {
 			event_publish("exit_completed");
-			effect.cleanup();
+			effect.teardown();
 			effect_out = undefined;
 			effect	   = undefined;
 		},
