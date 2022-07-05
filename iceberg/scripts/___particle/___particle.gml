@@ -16,7 +16,7 @@ global.___system_particle = {
 			#endregion
 			#region Events /////////
 			
-			EventObject(,"particle");
+			EventObject(self, "particle");
 			//event_register([]);
 			
 			#endregion

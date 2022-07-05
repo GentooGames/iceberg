@@ -581,7 +581,7 @@ function FloeEffect() constructor {
 	#endregion
 	#region Events /////////////////
 	
-	EventObject(, "floe");	/// <-- creates Publisher and methods
+	EventObject(self, "floe");	/// <-- creates Publisher and methods
 	event_register([
 		"enter_started",
 		"enter_completed",

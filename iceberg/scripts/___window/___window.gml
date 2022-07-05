@@ -15,7 +15,7 @@ global.___system_window = {
 			#endregion
 			#region Events /////////
 			
-			EventObject(,"window");
+			EventObject(self, "window");
 			event_register([
 				"fullscreen_assigned",
 				"position_assigned",

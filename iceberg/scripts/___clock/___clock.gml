@@ -36,7 +36,7 @@ global.___system_clock = {
 			#endregion
 			#region Events /////////
 			
-			EventObject(,"clock");
+			EventObject(self, "clock");
 			//event_register([]);
 			
 			#endregion

@@ -45,7 +45,7 @@ global.___system_transition = {
 			#endregion
 			#region Events /////////////
 		
-			EventObject(,"transition");
+			EventObject(self, "transition");
 			event_register([
 				"enter_started",
 				"enter_completed",

@@ -21,7 +21,7 @@ global.___system_gui = {
 			#endregion
 			#region Events /////////
 			
-			EventObject(,"gui");
+			EventObject(self, "gui");
 			//event_register([]);
 			
 			#endregion

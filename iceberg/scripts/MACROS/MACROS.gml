@@ -14,7 +14,7 @@ global.__paused = false;
 
 global.__objects_indexes = [];
 #macro OBJECTS_INDEXES	 global.__objects_indexes
-OBJECTS_INDEXES			 = compile_objects_indexes();
+OBJECTS_INDEXES			 = object_indexes_get_all();
 
 /// Input
 #macro lmb_held			INPUT.mouse.button(mb_left)

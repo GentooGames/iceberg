@@ -73,6 +73,8 @@ function Publisher() constructor {
 	/// @returns {Subscriber}
 	static subscribe = function(_channel, _callback, _releaseRef = true) {
 		
+		/// *** see Subscriber() for description of releaseRef ***
+		
 		// Check for autoRegister?
 		if (!variable_struct_exists(__channels, _channel)) {
 			// Ignore if there is no event registered under 'eventName'
@@ -185,8 +187,25 @@ function Subscriber(_publisher, _channel, _callback, _releaseRef) constructor {
 	__channel = _channel;
 	__callback = _callback;
 	__weakCallback = undefined;
-	__releaseRef = _releaseRef;
-	
+	__releaseRef = _releaseRef;		/// releaseRef aka: weakref.
+									/// vars are removed from memory if NO reference exists naturally.
+									///	weakrefs do not count as an official reference to the var, so the var
+									/// can still be deleted and removed from memory, even if a weakref may exist.
+									///
+									///	if releaseRef = true, and if the instance containing the callback method 
+									///	is destroyed, then the subscribe callback is removed automatically because
+									/// then it is considered a "dead" callback
+									///
+									/// if weakRef is false, then the system itself officially holds a reference
+									/// to the callback, and therefore this (minimum) of 1 reference(s), will still 
+									/// exist, keeping the callback alive in memory.
+									///
+									/// for example, if an instance is created briefly/one-off and has an associated
+									/// Pub/Sub, then setting a weakRef would probably be best, so that the callback
+									/// is cleaned up whenever the instance is cleaned up.
+									///
+									/// if releaseRef is set to false, then events need to be manually unsubscribed
+									///	using the manual unsubscribe methods.
 	#endregion
 	#region Properties
 	

@@ -190,7 +190,7 @@ global.___system_audio = {
 			#endregion
 			#region Events /////////
 		
-			EventObject(,"audio");
+			EventObject(self, "audio");
 			event_register([
 				"played",
 				"stopped",

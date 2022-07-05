@@ -30,6 +30,7 @@ INPUT.setup();
 PARTICLE.setup();
 TRANSITION.setup();
 WINDOW.setup();
+TRUINST.setup();
 DEBUG.setup();		/// <-- should be last
 			
 #endregion

@@ -1,6 +1,9 @@
 iceberg:
+	- a way to check for initialized dependencies. such as EventObject, TruInstObject, etc
+	- replace all instance_destroy() with instance.destroy()
 	- standardize FluidProperty method implementation
 		- make sure that spring setters are not just setting local value, but also spring's actual value
+	- re-evaluate publisher/subscriber weakref?
 	- REPLACE IOTA WITH TIMESOURCES!!!!
 	- create objp_entity to test event inheritence
 	- way for object to clear all subscriptions,

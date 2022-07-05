@@ -15,7 +15,7 @@ global.___system_input = {
 			#endregion
 			#region Events /////////
 		
-			EventObject(,"input");
+			EventObject(self, "input");
 			event_register([
 				/// mouse_button_pressed
 				"mouse_button_pressed",

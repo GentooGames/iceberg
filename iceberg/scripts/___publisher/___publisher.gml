@@ -15,8 +15,8 @@ global.___system_publisher = {
 			#endregion
 			#region Events /////////
 			
-			EventObject(,"publisher");
-			get_publisher	  = get_event_publisher;
+			EventObject(self, "publisher");
+			get_publisher	  = event_get_publisher;
 			register		  = event_register;			
 			registered		  = event_registered;			
 			publish			  = event_publish;				

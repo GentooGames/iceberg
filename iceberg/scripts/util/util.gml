@@ -169,18 +169,6 @@ function System() constructor {
 #endregion
 #region unit tests
 
-function compile_objects_indexes() {
-	/// @func compile_objects_indexes()
-	///
-	var _indexes = [];
-	for (var _i = 0; _i < 100000; _i++) {
-		if (!object_exists(_i)) {
-			return _indexes;	
-		}
-		array_push(_indexes, _i);
-	};
-	return _indexes;
-};
 function objects_count() {
 	/// @func	objects_count()
 	/// @desc	...
@@ -964,6 +952,44 @@ function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
 	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
 	return _nearest;
 };
+
+#endregion
+#region objects
+
+function object_indexes_get_all() {
+	/// @func	object_indexes_get_all()
+	/// @return {array} object_indexes
+	///
+	var _objects = [];
+	for (var _object = 0; _object < 1000000; _object++) {
+		if (!object_exists(_object)) {
+			return _objects;	
+		}
+		array_push(_objects, _object);
+	};
+	return _objects;
+};
+function object_indexes_get_parents() {
+	/// @func	object_indexes_get_parents()
+	/// @return {array} object_indexes
+	///
+	var _parents = [];
+	var _unique  = {};	// used so that duplicates are not stored
+	
+	for (var _object = 0; _object < 1000000; _object++) {
+		if (!object_exists(_object)) {
+			return _parents;	
+		}
+		var _parent  = object_get_parent(_object);
+		if (_parent != -1 && _parent != -100) {
+			if (_unique[$ object_get_name(_parent)] == undefined) {
+				_unique[$ object_get_name(_parent)] = _parent;
+				array_push(_parents, _parent);		
+			}
+		}
+	};
+	return _parents;
+};	
 
 #endregion
 #region sprites

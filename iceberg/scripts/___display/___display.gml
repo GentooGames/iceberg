@@ -15,7 +15,7 @@ global.___system_display = {
 			#endregion
 			#region Events /////////
 			
-			EventObject(,"display");
+			EventObject(self, "display");
 			//event_register([]);
 			
 			#endregion
