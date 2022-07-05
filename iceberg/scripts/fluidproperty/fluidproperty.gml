@@ -67,7 +67,7 @@ function FluidProperty(_data) constructor {
 		/// @func	get()	
 		/// @return {any} value
 		///
-		return get_raw() + get_spring();
+		return get_raw() + get_spring_value();
 	};
 	static get_total			  = get;
 	static get_target			  = function() {

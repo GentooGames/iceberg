@@ -207,7 +207,7 @@ function EventObject(_event_instance, _name = "") {
 			*/
 			var _publisher   = event_get_publisher();
 			var _data_struct = {
-				id:		  id,
+				id:		  event_get_instance(),
 				payload: _payload,
 			}
 			_publisher.publish(_event_name, _data_struct);
