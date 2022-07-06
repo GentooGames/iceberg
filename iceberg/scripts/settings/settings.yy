@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "xCamera",
-    "path": "folders/scripts/libraries/xdstudios/xCamera.yy",
+    "name": "scripts",
+    "path": "folders/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "CameraTask",
+  "name": "SETTINGS",
   "tags": [],
   "resourceType": "GMScript",
 }

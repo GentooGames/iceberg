@@ -1,0 +1,9 @@
+{
+  "extensionId": {
+    "name": "window_set_cursor",
+    "path": "extensions/window_set_cursor/window_set_cursor.yy"
+  },
+  "resourceVersion": "1.0",
+  "resourceType": "GMExtensionConfigSet",
+  "configurables": null
+}

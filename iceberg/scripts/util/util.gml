@@ -175,9 +175,10 @@ function objects_count() {
 	/// @return struct -> { object_index_0: instance_number_0, object_index_n, instance_number_n }
 	/// @tested false
 	///
-	var _return_data = {};
-	for (var _i = 0, _len = array_length(OBJECTS_INDEXES); _i < _len; _i++) {
-		var _object_index = OBJECTS_INDEXES[_i];
+	var _return_data	= {};
+	var _object_indexes = resource_tree_get_objects();
+	for (var _i = 0, _len = array_length(_object_indexes); _i < _len; _i++) {
+		var _object_index = _object_indexes[_i];
 		var _object_name  = object_get_name(_object_index);
 		var _object_count = instance_number(_object_index);
 		_return_data[$ _object_name] = _object_count;
@@ -196,8 +197,9 @@ function objects_count_equal(_object_count_1, _object_count_2) {
 		equals: true, 
 		data:	{} 
 	};
-	for (var _i = 0, _len = array_length(OBJECTS_INDEXES); _i < _len; _i++) {
-		var _object_index = OBJECTS_INDEXES[_i];
+	var _object_indexes = resource_tree_get_objects();
+	for (var _i = 0, _len = array_length(_object_indexes); _i < _len; _i++) {
+		var _object_index = _object_indexes[_i];
 		var _object_name  = object_get_name(_object_index);
 		var _value_1	  = _object_count_1[$ _object_name];
 		var _value_2	  = _object_count_2[$ _object_name];
@@ -954,10 +956,10 @@ function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
 };
 
 #endregion
-#region objects
+#region resource tree
 
-function object_indexes_get_all() {
-	/// @func	object_indexes_get_all()
+function resource_tree_get_objects() {
+	/// @func	resource_tree_get_objects()
 	/// @return {array} object_indexes
 	///
 	var _objects = [];
@@ -969,8 +971,8 @@ function object_indexes_get_all() {
 	};
 	return _objects;
 };
-function object_indexes_get_parents() {
-	/// @func	object_indexes_get_parents()
+function resource_tree_get_object_parents() {
+	/// @func	resource_tree_get_object_parents()
 	/// @return {array} object_indexes
 	///
 	var _parents = [];
