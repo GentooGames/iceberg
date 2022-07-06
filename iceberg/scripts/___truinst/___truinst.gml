@@ -101,6 +101,7 @@ global.___system_truInst = {
 };
 #macro TRUINST global.___system_truInst
 
+/// Global Util Functions //////////////////////////////////////
 function instance_exists_tru(_id = id) {
 	/// @func	instance_exists_tru(id*)
 	/// @param	{instance} instance=id

@@ -252,18 +252,20 @@ function EventObject(_event_instance, _name = "") {
 	}
 	return __event_instance;
 };
-function TruInstObject(_truInst_instance, _active = true) {
-	/// @func	TruInstObject(truInst_instance, active?*)	
-	/// @param	{struct/instance} truInst_instance
+function truInst_setup(_truInst_instance = id, _active = true) {
+	/// @func	truInst_setup(truInst_instance*, active?*)	
+	/// @param	{struct/instance} truInst_instance=id
 	/// @param	{boolean}		  active=true
 	/// @return {struct/instance} truInst_instance
 	///
 	with (_truInst_instance) {		
 		__truInst_instance = _truInst_instance;
 		__truInst_active   = _active;
+	
+		#region Private ////////////////////////////////
 		
-		truInst_setup	 = method(__truInst_instance, function(_active = true) {
-			///	@func	truInst_setup(active?*)
+		__truInst_setup	   = method(__truInst_instance, function(_active = true) {
+			///	@func	__truInst_setup(active?*)
 			/// @param	{boolean}		  active=true
 			/// @return {struct/instance} truInst_instance
 			///
@@ -289,8 +291,8 @@ function TruInstObject(_truInst_instance, _active = true) {
 			
 			return __truInst_instance;
 		});
-		truInst_update	 = method(__truInst_instance, function(_destroy_if_offscreen = false) {
-			/// @func	truInst_update(destroy_if_offscreen*)
+		__truInst_update   = method(__truInst_instance, function(_destroy_if_offscreen = false) {
+			/// @func	__truInst_update(destroy_if_offscreen*)
 			/// @param	{boolean}		  destroy_if_offscreen=false
 			/// @return {struct/instance} truInst_instance
 			///
@@ -303,8 +305,8 @@ function TruInstObject(_truInst_instance, _active = true) {
 			}
 			return __truInst_instance;
 		});
-		truInst_teardown = method(__truInst_instance, function() {
-			/// @func	truInst_teardown()
+		__truInst_teardown = method(__truInst_instance, function() {
+			/// @func	__truInst_teardown()
 			/// @return {struct/instance} truInst_instance
 			///	
 			if (TRUINST_APPLY_CULLING) {
@@ -334,7 +336,22 @@ function TruInstObject(_truInst_instance, _active = true) {
 			}
 			return __truInst_instance;
 		});
-		////////////////////////////////////////////////
+		
+		#endregion
+		
+		truInst_update			  = method(__truInst_instance, function(_destroy_if_offscreen = false) {
+			/// @func	truInst_update(destroy_if_offscreen*)
+			/// @param	{boolean}		  destroy_if_offscreen=false
+			/// @return {struct/instance} truInst_instance
+			///
+			return __truInst_update(_destroy_if_offscreen);
+		});
+		truInst_teardown		  = method(__truInst_instance, function() {
+			/// @func	truInst_teardown()
+			/// @return {struct/instance} truInst_instance
+			///	
+			return __truInst_teardown();
+		});
 		truInst_get_instance	  = method(__truInst_instance, function() {
 			/// @func	truInst_get_instance()
 			/// @return {struct/instance} truInst_instance
@@ -426,8 +443,8 @@ function TruInstObject(_truInst_instance, _active = true) {
 			}
 			return __truInst_instance;
 		});
-		////////////////////////////////////////////////
-		truInst_setup(_active); /// <-- automatically invoke setup
+		
+		__truInst_setup(_active); /// <-- automatically invoke setup
 	}
 	return __truInst_instance;
 };

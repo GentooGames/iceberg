@@ -2,8 +2,8 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "___",
-    "path": "folders/scripts/___.yy",
+    "name": "___systems",
+    "path": "folders/scripts/___systems.yy",
   },
   "resourceVersion": "1.0",
   "name": "___window",
