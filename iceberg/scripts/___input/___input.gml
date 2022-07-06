@@ -3,8 +3,7 @@ function ___input() {
 	///
 	global.___system_input = {
 	    initialized: false,
-	
-	    setup:  function() {
+	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
 	        ///
@@ -51,7 +50,7 @@ function ___input() {
 			}
 			return self;
 	    },
-	    update: function() {
+	    update:   function() {
 	        /// @func   update()
 	        /// @return {struct} self
 	        /// 
@@ -61,12 +60,26 @@ function ___input() {
 			}
 			return self;
 	    },
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
     
-		/// Core ///////////////
 		mouse:    {
 	        device: 0,
-        
-			/// Core ///////////////////////////
+			
+			#region Actions ////////
+			
 	        button_pressed:  function(_button) {
 	            /// @func   button_pressed(button)
 	            /// @param  {mb_button} button
@@ -101,7 +114,9 @@ function ___input() {
 	            return mouse_wheel_down();
 	        },
         
-	        /// Getters ////////////////////////
+			#endregion
+			#region Getters ////////
+			
 	        get_x:      function() {
 	            /// @func   get_x()
 	            /// @return {real} x
@@ -149,7 +164,9 @@ function ___input() {
 				return device;
 			},
 			
-			/// Util ///////////////////////////
+			#endregion
+			#region Util ///////////
+			
 			to_string: function(_button_index) {
 				/// @func	to_string(button_index)
 				/// @param	{mb}	 button_index
@@ -162,9 +179,12 @@ function ___input() {
 				}
 				return "";
 			},
+				
+			#endregion
 	    },
 	    keyboard: {
-			/// Core ///////////////////////////
+			#region Actions ////////
+			
 	        button_pressed:  function(_button) { 
 	            /// @func   button_pressed(button)
 	            /// @param  {kb_button} button
@@ -186,9 +206,32 @@ function ___input() {
 	            ///
 	            return keyboard_check_released(_button);  
 	        },
+				
+			#endregion
 	    },
 		
-		/// Private ////////////
+		#region Actions ////
+		
+		
+		
+		#endregion
+		#region Getters ////
+		
+		
+		
+		#endregion
+		#region Setters ////
+		
+		
+		
+		#endregion
+		#region Checkers ///
+		
+		
+		
+		#endregion
+		#region __Private //
+		
 		__update_mouse_events:	  function() {
 			/// @func	__update_mouse_events()
 			/// @return {struct} self
@@ -259,10 +302,15 @@ function ___input() {
 			}
 			return self;
 		},
+			
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro INPUT		global.___system_input
 	#macro mouse_x_gui	INPUT.mouse.get_x_gui()
 	#macro mouse_y_gui	INPUT.mouse.get_y_gui()
-	////////////////////
+	
+	#endregion
 	INPUT.setup(); /// <-- automatically invoke setup()
 }

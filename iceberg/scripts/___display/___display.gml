@@ -3,8 +3,7 @@ function ___display() {
 	///
 	global.___system_display = {
 	    initialized:  false,
-
-	    setup:  function() {
+	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
 	        ///
@@ -24,15 +23,35 @@ function ___display() {
 			}
 			return self;
 	    },
-		update:	function() {
+		update:	  function() {
 			/// @func   update()
 	        /// @return {struct} self
 	        ///
 	        if (initialized) {}
 			return self;
 		},
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
 	
-		/// Getters ////////////
+		#region Actions ////
+		
+		
+		
+		#endregion
+		#region Getters ////
+		
 	    get_width:  function() {
 	        /// @func   get_width()
 	        /// @return {real} width
@@ -45,8 +64,28 @@ function ___display() {
 	        ///
 	        return display_get_height();
 	    },
+			
+		#endregion
+		#region Setters ////
+		
+		
+		
+		#endregion
+		#region Checkers ///
+		
+		
+		
+		#endregion
+		#region __Private //
+		
+		
+		
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro DISPLAY global.___system_display
-	////////////////////////
+	
+	#endregion
 	DISPLAY.setup(); /// <-- automatically invoke setup()
 };

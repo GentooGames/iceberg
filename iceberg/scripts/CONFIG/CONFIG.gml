@@ -48,9 +48,12 @@ function ___config() {
 		world: {},
 	    entity: {},
 	};
+	#region Macros /////////
+	
 	#macro CONFIG global.___config
+	
+	#endregion
 };
-
 function color_get_random() {
 	/// @func	color_get_random()
 	/// @return {color} color

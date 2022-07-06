@@ -3,8 +3,7 @@ function ___window() {
 	///
 	global.___system_window = {
 	    initialized: false,
-	
-	    setup:  function() {
+	    setup:	  function() {
 	        /// @func   setup()
 	        /// @return {struct} self
 	        ///
@@ -27,16 +26,40 @@ function ___window() {
 			}
 			return self;
 	    },
+		update:	  function() {
+			/// @func	update()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
 	
-		/// Core ///////////////
-		toggle_fullscreen:	function() {
+		#region Actions ////
+		
+		toggle_fullscreen: function() {
 			/// @func   toggle_fullscreen()
 	        /// @return {struct} self
 	        ///
 			set_fullscreen(!get_fullscreen());
 		},
-	
-		/// Getters ////////////
+			
+		#endregion
+		#region Getters ////
+		
 	    get_width:		function() {
 	        /// @func   get_width()
 	        /// @return {real} width
@@ -56,7 +79,9 @@ function ___window() {
 	        return window_get_fullscreen();
 	    },
 	
-		/// Setters ////////////
+		#endregion
+		#region Setters ////
+		
 	    set_fullscreen: function(_fullscreen) {
 	        /// @func   set_fullscreen(fullscreen?)
 	        /// @return {bool} is_fullscreen?
@@ -81,8 +106,23 @@ function ___window() {
 			event_publish("position_assigned", { x: _x, y: _y });
 			return self;
 	    },
+			
+		#endregion
+		#region Checkers ///
+		
+		
+		
+		#endregion
+		#region __Private //
+		
+		
+		
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro WINDOW global.___system_window
-	////////////////////
+	
+	#endregion
 	WINDOW.setup(); /// <-- automatically invoke setup()
 };

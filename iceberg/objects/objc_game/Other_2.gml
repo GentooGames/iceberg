@@ -35,6 +35,7 @@ ___particle();
 ___gui();
 ___transition();
 ___truInst();
+___unit_test();
 ___debug();
 			
 #endregion
@@ -42,12 +43,6 @@ ___debug();
 			
 log("<OBJC_GAME> initializing data files...");
 //global_..._data_init();
-			
-#endregion
-#region Unit Tests /////
-
-log("<OBJC_GAME> initializing unit tests...");
-UNIT_TEST.run_tests();
 			
 #endregion
 #region Controllers ////

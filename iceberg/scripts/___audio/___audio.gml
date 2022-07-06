@@ -1,30 +1,152 @@
-/*
-	To Do:
-		- audio layers
-			- audio_create_sync_group()?
-			- audio fadeouts
-		- audio queueing
-	
-	Audio Categories:
-		- world
-			- sfx
-			- music
-			- ambient
-			- voice
-		- ui
-			- sfx
-			- music
+function ___audio() {
+	/// @func ___audio()
+	///
+	global.___system_audio = {
+	    initialized: false,
+	    setup:    function() {
+	        /// @func   setup()
+	        /// @return {struct} self
+	        ///
+	        if (!initialized) {
+				#region ----------------
+		
+		        log("<AUDIO> setup()");
+				initialized = true;
+		
+				audio_falloff_set_model(audio_falloff_linear_distance);
+		        audio_master_gain(0);
+		        audio_listener_orientation(0, 1, 0, 0, 0, 1);  
+		
+				#endregion
+				#region Layers /////////
 			
-	Approach:
-		- every sound exists on a layer
-		- every action to either queue or fade is tied to a sound/layer
-			- actions can be executed at the sound or layer level
-*/
-
+				layers		= {};
+				layer_names = [];
+				n_layers	= 0;
+			
+				#endregion
+				#region Queues /////////
+			
+				queue = ds_queue_create();
+			
+				#endregion
+				#region Events /////////
+		
+				EventObject(self, "audio");
+				event_register([
+					"played",
+					"stopped",
+					"all_stopped",
+					"pitch_assigned",
+					"emitter_gain_assigned",
+					"emitter_pitch_assigned",
+				]);
+		
+				#endregion
+			}
+			return self;
+	    },
+		update:	  function() {
+			/// @func   update()
+	        /// @return {struct} self
+	        ///
+	        if (initialized) {};
+			return self;
+		},
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {
+				#region ----------------
+		
+		        log("<AUDIO> teardown()");
+				initialized = false;
+			
+				#endregion
+				#region Layers /////////
+			
+				layers   = [];
+				n_layers = 0;
+			
+				#endregion
+				#region Queues /////////
+			
+				ds_queue_destroy(queue);
+				queue = undefined;
+			
+				#endregion
+			}
+			return self;
+		},
+		
+		#region Actions ////
+		
+		
+		
+		#endregion
+		#region Getters ////
+		
+		
+		
+		#endregion
+		#region Setters ////
+		
+		
+		
+		#endregion
+		#region Checkers ///
+		
+		
+		
+		#endregion
+		#region __Private //
+		
+		
+		
+		#endregion
+	};
+	#region Macros /////////
+	
+	#macro AUDIO global.___system_audio
+	
+	#endregion
+	AUDIO.setup();  /// <-- automatically invoke setup()
+};
 function AudioLayer() constructor {
 	/// @func	AudioLayer()
 	/// @return	{AudioLayer} self
 	///
+	/*
+		To Do:
+			- audio layers
+				- audio_create_sync_group()?
+				- audio fadeouts
+			- audio queueing
+	
+		Audio Categories:
+			- world
+				- sfx
+				- music
+				- ambient
+				- voice
+			- ui
+				- sfx
+				- music
+			
+		Approach:
+			- every sound exists on a layer
+			- every action to either queue or fade is tied to a sound/layer
+				- actions can be executed at the sound or layer level
+	*/
+	
 	emitters      = {};
 	emitter_names = [];
 	n_emitters	  = 0;
@@ -156,91 +278,3 @@ function AudioLayer() constructor {
 		return self;
 	};
 };	
-
-function ___audio() {
-	/// @func ___audio()
-	///
-	global.___system_audio = {
-	    initialized: false,
-	
-	    setup:    function() {
-	        /// @func   setup()
-	        /// @return {struct} self
-	        ///
-	        if (!initialized) {
-				#region ----------------
-		
-		        log("<AUDIO> setup()");
-				initialized = true;
-		
-				audio_falloff_set_model(audio_falloff_linear_distance);
-		        audio_master_gain(0);
-		        audio_listener_orientation(0, 1, 0, 0, 0, 1);  
-		
-				#endregion
-				#region Layers /////////
-			
-				layers		= {};
-				layer_names = [];
-				n_layers	= 0;
-			
-				#endregion
-				#region Queues /////////
-			
-				queue = ds_queue_create();
-			
-				#endregion
-				#region Events /////////
-		
-				EventObject(self, "audio");
-				event_register([
-					"played",
-					"stopped",
-					"all_stopped",
-					"pitch_assigned",
-					"emitter_gain_assigned",
-					"emitter_pitch_assigned",
-				]);
-		
-				#endregion
-			}
-			return self;
-	    },
-		update:	  function() {
-			/// @func   update()
-	        /// @return {struct} self
-	        ///
-	        if (initialized) {};
-			return self;
-		},
-		teardown: function() {
-			/// @func	teardown()
-			/// @return {struct} self
-			///
-			if (initialized) {
-				#region ----------------
-		
-		        log("<AUDIO> teardown()");
-				initialized = false;
-			
-				#endregion
-				#region Layers /////////
-			
-				layers   = [];
-				n_layers = 0;
-			
-				#endregion
-				#region Queues /////////
-			
-				ds_queue_destroy(queue);
-				queue = undefined;
-			
-				#endregion
-			}
-			return self;
-		},
-	};
-	#macro AUDIO global.___system_audio
-	////////////////////
-	AUDIO.setup();  /// <-- automatically invoke setup()
-};

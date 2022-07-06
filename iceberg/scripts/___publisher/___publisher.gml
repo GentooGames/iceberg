@@ -3,8 +3,7 @@ function ___publisher() {
 	///
 	global.___system_publisher = {
 	    initialized: false,
-	
-	    setup: function() {
+	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
 	        ///
@@ -30,8 +29,58 @@ function ___publisher() {
 			}
 			return self;
 	    },
+		update:	  function() {
+			/// @func	update()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+			
+		#region Actions ////
+		
+		
+		
+		#endregion
+		#region Getters ////
+		
+		
+		
+		#endregion
+		#region Setters ////
+		
+		
+		
+		#endregion
+		#region Checkers ///
+		
+		
+		
+		#endregion
+		#region __Private //
+		
+		
+		
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro PUBLISHER global.___system_publisher
-	////////////////////////
+	
+	#endregion
 	PUBLISHER.setup();	/// <-- automatically invoke setup()
 };

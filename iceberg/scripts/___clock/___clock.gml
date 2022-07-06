@@ -9,7 +9,7 @@ function ___clock() {
 	    clock_ui:		new iota_clock(), // ui overlays and action frames
 	    clock_tutorial: new iota_clock(), // tutorial entities
 	
-	    setup:  function() {
+	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
 	        ///
@@ -45,7 +45,7 @@ function ___clock() {
 			}
 			return self;
 	    },
-	    update: function() {
+	    update:   function() {
 	        /// @func   update()
 	        /// @return {struct} self
 	        ///
@@ -58,8 +58,51 @@ function ___clock() {
 			}
 			return self;
 	    },
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+			
+		#region Actions ////
+		
+		
+		
+		#endregion
+		#region Getters ////
+		
+		
+		
+		#endregion
+		#region Setters ////
+		
+		
+		
+		#endregion
+		#region Checkers ///
+		
+		
+		
+		#endregion
+		#region __Private //
+		
+		
+		
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro CLOCK global.___system_clock
-	////////////////////
+	
+	#endregion
 	CLOCK.setup(); /// <-- automatically invoke setup()
 };

@@ -3,8 +3,7 @@ function ___debug() {
 	///
 	global.___system_debug = {
 		initialized:  false,
-
-	    setup:  function() {
+	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
 	        /// 
@@ -24,7 +23,7 @@ function ___debug() {
 			}
 			return self;
 	    },
-	    update: function() {
+	    update:   function() {
 	        /// @func   update()
 			/// @return {struct} self
 	        ///
@@ -35,7 +34,7 @@ function ___debug() {
 			}
 			return self;
 	    },
-	    render: function() {
+	    render:   function() {
 	        /// @func   render()
 	        /// @return {struct} self
 	        ///
@@ -45,10 +44,46 @@ function ___debug() {
 			}
 			return self;
 	    },
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+			
+		#region Actions ////
+		
+		
+		
+		#endregion
+		#region Getters ////
+		
+		
+		
+		#endregion
+		#region Setters ////
+		
+		
+		
+		#endregion
+		#region Checkers ///
+		
+		
+		
+		#endregion
+		#region __Private //
+		
+		
+		
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro DEBUG	 global.___system_debug
 	#macro DEBUGGING 0
 	#macro LOGGING   1
-	////////////////////
+	
+	#endregion
 	DEBUG.setup(); /// <-- automatically invoke setup()
 };

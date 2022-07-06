@@ -3,8 +3,7 @@ function ___transition() {
 	///
 	global.___system_transition = { 
 	    initialized: false,
-	
-	    setup:  function() {
+	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
 	        ///
@@ -65,7 +64,7 @@ function ___transition() {
 			}
 			return self;
 	    },
-		update:	function() {
+		update:	  function() {
 			/// @func   update()
 	        /// @return {struct} self
 	        ///
@@ -86,7 +85,7 @@ function ___transition() {
 			}
 			return self;
 		},
-		render: function() {
+		render:   function() {
 			/// @func   render()
 	        /// @return {struct} self
 	        ///
@@ -95,9 +94,17 @@ function ___transition() {
 			}
 			return self;
 		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
 	
-		/// Core ///////////////////
-		goto:			   function(_room, _data = undefined) {
+		#region Actions ////////
+		
+		goto:		   function(_room, _data = undefined) {
 			/// @func   goto(room, data*)
 			/// @param	{room_index} room
 			/// @param	{struct}	 data=undefined
@@ -109,21 +116,21 @@ function ___transition() {
 			}
 			return self;
 		},
-	    goto_next:		   function(_data) {
+	    goto_next:	   function(_data) {
 	        /// @func   goto_next()
 			/// @param	{struct} data
 	        /// @return {struct} self
 	        ///
 			return goto(get_room_next(), _data);
 	    },
-	    goto_previous:	   function(_data) {
+	    goto_previous: function(_data) {
 	        /// @func   goto_previous()
 			/// @param	{struct} data
 	        /// @return {struct} self
 	        ///
 			return goto(get_room_previous(), _data);
 	    },
-	    restart:		   function(_data) {
+	    restart:	   function(_data) {
 	        /// @func   restart(data)
 			/// @param	{struct} data
 	        /// @return {struct} self
@@ -131,7 +138,9 @@ function ___transition() {
 			return goto(room, _data);
 	    },
 		
-		/// Transitions ////////////
+		#endregion
+		#region Transitions ////
+		
 		start_transition_is_ready: function() {
 			/// @func	start_transition_is_ready()
 			/// @return {boolean} is_ready?
@@ -184,7 +193,9 @@ function ___transition() {
 			return self;
 		},	
 		
-		/// Getters ////////////////
+		#endregion
+		#region Getters ////////
+		
 	    get_room_next:	   function(_room = room) {
 	        /// @func   get_room_next()
 	        /// @param  {room_index} room
@@ -207,8 +218,28 @@ function ___transition() {
 	        }
 	        throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
 	    },
+			
+		#endregion
+		#region Setters ////////
+		
+		
+		
+		#endregion
+		#region Checkers ///////
+		
+		
+		
+		#endregion
+		#region __Private //////
+		
+		
+		
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro TRANSITION global.___system_transition
-	////////////////////////
+	
+	#endregion
 	TRANSITION.setup(); /// <-- automatically invoke setup()
 }

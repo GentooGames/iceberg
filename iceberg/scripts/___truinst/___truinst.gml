@@ -2,15 +2,15 @@ function ___truInst() {
 	/// @func ___truInst()
 	///
 	global.___system_truInst = {
-		initialized:	false,
-		camera:			obj_camera,
-		parent_objects:	resource_tree_get_object_parents(),
-	
-		setup:		  function(_active = true) {
+		initialized: false,
+		setup:	  function(_active = true) {
 			/// @func	setup(active?*)
 			/// @param	{boolean} active=true
 			/// @return {struct}  self
 			///
+			camera			= obj_camera;
+			parent_objects  = resource_tree_get_object_parents();
+		
 			if (TRUINST_APPLY_CULLING && !initialized) {
 				active			 = _active;
 				deactivated		 = [];
@@ -21,7 +21,7 @@ function ___truInst() {
 			}
 			return self;
 		},
-		update:		  function() {
+		update:	  function() {
 			/// @func	update()
 			/// @return {struct} self
 			///
@@ -36,7 +36,14 @@ function ___truInst() {
 			}
 			return self;
 		},
-		teardown:	  function() {
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
 			/// @func	teardown()
 			/// @return {struct} self
 			///
@@ -51,7 +58,9 @@ function ___truInst() {
 			return self;
 		},
 	
-		clear_all:	  function(_destroy_instances = true) {
+		#region Actions ////
+		
+		clear_all:  function(_destroy_instances = true) {
 			/// @func	clear_all(destroy_instances?*)
 			/// @param	{boolean} destroy_instances=true
 			/// @return {struct}  self
@@ -73,7 +82,7 @@ function ___truInst() {
 			}
 			return self;
 		},
-		clear_temp:   function() {
+		clear_temp: function() {
 			/// @func	clear_temp()
 			/// @return {struct} self
 			///
@@ -86,6 +95,20 @@ function ___truInst() {
 			}
 			return self;
 		},
+		
+		#endregion
+		#region Getters ////
+		
+		
+		
+		#endregion
+		#region Setters ////
+		
+		
+		
+		#endregion
+		#region Checkers ///
+		
 		is_offscreen: function(_id = id) {
 			/// @func	is_offscreen(id*)
 			/// @param	{instance} id=id
@@ -98,15 +121,23 @@ function ___truInst() {
 				||	(_bbox.bbox_bottom < camera.get_top()	 - padding)
 			);
 		},
+			
+		#endregion
+		#region __Private //
+		
+		
+		
+		#endregion
 	};
+	#region Macros /////////
+	
 	#macro TRUINST				 global.___system_truInst
 	#macro TRUINST_APPLY_CULLING 1
 	#macro TRUINST_LOGGING		 1
-	////////////////////////
+	
+	#endregion
 	TRUINST.setup(); /// <-- automatically invoke setup()
 };
-
-/// Global Util Functions //////////////////////////////////////
 function instance_exists_tru(_id = id) {
 		/// @func	instance_exists_tru(id*)
 		/// @param	{instance} instance=id
