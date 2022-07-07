@@ -7,48 +7,59 @@
 function Coop() constructor {
 	/// @func Coop()
 	///
-	__owner = other;
-	__unique_components  = {};
-	__unique_names		 = [];
-	__generic_components = {};
-	__generic_names		 = [];
-	__ordered_components = [];
+	__owner		 = other;
+	__components = {};
+	__names		 = [];
 	
-	static update		 = function() {
+	static update			= function() {
 		/// @func	update()
 		/// @return {Coop} self
 		///
-		for (var _i = 0, _len = array_length(__ordered_components); _i < _len; _i++) {
-			__ordered_components[_i].__update();	
+		for (var _i = 0, _len = array_length(__names); _i < _len; _i++) {
+			get_component(__names[_i]).update();	
 		}
 		return self;
 	};
-	static add_component = function(_instance, _name = undefined) {
-		/// @func add_component(instance, name*)
+	static add_component	= function(_instance, _name = instanceof(_instance)) {
+		/// @func	add_component(instance, name*)
 		/// @param	{instanceof} instance
-		/// @param	{string}	 name=undefined
+		/// @param	{string}	 name=instanceof
 		/// @return {Coop}		 self
 		///
-		if (_name != undefined && _name != "") {
-			_instance.__set_name(_name);
-		}
-		////////////////////////////
-		var _constructor = instanceof(_instance);
-		if (_instance.__singleton) {
-			if (!variable_struct_exists(__unique_components, _constructor)) {
-				__unique_components[$ _constructor] = _instance;	
-				array_push(__unique_names, _constructor);
-				array_push(__ordered_components, _instance);
+		_instance.__name = _name;
+		__components[$ _name] = _instance;
+		array_push(__names, _name);
+		return self;
+	};
+	static get_component	= function(_name) {
+		/// @func	get_component(name)
+		/// @param	{string}	name
+		/// @eturn	{Cooponent} component
+		///
+		return __components[$ _name];
+	};
+	static has_component	= function(_name) {
+		/// @func	has_component(name)
+		/// @param	{string}  name
+		/// @return {boolean} has_component?
+		///
+		return get_component(_name) != undefined;
+	};
+	static remove_component = function(_name) {
+		/// @func	remove_component(name)
+		/// @param	{string} name
+		/// @return {Coop}   self
+		///
+		if (has_component(_name)) {
+			variable_struct_remove(__components, _name);
+			
+			/// array_find_delete()
+			for (var _i = array_length(__names) - 1; _i >= 0; _i--) {
+				if (__names[_i] == _name) {
+					array_delete(__names, _i, 1);
+					break;
+				}
 			}
-		}
-		else {
-			if (__generic_components[$ _constructor] == undefined) {
-				__generic_components[$ _constructor]  = {};
-				array_push(__generic_names, _constructor);
-			}
-			var _components = __generic_components[$ _constructor];
-			_components[$ _instance.__name] = _instance;
-			array_push(__ordered_components, _instance);
 		}
 		return self;
 	};
@@ -57,41 +68,32 @@ function Cooponent() constructor {
 	/// @func	Cooponent()
 	/// @return {Cooponent} self
 	///
-	__singleton = false;
-	__active	= true;
-	__name		= string(ptr(self));
-	__name_set	= false; // name set manually?
+	__name	 = undefined;
+	__active = true;
 	
 	#region Private Methods
 	
-	static __update	  = function() {};
-	static __set_name = function(_name) {
-		__name	   = _name;
-		__name_set =  true;
-		return self;
-	};
-		
 	#endregion
+	
+	static update = function() {};
 };
 function Actionable() : Cooponent() constructor {
 	/// @func	Actionable()
 	/// @return {Cooponent} self
 	///
-	__singleton = true;
-	__actor		= other;
-	__fsm		= undefined;
+	__actor	= other;
+	__fsm	= undefined;
 	
 	#region Private Methods
+		
+	#endregion
 	
-	static __update	= function() {
+	static update	 = function() {
 		if (__fsm != undefined) {
 			__fsm.step();
 		}
 		return self;
 	};
-		
-	#endregion
-	
 	static add_state = function(_state_name, _state_struct) {
 		if (__fsm == undefined) {
 			__fsm  = new SnowState(_state_name);
@@ -104,7 +106,6 @@ function Moveable() : Cooponent() constructor {
 	/// @func	Moveable()
 	/// @return {Cooponent} self
 	///
-	__singleton = true;
 };
 function Scriptable() : Cooponent() constructor {
 	/// @func	Scriptable()
