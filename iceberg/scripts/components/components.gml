@@ -446,5 +446,5 @@ function truInst_setup(_truInst_instance = id, _active = true) {
 		
 		__truInst_setup(_active); /// <-- automatically invoke setup
 	}
-	return __truInst_instance;
+	return _truInst_instance;
 };

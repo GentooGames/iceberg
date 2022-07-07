@@ -1,4 +1,5 @@
 iceberg:
+	- set SnowState methods to static declarations
 	- a way to check for initialized dependencies. such as EventObject, TruInstObject, etc
 	- replace all instance_destroy() with instance.destroy()
 	- standardize FluidProperty method implementation

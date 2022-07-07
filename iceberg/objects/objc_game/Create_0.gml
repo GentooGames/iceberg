@@ -80,5 +80,3 @@ render	 = method_inherit(render,   function() {
 	return id;
 });
 
-
-
