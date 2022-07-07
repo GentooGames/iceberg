@@ -262,7 +262,7 @@ function truInst_setup(_truInst_instance = id, _active = true) {
 		__truInst_instance = _truInst_instance;
 		__truInst_active   = _active;
 	
-		#region Private ////////////////////////////////
+		#region Private ////////
 		
 		__truInst_setup	   = method(__truInst_instance, function(_active = true) {
 			///	@func	__truInst_setup(active?*)

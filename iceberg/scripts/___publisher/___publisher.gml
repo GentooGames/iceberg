@@ -3,6 +3,9 @@ function ___publisher() {
 	///
 	global.___system_publisher = {
 	    initialized: false,
+		
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -50,7 +53,8 @@ function ___publisher() {
 			if (initialized) {};
 			return self;
 		},
-			
+		
+		#endregion
 		#region Actions ////
 		
 		

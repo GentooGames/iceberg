@@ -2,11 +2,11 @@
 log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(id));
 global._camera = id;
 //#macro CAMERA global._camera
-event_user(METHODS);
+events_user(CALLBACKS, EVENTS, METHODS);
 //////////////////////////////////////////
-// .---- .---. .    . .---- .---. .---. //
+// .---. .---. .    . .---- .---. .---. //
 // |     r---j | V  | r--   r---J r---J //
-// L---- |   | |    | .---- |  \  |   | //
+// L---' |   | |    | .---- |  \  |   | //
 //////////////////////////////////////////
 
 cam	    = camera_create();

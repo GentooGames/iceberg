@@ -3,6 +3,9 @@ function ___gui() {
 	///
 	global.___system_gui = {
 	    initialized: false,
+		
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -80,6 +83,7 @@ function ___gui() {
 			return self;
 		},
 	
+		#endregion
 		#region Actions ////
 		
 	    world_to_gui_x: function(_x) {

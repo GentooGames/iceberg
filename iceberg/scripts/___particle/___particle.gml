@@ -3,6 +3,9 @@ function ___particle() {
 	///
 	global.___system_particle = {
 	    initialized: false,
+		
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -47,6 +50,7 @@ function ___particle() {
 			return self;
 		},
 		
+		#endregion
 		#region Actions ////
 		
 		

@@ -1,4 +1,3 @@
-if (!initialized) return;
-if (!rendering)	  return;
-////////////////////////
-render();
+if (initialized && rendering) {
+	render();
+}

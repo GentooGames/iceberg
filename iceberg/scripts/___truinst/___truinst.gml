@@ -3,6 +3,9 @@ function ___truInst() {
 	///
 	global.___system_truInst = {
 		initialized: false,
+		
+		#region Core ///////
+		
 		setup:	  function(_active = true) {
 			/// @func	setup(active?*)
 			/// @param	{boolean} active=true
@@ -10,6 +13,7 @@ function ___truInst() {
 			///
 			camera			= obj_camera;
 			parent_objects  = resource_tree_get_object_parents();
+			padding			= 0;
 		
 			if (TRUINST_APPLY_CULLING && !initialized) {
 				active			 = _active;
@@ -58,6 +62,7 @@ function ___truInst() {
 			return self;
 		},
 	
+		#endregion
 		#region Actions ////
 		
 		clear_all:  function(_destroy_instances = true) {

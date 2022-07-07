@@ -3,78 +3,7 @@ function ___input() {
 	///
 	global.___system_input = {
 	    initialized: false,
-	    setup:    function() {
-	        /// @func   setup()
-	        /// @return {struct} self
-	        ///
-	        if (!initialized) {
-				#region ----------------
 		
-		        log("<INPUT> setup()");
-		        initialized = true;
-		
-				#endregion
-				#region Events /////////
-		
-				EventObject(self, "input");
-				event_register([
-					/// mouse_button_pressed
-					"mouse_button_pressed",
-					"mouse_left_button_pressed",
-			        "mouse_right_button_pressed",
-			        "mouse_middle_button_pressed",  
-			
-					/// mouse_button
-					"mouse_button",
-					"mouse_left_button",
-			        "mouse_right_button",
-			        "mouse_middle_button",  
-			
-					/// mouse_button_released
-					"mouse_button_released",
-					"mouse_left_button_released",
-			        "mouse_right_button_released",
-			        "mouse_middle_button_released",  
-			
-					/// mouse_wheel
-					"mouse_wheel_up",
-					"mouse_wheel_down",
-			
-					/// keyboard_button_*
-					"keyboard_button_pressed",
-					"keyboard_button",
-					"keyboard_button_released",
-				]);
-		
-				#endregion
-			}
-			return self;
-	    },
-	    update:   function() {
-	        /// @func   update()
-	        /// @return {struct} self
-	        /// 
-			if (initialized) {
-				__update_mouse_events();
-				__update_keyboard_events();
-			}
-			return self;
-	    },
-		render:	  function() {
-			/// @func	render()
-			/// @return {struct} self
-			///
-			if (initialized) {};
-			return self;
-		},
-		teardown: function() {
-			/// @func	teardown()
-			/// @return {struct} self
-			///
-			if (initialized) {};
-			return self;
-		},
-    
 		mouse:    {
 	        device: 0,
 			
@@ -210,6 +139,81 @@ function ___input() {
 			#endregion
 	    },
 		
+		#region Core ///////
+		
+	    setup:    function() {
+	        /// @func   setup()
+	        /// @return {struct} self
+	        ///
+	        if (!initialized) {
+				#region ----------------
+		
+		        log("<INPUT> setup()");
+		        initialized = true;
+		
+				#endregion
+				#region Events /////////
+		
+				EventObject(self, "input");
+				event_register([
+					/// mouse_button_pressed
+					"mouse_button_pressed",
+					"mouse_left_button_pressed",
+			        "mouse_right_button_pressed",
+			        "mouse_middle_button_pressed",  
+			
+					/// mouse_button
+					"mouse_button",
+					"mouse_left_button",
+			        "mouse_right_button",
+			        "mouse_middle_button",  
+			
+					/// mouse_button_released
+					"mouse_button_released",
+					"mouse_left_button_released",
+			        "mouse_right_button_released",
+			        "mouse_middle_button_released",  
+			
+					/// mouse_wheel
+					"mouse_wheel_up",
+					"mouse_wheel_down",
+			
+					/// keyboard_button_*
+					"keyboard_button_pressed",
+					"keyboard_button",
+					"keyboard_button_released",
+				]);
+		
+				#endregion
+			}
+			return self;
+	    },
+	    update:   function() {
+	        /// @func   update()
+	        /// @return {struct} self
+	        /// 
+			if (initialized) {
+				__update_mouse_events();
+				__update_keyboard_events();
+			}
+			return self;
+	    },
+		render:	  function() {
+			/// @func	render()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+		teardown: function() {
+			/// @func	teardown()
+			/// @return {struct} self
+			///
+			if (initialized) {};
+			return self;
+		},
+    
+		#endregion
 		#region Actions ////
 		
 		

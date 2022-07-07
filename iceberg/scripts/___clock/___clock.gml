@@ -9,6 +9,8 @@ function ___clock() {
 	    clock_ui:		new iota_clock(), // ui overlays and action frames
 	    clock_tutorial: new iota_clock(), // tutorial entities
 	
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -72,7 +74,8 @@ function ___clock() {
 			if (initialized) {};
 			return self;
 		},
-			
+		
+		#endregion
 		#region Actions ////
 		
 		

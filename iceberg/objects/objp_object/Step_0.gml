@@ -1,3 +1,3 @@
-if (!initialized) return;
-////////////////////////
-update();
+if (initialized && updating) {
+	update();
+}

@@ -3,6 +3,9 @@ function ___transition() {
 	///
 	global.___system_transition = { 
 	    initialized: false,
+		
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -101,7 +104,8 @@ function ___transition() {
 			if (initialized) {};
 			return self;
 		},
-	
+			
+		#endregion
 		#region Actions ////////
 		
 		goto:		   function(_room, _data = undefined) {

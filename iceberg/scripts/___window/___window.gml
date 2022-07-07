@@ -3,6 +3,9 @@ function ___window() {
 	///
 	global.___system_window = {
 	    initialized: false,
+		
+		#region Core ///////
+		
 	    setup:	  function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -48,6 +51,7 @@ function ___window() {
 			return self;
 		},
 	
+		#endregion
 		#region Actions ////
 		
 		toggle_fullscreen: function() {

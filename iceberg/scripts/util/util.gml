@@ -1,4 +1,4 @@
-#region system
+#region system /////////////
 
 function log(_format) {
 	/// @func	log(_format, params, ...)
@@ -109,6 +109,17 @@ function method_inherit(_method_parent = undefined, _method_child = undefined, _
 		}
     });
 };
+function events_user() {
+	/// @func	events_user(numb1, ..., numbN)
+	/// @param	{real} numb1
+	/// @param	{real} ...
+	/// @param	{real} numbN
+	/// @return NA
+	///
+	for (var _i = 0; _i < argument_count; _i++) {
+		event_user(argument[_i]);	
+	}
+};
 
 #region DYNAMIC GETTERS AND SETTERS
 /*
@@ -167,7 +178,7 @@ function System() constructor {
 #endregion
 
 #endregion
-#region unit tests
+#region unit tests /////////
 
 function objects_count() {
 	/// @func	objects_count()
@@ -238,7 +249,7 @@ function log_objects_number(_prefix_msg = "") {
 };
 
 #endregion
-#region array_3d
+#region array_3d ///////////
 
 function array_3d_get_width(_array) {
 	/// @func	array_3d_get_width(array)
@@ -356,7 +367,7 @@ function array_3d_downsize(_array, _width, _length, _height) {
 };
 
 #endregion
-#region arrays
+#region arrays /////////////
 
 function array_get_random(_array) {
 	/// @func   array_get_random(array)
@@ -545,7 +556,7 @@ function for_array(_array, _cb, _cb_data) {
 };
 
 #endregion
-#region ds_lists
+#region ds_lists ///////////
 
 function ds_list_index_in_bounds(_ds_list, _index) {
 	/// @func   ds_list_index_in_bounds(ds_list, index)
@@ -661,7 +672,7 @@ function ds_list_count_not_entry(_ds_list, _value) {
 };
 
 #endregion
-#region ds_grids
+#region ds_grids ///////////
 
 function ds_grid_index_in_bounds(_ds_grid, _i, _j) {
 	/// @func   ds_grid_index_in_bounds(ds_grid, i, j)
@@ -679,7 +690,7 @@ function ds_grid_index_in_bounds(_ds_grid, _i, _j) {
 };
 
 #endregion
-#region structs
+#region structs ////////////
 
 function struct_has(_struct, _var_name) {
 	/// @func	struct_has(struct, var_name)
@@ -718,7 +729,7 @@ function structs_have_same_names(_struct_1, _struct_2) {
 };
 
 #endregion
-#region buffers
+#region buffers ////////////
 
 function struct_to_buffer_encoded_compressed(_struct) {
 	/// @func   struct_to_buffer_encoded_compressed(struct)
@@ -802,7 +813,10 @@ function buffer_compressed_encoded_to_struct(_buffer, _destroy_buffer = true) {
 };
 
 #endregion
-#region paths
+#region objects ////////////
+
+#endregion
+#region paths //////////////
 
 function path_sprite_index_to_image_index(_path_index) {
 	/// @func   path_sprite_index_to_image_index(path_index)
@@ -887,7 +901,7 @@ function path_empty(_path) {
 };
 
 #endregion
-#region collisions
+#region collisions /////////
 
 function collision_rectangle_bbox(_object, _precise, _notme, _padding = 0) {	 
 	/// @func   collision_rectangle_bbox(object, precise?, notme?, padding*<0>)
@@ -956,7 +970,7 @@ function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
 };
 
 #endregion
-#region resource tree
+#region resource tree //////
 
 function resource_tree_get_objects() {
 	/// @func	resource_tree_get_objects()
@@ -994,7 +1008,7 @@ function resource_tree_get_object_parents() {
 };	
 
 #endregion
-#region sprites
+#region sprites ////////////
 
 function draw_rectangle_width_color(_x1, _y1, _x2, _y2, _width, _color) {	 
 	/// @func   draw_rectangle_width_color(x1, y1, x2, y2, width, color)
@@ -1202,7 +1216,7 @@ function draw_sprite_alt(_spr = sprite_index, _subimg = image_index, _x = x, _y 
 };
 
 #endregion
-#region strings
+#region strings ////////////
 
 function string_contains(_string, _sub) {	 
 	/// @func   string_contains(string, substring)
@@ -1256,7 +1270,7 @@ function string_parse_into_struct(_string, _substrings, _delineator) {
 };
 
 #endregion
-#region surfaces
+#region surfaces ///////////
 
 function surface_ensure(_surface, _width, _height) {
 	/// @func   surface_ensure(surface, width, height)
@@ -1291,7 +1305,7 @@ function surface_catch(_surf, _w, _h, _cb = function() {}, _cb_data) {
 };
 	
 #endregion
-#region maths
+#region maths //////////////
 
 function percent(_percent) {
 	/// @func   percent(percent)
@@ -1505,7 +1519,7 @@ function angle_perpendicular(_x1, _y1, _x2, _y2) {
 }
 
 #endregion
-#region async
+#region async //////////////
 
 function async_get_id() {
 	/// @func   async_get_id()
@@ -1533,7 +1547,7 @@ function async_status_fail() {
 };
 
 #endregion
-#region enum
+#region enum ///////////////
 
 function dir_enum_to_string(_DIR) {
 	/// @func   dir_enum_to_string(DIR)
@@ -1565,7 +1579,7 @@ function dir_enum_to_real(_DIR) {
 };
 
 #endregion
-#region others
+#region others /////////////
 
 function data_get_weighted(_data) {
 	/// @func   data_get_weighted(data_array)
@@ -1638,7 +1652,7 @@ function method_get_name_dynamic(_method) {
 };
 
 #endregion
-#region isometric
+#region isometric //////////
 
 function iso_ijk_to_x(_iso_width, _i, _j, _k) {
 	/// @func   iso_ijk_to_x(iso_width, i, j, k)

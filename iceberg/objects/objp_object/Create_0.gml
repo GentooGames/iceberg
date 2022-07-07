@@ -5,13 +5,13 @@ log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + strin
 // |   | r--<  .   | r--   |       |   //
 // L---J L---J L---J L---- L----   |   //
 /////////////////////////////////////////
-event_user(METHODS);
-event_user(EVENTS);
+events_user(CALLBACKS, EVENTS, METHODS);
 event_id	= "object";
 initialized	= false;
+updating	= true;
+rendering	= true;
 active		= true;
 destroyed	= false;
-rendering	= true;
 
 setup	 = method_inherit(,function() {
 	/// @func	setup()
@@ -20,9 +20,10 @@ setup	 = method_inherit(,function() {
 	if (!initialized) {
 		#region ------------
 	
+		updating  = true;
+		rendering = true;
 		active	  = true;
 		destroyed = false;
-		rendering = true;
 	
 		#endregion
 		#region Events /////
@@ -44,8 +45,7 @@ setup	 = method_inherit(,function() {
 		#endregion
 	}
 	return id;	
-	/// v== callback
-},	function() { setup_callback(); });
+},	setup_callback);
 teardown = method_inherit(,function() {
 	/// @func	teardown()
 	/// @return {instance} id
@@ -57,13 +57,13 @@ teardown = method_inherit(,function() {
 	
 		#endregion
 	
+		updating  = true;
+		rendering = true;
 		active	  = true;
 		destroyed = false;
-		rendering = true;
 	}
 	return id;
-	/// v== callback
-},	function() { teardown_callback(); });
+},	teardown_callback);
 rebuild  = method_inherit(,function() {
 	/// @func	rebuild()
 	/// @return {instance} id
@@ -73,8 +73,7 @@ rebuild  = method_inherit(,function() {
 		setup();
 	}
 	return id;
-	/// v== callback
-},	function() { rebuild_callback(); });
+},	rebuild_callback);
 update	 = method_inherit(,function() {
 	/// @func	update()
 	/// @return {instance} id

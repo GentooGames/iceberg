@@ -5,8 +5,7 @@
 // L---- L---J |   V   |   |  \  L---J L---- L---- L---- |  \  //
 /////////////////////////////////////////////////////////////////
 event_inherited();
-event_user(METHODS);
-event_user(EVENTS);
+events_user(CALLBACKS, EVENTS, METHODS);
 event_id = "controller";
 
 setup	 = method_inherit(setup,	function() {

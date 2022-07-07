@@ -5,8 +5,7 @@
 // | V | L---J |  \  L---- L---/ //
 ///////////////////////////////////
 event_inherited();
-event_user(METHODS);
-event_user(EVENTS);
+events_user(CALLBACKS, EVENTS, METHODS);
 
 setup	 = method_inherit(setup,	function() {
 	/// @func	setup()

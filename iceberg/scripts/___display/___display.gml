@@ -3,6 +3,9 @@ function ___display() {
 	///
 	global.___system_display = {
 	    initialized:  false,
+		
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -45,6 +48,7 @@ function ___display() {
 			return self;
 		},
 	
+		#endregion
 		#region Actions ////
 		
 		

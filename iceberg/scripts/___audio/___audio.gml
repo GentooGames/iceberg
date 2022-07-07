@@ -3,6 +3,9 @@ function ___audio() {
 	///
 	global.___system_audio = {
 	    initialized: false,
+		
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -87,6 +90,7 @@ function ___audio() {
 			return self;
 		},
 		
+		#endregion
 		#region Actions ////
 		
 		

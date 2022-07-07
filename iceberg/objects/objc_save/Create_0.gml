@@ -7,8 +7,7 @@ global._save = id;
 // ----J |   |   V   L---- //
 /////////////////////////////
 event_inherited();
-event_user(METHODS);
-event_user(EVENTS);
+events_user(CALLBACKS, EVENTS, METHODS);
 event_id = "save";
 
 /*	ToDo

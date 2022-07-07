@@ -3,6 +3,9 @@ function ___debug() {
 	///
 	global.___system_debug = {
 		initialized:  false,
+		
+		#region Core ///////
+		
 	    setup:    function() {
 	        /// @func   setup()
 	        /// @return {struct} self
@@ -51,7 +54,8 @@ function ___debug() {
 			if (initialized) {};
 			return self;
 		},
-			
+		
+		#endregion
 		#region Actions ////
 		
 		
