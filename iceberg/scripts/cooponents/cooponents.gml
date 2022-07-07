@@ -20,6 +20,15 @@ function Coop() constructor {
 		}
 		return self;
 	};
+	static render			= function() {
+		/// @func	render()
+		/// @return {Coop} self
+		///
+		for (var _i = 0, _len = array_length(__names); _i < _len; _i++) {
+			get_component(__names[_i]).render();	
+		}
+		return self;
+	};
 	static add_component	= function(_instance, _name = instanceof(_instance)) {
 		/// @func	add_component(instance, name*)
 		/// @param	{instanceof} instance
@@ -75,7 +84,8 @@ function Cooponent() constructor {
 	
 	#endregion
 	
-	static update = function() {};
+	static update = function() {}; /// @OVERRIDE
+	static render = function() {}; /// @OVERRIDE
 };
 function Actionable() : Cooponent() constructor {
 	/// @func	Actionable()
@@ -88,19 +98,32 @@ function Actionable() : Cooponent() constructor {
 		
 	#endregion
 	
-	static update	 = function() {
+	static update = function() {
 		if (__fsm != undefined) {
 			__fsm.step();
 		}
 		return self;
 	};
-	static add_state = function(_state_name, _state_struct) {
+	static render = function() {
+		if (__fsm != undefined) {
+			__fsm.draw();	
+		}
+		return self;
+	};
+		
+	static actionable_state_add	   = function(_state_name, _state_struct) {
 		if (__fsm == undefined) {
-			__fsm  = new SnowState(_state_name);
+			__fsm  = new SnowState(_state_name, false);
 		}
 		__fsm.add(_state_name, _state_struct);
 		return self;
 	};
+	static actionable_state_change = function(_state_name) {
+		__fsm.change(_state_name);
+		return self;
+	};
+	static state_add			   = actionable_state_add;
+	static state_change			   = actionable_state_change;
 };
 function Moveable() : Cooponent() constructor {
 	/// @func	Moveable()
@@ -112,25 +135,6 @@ function Scriptable() : Cooponent() constructor {
 	/// @return {Cooponent} self
 	///
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
