@@ -53,7 +53,7 @@ function GStat(_value, _decay) constructor {
 	/// @param	{real}	decay
 	/// @return {GStat} self
 	///
-	instance =  other;
+	owner	 =  other;
 	base	 = _value;
 	decay	 = _decay;
 	mods	 = {};

@@ -38,11 +38,10 @@ function PathFinder(_width, _height) constructor {
 	// Public
 	static pathfind    = function(_instance, _node_start, _node_target) {
 	    /// @func   pathfind(instance, node_start, node_target)
-	    /// @param  instance    {instance}
-	    /// @param  node_start  {PathNode}
-	    /// @param  node_target {PathNode}
-		/// @desc	...
-	    /// @return nodes       {[PathNode]}
+	    /// @param  {struct}	 instance    
+	    /// @param  {PathNode}   node_start  
+	    /// @param  {PathNode}   node_target 
+	    /// @return {[PathNode]} nodes       
 	    ///
 		open_set   = [];
 		closed_set = [];
@@ -130,11 +129,10 @@ function PathFinder(_width, _height) constructor {
 	// Private
 	static _is_traversable = function(_instance, _node_from, _node_to) {
 	    /// @func   _is_traversable(instance, node_from, node_to)
-	    /// @param  instance        {instance}
-	    /// @param  node_from       {PathNode}
-	    /// @param  node_to         {PathNode}
-		/// @desc	...
-	    /// @return is_traversable? {bool}
+	    /// @param  {struct}   instance        
+	    /// @param  {PathNode} node_from       
+	    /// @param  {PathNode} node_to         
+	    /// @return {bool}     is_traversable? 
 	    ///
 		if (!_node_to.walkable) return false;
 		//var _climb	  = _instance.get_climb();

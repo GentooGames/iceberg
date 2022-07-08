@@ -448,26 +448,26 @@ function EventObject(_name = "") {
 
 	event_setup				= method(__event_instance, function() {
 		/// @func	event_setup()
-		/// @return	{struct/instance} event_instance
+		/// @return	{struct} event_instance
 		///
 		return __event_instance;
 	});
 	event_update			= method(__event_instance, function() {
 		/// @func	event_update()
-		/// @return	{struct/instance} event_instance
+		/// @return	{struct} event_instance
 		///
 		return __event_instance;
 	});
 	event_teardown			= method(__event_instance, function() {
 		/// @func	event_teardown()
-		/// @return	{struct/instance} event_instance
+		/// @return	{struct} event_instance
 		///
 		return __event_instance;
 	});
 	////////////////////////////////////////////////////
 	event_get_instance		= method(__event_instance, function() {
 		/// @func	event_get_instance()
-		/// @return	{struct/instance} event_instance
+		/// @return	{struct} event_instance
 		///
 		return __event_instance;
 	});
@@ -485,9 +485,9 @@ function EventObject(_name = "") {
 	});
 	event_register			= method(__event_instance, function(_event_array, _push_to_global = false) {
 		/// @func	event_register(event_array, push_to_global?)
-		/// @param	{array}			  event_array
-		/// @parma	{bool}			  push_to_global=false
-		/// @return	{struct/instance} event_instance
+		/// @param	{array}	 event_array
+		/// @parma	{bool}	 push_to_global=false
+		/// @return	{struct} event_instance
 		///
 		/// Cast And Normalize Argument To Array
 		if (!is_array(_event_array)) {
@@ -514,10 +514,10 @@ function EventObject(_name = "") {
 	});
 	event_publish			= method(__event_instance, function(_event_name, _payload = undefined, _push_to_global = false) {
 		/// @func	 event_publish(event_name, payload*, push_to_global?*)
-		/// @param	{string}		  event_name
-		/// @param	{any}			  payload=undefined
-		/// @param	{bool}			  push_to_global=false
-		/// @return	{struct/instance} event_instance
+		/// @param	{string} event_name
+		/// @param	{any}	 payload=undefined
+		/// @param	{bool}	 push_to_global=false
+		/// @return	{struct} event_instance
 		///
 		/*	<data_struct>: {
 				id:		 self,
@@ -538,10 +538,10 @@ function EventObject(_name = "") {
 	});
 	event_subscribe			= method(__event_instance, function(_event_name, _callback, _weak_reference = false) {
 		/// @func	event_subscribe(event_name, callback, weak_reference?)
-		/// @param	{string}		  event_name
-		/// @param	{method}		  callback_method
-		/// @param	{boolean}		  weak_reference=false
-		/// @return	{struct/instance} event_instance
+		/// @param	{string}  event_name
+		/// @param	{method}  callback_method
+		/// @param	{boolean} weak_reference=false
+		/// @return	{struct}  event_instance
 		///
 		var _publisher = event_get_publisher();
 		_publisher.subscribe(_event_name, _callback, _weak_reference);
@@ -549,9 +549,9 @@ function EventObject(_name = "") {
 	});
 	event_unsubscribe		= method(__event_instance, function(_event_name, _force = false) {
 		/// @func	event_unsubscribe(event_name, force?*)
-		/// @param	{string}		  event_name
-		/// @parma	{boolean}		  force=false
-		/// @return	{struct/instance} event_instance
+		/// @param	{string}  event_name
+		/// @parma	{boolean} force=false
+		/// @return	{struct}  event_instance
 		///
 		var _publisher = event_get_publisher();
 		_publisher.unsubscribe(_event_name, _force);
@@ -559,8 +559,8 @@ function EventObject(_name = "") {
 	});
 	event_clear_subscribers = method(__event_instance, function(_event_name) {
 		/// @func	event_clear_subscribers(event_name)
-		/// @param	{string}		  event_name
-		/// @return	{struct/instance} event_instance
+		/// @param	{string} event_name
+		/// @return	{struct} event_instance
 		///
 		var _publisher = event_get_publisher();
 		_publisher.clear_channel(_event_name);
@@ -572,6 +572,11 @@ function EventObject(_name = "") {
 	return __event_instance;
 };
 function truInst_setup(_truInst_instance = self, _active = true) {
+	
+	
+	/// REPLACE INSTANCE ID WITH APPROPRAITE SELF
+	
+	
 	/// @func	truInst_setup(truInst_instance*, active?*)	
 	/// @param	{struct}  truInst_instance=other
 	/// @param	{boolean} active=true
@@ -585,8 +590,8 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		
 		__truInst_setup	   = method(__truInst_instance, function(_active = true) {
 			///	@func	__truInst_setup(active?*)
-			/// @param	{boolean}		  active=true
-			/// @return {struct/instance} truInst_instance
+			/// @param	{boolean} active=true
+			/// @return {struct}  truInst_instance
 			///
 			if (TRUINST_APPLY_CULLING) {
 				/// Add Instance To Cached Array
@@ -612,8 +617,8 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		});
 		__truInst_update   = method(__truInst_instance, function(_destroy_if_offscreen = false) {
 			/// @func	__truInst_update(destroy_if_offscreen*)
-			/// @param	{boolean}		  destroy_if_offscreen=false
-			/// @return {struct/instance} truInst_instance
+			/// @param	{boolean} destroy_if_offscreen=false
+			/// @return {struct}  truInst_instance
 			///
 			if (TRUINST_APPLY_CULLING && truInst_is_active() && truInst_is_offscreen()) {
 				if (_destroy_if_offscreen) {
@@ -626,7 +631,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		});
 		__truInst_teardown = method(__truInst_instance, function() {
 			/// @func	__truInst_teardown()
-			/// @return {struct/instance} truInst_instance
+			/// @return {struct} truInst_instance
 			///	
 			if (TRUINST_APPLY_CULLING) {
 				/// Remove Instance From Cached Array
@@ -660,20 +665,20 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		
 		truInst_update			  = method(__truInst_instance, function(_destroy_if_offscreen = false) {
 			/// @func	truInst_update(destroy_if_offscreen*)
-			/// @param	{boolean}		  destroy_if_offscreen=false
-			/// @return {struct/instance} truInst_instance
+			/// @param	{boolean} destroy_if_offscreen=false
+			/// @return {struct}  truInst_instance
 			///
 			return __truInst_update(_destroy_if_offscreen);
 		});
 		truInst_teardown		  = method(__truInst_instance, function() {
 			/// @func	truInst_teardown()
-			/// @return {struct/instance} truInst_instance
+			/// @return {struct} truInst_instance
 			///	
 			return __truInst_teardown();
 		});
 		truInst_get_instance	  = method(__truInst_instance, function() {
 			/// @func	truInst_get_instance()
-			/// @return {struct/instance} truInst_instance
+			/// @return {struct} truInst_instance
 			///
 			return __truInst_instance;
 		});
@@ -717,8 +722,8 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		});
 		truInst_activate		  = method(__truInst_instance, function(_index) {
 			/// @func	truInst_activate(index)
-			/// @param	{real}			  list_index
-			/// @return {struct/instance} truInst_instance
+			/// @param	{real}	 list_index
+			/// @return {struct} truInst_instance
 			///
 			if (TRUINST_APPLY_CULLING) {
 				array_delete(TRUINST.deactivated,	     _index, 1);
@@ -732,7 +737,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		});
 		truInst_temp_activate	  = method(__truInst_instance, function() {
 			/// @func	truInst_temp_activate()
-			/// @return {struct/instance} truInst_instance
+			/// @return {struct} truInst_instance
 			///
 			instance_activate_object(id);
 			array_push(TRUINST.temp_activated, id);
@@ -740,7 +745,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		});
 		truInst_deactivate		  = method(__truInst_instance, function() {
 			/// @func	truInst_deactivate()
-			/// @return {struct/instance} truInst_instance
+			/// @return {struct} truInst_instance
 			///
 			if (TRUINST_APPLY_CULLING) {
 				array_push(TRUINST.deactivated, id);
@@ -753,7 +758,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 		});
 		truInst_destroy			  = method(__truInst_instance, function() {
 			/// @func	truInst_destroy()
-			/// @return {struct/instance} truInst_instance
+			/// @return {struct} truInst_instance
 			///
 			instance_destroy();	// replace with instance.destroy()?
 			

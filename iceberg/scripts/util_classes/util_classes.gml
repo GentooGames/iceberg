@@ -96,7 +96,7 @@ function Method(_config = {}) constructor {
 	
 	static get_owner  = function() {
 		/// @func	get_owner()
-		/// @return {instance/struct} owner
+		/// @return {struct} owner
 		///
 		return __owner;
 	};
@@ -130,7 +130,7 @@ function Method(_config = {}) constructor {
 	
 	static set_owner  = function(_owner) {
 		/// @func	set_owner(owner)
-		/// @param	{instance/struct} owner
+		/// @param	{struct} owner
 		/// @return {Method} self
 		///
 		__owner = _owner;

@@ -250,9 +250,8 @@ function Orderly()  constructor {
 	};
 	static remove_actor			   = function(_actor,  _clear_active = true) {
 		/// @func	remove_actor(actor, clear_active?*<t>)	
-		/// @param	{instance/struct} actor		 
-		/// @param	{bool} clear_active?
-		/// @desc	...
+		/// @param	{struct}  actor		 
+		/// @param	{bool}    clear_active?
 		/// @return {Orderly} self
 		///
 		for (var _i = get_size() - 1; _i >= 0; _i--) {
@@ -274,16 +273,14 @@ function Orderly()  constructor {
 	static flag_action_for_removal = function(_action) {
 		/// @func	flag_action_for_removal(action)
 		/// @param	{OrderlyAction} action
-		/// @desc	...
-		/// @return {Orderly} self
+		/// @return {Orderly}		self
 		///
 		_action.flag_for_removal();
 		return self;
 	};
 	static flag_actor_for_removal  = function(_actor) {
 		/// @func	flag_actor_for_removal(actor)
-		/// @param	{instance/struct} actor
-		/// @desc	...
+		/// @param	{struct}  actor
 		/// @return {Orderly} self
 		///
 		for (var _i = 0, _len = get_size(); _i < _len; _i++) {
@@ -339,7 +336,7 @@ function Orderly()  constructor {
 	static get_owner  = function() {
 		/// @func	get_owner()
 		/// @desc	return the assigned owner to the Orderly()
-		/// @return {instance/struct} owner
+		/// @return {struct} owner
 		///
 		return owner;
 	};
@@ -361,7 +358,7 @@ function Orderly()  constructor {
 		/// @func	get_actor()
 		/// @desc	return the defined actor for the given action executing
 		///			if no action executing, return undefined
-		/// @return {instance/struct} actor
+		/// @return {struct} actor
 		///
 		return (
 			has_action() 
@@ -387,10 +384,9 @@ function Orderly()  constructor {
 	};
 	static set_default_end_condition		  = function(_actor = get_owner(), _func, _data) {
 		/// @func	set_default_end_condition(actor*, func, data)
-		/// @param	{struct/instance} actor
+		/// @param	{struct}   actor
 		/// @param	{function} func 
 		/// @param	{any} data 
-		/// @desc	...
 		/// @return {Orderly} self
 		///
 		this.config.default_end_condition	   = _func;
@@ -492,11 +488,10 @@ function Orderly()  constructor {
 	};
 	static set_default_on_start				  = function(_actor = get_owner(), _func, _data) {
 		/// @func	set_default_on_start(actor*, func, data)
-		/// @param	{struct/instance} actor
+		/// @param	{struct}   actor
 		/// @param	{function} func
-		/// @param	{any} data
-		/// @desc	...
-		/// @return {Orderly} self
+		/// @param	{any}	   data
+		/// @return {Orderly}  self
 		///
 		this.config.default_on_start_func = _func;
 		this.config.default_on_start_data = _data;
@@ -507,11 +502,10 @@ function Orderly()  constructor {
 	};
 	static set_default_on_execute			  = function(_actor = get_owner(), _func, _data) {
 		/// @func	set_default_on_execute(actor*, func, data)
-		/// @param	{struct/instance} actor
+		/// @param	{struct}   actor
 		/// @param	{function} func
-		/// @param	{any} data
-		/// @desc	...
-		/// @return {Orderly} self
+		/// @param	{any}	   data
+		/// @return {Orderly}  self
 		///
 		this.config.default_on_execute_func = _func;
 		this.config.default_on_execute_data = _data;
@@ -522,11 +516,10 @@ function Orderly()  constructor {
 	};
 	static set_default_on_end				  = function(_actor = get_owner(), _func, _data) {
 		/// @func	set_default_on_end(actor*, func, data)
-		/// @param	{struct/instance} actor
+		/// @param	{struct}   actor
 		/// @param	{function} func
-		/// @param	{any} data
-		/// @desc	...
-		/// @return {Orderly} self
+		/// @param	{any}	   data
+		/// @return {Orderly}  self
 		///
 		this.config.default_on_end_func = _func;
 		this.config.default_on_end_data = _data;
@@ -796,7 +789,7 @@ function OrderlyAction(_config) constructor {
 	static get_actor = function() {
 		/// @func	get_actor()
 		/// @desc	return the actor/context
-		/// @return {instance/struct} actor
+		/// @return {struct} actor
 		///
 		return this.actor;
 	};
@@ -804,10 +797,9 @@ function OrderlyAction(_config) constructor {
 	/// Setters ////////////////////////////////////////
 	static set_method				  = function(_actor = get_actor(), _func = this.func, _data = this.data) {
 		/// @func	set_method(actor*, func, data)
-		/// @param	{struct/instance} actor
-		/// @param	{function} func  
-		/// @param	{any} data  
-		/// @desc	...
+		/// @param	{struct}		actor
+		/// @param	{function}		func  
+		/// @param	{any}			data  
 		/// @return {OrderlyAction} self
 		///
 		this.func = _func;
@@ -819,8 +811,7 @@ function OrderlyAction(_config) constructor {
 	};
 	static set_actor				  = function(_actor) {
 		/// @func	set_actor(actor)
-		/// @param	{struct/instance} actor
-		/// @desc	...
+		/// @param	{struct}		actor
 		/// @return {OrderlyAction} self
 		///
 		this.actor = _actor;

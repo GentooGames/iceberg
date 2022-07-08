@@ -514,13 +514,13 @@ function Ui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) con
 	
 	static get_owner						= function() {
 		/// @func	get_owner()
-		/// @return {instance/struct} owner
+		/// @return {struct} owner
 		///
 		return __owner;
 	};
 	static get_active						= function() {
 		/// @func	get_active()
-		/// @return {instance/struct} owner
+		/// @return {struct} owner
 		///
 		return __active;
 	};
@@ -725,7 +725,7 @@ function Ui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) con
 		
 	static set_owner						= function(_owner) {
 		/// @func	set_owner(owner)
-		/// @param	{instance/struct} owner
+		/// @param	{struct} owner
 		/// @return {Ui} self
 		///
 		__owner = _owner;

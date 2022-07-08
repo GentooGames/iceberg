@@ -162,7 +162,7 @@ function SerializerTranslator(_owner, _name) constructor {
 	/// Getters
 	static get_owner	 = function() {
 		/// @func	get_owner()
-		/// @return {instance/struct} var_owner
+		/// @return {struct} var_owner
 		///
 		return __var_owner;
 	};

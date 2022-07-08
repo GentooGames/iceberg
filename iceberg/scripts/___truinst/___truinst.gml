@@ -1,3 +1,5 @@
+/// REPLACE INSTANCE ID WITH APPROPRAITE SELF
+
 function ___truInst() {
 	/// @func ___truInst()
 	///
@@ -114,10 +116,10 @@ function ___truInst() {
 		#endregion
 		#region Checkers ///
 		
-		is_offscreen: function(_id = id) {
+		is_offscreen: function(_id = self) {
 			/// @func	is_offscreen(id*)
-			/// @param	{instance} id=id
-			/// @return {boolean}  is_offscreen?
+			/// @param	{self}	  id=self
+			/// @return {boolean} is_offscreen?
 			///
 			var _bbox = _id.truInst_get_bbox();
 			return ((_bbox.bbox_left   > camera.get_right()  + padding)
