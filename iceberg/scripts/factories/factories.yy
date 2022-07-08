@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "iceberg",
-    "path": "iceberg.yyp",
+    "name": "scripts",
+    "path": "folders/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "scr_totemic_move",
+  "name": "factories",
   "tags": [],
   "resourceType": "GMScript",
 }

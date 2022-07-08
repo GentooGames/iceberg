@@ -1,3 +1,320 @@
+//////////////////////////////////////////////////////////////////////////////////////////
+//	Components																			//
+//		-	components are class objects that containerize reusable functionality.		//
+//		-	components can be instantiated as stand alone objects, or be tied into 		//
+//			a greater component system designed to organize and provide structure		//
+//			to a series of components.													//
+//		-	any form of generalized logic that can be shared across multiple objects	//
+//			(regardless of object inheritence) should be encapsulated into a 			//
+//			component.																	//
+//////////////////////////////////////////////////////////////////////////////////////////
+
+function Component() constructor {
+	/// @func	Component()
+	/// @return {Component} self
+	///
+	__name	 = undefined;
+	__active = true;
+	
+	static setup    = function() {}; /// @OVERRIDE
+	static update   = function() {}; /// @OVERRIDE
+	static render   = function() {}; /// @OVERRIDE
+	static teardown = function() {}; /// @OVERRIDE
+
+	static actvate	  = function() {
+		/// @func	actvate()
+		/// @return {Component} self
+		///
+		__active = true;
+		return self;
+	};
+	static deactivate = function() {
+		/// @func	deactivate()
+		/// @return {Component} self
+		///
+		__active = false;
+		return self;
+	};
+};
+function Actionable() : Component() constructor {
+	/// @func	Actionable()
+	/// @return {Component} self 
+	///
+	__actor	= other;
+	__fsm	= undefined;
+	
+	static update = function() {
+		/// @func	update()
+		/// @return {Actionable} self
+		///
+		if (__fsm != undefined) {
+			__fsm.step();
+		}
+		return self;
+	};
+	static render = function() {
+		/// @func	render()
+		/// @return {Actionable} self
+		///
+		if (__fsm != undefined) {
+			__fsm.draw();	
+		}
+		return self;
+	};
+	
+	/// States
+	static actionable_state_add			 = function(_state_name, _state_struct) {
+		/// @func	actionable_state_add(state_name, state_struct)
+		/// @param	{string}	 state_name
+		/// @param	{struct}	 state_struct
+		/// @return {Actionable} self
+		///
+		if (__fsm == undefined) {
+			__fsm  = new SnowState(_state_name, false);
+		}
+		__fsm.add(_state_name, _state_struct);
+		return self;
+	};
+	static actionable_state_change		 = function(_state_name) {
+		/// @func	actionable_state_change(state_name)
+		/// @param	{string}	 state_name
+		/// @return {Actionable} self
+		///
+		__fsm.change(_state_name);
+		return self;
+	};
+	static actionable_state_is			 = function(_state_name) {
+		/// @func	actionable_state_is(state_name)
+		/// @param	{string}	 state_name
+		/// @return {Actionable} self
+		///
+		return __fsm.state_is(_state_name);
+	};
+	static actionable_state_exists		 = function(_state_name) {
+		/// @func	actionable_state_exists(state_name)
+		/// @param	{string}	 state_name
+		/// @return {Actionable} self
+		///
+		return __fsm.state_exists(_state_name);
+	};
+	static actionable_state_get_states	 = function() {
+		/// @func	actionable_state_get_states()
+		/// @return {Actionable} self
+		///
+		return __fsm.get_states();
+	};
+	static actionable_state_get_current  = function() {
+		/// @func	actionable_state_get_current()
+		/// @return {Actionable} self
+		///
+		return __fsm.get_current_state();
+	};
+	static actionable_state_get_previous = function() {
+		/// @func	actionable_state_get_previous()
+		/// @return {Actionable} self
+		///
+		return __fsm.get_previous_state();
+	};
+	static actionable_state_get_time	 = function(_us = true) {
+		/// @func	actionable_state_get_time(us*)
+		/// @param	{boolean}	 us?=true
+		/// @return {Actionable} self
+		///
+		return __fsm.get_time(_us);
+	};
+	static actionable_state_set_time	 = function(_time, _us = true) {
+		/// @func	actionable_state_set_time(time, us*)
+		/// @param	{milliseconds} time
+		/// @param	{boolean}	   us?=true
+		/// @return {Actionable}   self
+		///
+		__fsm.set_time(_time, _us);
+		return self;
+	};
+	static state_add					 = actionable_state_add;
+	static state_change					 = actionable_state_change;
+	static state_is						 = actionable_state_is;
+	static state_exists					 = actionable_state_exists;
+	static state_get_states				 = actionable_state_get_states;
+	static state_get_current			 = actionable_state_get_current;
+	static state_get_previous			 = actionable_state_get_previous;
+	static state_get_time				 = actionable_state_get_time;
+	static state_set_time				 = actionable_state_set_time;
+};
+function Moveable() : Component() constructor {
+	/// @func	Moveable()
+	/// @return {Component} self
+	///
+	__mover		 = other;
+	__hspd		 = 0;
+	__vspd		 = 0;
+	__speed		 = 0;
+	__accel		 = 1;
+	__fric		 = 1;
+	__movesets	 = {
+		__sets:	   {},
+		__names:   [],
+		__current: {
+			__set:  undefined,
+			__name: undefined,
+		},
+	};
+	
+	// v-- to implement later
+	__dir		 = undefined;
+	__collisions = undefined;	// instantiated in setup()
+	__path		 = undefined;	// instantiated in setup()
+	
+	#region Private
+	
+	#region Move Sets
+	
+	static __moveset_get_current_name	= function() {
+		/// @func	__moveset_get_current_name()
+		///	@return {string} name
+		///
+		return __movesets.__current.__name;
+	};
+	static __moveset_get_current		= function() {
+		/// @func	__moveset_get_current()
+		/// @return {struct} move_set
+		///
+		return __movesets.__current.__set;
+	};
+	static __moveset_get				= function(_name) {
+		///	@func	__moveset_get(name)
+		/// @param	{string} name
+		/// @return {struct} moveset
+		///
+		return __movesets.__sets[$ _name];
+	};
+	static __moveset_set_current		= function(_name) {
+		/// @func	__moveset_set_current(name)
+		/// @param	{string}	 name
+		/// @return {Actionable} self
+		///
+		if (__moveset_exists(_name)) {
+			__movesets.__current.__name = _name;
+			__movesets.__current.__set  = __moveset_get(_name);
+		}
+		return self;
+	};
+	static __moveset_exists				= function(_name) {
+		/// @func	__moveset_exists(name)
+		/// @param	{string}  name
+		/// @return {boolean} exists?
+		///
+		return __moveset_get(_name) != undefined;
+	};
+	static __moveset_add				= function(_name, _moveset) {
+		/// @func	__moveset_add(name, moveset)
+		/// @param	{string}   name
+		/// @param	{MoveSet}  moveset
+		/// @return {Moveable} self
+		///
+		__movesets.__sets[$ _name] = _moveset;
+		array_push(__movesets.__names, _name);
+		return self;
+	};
+	static __moveset_remove				= function(_name) {
+		/// @func	__moveset_remove(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (__moveset_exists(_name)) {
+			variable_struct_remove(__movesets.__sets, _name);
+			
+			/// array_find_delete()
+			for (var _i = array_length(__movesets.__names) - 1; _i >= 0; _i--) {
+				if (__movesets.__names[_i] == _name) {
+					array_delete(__movesets.__names, _i, 1);
+					break;
+				}
+			}
+		}
+		return self;
+	};
+	
+	#endregion
+	
+	static __update_move_values = function() {
+		/// @func	__update_move_values()
+		/// @return {Actionable} self
+		///
+		__speed = __moveset_get_current().__speed;
+		__accel = __moveset_get_current().__accel;
+		__fric  = __moveset_get_current().__fric;
+		return self;
+	};
+	
+	#endregion
+	
+	static setup	= function() {
+		/// @func	setup()
+		/// @return {Moveable} self
+		///
+		__collisions = ds_list_create();
+		__path		 = path_add();
+		path_set_kind(__path, 1);
+		path_set_closed(__path, false);
+		return self;
+	};
+	static update	= function() {
+		/// @func	update()
+		/// @return {Moveable} self
+		///
+		//__update_move_values();
+		//__check_for_collisions();
+		//__update_hspd_vspd();
+		//__update_xy();
+		return self;
+	};
+	static teardown = function() {
+		/// @func	teardown()
+		/// @return {Moveable} self
+		///
+		ds_list_destroy(__collisions);
+		path_delete(__path);
+		__collisions = undefined;
+		__path		 = undefined;
+		return self;
+	};
+		
+	static new_moveset = function(_name) {
+		/// @func	new_moveset(name)
+		/// @param	...
+		/// @return {Moveable} self
+		///
+		var _moveset = new MoveSet();
+		__moveset_add(_name, _moveset);
+		return self;
+	};
+};
+function Scriptable() : Component() constructor {
+	/// @func	Scriptable()
+	/// @return {Component} self
+	///
+};
+
+#region Util Constructors
+
+function MoveSet() constructor {
+	/// @func	MoveSet()
+	/// @return {MoveSet} self
+	///
+	__moveable	= other;
+	__name		= undefined;
+	__speed		= 0;
+	__accel		= 0;
+	__fric		= 0;
+	__mult		= 1;
+	
+	ITriggerContainer();
+};
+
+#endregion
+#region Need To Rework
+
 function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) constructor {
 	/// @func  SaveObject(save_id*, save_vars, on_init*)
 	/// @param {string}   save_id=undefined
@@ -448,3 +765,5 @@ function truInst_setup(_truInst_instance = id, _active = true) {
 	}
 	return _truInst_instance;
 };
+
+#endregion

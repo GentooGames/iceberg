@@ -46,8 +46,8 @@ if (!is_string(SNOWSTATE_REFLEXIVE_TRANSITION_NAME) || (string_length(SNOWSTATE_
 #endregion
 
 /// @func SnowState(initial_state, [execute_enter])
-/// @param {string} initial_state		Initial state for the state machine
-/// @param {bool}   [execute_enter]		Whether to execute the "enter" event for the initial state (true) or not (false) [Default: true]
+/// @param {string} initial_state	Initial state for the state machine
+/// @param {bool}   [execute_enter]	Whether to execute the "enter" event for the initial state (true) or not (false) [Default: true]
 function SnowState(_initState, _execEnter = true) constructor {
 	
 	#region SnowState System

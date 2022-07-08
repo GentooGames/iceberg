@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "iceberg",
-    "path": "iceberg.yyp",
+    "name": "gentoo",
+    "path": "folders/scripts/libraries/gentoo.yy",
   },
   "resourceVersion": "1.0",
-  "name": "scr_totemic_move",
+  "name": "cooponent",
   "tags": [],
   "resourceType": "GMScript",
 }
