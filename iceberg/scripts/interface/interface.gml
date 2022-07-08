@@ -10,6 +10,8 @@
 //			dependency.								//								
 //////////////////////////////////////////////////////
 
+function Interface() constructor {};
+
 function TriggerContainer() constructor {
 	/// @func	TriggerContainer()
 	/// @return {TriggerContainer} self

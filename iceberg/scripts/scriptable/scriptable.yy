@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "scripts",
-    "path": "folders/scripts.yy",
+    "name": "components",
+    "path": "folders/scripts/components.yy",
   },
   "resourceVersion": "1.0",
-  "name": "util_classes",
+  "name": "Scriptable",
   "tags": [],
   "resourceType": "GMScript",
 }

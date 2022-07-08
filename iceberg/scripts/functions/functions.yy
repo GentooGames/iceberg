@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "systems",
-    "path": "folders/scripts/systems.yy",
+    "name": "util",
+    "path": "folders/scripts/util.yy",
   },
   "resourceVersion": "1.0",
-  "name": "___clock",
+  "name": "functions",
   "tags": [],
   "resourceType": "GMScript",
 }

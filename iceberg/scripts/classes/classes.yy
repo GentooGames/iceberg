@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "scripts",
-    "path": "folders/scripts.yy",
+    "name": "util",
+    "path": "folders/scripts/util.yy",
   },
   "resourceVersion": "1.0",
-  "name": "factories",
+  "name": "classes",
   "tags": [],
   "resourceType": "GMScript",
 }

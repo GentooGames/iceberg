@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "systems",
-    "path": "folders/scripts/systems.yy",
+    "name": "components",
+    "path": "folders/scripts/components.yy",
   },
   "resourceVersion": "1.0",
-  "name": "___clock",
+  "name": "Cullable",
   "tags": [],
   "resourceType": "GMScript",
 }

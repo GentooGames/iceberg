@@ -11,6 +11,9 @@
 //			mantaining proper abstraction.			//
 //////////////////////////////////////////////////////
 
+function Factory() constructor {};
+
+
 /// To Implement...
 function camera_create_instance(_x = 0, _y = 0) {
 	/// @func	camera_create_instance(x*, y*)
