@@ -1,7 +1,6 @@
 function ___macros() {
 	/// @func ___macros()
 	///
-	#macro null      undefined
 	#macro EMPTY     -1
 	#macro MAX_DEPTH -10000
 	#macro SECOND    60

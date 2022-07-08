@@ -10,7 +10,7 @@ function ___unit_test() {
 				},
 	            teardown: function() {
 					instance_destroy(object);
-					object = null;
+					object = undefined;
 				},
 	            tests: [
 					ut_object_onCreate_setEventId,
@@ -50,22 +50,22 @@ function test_builder() {
         if (!_test_suite_data.run) continue;
             
         if (variable_struct_exists(_test_suite_data, "setup")) {
-            if (_test_suite_data.setup != null) {
+            if (_test_suite_data.setup != undefined) {
                 _test_suite.setup(_test_suite_data.setup);
             }
         }
         if (variable_struct_exists(_test_suite_data, "teardown")) {
-            if (_test_suite_data.teardown != null) {
+            if (_test_suite_data.teardown != undefined) {
                 _test_suite.teardown(_test_suite_data.teardown);
             }
         }
         if (variable_struct_exists(_test_suite_data, "on_run_begin")) {
-            if (_test_suite_data.on_run_begin != null) {
+            if (_test_suite_data.on_run_begin != undefined) {
                 _test_suite.on_run_begin(_test_suite_data.on_run_begin);
             }
         }
         if (variable_struct_exists(_test_suite_data, "on_run_end")) {
-            if (_test_suite_data.on_run_end != null) {
+            if (_test_suite_data.on_run_end != undefined) {
                 _test_suite.on_run_end(_test_suite_data.on_run_end);
             }
         }
@@ -77,22 +77,22 @@ function test_builder() {
             var _test_case = new TestCase(_test_data.name, _test_data.test);
                 
             if (variable_struct_exists(_test_data, "setup")) {
-                if (_test_data.setup != null) {
+                if (_test_data.setup != undefined) {
                     _test_case.setup(_test_data.setup);
                 }
             }
             if (variable_struct_exists(_test_data, "teardown")) {
-                if (_test_data.teardown != null) {
+                if (_test_data.teardown != undefined) {
                     _test_case.teardown(_test_data.teardown);
                 }
             }
             if (variable_struct_exists(_test_data, "on_run_begin")) {
-                if (_test_data.on_run_begin != null) {
+                if (_test_data.on_run_begin != undefined) {
                     _test_case.on_run_begin(_test_data.on_run_begin);
                 }
             }
             if (variable_struct_exists(_test_data, "on_run_end")) {
-                if (_test_data.on_run_end != null) {
+                if (_test_data.on_run_end != undefined) {
                     _test_case.on_run_end(_test_data.on_run_end);
                 }
             }

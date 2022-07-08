@@ -376,7 +376,7 @@ function array_get_random(_array) {
 	/// @return value -> {any}
 	/// @tested false
 	///
-	if (array_length(_array) <= 0) return null;
+	if (array_length(_array) <= 0) return undefined;
 	var _index = irandom(array_length(_array) - 1);
 	var _value = _array[_index];
 	return _value;
@@ -389,7 +389,7 @@ function array_peek_bottom(_array) {
 	/// @tested false
 	///
 	var _n_items  = array_length(_array);
-	if (_n_items == 0) return null;
+	if (_n_items == 0) return undefined;
 	//
 	return _array[_n_items - 1];	
 };
@@ -528,7 +528,7 @@ function array_operate_on(_array, _use_entry_as_context, _callback, _data) {
 	if (_use_entry_as_context) {
 		for (var _i = 0, _len = array_length(_array); _i < _len; _i++) {
 			with (_array[_i]) {
-				if (_data == null) {
+				if (_data == undefined) {
 					 _callback();
 				}
 				else _callback(_data);
@@ -575,7 +575,7 @@ function ds_list_pop(_ds_list) {
 	/// @return value   -> {real}
 	/// @tested false
 	///
-	if (ds_list_size(_ds_list) <= 0) return null;
+	if (ds_list_size(_ds_list) <= 0) return undefined;
 	var _val = _ds_list[| 0];
 	ds_list_delete(_ds_list, 0);
 	return _val;
@@ -587,7 +587,7 @@ function ds_list_peek(_ds_list) {
 	/// @return entry -> {any}
 	/// @tested false
 	///
-	if (ds_list_size(_ds_list) <= 0) return null;
+	if (ds_list_size(_ds_list) <= 0) return undefined;
 	var _val = _ds_list[| 0];	
 	return _val;
 };
@@ -825,8 +825,8 @@ function path_sprite_index_to_image_index(_path_index) {
 	/// @return image_index -> {real}
 	/// @tested false
 	///
-	if (player.entity_selected == null) return 8;
-	if (_path_index == null) return 7;
+	if (player.entity_selected == undefined) return 8;
+	if (_path_index == undefined) return 7;
 	if (_path_index == 0) return 7;
 	
 	var _path_cells	= player.entity_selected.get_path_cells();
@@ -835,13 +835,13 @@ function path_sprite_index_to_image_index(_path_index) {
 	
 	var _cell_next	= (_path_index + 1 < _n_cells) 
 		? _path_cells[_path_index + 1
-		] : null;
+		] : undefined;
 		
 	var _cell_prev	= (_path_index - 1 >= 0) 
 		? _path_cells[_path_index - 1] 
 		: get_cell(player.entity_selected.i, player.entity_selected.j);
 		
-	if (_cell_next == null) return 0;
+	if (_cell_next == undefined) return 0;
 	
 	var _dir_prev = board.get_cells_dir_relative(_cell_prev, _cell);
 	var _dir_next = board.get_cells_dir_relative(_cell, _cell_next);
@@ -960,7 +960,7 @@ function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
 	/// @tested false
 	///
 	var _count	 = min(max(1, _n), instance_number(_obj));
-	var _nearest = null;
+	var _nearest = undefined;
 	ds_priority_clear(_priority);
 	with (_obj) ds_priority_add(_priority, self.id, distance_to_point(_x, _y)); 
 	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
@@ -1279,7 +1279,7 @@ function surface_ensure(_surface, _width, _height) {
 	/// @return surface -> {surface}
 	/// @tested false
 	///
-	if (_surface == null || !surface_exists(_surface)) {
+	if (_surface == undefined || !surface_exists(_surface)) {
 		_surface = surface_create(_width, _height);	
 	}
 	return _surface;

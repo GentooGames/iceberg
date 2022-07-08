@@ -41,7 +41,7 @@ teardown = method_inherit(teardown,	function() {
 	if (initialized) {
 		#region States /////////
 	
-		fsm = null;
+		fsm = undefined;
 	
 		#endregion
 	}

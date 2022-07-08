@@ -1,26 +1,29 @@
 iceberg:
-	- set SnowState methods to static declarations
-	- a way to check for initialized dependencies. such as EventObject, TruInstObject, etc
+	- encapsulate game logic into components
+	- abstracted component management system
+	- what to do with "sub-components"?
+	- interfaces?
+		- interfaces could act as a way to help handle dependencies in github repos, 
+		where errors are thrown when the proper implementation is not declared?
 	- replace all instance_destroy() with instance.destroy()
 	- standardize FluidProperty method implementation
 		- make sure that spring setters are not just setting local value, but also spring's actual value
 	- re-evaluate publisher/subscriber weakref?
-	- REPLACE IOTA WITH TIMESOURCES!!!!
-	- create objp_entity to test event inheritence
+	- replace timers and alarms with timesources
+	- need to test event inheritence?
 	- way for object to clear all subscriptions,
 		- should re-store into an array on event init
-	
 	- add a did_transition flag for state transitions?
 		- similar to the did_destroy flag, this would allow us to check if a state transition has been registered in this frame?
-	
 	- organize and abstract global._gui{} into a more modular system similar to global._transition{}
 		- create an array of borders that is iterated through and updated
 		- expose ways for new borders to be created and destroyed dynamically	
-	- convert objc_save into global._save = {} (?)
-	- replace iota with gm_time_source
-	- remove callbacks from save controller and replace with pubsub?
+	- remove callbacks and replace with pubsub?
+		- save controller
+		- etc.
 	- should object event methods, utilizing method_inherit, do their event_publish() in the callback?
-	- standardize undefined & null. use just one --> probably just undefined
+		- yes? i think this is already implemented
+	- update util functions documentation and blend with existing functions from totem and other projects
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width
@@ -36,7 +39,7 @@ __transition:
 			instead, expose ways to inject custom update methods that would make for easy particle plugin
 
 __unit_tests:
-	- WRITE UNIT TESTS FOR ICEBERG!!!!
+	- WRITE UNIT TESTS FOR base ICEBERG functionality!!!!
 	
 __window: 
 	- rework screen resolution resizing and fullscreen

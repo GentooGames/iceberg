@@ -49,10 +49,10 @@ function WeeState() constructor {
     /// @return {WeeState} self
     ///
     owner              = other;
-    default_draw       = null;
+    default_draw       = undefined;
     states             = {};
     state_current_name = "";
-    state_current      = null;
+    state_current      = undefined;
     
     // System
     static step = function() {

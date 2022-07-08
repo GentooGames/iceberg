@@ -10,8 +10,8 @@ events_user(CALLBACKS, EVENTS, METHODS);
 //////////////////////////////////////////
 
 cam	    = camera_create();
-viewmat = null;
-projmat = null;
+viewmat = undefined;
+projmat = undefined;
 preset  = {
     zoom: {
         intro: 1.0,
@@ -34,16 +34,16 @@ preset  = {
 // Dimensions
 width   = GUI.width_base; 
 height  = GUI.height_base;
-left    = null; // set in _update_edges()
-right   = null; // set in _update_edges()
-top     = null; // set in _update_edges()
-bottom  = null; // set in _update_edges()
+left    = undefined; // set in _update_edges()
+right   = undefined; // set in _update_edges()
+top     = undefined; // set in _update_edges()
+bottom  = undefined; // set in _update_edges()
 
 // Move & Positions
 x_to         = 0;
 y_to         = 0;
-focus_target = null;
-focus_point  = null;
+focus_target = undefined;
+focus_point  = undefined;
 move_speed   = preset.move.speed.base;
 
 // Zoom
@@ -67,8 +67,8 @@ shakers		= {
 
 // Panning
 panning	    = false;
-pan_start_x = null;
-pan_start_y = null;
+pan_start_x = undefined
+pan_start_y = undefined
 middle_mouse_down		= false;
 middle_mouse_pressed	= false;
 middle_mouse_released	= false;

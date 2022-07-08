@@ -10,8 +10,8 @@ function PathNode(_config) constructor {
 	k			= _config.k;
 	g_cost		= 0;
 	h_cost		= 0;
-	cell		= null;
-	parent		= null;
+	cell		= undefined;
+	parent		= undefined;
 	walkable	= true;
 	weight		= _config.weight;
 	

@@ -31,7 +31,7 @@ _update_pos	   = function() {
 		var _mouse_y = INPUT.mouse.get_y();
 		
 		// Capture Initial Mouse Position
-		if (pan_start_x == null || pan_start_y == null) {
+		if (pan_start_x == undefined || pan_start_y == undefined) {
 			pan_start_x = _mouse_x;	
 			pan_start_y = _mouse_y + TILE_HEIGHT;	
 		} 
@@ -46,36 +46,36 @@ _update_pos	   = function() {
 		y_to = y;
 		
 		// Wipe Focus Target
-		focus_target = null;
+		focus_target = undefined;
 	}
 	// Focus Target 2nd Priority
-	else if (focus_target != null && instance_exists(focus_target)) {
+	else if (focus_target != undefined && instance_exists(focus_target)) {
 		x_to = focus_target.x;
 		y_to = focus_target.y;
 		x   += (x_to - x) * move_speed;
 		y   += (y_to - y) * move_speed;
 		
-		pan_start_x = null;
-		pan_start_y = null;
+		pan_start_x = undefined;
+		pan_start_y = undefined;
 	}
 	// Focus Point 3rd Priority
-	else if (focus_point != null) {
+	else if (focus_point != undefined) {
 	    x_to = focus_point.x;
 		y_to = focus_point.y;
 		x   += (x_to - x) * move_speed;
 		y   += (y_to - y) * move_speed;
 		
-		pan_start_x  = null;
-		pan_start_y  = null;
+		pan_start_x = undefined;
+		pan_start_y = undefined;
 	}
 	// Standard Movement Last Priority
 	else {
-		focus_target = null;
+		focus_target = undefined;
 		x += (x_to - x) * move_speed;
 		y += (y_to - y) * move_speed;
 	
-		pan_start_x = null;
-		pan_start_y = null;
+		pan_start_x = undefined;
+		pan_start_y = undefined;
 	}
 }
 _update_zoom   = function() {
@@ -229,13 +229,13 @@ clear_focus_point = function() {
     /// @func   clear_focus_point()
     /// @return NA
     ///
-    focus_point = null;
+    focus_point = undefined;
 }
 clear_focus_target = function() {
     /// @func   clear_focus_target()
     /// @return NA
     ///
-	focus_target = null;	
+	focus_target = undefined;	
 }
 
 #endregion
