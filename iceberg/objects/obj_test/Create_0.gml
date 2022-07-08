@@ -8,7 +8,7 @@ setup  = method_inherit(setup, function() {
 	
 	coop = new Coop()
 		.add_component(new Actionable(), "fsm")
-		//.add_component(new Moveable())
+		.add_component(new Moveable())
 		//.add_component(new Scriptable(), "hello_world")
 		//.add_component(new Scriptable())
 	
