@@ -340,34 +340,35 @@ function GentuiState(_config) constructor {
 
 #endregion
 
-function Ui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) constructor {
-	/// @func  Ui(config_name*, config*)
-	/// @desc  this is the base ui component, containing all core features and functionality that is inherited and implemented
-	///		   by all other ui components. an instance of this class will have no visual representation, but can still be utilized
-	///		   for creating more "abstract" data containers. see UiLine().add_point() for an example, where a "point" is created
-	///		   by instantiating a new Ui() class instance, and passing in x & y values for later reference.
-	/// @use   generally this class will be implemented through inheritance of the other Ui components; however, if you wish to implement
-	///		   an explicit instance of this class, you can do so using the following: 
-	///		   var _abstractUiPointContainer = new Ui({x : _x, y: _y});		/// creates an abstract component containing coordinate points
-	/// @param {real}	x*
-	/// @param {real}	y*
-	/// @param {color}	color*
-	/// @param {real}	alpha*
-	/// @param {real}	angle*
-	/// @param {real}	scale*
-	/// @param {real}	xscale*
-	/// @param {real}	yscale*
-	/// @param {real}	width*
-	/// @param {real}	height*
-	/// @param {bool}	visible*
-	/// @param {real}	thickness*
-	/// @param {real}	input_device*
-	/// @param {bool}	use_gui_space*
-	/// @param {bool}	state_execute_on_enter*
-	/// @param {bool}	state_execute_on_exit*
-	/// @param {bool}	propagate_position_to_child*
-	/// @param {bool}	propagate_scale_to_child*
-	/// @param {bool}	propagate_alpha_to_child*
+function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) constructor {
+	/// @func	Gentui(config_name*, config*)
+	/// @desc	this is the base ui component, containing all core features and functionality that is inherited and implemented
+	///			by all other ui components. an instance of this class will have no visual representation, but can still be utilized
+	///			for creating more "abstract" data containers. see UiLine().add_point() for an example, where a "point" is created
+	///			by instantiating a new Gentui() class instance, and passing in x & y values for later reference.
+	/// @use	generally this class will be implemented through inheritance of the other Gentui components; however, if you wish to implement
+	///			an explicit instance of this class, you can do so using the following: 
+	///			var _abstractUiPointContainer = new Gentui({x : _x, y: _y});		/// creates an abstract component containing coordinate points
+	/// @param	{real}	 x*
+	/// @param	{real}	 y*
+	/// @param	{color}	 color*
+	/// @param	{real}	 alpha*
+	/// @param	{real}	 angle*
+	/// @param	{real}	 scale*
+	/// @param	{real}	 xscale*
+	/// @param	{real}	 yscale*
+	/// @param	{real}	 width*
+	/// @param	{real}	 height*
+	/// @param	{bool}	 visible*
+	/// @param	{real}	 thickness*
+	/// @param	{real}	 input_device*
+	/// @param	{bool}	 use_gui_space*
+	/// @param	{bool}	 state_execute_on_enter*
+	/// @param	{bool}	 state_execute_on_exit*
+	/// @param	{bool}	 propagate_position_to_child*
+	/// @param	{bool}	 propagate_scale_to_child*
+	/// @param	{bool}	 propagate_alpha_to_child*
+	/// @return {Gentui} self
 	///
 	__owner = other;
 	__this  = {			/// <-- change default starting values here
@@ -2403,7 +2404,7 @@ function Ui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) con
 	#endregion
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function UiPanel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_config_name, _config) constructor {
+function UiPanel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// @func  UiPanel(config) : Ui(config)
 	/// @param {bool} outline*
 	///
@@ -2478,7 +2479,7 @@ function UiPanel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	
 	action_render_add("render_main", render, true);
 };
-function UiLabel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_config_name, _config) constructor {
+function UiLabel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// @func  UiLabel(config) : Ui(config)
 	/// @param {string}	  text*
 	/// @param {bool}	  wrap*
@@ -2698,7 +2699,7 @@ function UiLabel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	
 	action_render_add("render_main", render, true);
 };
-function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_config_name, _config) constructor {
+function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// @func  UiSprite(config) : Ui(config)
 	/// @param {sprite_index} sprite*
 	/// @param {real} image*
@@ -2899,7 +2900,7 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	action_update_add("update_main", render, true);
 	action_render_add("render_main", render, true);
 };
-function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_config_name, _config) constructor {
+function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// @func  UiLine(config) : Ui(config)
 	///
 	#region __this /////////////////
@@ -2959,7 +2960,7 @@ function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		/// @param	{real}	 y
 		/// @return {UiLine} self
 		///
-		var _point = new Ui(,,{ // create empty object to hold coordinates
+		var _point = new Gentui(,,{ // create empty object to hold coordinates
 			x: _x,
 			y: _y,
 		});
@@ -3050,7 +3051,7 @@ function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	action_render_add("render_main", render, true);
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function UiCircle (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_config_name, _config) constructor {
+function UiCircle (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// @func UiCircle(config) : Ui(config)
 	///
 	exit; // <-- not yet ready
@@ -3115,10 +3116,10 @@ function UiCircle (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		
 	action_render_add("render_main", render, true);
 };
-function UiArc	  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_config_name, _config) constructor {
+function UiArc	  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// This should use the draw_circle_curve() function instead
 };
-function UiTextbox(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Ui(_config_name, _config) constructor {
+function UiTextbox(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// @func UiTextbox(config) : Ui(config)
 	///
 	exit; // <-- not yet ready
