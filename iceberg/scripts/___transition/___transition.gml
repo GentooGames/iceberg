@@ -49,7 +49,7 @@ function ___transition() {
 				#endregion
 				#region Events /////////////
 		
-				EventObject(self, "transition");
+				EventObject("transition");
 				event_register([
 					"enter_started",
 					"enter_completed",

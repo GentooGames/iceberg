@@ -32,7 +32,7 @@ function FluidProperty(_data) constructor {
 		speed		= __SPRING_DEFAULT_SPEED;
 		spring_main	= new Spring(tension, dampening);
 	};
-	EventObject(self,"FluidProperty");
+	EventObject("FluidProperty");
 	
 	#region Public /////////
 	

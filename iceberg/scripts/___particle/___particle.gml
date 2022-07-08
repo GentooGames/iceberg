@@ -21,7 +21,7 @@ function ___particle() {
 				#endregion
 				#region Events /////////
 			
-				EventObject(self, "particle");
+				EventObject("particle");
 				//event_register([]);
 			
 				#endregion

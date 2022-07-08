@@ -40,7 +40,7 @@ function ___clock() {
 				#endregion
 				#region Events /////////
 			
-				EventObject(self, "clock");
+				EventObject("clock");
 				//event_register([]);
 			
 				#endregion

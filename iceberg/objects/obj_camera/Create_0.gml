@@ -1,6 +1,6 @@
 /// @desc obj_camera
-log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(id));
-global._camera = id;
+log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(self.id));
+global._camera = self;
 //#macro CAMERA global._camera
 events_user(CALLBACKS, EVENTS, METHODS);
 //////////////////////////////////////////
@@ -89,7 +89,7 @@ CLOCK_STABLE.variable_interpolate("pos_y",	   "iota_pos_y");
 CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );
 
 // events
-EventObject(id, "camera");
+EventObject("camera");
 event_register([
 	"zoom_completed",
 ]);

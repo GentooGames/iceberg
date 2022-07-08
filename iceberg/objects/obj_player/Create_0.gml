@@ -1,5 +1,5 @@
 /// @desc obj_player
-global._player = id;
+global._player = self;
 #macro PLAYER global._player
 /////////////////////////////////////////
 // .---. .     .---. .   . .---- .---. //
@@ -12,7 +12,7 @@ event_id = "player";
 
 setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (!initialized) {
 		#region Interactions ///
@@ -32,11 +32,11 @@ setup	 = method_inherit(setup,	function() {
 	
 		#endregion
 	}
-	return id;
+	return self;
 });
 teardown = method_inherit(teardown,	function() {
 	/// @func	teardown()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		#region States /////////
@@ -45,21 +45,21 @@ teardown = method_inherit(teardown,	function() {
 	
 		#endregion
 	}
-	return id;
+	return self;
 	
 });
 rebuild  = method_inherit(rebuild,	function() {
 	/// @func	rebuild()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 update   = method_inherit(update,	function() {
 	/// @func	update()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		#region States /////////
@@ -68,11 +68,11 @@ update   = method_inherit(update,	function() {
 	
 		#endregion
 	}
-	return id;
+	return self;
 });
 render   = method_inherit(render,	function() {
 	/// @func	render()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		#region States /////////
@@ -81,6 +81,6 @@ render   = method_inherit(render,	function() {
 	
 		#endregion
 	}
-	return id;
+	return self;
 });
 	

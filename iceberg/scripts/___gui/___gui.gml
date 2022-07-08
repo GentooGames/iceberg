@@ -25,7 +25,7 @@ function ___gui() {
 				#endregion
 				#region Events /////////
 			
-				EventObject(self, "gui");
+				EventObject("gui");
 				//event_register([]);
 			
 				#endregion

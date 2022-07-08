@@ -282,26 +282,32 @@ save_file_validated			= function() {
 #endregion
 #region Util ///////////////
 
-stash_save_object	= function(_save_object = id) {
-	/// @func  stash_save_object(save_object*)
-	/// @param save_object=id
+stash_save_object	= function(_save_object = self) {
+	/// @func   stash_save_object(save_object*)
+	/// @param  {struct} save_object=self
+	/// @return {struct} self
 	///
 	if (!array_contains(save_objects, _save_object)) {
 		array_push(save_objects, _save_object);
 	}
+	return self;
 };
-unstash_save_object	= function(_save_object = id) {
+unstash_save_object	= function(_save_object = self) {
 	/// @func  unstash_save_object(save_object*)
-	/// @param save_object=id
+	/// @param  {struct} save_object=self
+	/// @return {struct} self
 	///
 	array_find_delete(save_objects, _save_object);
+	return self;
 };
 data_new_empty		= function() {
-	/// @func data_new_empty()
+	/// @func	data_new_empty()
+	/// @return {struct} self
 	///
 	return {
 		room_data: {},
 	};
+	return self;
 };
 
 #endregion

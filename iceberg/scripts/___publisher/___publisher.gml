@@ -19,7 +19,7 @@ function ___publisher() {
 				#endregion
 				#region Events /////////
 			
-				EventObject(self, "publisher");
+				EventObject("publisher");
 				get_publisher	  = event_get_publisher;
 				register		  = event_register;			
 				registered		  = event_registered;			

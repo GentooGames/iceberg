@@ -1,5 +1,5 @@
 /// @desc objp_object
-log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(id));
+log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(self.id));
 /////////////////////////////////////////
 // .---. .---.     . .---- .---- ----- //
 // |   | r--<  .   | r--   |       |   //
@@ -15,7 +15,7 @@ destroyed	= false;
 
 setup	 = method_inherit(,function() {
 	/// @func	setup()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (!initialized) {
 		#region ------------
@@ -28,7 +28,7 @@ setup	 = method_inherit(,function() {
 		#endregion
 		#region Events /////
 	
-		EventObject(id, event_id);
+		EventObject(event_id);
 		event_register([
 			"setup_completed",
 			"teardown_completed",
@@ -44,11 +44,11 @@ setup	 = method_inherit(,function() {
 		
 		#endregion
 	}
-	return id;	
+	return self;	
 },	setup_callback);
 teardown = method_inherit(,function() {
 	/// @func	teardown()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		#region Events /////////
@@ -62,35 +62,35 @@ teardown = method_inherit(,function() {
 		active	  = true;
 		destroyed = false;
 	}
-	return id;
+	return self;
 },	teardown_callback);
 rebuild  = method_inherit(,function() {
 	/// @func	rebuild()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		teardown();
 		setup();
 	}
-	return id;
+	return self;
 },	rebuild_callback);
 update	 = method_inherit(,function() {
 	/// @func	update()
-	/// @return {instance} id
+	/// @return {struct} self
 	/// 
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 render	 = method_inherit(,function() {
 	/// @func	render()
-	/// @return {instance} id
+	/// @return {struct} self
 	/// 
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 	
 	

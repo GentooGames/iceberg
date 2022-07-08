@@ -19,7 +19,7 @@ function ___display() {
 				#endregion
 				#region Events /////////
 			
-				EventObject(self, "display");
+				EventObject("display");
 				//event_register([]);
 			
 				#endregion

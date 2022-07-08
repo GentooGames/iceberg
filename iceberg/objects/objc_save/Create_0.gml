@@ -1,5 +1,5 @@
 /// @desc objc_save
-global._save = id;
+global._save = self;
 #macro SAVE global._save
 /////////////////////////////
 // .---- .---. .   . .---- //
@@ -45,7 +45,7 @@ enum __SC_STATE {
 
 setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (!initialized) {
 		#region States /////////
@@ -89,43 +89,43 @@ setup	 = method_inherit(setup,	function() {
 		
 		save_file_begin_validation(room_goto_next);
 	}
-	return id;
+	return self;
 });
 teardown = method_inherit(teardown, function() {
 	/// @func	teardown()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 rebuild  = method_inherit(rebuild,	function() {
 	/// @func	rebuild()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 update	 = method_inherit(update,	function() {
 	/// @func	update()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 render	 = method_inherit(render,	function() {
 	/// @func	render()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 
 /*

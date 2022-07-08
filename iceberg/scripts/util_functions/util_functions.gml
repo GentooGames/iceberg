@@ -860,14 +860,12 @@ function path_sprite_index_to_image_index(_path_index) {
 	if (_dir_prev == DIR.RIGHT && _dir_next == DIR.UP)	  return 6;
 	return 7;
 };
-function path_end_all(_instance = id) {	 	
-	/// @func   path_end_all(instance)
-	/// @param  instance -> {instance} | optional<id>
-	/// @desc   wipe and end all path motion.
+function path_end_all(_instance = self) {	 	
+	/// @func   path_end_all(instance*)
+	/// @param  {struct} instance=self
 	/// @return NA
-	/// @tested false
 	///
-	with (_id) {
+	with (_instance) {
 		path_end();
 		path_clear_points(path);
 		path_position = 0;
@@ -964,7 +962,7 @@ function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
 	var _count	 = min(max(1, _n), instance_number(_obj));
 	var _nearest = null;
 	ds_priority_clear(_priority);
-	with (_obj) ds_priority_add(_priority, id, distance_to_point(_x, _y)); 
+	with (_obj) ds_priority_add(_priority, self.id, distance_to_point(_x, _y)); 
 	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
 	return _nearest;
 };

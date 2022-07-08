@@ -2387,7 +2387,7 @@ function Ui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) con
 	#endregion
 	#region Events /////////////////////////
 	
-	EventObject(self, "gentui");
+	EventObject("gentui");
 	event_register([
 		"activated", 
 		"deactivated",

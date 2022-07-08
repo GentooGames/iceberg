@@ -154,7 +154,7 @@ function ___input() {
 				#endregion
 				#region Events /////////
 		
-				EventObject(self, "input");
+				EventObject("input");
 				event_register([
 					/// mouse_button_pressed
 					"mouse_button_pressed",

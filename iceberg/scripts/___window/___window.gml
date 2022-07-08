@@ -19,7 +19,7 @@ function ___window() {
 				#endregion
 				#region Events /////////
 			
-				EventObject(self, "window");
+				EventObject("window");
 				event_register([
 					"fullscreen_assigned",
 					"position_assigned",

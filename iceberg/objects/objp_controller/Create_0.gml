@@ -10,42 +10,48 @@ event_id = "controller";
 
 setup	 = method_inherit(setup,	function() {
 	/// @func	setup()
-	/// @return {instance} 
+	/// @return {struct} self
 	///
 	if (!initialized) {
 		/// ...
 	}
-	return id;
+	return self;
 });
 teardown = method_inherit(teardown, function() {
 	/// @func	teardown()
-	/// @return {instance} id
-	///
-	if (initialized) {}
-	return id;
-});
-rebuild  = method_inherit(rebuild,	function() {
-	/// @func	rebuild()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (initialized) {
 		/// ...
 	}
-	return id;
+	return self;
+});
+rebuild  = method_inherit(rebuild,	function() {
+	/// @func	rebuild()
+	/// @return {struct} self
+	///
+	if (initialized) {
+		/// ...
+	}
+	return self;
 });
 update	 = method_inherit(update,	function() {
 	/// @func	update()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
-	if (initialized) {}
-	return id;
+	if (initialized) {
+		/// ...
+	}
+	return self;
 });
 render	 = method_inherit(render,	function() {
 	/// @func	render()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
-	if (initialized) {}
-	return id;
+	if (initialized) {
+		/// ...
+	}
+	return self;
 });
 
 

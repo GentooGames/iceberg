@@ -35,7 +35,7 @@ function ___audio() {
 				#endregion
 				#region Events /////////
 		
-				EventObject(self, "audio");
+				EventObject("audio");
 				event_register([
 					"played",
 					"stopped",

@@ -3,32 +3,31 @@
 /// Core 
 activate   = method_inherit(,function() {
 	/// @func	activate()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (!active) {
-		instance_activate_object(id);
+		instance_activate_object(self.id);
 	}
-	return id;
-	////////////////////
+	return self;
 },	activate_callback);
 deactivate = method_inherit(,function() {
 	/// @func	deactivate()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (active) {
-		instance_deactivate_object(id);
+		instance_deactivate_object(self.id);
 	}
-	return id;
+	return self;
 },	function() { deactivate_callback(); });
 destroy	   = method_inherit(,function() {
 	/// @func	destroy()
-	/// @return {instance} id
+	/// @return {struct} self
 	///
 	if (!destroyed) {
 		activate();
 		teardown();
 	}
-	return id;
+	return self;
 },	function() { destroy_callback(); });
 	
 /// Interactions
