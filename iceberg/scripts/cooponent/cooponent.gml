@@ -5,7 +5,8 @@
 //////////////////////$(º)>//
 
 function Coop() constructor {
-	/// @func Coop()
+	/// @func	Coop()
+	/// @return {Coop} self
 	///
 	__owner		 = other;
 	__components = {};

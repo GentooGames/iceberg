@@ -1,4 +1,4 @@
-function Method(_config) constructor {
+function Method(_config = {}) constructor {
 	/// @func	Method(config)
 	/// @desc	Method is a fairly basic class that contains two primary properties:
 	///			a method, and a name. This allows for class encapsulation of a method with an 
@@ -172,7 +172,7 @@ function Method(_config) constructor {
 		
 	#endregion
 };
-function Action(_config) : Method(_config) constructor {
+function Action(_config = {}) : Method(_config) constructor {
 	/// @func	Action(config)
 	/// @param	{struct} config
 	/// @return {Action} self
@@ -207,7 +207,7 @@ function Action(_config) : Method(_config) constructor {
 		return _return;
 	};
 };
-function Trigger(_config) : Method(_config) constructor {
+function Trigger(_config = {}) : Method(_config) constructor {
 	/// @func	Trigger(config)
 	/// @param	{struct} config
 	/// @return {Trigger} self
@@ -227,3 +227,4 @@ function Trigger(_config) : Method(_config) constructor {
 		return _result;
 	};
 };
+

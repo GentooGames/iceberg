@@ -86,6 +86,7 @@ enum __FLOE_STATE {
 function FloeEffect() constructor {
 	/// @func FloeEffect()
 	///
+	__owner		=  other;
 	__padding	=  20;		// offset to move effects offscreen for smoother animations
 	__color		=  c_black;
 	__alpha		=  1.0;

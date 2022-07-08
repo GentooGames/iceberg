@@ -132,7 +132,7 @@ render	 = method_inherit(render,	function() {
 test_number		= 100;
 test_name		= "Gentoo";
 test_serializer = new Serializer(
-	id, 
+	self,
 	[
 		"test_number",
 		"test_name",

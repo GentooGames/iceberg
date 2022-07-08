@@ -1,37 +1,32 @@
-/// @func PathNode({finder, i, j, k, weight}) constructor
-function PathNode(_data) constructor {
-    /// @param	finder {PathFinder}
-    /// @param	i      {real}
-    /// @param	j      {real}
-    /// @param	k      {real}
-    /// @param	weight {real}
-	/// @desc	DO NOT MANUALLY INSTANTIATE. INVOKE THROUGH PathFinder.new_node()
-	/// @return self  {PathNode}
+function PathNode(_config) constructor {
+	/// @func	PathNode(config) 
+	/// @param	{struct}   config
+	/// @return {PathNode} self  
+	/// @NOTE:	DO NOT MANUALLY INSTANTIATE. INVOKE THROUGH PathFinder.new_node()
     ///
-	path_finder = _data.finder;
-	i			= _data.i;
-	j			= _data.j;
-	k			= _data.k;
+	path_finder = _config[$ "finder"] ?? other;
+	i			= _config.i;
+	j			= _config.j;
+	k			= _config.k;
 	g_cost		= 0;
 	h_cost		= 0;
 	cell		= null;
 	parent		= null;
 	walkable	= true;
-	weight		= _data.weight;
+	weight		= _config.weight;
 	
 	static get_f_cost = function() {
 		return g_cost + h_cost;
 	};
 };
-
-/// @func PathFinder(width, height) constructor
 function PathFinder(_width, _height) constructor {
-    /// @param	width  {real}
-    /// @param	height {real}
+	/// @func	PathFinder(width, height)
+    /// @param	{real}		 width 
+    /// @param	{real}		 height
+	/// @return {PathFinder} self 
     /// @credit original Unity code written by Sebastian Lague
     ///			https://github.com/SebLague/Pathfinding.
 	///			Ported to GameMaker by _gentoo_
-	/// @return self {PathFinder}
     ///
     width      = _width;
     height     = _height;

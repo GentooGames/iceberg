@@ -14,7 +14,7 @@ function FluidProperty(_data) constructor {
 	///			the current property value to a given target value, with additive springs, 
 	///			offset values, and swappable interpolation strategies.
 	///
-	owner   =  other;
+	owner   = _data[$ "owner" ] ?? other;
 	name    = _data[$ "name"  ] ?? "";
 	value   = _data[$ "value" ] ?? 0.0;
 	offset  = _data[$ "offset"] ?? 0.0;

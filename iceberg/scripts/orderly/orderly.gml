@@ -75,7 +75,6 @@ enum __AR_ACTION_END {
 
 function Orderly()  constructor {
 	/// @func	Orderly() 
-	/// @desc	implementing the Command design pattern.
 	/// @return {Orderly} self
 	///
 	owner = other;

@@ -49,10 +49,9 @@ enum __STAT_MOD {
 
 function GStat(_value, _decay) constructor {
 	/// @func	GStat(value, decay)
-	/// @param	{real} value
-	/// @param	{real} decay
-	/// @desc	...
-	/// @return {GStat} stat
+	/// @param	{real}	value
+	/// @param	{real}	decay
+	/// @return {GStat} self
 	///
 	instance =  other;
 	base	 = _value;
@@ -352,7 +351,7 @@ function GStatNoDecay(_value) : GStat(_value, undefined) constructor {
 	/// @func	GStatNoDecay(value)
 	/// @param	{real} value
 	/// @desc	...
-	/// @return NA
+	/// @return {GStatNoDecay} self
 	///
 	static get_mods_sum = function() {
 		/// @func	get_mods_sum()

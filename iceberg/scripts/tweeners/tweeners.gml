@@ -1,79 +1,16 @@
-/// @func Shaker() constructor
-function Shaker() constructor {
-	/// @desc	...
-	/// @return self -> {struct}
-	///
-	val	 = 0;
-	size = 0;
-	damp = 1;
-	time = 0;
-	mode = "time";
-	
-	static shake_damp   = function(_size, _damp = 1) {
-		/// @func	shake_damp(size, damp*<1>)
-		/// @param	size -> {real}
-		/// @param	damp -> {real}*<1>
-		/// @desc	...
-		/// @return NA
-		///
-		size = _size;
-		val	 = _size;
-		damp = _damp;
-		mode = "damp";
-	};
-	static shake_time   = function(_size, _time = 8) {
-		/// @func	shake_time(size, time*<8>)
-		/// @param	size -> {real}
-		/// @param	time -> {real}*<8>
-		/// @desc	...
-		/// @return NA
-		///
-		size = _size;
-		time = _time;
-		mode = "time";
-	};
-	static update	    = function() {
-		/// @func	update()
-		/// @desc	...
-		/// @return NA
-		///
-		switch (mode) {
-			case "time": _update_time(); break;
-			default:	 _update_damp(); break;
-		}
-	};
-	
-	/// _private 
-	static _update_time = function() {
-		/// @func	_update_time()
-		/// @desc	...
-		/// @return NA
-		///
-		val = (time--) ? random_range(-size, size) : 0;
-	};
-	static _update_damp = function() {
-		/// @func	_update_damp()
-		/// @desc	...
-		/// @return NA
-		///
-		size = max(size - damp, 0);
-		val  = random_range(-size, size);
-	};
-};
-
 #macro __SPRING_DEFAULT_TENSION	  0.15
 #macro __SPRING_DEFAULT_DAMPENING 0.15
 #macro __SPRING_DEFAULT_SPEED	  5
 
-/// @func Spring(tension, damp, spd*<0>, cutoff*<0.001>) constructor
 function Spring(_tension, _dampening, _spd = 0, _cutoff = 0.001) constructor {
-	/// @param	tension	  -> {real}	
-	/// @param	dampening -> {real}	
-	/// @param	speed	  -> {real}*<0>
-	/// @param	cutoff    -> {real}*<0.001>	
-	/// @desc	...
-	/// @return self -> {Spring}
+	/// @func	Spring(tension, damp, spd*<0>, cutoff*<0.001>) constructor
+	/// @param	{real}   tension	 
+	/// @param	{real}   dampening 
+	/// @param	{real}   speed=0 
+	/// @param	{real}   cutoff=0   
+	/// @return {Spring} self
 	///
+	owner	  =  other;
 	tension	  = _tension;
 	dampening = _dampening;
 	spd		  = 0;
@@ -134,5 +71,67 @@ function Spring(_tension, _dampening, _spd = 0, _cutoff = 0.001) constructor {
 		/// @return NA
 		///
 		ended = (val == 0);
+	};
+};
+function Shaker() constructor {
+	/// @func	Shaker() constructor
+	/// @return {Shaker} self
+	///
+	owner = other;
+	val	  = 0;
+	size  = 0;
+	damp  = 1;
+	time  = 0;
+	mode  = "time";
+	
+	static shake_damp   = function(_size, _damp = 1) {
+		/// @func	shake_damp(size, damp*<1>)
+		/// @param	size -> {real}
+		/// @param	damp -> {real}*<1>
+		/// @desc	...
+		/// @return NA
+		///
+		size = _size;
+		val	 = _size;
+		damp = _damp;
+		mode = "damp";
+	};
+	static shake_time   = function(_size, _time = 8) {
+		/// @func	shake_time(size, time*<8>)
+		/// @param	size -> {real}
+		/// @param	time -> {real}*<8>
+		/// @desc	...
+		/// @return NA
+		///
+		size = _size;
+		time = _time;
+		mode = "time";
+	};
+	static update	    = function() {
+		/// @func	update()
+		/// @desc	...
+		/// @return NA
+		///
+		switch (mode) {
+			case "time": _update_time(); break;
+			default:	 _update_damp(); break;
+		}
+	};
+	
+	/// _private 
+	static _update_time = function() {
+		/// @func	_update_time()
+		/// @desc	...
+		/// @return NA
+		///
+		val = (time--) ? random_range(-size, size) : 0;
+	};
+	static _update_damp = function() {
+		/// @func	_update_damp()
+		/// @desc	...
+		/// @return NA
+		///
+		size = max(size - damp, 0);
+		val  = random_range(-size, size);
 	};
 };

@@ -1,18 +1,23 @@
-//////////////////////////////////////////////////////////////////////////////////////////
-//	Components																			//
-//		-	components are class objects that containerize reusable functionality.		//
-//		-	components can be instantiated as stand alone objects, or be tied into 		//
-//			a greater component system designed to organize and provide structure		//
-//			to a series of components.													//
-//		-	any form of generalized logic that can be shared across multiple objects	//
-//			(regardless of object inheritence) should be encapsulated into a 			//
-//			component.																	//
-//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//	Components										//								
+//		-	components are class objects that 		//
+//			containerize reusable functionality.    //	
+//		-	components can be instantiated as stand //
+//			alone objects, or be tied into a 		//
+//			greater component system designed to 	//
+//			organize and provide structure to a 	//
+//			series of components.					//							
+//		-	any form of generalized logic that can 	//
+//			be shared across multiple objects 		//
+//			(regardless of object inheritence) 		//
+//			should be encapsulated into a component //
+//////////////////////////////////////////////////////
 
 function Component() constructor {
 	/// @func	Component()
 	/// @return {Component} self
 	///
+	__owner  = other;
 	__name	 = undefined;
 	__active = true;
 	
@@ -20,7 +25,7 @@ function Component() constructor {
 	static update   = function() {}; /// @OVERRIDE
 	static render   = function() {}; /// @OVERRIDE
 	static teardown = function() {}; /// @OVERRIDE
-
+	
 	static actvate	  = function() {
 		/// @func	actvate()
 		/// @return {Component} self
@@ -36,12 +41,12 @@ function Component() constructor {
 		return self;
 	};
 };
+////////////////////////////////
 function Actionable() : Component() constructor {
 	/// @func	Actionable()
-	/// @return {Component} self 
+	/// @return {Component}	self 
 	///
-	__actor	= other;
-	__fsm	= undefined;
+	__fsm = undefined;
 	
 	static update = function() {
 		/// @func	update()
@@ -145,13 +150,12 @@ function Moveable() : Component() constructor {
 	/// @func	Moveable()
 	/// @return {Component} self
 	///
-	__mover		 = other;
-	__hspd		 = 0;
-	__vspd		 = 0;
-	__speed		 = 0;
-	__accel		 = 1;
-	__fric		 = 1;
-	__movesets	 = {
+	__hspd	   = 0;
+	__vspd	   = 0;
+	__speed	   = 0;
+	__accel	   = 1;
+	__fric	   = 1;
+	__movesets = {
 		__sets:	   {},
 		__names:   [],
 		__current: {
@@ -285,9 +289,12 @@ function Moveable() : Component() constructor {
 		/// @param	...
 		/// @return {Moveable} self
 		///
-		var _moveset = new MoveSet();
+		var _moveset = new Moveable_MoveSet();
 		__moveset_add(_name, _moveset);
 		return self;
+	};
+	static add_moveset_trigger = function() {
+		
 	};
 };
 function Scriptable() : Component() constructor {
@@ -295,12 +302,10 @@ function Scriptable() : Component() constructor {
 	/// @return {Component} self
 	///
 };
-
-#region Util Constructors
-
-function MoveSet() constructor {
-	/// @func	MoveSet()
-	/// @return {MoveSet} self
+////////////////////////////////
+function Moveable_MoveSet() constructor {
+	/// @func	Moveable_MoveSet()
+	/// @return {Moveable_MoveSet} self
 	///
 	__moveable	= other;
 	__name		= undefined;
@@ -312,7 +317,6 @@ function MoveSet() constructor {
 	ITriggerContainer();
 };
 
-#endregion
 #region Need To Rework
 
 function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) constructor {
@@ -569,11 +573,11 @@ function EventObject(_event_instance, _name = "") {
 	}
 	return __event_instance;
 };
-function truInst_setup(_truInst_instance = id, _active = true) {
+function truInst_setup(_truInst_instance = self, _active = true) {
 	/// @func	truInst_setup(truInst_instance*, active?*)	
-	/// @param	{struct/instance} truInst_instance=id
-	/// @param	{boolean}		  active=true
-	/// @return {struct/instance} truInst_instance
+	/// @param	{struct}  truInst_instance=other
+	/// @param	{boolean} active=true
+	/// @return {struct}  truInst_instance
 	///
 	with (_truInst_instance) {		
 		__truInst_instance = _truInst_instance;
@@ -767,3 +771,4 @@ function truInst_setup(_truInst_instance = id, _active = true) {
 };
 
 #endregion
+

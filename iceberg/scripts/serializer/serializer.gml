@@ -17,10 +17,10 @@
 #endregion
 
 function Serializer(_owner = other, _vars) constructor {	
-	/// @func  Serializer(owner*, vars)
-	/// @param {struct/instance} owner=other
-	/// @param {array} vars
-	/// @desc  ...
+	/// @func	Serializer(owner*, vars)
+	/// @param	{struct} owner=other
+	/// @param	{array}  vars
+	/// @return {Serializer} self
 	///
 	owner			= _owner;
 	on_serialize	=  undefined;
@@ -137,7 +137,7 @@ function Serializer(_owner = other, _vars) constructor {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 function SerializerTranslator(_owner, _name) constructor {
 	/// @func	SerializerTranslator(owner, name)
-	/// @param	{instance/struct} owner
+	/// @param	{struct} owner
 	/// @param	{string} name
 	///
 	__serializer =  other;

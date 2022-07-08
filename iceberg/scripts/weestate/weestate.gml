@@ -46,8 +46,7 @@
 
 function WeeState() constructor {
 	/// @func	WeeState() constructor
-	/// @desc	...
-    /// @return self {struct}
+    /// @return {WeeState} self
     ///
     owner              = other;
     default_draw       = null;
