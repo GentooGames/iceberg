@@ -1,125 +1,14 @@
 #region system /////////////
 
-function log(_format) {
-	/// @func	log(_format, params, ...)
-	/// @desc	Logs to console using string format and arguments (allows 19 different arguments)
-	/// @param	{string} format The string format.
-	/// @param	{*...} params The values to append
-	/// @return NA
-	/// @tested false
-	/// @usage
-	/*
-	log("{0} this is my {1}", "Hello", "World");
-	log("Print numbers: {0} and strings '{1}'", 124, "World");
-	log("Arrays {0} and structs {1}", [1, 2, 3], { hello: "world" });
-	*/
-	if (!LOGGING) return;
-	///
-	var _params = array_create(argument_count);
-	for (var i = 0; i < argument_count; i++) {
-		_params[i] = argument[i];
-	}
-	var _output = script_execute_ext(string_build, _params);
-	show_debug_message("[" + string(current_time) + "]: " + _output);
-};
-function string_build(_format) {
-	/// @func	string_build(_format, params, ...)
-	/// @desc	Builds a string using string format and arguments (allows 19 different arguments)
-	/// @param	{string} format The string format.
-	/// @param	{*...} params The values to append
-	/// @return	output -> {string}
+function do_every_frame(_interval) {
+	/// @func   do_every_frame(interval)
+	/// @param  interval -> {real}
+	/// @desc   conditional check for if the current frame interval has been triggered.
+	/// @return do_this_frame -> {bool}
 	/// @tested false
 	///
-	static _paramIDs = ["{0}",	"{1}",	"{2}",	"{3}",	"{4}",	"{5}",	"{6}",	"{7}",	"{8}",	"{9}",
-						"{10}", "{11}", "{12}", "{13}", "{14}", "{15}", "{16}", "{17}", "{18}", "{19}"];
-						
-	var _output = _format, _count = argument_count - 1;
-	repeat (_count) {
-		var _argument = argument[_count];
-		var _argumentString = is_string(_argument) ? _argument : string(_argument);
-		_output = string_replace_all(_output, _paramIDs[--_count], _argumentString);
-	}
-	return _output;
-};
-function method_inherit(_method_parent = undefined, _method_child = undefined, _callback = undefined) {
-	/// @func	method_inherit(method_parent*, method_child*, callback*)
-	/// @desc	rather than needing to setup complex method inheritance through initialization of extra
-	///			methods, this function serves as an encapsulation to do so with one-line execution.
-	/// @param	{method} method_parent=undefined
-	/// @param	{method} method_child=undefined
-	/// @param	{method} callback=undefined
-	/// @return {method} method
-	/// @author GlebTsereteli & _gentoo_
-	///
-	var _inherit_depth = 1;
-	
-	#region Method Child ///////////
-	
-	var _method_child_owner = self;
-	if (_method_child != undefined) {
-		_method_child  = method(_method_child_owner, _method_child);
-	}
-	
-	#endregion
-	#region Method Parent //////////
-	
-	var _method_parent_owner = self;
-	if (_method_parent != undefined) {
-		_method_parent_owner = method_get_self(_method_parent); 
-		if (is_struct(_method_parent_owner)) {
-			_inherit_depth = _method_parent_owner.inherit_depth + 1;
-		}
-		_method_parent = method(_method_parent_owner, _method_parent);
-	}
-	
-	#endregion
-	#region Method Callbacks ///////
-	
-	var _callbacks = [];
-	if (is_struct(_method_parent_owner)) {
-		_callbacks = _method_parent_owner.callbacks;
-	}
-	if (_callback != undefined) {
-		_callback  = method(method_get_self(_callback), _callback);
-	}
-	array_push(_callbacks, _callback); // push even if undefined, so that len matches inherit depth
-	
-	#endregion
-	
-	/// Stash Local Var References Through Temp Struct Binding
-	var _bridge = {
-		inherit_depth: _inherit_depth,
-        method_parent: _method_parent,
-        method_child:  _method_child,
-		callbacks:	   _callbacks,
-    };
-    return method(_bridge, function() {
-		if (method_parent != undefined) method_parent();
-        if (method_child  != undefined) method_child();
-		
-		/// Execute Callbacks If At End Of Chain
-		var _n_callbacks = array_length(callbacks);
-		if (inherit_depth == _n_callbacks) {
-			for (var _i = 0; _i < _n_callbacks; _i++) {
-				var _callback  = callbacks[_i];
-				if (_callback != undefined) {
-					_callback();
-				}
-			}
-		}
-    });
-};
-function events_user() {
-	/// @func	events_user(numb1, ..., numbN)
-	/// @param	{real} numb1
-	/// @param	{real} ...
-	/// @param	{real} numbN
-	/// @return NA
-	///
-	for (var _i = 0; _i < argument_count; _i++) {
-		event_user(argument[_i]);	
-	}
-};
+	return (CURRENT_FRAME % _interval == 0);
+}
 
 #region DYNAMIC GETTERS AND SETTERS
 /*
@@ -727,6 +616,29 @@ function structs_have_same_names(_struct_1, _struct_2) {
 	}
 	return true;	
 };
+function struct_get_random_weighted(_data) {
+	/// @func   struct_get_random_weighted(data_array)
+	/// @param  data -> {data}
+	/// @desc   data is an array of structs, where "chance" is a defined value indicating the weight.
+	/// @return value -> {real}
+	/// @tested false
+	///
+	var _total_chance = 0;
+	for (var _i = 0, _len = array_length(_data); _i < _len; _i++) {
+		_total_chance += _data[_i].chance;
+	}
+	var _rand = random(_total_chance);
+	var _total_chance = 0;
+	
+	for (var _i = 0, _len = array_length(_data); _i < _len; _i++) {
+		_total_chance += _data[_i].chance;
+		if (_total_chance > _rand) {
+			return _data[_i];
+			break;
+		}
+	}
+	return _data[irandom(array_length(_data) - 1)];
+};
 
 #endregion
 #region buffers ////////////
@@ -814,6 +726,52 @@ function buffer_compressed_encoded_to_struct(_buffer, _destroy_buffer = true) {
 
 #endregion
 #region objects ////////////
+
+function events_user() {
+	/// @func	events_user(numb1, ..., numbN)
+	/// @param	{real} numb1
+	/// @param	{real} ...
+	/// @param	{real} numbN
+	/// @return NA
+	///
+	for (var _i = 0; _i < argument_count; _i++) {
+		event_user(argument[_i]);	
+	}
+};
+function animation_ended(_sprite_index = sprite_index, _image_index = image_index, _image_speed = image_speed, _image_number = image_number) {
+	/// @func   animation_ended(sprite_index*, image_index*, image_speed*, image_number*)
+	/// @param	sprite_index -> {sprite_index}
+	/// @param	image_index	 -> {real}
+	/// @param	image_speed	 -> {real}
+	/// @param	image_number -> {real}
+	/// @desc   check to see if the current animation has ended.
+	/// @return animation_ended -> {bool}
+	/// @tested false
+	///
+	return (_image_index + _image_speed * sprite_get_speed(_sprite_index) / (sprite_get_speed_type(_sprite_index) == spritespeed_framespergameframe ? 1 : game_get_speed(gamespeed_fps)) >= _image_number);	
+};
+
+#endregion
+#region instances //////////
+
+function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
+	/// @func   instance_nth_nearest(x, y, obj, n, priority_list)
+	/// @param  x	-> {real}
+	/// @param  y	-> {real}
+	/// @param  obj -> {object}
+	/// @param  n	-> {real}
+	/// @param  priority_list -> {ds_priority}
+	/// @desc   find the nth instance nearest a given point. this utilized a ds_priority.
+	/// @return instance -> {instance}
+	/// @tested false
+	///
+	var _count	 = min(max(1, _n), instance_number(_obj));
+	var _nearest = undefined;
+	ds_priority_clear(_priority);
+	with (_obj) ds_priority_add(_priority, self.id, distance_to_point(_x, _y)); 
+	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
+	return _nearest;
+};
 
 #endregion
 #region paths //////////////
@@ -939,33 +897,6 @@ function collision_rectangle_list_bbox(_object, _precise, _notme, _list, _ordere
 		_ordered
 	);
 };
-function do_every_frame(_interval) {
-	/// @func   do_every_frame(interval)
-	/// @param  interval -> {real}
-	/// @desc   conditional check for if the current frame interval has been triggered.
-	/// @return do_this_frame -> {bool}
-	/// @tested false
-	///
-	return (CURRENT_FRAME % _interval == 0);
-}
-function instance_nth_nearest(_x, _y, _obj, _n, _priority) {
-	/// @func   instance_nth_nearest(x, y, obj, n, priority_list)
-	/// @param  x	-> {real}
-	/// @param  y	-> {real}
-	/// @param  obj -> {object}
-	/// @param  n	-> {real}
-	/// @param  priority_list -> {ds_priority}
-	/// @desc   find the nth instance nearest a given point. this utilized a ds_priority.
-	/// @return instance -> {instance}
-	/// @tested false
-	///
-	var _count	 = min(max(1, _n), instance_number(_obj));
-	var _nearest = undefined;
-	ds_priority_clear(_priority);
-	with (_obj) ds_priority_add(_priority, self.id, distance_to_point(_x, _y)); 
-	repeat (_count) _nearest = ds_priority_delete_min(_priority); 
-	return _nearest;
-};
 
 #endregion
 #region resource tree //////
@@ -1008,6 +939,114 @@ function resource_tree_get_object_parents() {
 #endregion
 #region sprites ////////////
 
+function sprite_get_true_width(_sprite_index) {
+	/// @func   sprite_get_true_width(sprite_index)
+	/// @param  sprite_index -> {sprite}
+	/// @desc   get the sprites width based off of the sprites baked bounding boxes.
+	/// @return width		 -> {real}
+	/// @tested false
+	///
+	return (sprite_get_bbox_right(_sprite_index) - sprite_get_bbox_left(_sprite_index));	
+};
+function sprite_get_true_height(_sprite_index) {	 
+	/// @func   sprite_get_true_height(sprite_index)
+	/// @param  sprite_index -> {sprite}
+	/// @desc   get the sprites height based off of the sprites baked bounding boxes.
+	/// @return width -> {real}
+	///
+	return (sprite_get_bbox_bottom(_sprite_index) - sprite_get_bbox_top(_sprite_index));	
+};
+function sprite_stretch(_xscale = 1, _yscale = _xscale) {
+	/// @func   sprite_stretch(image_<xy>scale, image_<y>scale*)
+	/// @param  image_xscale
+	/// @param  image_yscale
+	/// @desc   apply a slight offset to the sprite x & yscale.
+	/// @return NA
+	/// @tested false
+	///
+	if (sign(image_xscale) == -1) {
+		_xscale = -abs(_xscale);	
+	}
+	image_xscale = _xscale;
+	image_yscale = abs(_yscale);
+};
+function sprite_stretch_step() {
+	/// @func   sprite_stretch_step()
+	/// @desc   place in object's step event whenever using sprite_stretch() function.
+	/// @return NA
+	/// @tested false
+	///
+	image_xscale = lerp(image_xscale, xscale_base * facing, 0.3);
+	image_yscale = lerp(image_yscale, yscale_base, 0.3);
+};
+function sprite_stretch_reset() {
+	/// @func   sprite_stretch_reset()
+	/// @desc   reset the sprites image_xscale and image_yscale back to their base value.
+	/// @return NA
+	/// @tested false
+	///
+	image_xscale = xscale_base * facing;
+	image_yscale = yscale_base;
+};
+function sprite_update(_sprite_array, _dir, _face) {
+	/// @func	sprite_update(sprite_array, dir, face)
+	/// @param	sprite_array -> {array}
+	/// @param	dir 		 -> {dir_enum}
+	/// @param	face		 -> {face_enum}
+	/// @desc	...
+	/// @return sprite_index -> {real}
+	/// @tested false
+	///
+	var _sprite;
+	switch (_face) {
+		case FACE.FRONT: {
+			_sprite = _sprite_array[0];
+		}
+		case FACE.BACK: {
+			_sprite = _sprite_array[1];
+		}
+	}
+	sprite_index = _sprite;
+	image_xscale = scale * _face;
+	image_yscale = abs(image_yscale);
+	return _sprite;
+};
+
+#endregion
+#region draw ///////////////
+	
+function draw_sprite_alt(_spr = sprite_index, _subimg = image_index, _x = x, _y = y, _xscale = image_xscale, _yscale = image_yscale, _ang = image_angle, _c = image_blend, _a = image_alpha) {
+	/// @func	draw_sprite_alt(sprite*, subimg*, x*, y*, xscale*, yscale*, angle*, color*, alpha*)
+	/// @param	sprite_index -> {sprite_index}
+	/// @param	image_index	 -> {image_index}
+	/// @param	x			 -> {real}
+	/// @param	y			 -> {real}
+	/// @param	xscale		 -> {real}
+	/// @param	yscale		 -> {real}
+	/// @param	angle		 -> {real}
+	/// @param	color		 -> {color}
+	/// @param	alpha		 -> {real}
+	/// @desc	...
+	/// @return NA
+	/// @tested false
+	///
+	draw_sprite_ext(_spr, _subimg, _x, _y, _xscale, _yscale, _ang, _c, _a);		
+};
+function draw_rectangle_alt(_x, _y, _width, _height, _rot, _col, _alpha) {
+	/// @func   draw_rectangle_alt(x, y, width, height, rot, col, alpha)
+	/// @param  x	   -> {real} 
+	/// @param  y	   -> {real} 
+	/// @param  width  -> {real} 
+	/// @param  height -> {real} 
+	/// @param  rot	   -> {real} 
+	/// @param  color  -> {color} 
+	/// @param  alpha  -> {real}
+	/// @desc   draw a rectangle using a 1 pixel sprite: spr_white, this does not introduce a batch break.
+	/// @return NA
+	/// @tested false
+	///
+	draw_sprite_ext(__spr_pixel_white, 0, _x, _y, _width, _height, _rot, _col, _alpha);	
+};
 function draw_rectangle_width_color(_x1, _y1, _x2, _y2, _width, _color) {	 
 	/// @func   draw_rectangle_width_color(x1, y1, x2, y2, width, color)
 	/// @param  x1	  -> {real}
@@ -1085,137 +1124,74 @@ function draw_circle_curve(_x, _y, _radius, _precision, _angle_start, _angle_end
 		draw_set_alpha(1.0);
 	}
 };
-function sprite_get_true_width(_sprite_index) {
-	/// @func   sprite_get_true_width(sprite_index)
-	/// @param  sprite_index -> {sprite}
-	/// @desc   get the sprites width based off of the sprites baked bounding boxes.
-	/// @return width		 -> {real}
-	/// @tested false
+
+#endregion
+#region color //////////////
+
+function colors_merge(_color1, _color2, _amount) {
+	/// @func	colors_merge(color1, color2, amount)
+	/// @param	{color} color1
+	/// @param	{color} color2
+	/// @param	{real}  amount
+	/// @return {color} color_merged
 	///
-	return (sprite_get_bbox_right(_sprite_index) - sprite_get_bbox_left(_sprite_index));	
+	return merge_color(_color1, _color2, _amount);	
 };
-function sprite_get_true_height(_sprite_index) {	 
-	/// @func   sprite_get_true_height(sprite_index)
-	/// @param  sprite_index -> {sprite}
-	/// @desc   get the sprites height based off of the sprites baked bounding boxes.
-	/// @return width -> {real}
+function colors_pulse(_color1, _color2, _duration, _offset = 0) {
+	/// @func	colors_pulse(color1, color2, duration, offset*)   
+	/// @param  {color} color1	
+	/// @param  {color} color2	
+	/// @param  {real}  duration
+	/// @param	{real}  offset=0
+	/// @return {color} color	
 	///
-	return (sprite_get_bbox_bottom(_sprite_index) - sprite_get_bbox_top(_sprite_index));	
-};
-function sprite_stretch(_xscale = 1, _yscale = _xscale) {
-	/// @func   sprite_stretch(image_<xy>scale, image_<y>scale*)
-	/// @param  image_xscale
-	/// @param  image_yscale
-	/// @desc   apply a slight offset to the sprite x & yscale.
-	/// @return NA
-	/// @tested false
-	///
-	if (sign(image_xscale) == -1) {
-		_xscale = -abs(_xscale);	
-	}
-	image_xscale = _xscale;
-	image_yscale = abs(_yscale);
-};
-function sprite_stretch_step() {
-	/// @func   sprite_stretch_step()
-	/// @desc   place in object's step event whenever using sprite_stretch() function.
-	/// @return NA
-	/// @tested false
-	///
-	image_xscale = lerp(image_xscale, xscale_base * facing, 0.3);
-	image_yscale = lerp(image_yscale, yscale_base, 0.3);
-};
-function sprite_stretch_reset() {
-	/// @func   sprite_stretch_reset()
-	/// @desc   reset the sprites image_xscale and image_yscale back to their base value.
-	/// @return NA
-	/// @tested false
-	///
-	image_xscale = xscale_base * facing;
-	image_yscale = yscale_base;
-};
-function draw_rectangle_alt(_x, _y, _width, _height, _rot, _col, _alpha) {
-	/// @func   draw_rectangle_alt(x, y, width, height, rot, col, alpha)
-	/// @param  x	   -> {real} 
-	/// @param  y	   -> {real} 
-	/// @param  width  -> {real} 
-	/// @param  height -> {real} 
-	/// @param  rot	   -> {real} 
-	/// @param  color  -> {color} 
-	/// @param  alpha  -> {real}
-	/// @desc   draw a rectangle using a 1 pixel sprite: spr_white, this does not introduce a batch break.
-	/// @return NA
-	/// @tested false
-	///
-	draw_sprite_ext(__spr_pixel_white, 0, _x, _y, _width, _height, _rot, _col, _alpha);	
-};
-function animation_end_sys(_sprite_index = sprite_index, _image_index = image_index, _image_speed = image_speed, _image_number = image_number) {
-	/// @func   animation_end_sys(sprite_index*, image_index*, image_speed*, image_number*)
-	/// @param	sprite_index -> {sprite_index}
-	/// @param	image_index	 -> {real}
-	/// @param	image_speed	 -> {real}
-	/// @param	image_number -> {real}
-	/// @desc   check to see if the current animation has ended.
-	/// @return animation_ended -> {bool}
-	/// @tested false
-	///
-	return (_image_index + _image_speed * sprite_get_speed(_sprite_index) / (sprite_get_speed_type(_sprite_index) == spritespeed_framespergameframe ? 1 : game_get_speed(gamespeed_fps)) >= _image_number);	
-};
-function pulse_colors(_color1, _color2, _duration) {
-	/// @func	pulse_colors(color1, color2, duration)   
-	/// @param  color1	 -> {color}
-	/// @param  color2	 -> {color}
-	/// @param  duration -> {real}
-	/// @desc   sin lerp between two different colors over a set duration.
-	/// @return color	 -> {color}
-	/// @tested false
-	///
-	return merge_color(_color1, _color2, wave(0, 1, _duration, 0));
-};
-function sprite_update(_sprite_array, _dir, _face) {
-	/// @func	sprite_update(sprite_array, dir, face)
-	/// @param	sprite_array -> {array}
-	/// @param	dir 		 -> {dir_enum}
-	/// @param	face		 -> {face_enum}
-	/// @desc	...
-	/// @return sprite_index -> {real}
-	/// @tested false
-	///
-	var _sprite;
-	switch (_face) {
-		case FACE.FRONT: {
-			_sprite = _sprite_array[0];
-		}
-		case FACE.BACK: {
-			_sprite = _sprite_array[1];
-		}
-	}
-	sprite_index = _sprite;
-	image_xscale = scale * _face;
-	image_yscale = abs(image_yscale);
-	return _sprite;
-};
-function draw_sprite_alt(_spr = sprite_index, _subimg = image_index, _x = x, _y = y, _xscale = image_xscale, _yscale = image_yscale, _ang = image_angle, _c = image_blend, _a = image_alpha) {
-	/// @func	draw_sprite_alt(sprite*, subimg*, x*, y*, xscale*, yscale*, angle*, color*, alpha*)
-	/// @param	sprite_index -> {sprite_index}
-	/// @param	image_index	 -> {image_index}
-	/// @param	x			 -> {real}
-	/// @param	y			 -> {real}
-	/// @param	xscale		 -> {real}
-	/// @param	yscale		 -> {real}
-	/// @param	angle		 -> {real}
-	/// @param	color		 -> {color}
-	/// @param	alpha		 -> {real}
-	/// @desc	...
-	/// @return NA
-	/// @tested false
-	///
-	draw_sprite_ext(_spr, _subimg, _x, _y, _xscale, _yscale, _ang, _c, _a);		
+	return merge_color(_color1, _color2, wave(0, 1, _duration, _offset));
 };
 
 #endregion
 #region strings ////////////
 
+function log(_format) {
+	/// @func	log(_format, params, ...)
+	/// @desc	Logs to console using string format and arguments (allows 19 different arguments)
+	/// @param	{string} format The string format.
+	/// @param	{*...} params The values to append
+	/// @return NA
+	/// @tested false
+	/// @usage
+	/*
+	log("{0} this is my {1}", "Hello", "World");
+	log("Print numbers: {0} and strings '{1}'", 124, "World");
+	log("Arrays {0} and structs {1}", [1, 2, 3], { hello: "world" });
+	*/
+	if (!LOGGING) return;
+	///
+	var _params = array_create(argument_count);
+	for (var i = 0; i < argument_count; i++) {
+		_params[i] = argument[i];
+	}
+	var _output = script_execute_ext(string_build, _params);
+	show_debug_message("[" + string(current_time) + "]: " + _output);
+};
+function string_build(_format) {
+	/// @func	string_build(_format, params, ...)
+	/// @desc	Builds a string using string format and arguments (allows 19 different arguments)
+	/// @param	{string} format The string format.
+	/// @param	{*...} params The values to append
+	/// @return	output -> {string}
+	/// @tested false
+	///
+	static _paramIDs = ["{0}",	"{1}",	"{2}",	"{3}",	"{4}",	"{5}",	"{6}",	"{7}",	"{8}",	"{9}",
+						"{10}", "{11}", "{12}", "{13}", "{14}", "{15}", "{16}", "{17}", "{18}", "{19}"];
+						
+	var _output = _format, _count = argument_count - 1;
+	repeat (_count) {
+		var _argument = argument[_count];
+		var _argumentString = is_string(_argument) ? _argument : string(_argument);
+		_output = string_replace_all(_output, _paramIDs[--_count], _argumentString);
+	}
+	return _output;
+};
 function string_contains(_string, _sub) {	 
 	/// @func   string_contains(string, substring)
 	/// @param  string	  -> {string} 
@@ -1329,19 +1305,6 @@ function avg() {
 		_avg += argument[_i];
 	}
 	return (_avg / _n);
-};
-function logarithm(_base, _shift, _percent, _invert = false) {
-	/// @func   logarithm(base, shift, percent, invert?*<f>)
-	/// @param  base	-> {real}
-	/// @param  shift   -> {real}
-	/// @param  percent -> {real}
-	/// @param  invert  -> {bool}
-	/// @desc   compute a pretty jank logarithm calculation.
-	/// @return log -> {real}
-	/// @tested false
-	///
-	var _log = logn(_base, (1 + (_base - 1) * _percent) + _shift);	
-	return clamp(_invert ? 1 - _log : _log, 0, 1);
 };
 function wrap(_val, _min, _max) {
 	/// @func   wrap(val, min, max)
@@ -1487,8 +1450,6 @@ function wave(_from, _to, _duration, _offset) {
 	var _a4 = (_to - _from) * 0.5;
 	return _from + _a4 + sin((((current_time * 0.001) + _duration * _offset) / _duration) * (pi * 2)) * _a4;
 };
-	
-/// Angle
 function lerp_angle(_angle_from, _angle_to, _amount) {
 	/// @func   lerp_angle(angle_from, angle_to, amount)
 	/// @param  angle_from -> {real}
@@ -1545,63 +1506,8 @@ function async_status_fail() {
 };
 
 #endregion
-#region enum ///////////////
-
-function dir_enum_to_string(_DIR) {
-	/// @func   dir_enum_to_string(DIR)
-	/// @param  DIR -> {DIR_ENUM}
-	/// @desc   convert a DIR_ENUM to a string.
-	/// @return dir -> {string}
-	/// @tested false
-	///
-	switch (_DIR) {
-		case DIR.RIGHT:	return "right";	
-		case DIR.LEFT:	return "left";	
-		case DIR.UP:	return "up";	
-		case DIR.DOWN:	return "down";	
-	}
-};
-function dir_enum_to_real(_DIR) {
-	/// @func   dir_enum_to_real(DIR)
-	/// @param  DIR   -> {DIR_ENUM}
-	/// @desc   convert a DIR_ENUM to a dir value.
-	/// @return angle -> {real}
-	/// @tested false
-	///
-	switch (_DIR) {
-		case DIR.RIGHT:	return 0;
-		case DIR.LEFT:	return 180;
-		case DIR.UP:	return 90;
-		case DIR.DOWN:	return 270;
-	}
-};
-
-#endregion
 #region others /////////////
 
-function data_get_weighted(_data) {
-	/// @func   data_get_weighted(data_array)
-	/// @param  data -> {data}
-	/// @desc   data is an array of structs, where "chance" is a defined value indicating the weight.
-	/// @return value -> {real}
-	/// @tested false
-	///
-	var _total_chance = 0;
-	for (var _i = 0, _len = array_length(_data); _i < _len; _i++) {
-		_total_chance += _data[_i].chance;
-	}
-	var _rand = random(_total_chance);
-	var _total_chance = 0;
-	
-	for (var _i = 0, _len = array_length(_data); _i < _len; _i++) {
-		_total_chance += _data[_i].chance;
-		if (_total_chance > _rand) {
-			return _data[_i];
-			break;
-		}
-	}
-	return _data[irandom(array_length(_data) - 1)];
-};
 function dist_thresh(_val1, _val2, _thresh, _abs = true) {
 	/// @func	dist_thresh(val1, val2, thresh, abs?*<t>)
 	/// @param	val1   -> {any}
@@ -1640,13 +1546,6 @@ function instance_get_name_dynamic(_instance) {
 	else {
 		return object_get_name(_instance.object_index);
 	}
-};
-function method_get_name_dynamic(_method) {
-	/// @func	method_get_name_dynamic(method)
-	/// @param	{method} method
-	/// @return {string} name
-	///
-	return string(ptr(_method));
 };
 
 #endregion
@@ -1698,4 +1597,82 @@ function iso_xy_to_j(_iso_width, _iso_height, _x, _y) {
 };
 
 #endregion
+#region method /////////////
 
+function method_get_name_dynamic(_method) {
+	/// @func	method_get_name_dynamic(method)
+	/// @param	{method} method
+	/// @return {string} name
+	///
+	return string(ptr(_method));
+};
+function method_inherit(_method_parent = undefined, _method_child = undefined, _callback = undefined) {
+	/// @func	method_inherit(method_parent*, method_child*, callback*)
+	/// @desc	rather than needing to setup complex method inheritance through initialization of extra
+	///			methods, this function serves as an encapsulation to do so with one-line execution.
+	/// @param	{method} method_parent=undefined
+	/// @param	{method} method_child=undefined
+	/// @param	{method} callback=undefined
+	/// @return {method} method
+	/// @author GlebTsereteli & _gentoo_
+	///
+	var _inherit_depth = 1;
+	
+	#region Method Child ///////////
+	
+	var _method_child_owner = self;
+	if (_method_child != undefined) {
+		_method_child  = method(_method_child_owner, _method_child);
+	}
+	
+	#endregion
+	#region Method Parent //////////
+	
+	var _method_parent_owner = self;
+	if (_method_parent != undefined) {
+		_method_parent_owner = method_get_self(_method_parent); 
+		if (is_struct(_method_parent_owner)) {
+			_inherit_depth = _method_parent_owner.inherit_depth + 1;
+		}
+		_method_parent = method(_method_parent_owner, _method_parent);
+	}
+	
+	#endregion
+	#region Method Callbacks ///////
+	
+	var _callbacks = [];
+	if (is_struct(_method_parent_owner)) {
+		_callbacks = _method_parent_owner.callbacks;
+	}
+	if (_callback != undefined) {
+		_callback  = method(method_get_self(_callback), _callback);
+	}
+	array_push(_callbacks, _callback); // push even if undefined, so that len matches inherit depth
+	
+	#endregion
+	
+	/// Stash Local Var References Through Temp Struct Binding
+	var _bridge = {
+		inherit_depth: _inherit_depth,
+        method_parent: _method_parent,
+        method_child:  _method_child,
+		callbacks:	   _callbacks,
+    };
+    return method(_bridge, function() {
+		if (method_parent != undefined) method_parent();
+        if (method_child  != undefined) method_child();
+		
+		/// Execute Callbacks If At End Of Chain
+		var _n_callbacks = array_length(callbacks);
+		if (inherit_depth == _n_callbacks) {
+			for (var _i = 0; _i < _n_callbacks; _i++) {
+				var _callback  = callbacks[_i];
+				if (_callback != undefined) {
+					_callback();
+				}
+			}
+		}
+    });
+};
+
+#endregion

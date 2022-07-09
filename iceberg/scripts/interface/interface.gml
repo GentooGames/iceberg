@@ -10,7 +10,25 @@
 //			dependency.								//								
 //////////////////////////////////////////////////////
 
-function Interface() constructor {};
+function Interface(_methods) constructor {
+	for (var _i = 0, _len = array_length(_methods); _i < _len; _i++) {
+		var _method = _methods[_i];
+		if (!variable_struct_exists(self, _method)) {
+			log("ERROR in Interface<" + instanceof(self)	+ "." + _method + "()> not implemented.");
+		}
+	}
+};
+function IIntegral(_methods = [
+	"setup",
+	"update",
+	"render",
+	"teardown",
+]) : Interface(_methods) constructor {};
+
+
+
+
+
 
 function TriggerContainer() constructor {
 	/// @func	TriggerContainer()

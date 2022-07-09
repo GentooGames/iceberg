@@ -40,4 +40,5 @@ function Component() constructor {
 		__active = false;
 		return self;
 	};
+		
 };
