@@ -17,8 +17,6 @@ function Component() constructor {
 	/// @func	Component()
 	/// @return {Component} self
 	///
-	implements(IIntegral);
-
 	__owner  = other;
 	__name	 = undefined;
 	__active = true;

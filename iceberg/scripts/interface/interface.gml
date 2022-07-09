@@ -22,8 +22,15 @@ function implements(_interface) {
 	/// @param	{struct} interface_data
 	/// @return NA
 	///
-	var _methods_required = _interface[$ "required"] ?? [];
-	var _methods_optional = _interface[$ "optional"] ?? [];
+	return Interface(_interface());
+};
+function Interface(_method_data) {
+	/// @func	Interface(method_data)
+	/// @param	{struct} method_data
+	/// @return NA
+	///
+	var _methods_required = _method_data[$ "required"] ?? [];
+	var _methods_optional = _method_data[$ "optional"] ?? [];
 	
 	/// Optional
 	for (var _i = 0, _len = array_length(_methods_optional); _i < _len; _i++) {
@@ -57,21 +64,6 @@ function implements(_interface) {
 ////////////////////////////////////////////////////////////////
 function IIntegral() {
 	/// @func	IIntegral()
-	/// @return {struct} method_data
-	///
-	return {
-		optional: [
-			"setup",
-			"teardown",
-		],
-		required: [
-			"update",	
-			"render",	
-		],
-	};
-};
-function IIntegralComplete() {
-	/// @func	IIntegralComplete()
 	/// @return {struct} method_data
 	///
 	return {
