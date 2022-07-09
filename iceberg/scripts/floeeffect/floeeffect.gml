@@ -838,7 +838,7 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 			if (_sprite == undefined) {
 				throw("ERROR: FloeEffectBorderSprite.sprite cannot be undefined");	
 			}
-			if (!sprite_get_nineslice(_sprite).enabled) {
+			if (!(sprite_get_nineslice(_sprite)).enabled) {
 				throw("ERROR: FloeEffectBorderSprite.sprite must be a nine-slice sprite");
 			}
 			__set_sprite_validated(true);

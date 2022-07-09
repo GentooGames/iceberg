@@ -101,6 +101,4 @@ function Actionable() : Component() constructor {
 	static state_get_previous			 = actionable_state_get_previous;
 	static state_get_time				 = actionable_state_get_time;
 	static state_set_time				 = actionable_state_set_time;
-	
-	//IIntegral();
 };

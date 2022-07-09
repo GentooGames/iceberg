@@ -1036,7 +1036,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {string} action_name
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).get_active();
+			return (__action_get(_action_context, _action_name)).get_active();
 		}
 		return false;
 	};
@@ -1047,7 +1047,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {UiAction} action
 		/// 
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).get_method();
+			return (__action_get(_action_context, _action_name)).get_method();
 		}
 		return undefined;
 	};
@@ -1059,7 +1059,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			__action_get(_action_context, _action_name).set_active(_active);
+			(__action_get(_action_context, _action_name)).set_active(_active);
 		}
 		return self;
 	};
@@ -1071,7 +1071,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		/// 
 		if (__action_exists(_action_context, _action_name)) {
-			__action_get(_action_context, _action_name).set_name(_new_name);
+			(__action_get(_action_context, _action_name)).set_name(_new_name);
 		}
 		return self;
 	};
@@ -1087,7 +1087,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_bind_to_self) {
 				_action_method = method(self, _action_method);	
 			}
-			__action_get(_action_context, _action_name).set_method(_action_method);
+			(__action_get(_action_context, _action_name)).set_method(_action_method);
 		}
 		return self;
 	}
@@ -1106,7 +1106,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_bind_to_self) {
 				_trigger_method = method(self, _trigger_method);
 			}
-			__action_get(_action_context, _action_name).add_trigger(_trigger_name, _trigger_method);
+			(__action_get(_action_context, _action_name)).add_trigger(_trigger_name, _trigger_method);
 		}
 		return self;
 	};
@@ -1118,7 +1118,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Trigger} trigger
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).get_trigger(_trigger_name);
+			return (__action_get(_action_context, _action_name)).get_trigger(_trigger_name);
 		}
 		return undefined;
 	};
@@ -1130,7 +1130,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} trigger_exists?
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).has_trigger(_trigger_name);	
+			return (__action_get(_action_context, _action_name)).has_trigger(_trigger_name);	
 		}
 		return false;
 	};
@@ -1142,7 +1142,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			__action_get(_action_context, _action_name).destroy_trigger(_trigger_name);
+			(__action_get(_action_context, _action_name)).destroy_trigger(_trigger_name);
 		}
 		return self;
 	};
@@ -1153,7 +1153,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			__action_get(_action_context, _action_name).destroy_triggers();
+			(__action_get(_action_context, _action_name)).destroy_triggers();
 		}
 		return self;
 		
@@ -1168,7 +1168,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {UiAction} action_trigger
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).get_trigger_method(_trigger_name);	
+			return (__action_get(_action_context, _action_name)).get_trigger_method(_trigger_name);	
 		}
 		return undefined;
 	};
@@ -1180,7 +1180,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} triggers_active?
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).get_trigger_data(_trigger_name);
+			return (__action_get(_action_context, _action_name)).get_trigger_data(_trigger_name);
 		}
 		return false;
 	};
@@ -1192,7 +1192,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} active
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).get_active(_trigger_name);
+			return (__action_get(_action_context, _action_name)).get_active(_trigger_name);
 		}
 		return false;
 	};
@@ -1203,7 +1203,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} triggers_active?
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return __action_get(_action_context, _action_name).get_triggers_active();
+			return (__action_get(_action_context, _action_name)).get_triggers_active();
 		}
 		return false;
 	};
@@ -1221,7 +1221,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_bind_to_self) {
 				_trigger_method = method(self, _trigger_method);	
 			}
-			__action_get(_action_context, _action_name).set_trigger_method(_trigger_name, _trigger_method);
+			(__action_get(_action_context, _action_name)).set_trigger_method(_trigger_name, _trigger_method);
 		}
 		return self;
 	};
@@ -1234,7 +1234,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui}	 self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			__action_get(_action_context, _action_name).set_trigger_data(_trigger_name, _trigger_data);
+			(__action_get(_action_context, _action_name)).set_trigger_data(_trigger_name, _trigger_data);
 		}
 		return self;
 	};
@@ -1247,7 +1247,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return	{Ui}	  self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			__action_get(_action_context, _action_name).set_trigger_active(_trigger_name, _active);
+			(__action_get(_action_context, _action_name)).set_trigger_active(_trigger_name, _active);
 		}
 		return self;
 	};
@@ -1259,7 +1259,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			__action_get(_action_context, _action_name).set_triggers_active(_active);
+			(__action_get(_action_context, _action_name)).set_triggers_active(_active);
 		}
 		return self;
 	};
@@ -1667,7 +1667,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (state_has_current()) {
-			state_get_current().update();	
+			(state_get_current()).update();	
 		}
 		return self;
 	};
@@ -1762,7 +1762,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} active?
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).get_active();
+			(state_get(_state_name)).get_active();
 		}
 		return false;
 	};
@@ -1772,7 +1772,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {method} on_enter
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).get_on_enter();
+			(state_get(_state_name)).get_on_enter();
 		}
 		return false;
 	};
@@ -1782,7 +1782,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {method} on_loop
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).get_on_loop();
+			(state_get(_state_name)).get_on_loop();
 		}
 		return false;
 	};
@@ -1792,7 +1792,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {method} on_exit
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).get_on_exit();
+			(state_get(_state_name)).get_on_exit();
 		}
 		return false;
 	};
@@ -1802,7 +1802,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {string} config_name
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).get_config_bind();
+			(state_get(_state_name)).get_config_bind();
 		}
 		return false;
 	};
@@ -1835,8 +1835,8 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			}
 			/// Check For Config Binding
 			if (_config == undefined) {
-				var _config_bind  = state_get(_state_name).get_config_bind();
-				if (_config_bind != undefined && config_exists(_config_bind)) {
+				var _config_bind  = (state_get(_state_name)).get_config_bind();
+				if (_config_bind !=  undefined && config_exists(_config_bind)) {
 					_config = _config_bind;
 				}
 			}
@@ -1865,7 +1865,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).set_name(_new_name);
+			(state_get(_state_name)).set_name(_new_name);
 		}
 		return self;
 	};
@@ -1876,7 +1876,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).set_active(_active);
+			(state_get(_state_name)).set_active(_active);
 		}
 		return self;
 	};
@@ -1892,7 +1892,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_auto_bind_method) {
 				_on_enter_method = method(self, _on_enter_method);	
 			}
-			state_get(_state_name).set_on_enter(_on_enter_method);
+			(state_get(_state_name)).set_on_enter(_on_enter_method);
 		}
 		return self;
 	};
@@ -1908,7 +1908,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_auto_bind_method) {
 				_on_loop_method = method(self, _on_loop_method);	
 			}
-			state_get(_state_name).set_on_loop(_on_loop_method);
+			(state_get(_state_name)).set_on_loop(_on_loop_method);
 		}
 		return self;
 	};
@@ -1924,7 +1924,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_auto_bind_method) {
 				_on_exit_method = method(self, _on_exit_method);	
 			}
-			state_get(_state_name).set_on_exit(_on_exit_method);
+			(state_get(_state_name)).set_on_exit(_on_exit_method);
 		}
 		return self;
 	};
@@ -1937,7 +1937,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).set_config_bind(_config_name);
+			(state_get(_state_name)).set_config_bind(_config_name);
 		}
 		return self;
 	};
@@ -1973,7 +1973,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).execute_on_enter();
+			(state_get(_state_name)).execute_on_enter();
 		}
 		return self;
 	};
@@ -1983,7 +1983,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).execute_on_loop();
+			(state_get(_state_name)).execute_on_loop();
 		}
 		return self;
 	};
@@ -1993,7 +1993,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (state_exists(_state_name)) {
-			state_get(_state_name).execute_on_exit();
+			(state_get(_state_name)).execute_on_exit();
 		}
 		return self;
 	};

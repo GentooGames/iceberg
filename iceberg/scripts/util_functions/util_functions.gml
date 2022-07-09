@@ -1597,6 +1597,11 @@ function iso_xy_to_j(_iso_width, _iso_height, _x, _y) {
 };
 
 #endregion
+#region constructors ///////
+
+
+
+#endregion
 #region method /////////////
 
 function method_get_name_dynamic(_method) {

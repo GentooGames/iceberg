@@ -6,7 +6,7 @@
     "path": "folders/scripts/util.yy",
   },
   "resourceVersion": "1.0",
-  "name": "functions",
+  "name": "util_classes",
   "tags": [],
   "resourceType": "GMScript",
 }

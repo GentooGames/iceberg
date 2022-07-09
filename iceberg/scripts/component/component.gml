@@ -17,6 +17,8 @@ function Component() constructor {
 	/// @func	Component()
 	/// @return {Component} self
 	///
+	IIntegral();
+
 	__owner  = other;
 	__name	 = undefined;
 	__active = true;
@@ -24,7 +26,7 @@ function Component() constructor {
 	static setup    = function() {}; /// @OVERRIDE
 	static update   = function() {}; /// @OVERRIDE
 	static render   = function() {}; /// @OVERRIDE
-	static teardown = function() {}; /// @OVERRIDE
+	//static teardown = function() {}; /// @OVERRIDE
 	
 	static actvate	  = function() {
 		/// @func	actvate()

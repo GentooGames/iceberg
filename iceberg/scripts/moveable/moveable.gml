@@ -21,10 +21,50 @@ function Moveable() : Component() constructor {
 	__collisions = undefined;	// instantiated in setup()
 	__path		 = undefined;	// instantiated in setup()
 	
+	static setup	= function() {
+		/// @func	setup()
+		/// @return {Moveable} self
+		///
+		__collisions = ds_list_create();
+		__path		 = path_add();
+		path_set_kind(__path, 1);
+		path_set_closed(__path, false);
+		return self;
+	};
+	static update	= function() {
+		/// @func	update()
+		/// @return {Moveable} self
+		///
+		//__update_move_values();
+		//__check_for_collisions();
+		//__update_hspd_vspd();
+		//__update_xy();
+		return self;
+	};
+	static teardown = function() {
+		/// @func	teardown()
+		/// @return {Moveable} self
+		///
+		ds_list_destroy(__collisions);
+		path_delete(__path);
+		__collisions = undefined;
+		__path		 = undefined;
+		return self;
+	};
+	
 	#region Private
 	
-	#region Move Sets
+	static __update_move_values = function() {
+		/// @func	__update_move_values()
+		/// @return {Actionable} self
+		///
+		__speed = (__moveset_get_current()).__speed;
+		__accel = (__moveset_get_current()).__accel;
+		__fric  = (__moveset_get_current()).__fric;
+		return self;
+	};
 	
+	/// Move Sets
 	static __moveset_get_current_name	= function() {
 		/// @func	__moveset_get_current_name()
 		///	@return {string} name
@@ -93,50 +133,7 @@ function Moveable() : Component() constructor {
 	
 	#endregion
 	
-	static __update_move_values = function() {
-		/// @func	__update_move_values()
-		/// @return {Actionable} self
-		///
-		__speed = __moveset_get_current().__speed;
-		__accel = __moveset_get_current().__accel;
-		__fric  = __moveset_get_current().__fric;
-		return self;
-	};
-	
-	#endregion
-	
-	static setup	= function() {
-		/// @func	setup()
-		/// @return {Moveable} self
-		///
-		__collisions = ds_list_create();
-		__path		 = path_add();
-		path_set_kind(__path, 1);
-		path_set_closed(__path, false);
-		return self;
-	};
-	static update	= function() {
-		/// @func	update()
-		/// @return {Moveable} self
-		///
-		//__update_move_values();
-		//__check_for_collisions();
-		//__update_hspd_vspd();
-		//__update_xy();
-		return self;
-	};
-	static teardown = function() {
-		/// @func	teardown()
-		/// @return {Moveable} self
-		///
-		ds_list_destroy(__collisions);
-		path_delete(__path);
-		__collisions = undefined;
-		__path		 = undefined;
-		return self;
-	};
-		
-	static new_moveset = function(_name) {
+	static new_moveset		   = function(_name) {
 		/// @func	new_moveset(name)
 		/// @param	...
 		/// @return {Moveable} self
@@ -159,6 +156,4 @@ function Moveable_MoveSet() constructor {
 	__accel		= 0;
 	__fric		= 0;
 	__mult		= 1;
-	
-	ITriggerContainer();
 };

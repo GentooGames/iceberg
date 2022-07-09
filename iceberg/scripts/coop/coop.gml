@@ -17,7 +17,7 @@ function Coop() constructor {
 		/// @return {Coop} self
 		///
 		for (var _i = 0, _len = array_length(__names); _i < _len; _i++) {
-			get_component(__names[_i]).setup();	
+			(get_component(__names[_i])).setup();	
 		}
 		return self;
 	}
@@ -50,7 +50,7 @@ function Coop() constructor {
 		/// @return {Coop} self
 		///
 		for (var _i = 0, _len = array_length(__names); _i < _len; _i++) {
-			get_component(__names[_i]).teardown();	
+			(get_component(__names[_i])).teardown();	
 		}
 		return self;
 	};

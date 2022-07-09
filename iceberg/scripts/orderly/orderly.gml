@@ -263,7 +263,7 @@ function Orderly()  constructor {
 		}
 		if (_clear_active) {
 			if (get_actor() != undefined) {
-				if (get_action() != undefined && get_action().get_actor() == _actor) {
+				if (get_action() != undefined && (get_action()).get_actor() == _actor) {
 					clear_action();	
 				}
 			}
@@ -362,8 +362,8 @@ function Orderly()  constructor {
 		///
 		return (
 			has_action() 
-				? get_action().get_actor() 
-				: undefined
+				? (get_action()).get_actor() 
+				:  undefined
 		);
 	};
 	

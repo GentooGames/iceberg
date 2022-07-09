@@ -10,23 +10,26 @@
 //			dependency.								//								
 //////////////////////////////////////////////////////
 
-function Interface(_methods) constructor {
+function Interface(_methods) {
 	for (var _i = 0, _len = array_length(_methods); _i < _len; _i++) {
 		var _method = _methods[_i];
-		if (!variable_struct_exists(self, _method)) {
-			log("ERROR in Interface<" + instanceof(self)	+ "." + _method + "()> not implemented.");
+		try {
+			var _check = self[$ _method];
 		}
-	}
+		catch (_exception) {
+			var _error_msg = "<ERROR:Interface>	method " + _method + "() not implemented in class: " + instanceof(self);
+			show_message(_error_msg);
+		}
+	};
 };
-function IIntegral(_methods = [
-	"setup",
-	"update",
-	"render",
-	"teardown",
-]) : Interface(_methods) constructor {};
-
-
-
+function IIntegral() {
+	return Interface([
+		"setup",
+		"update",
+		"render",
+		"teardown",
+	]);
+};
 
 
 
@@ -137,7 +140,7 @@ function TriggerContainer() constructor {
 		/// @return {boolean} active?
 		///
 		if (has_trigger(_trigger_name)) {
-			return get_trigger(_trigger_name).get_active();
+			return (get_trigger(_trigger_name)).get_active();
 		}
 		return false;
 	};
@@ -147,7 +150,7 @@ function TriggerContainer() constructor {
 		/// @return {method} method
 		///
 		if (has_trigger(_trigger_name)) {
-			return get_trigger(_trigger_name).get_method();
+			return (get_trigger(_trigger_name)).get_method();
 		}
 		return undefined;
 	};
@@ -157,7 +160,7 @@ function TriggerContainer() constructor {
 		/// @return {method} method
 		///
 		if (has_trigger(_trigger_name)) {
-			return get_trigger(_trigger_name).get_data();
+			return (get_trigger(_trigger_name)).get_data();
 		}
 		return undefined;
 	};
@@ -180,7 +183,7 @@ function TriggerContainer() constructor {
 		/// @return {Action} self
 		///
 		if (has_trigger(_trigger_name)) {
-			get_trigger(_trigger_name).set_active(_active);
+			(get_trigger(_trigger_name)).set_active(_active);
 		}
 		return self;
 	};
@@ -191,7 +194,7 @@ function TriggerContainer() constructor {
 		/// @return {Action} self
 		///
 		if (has_trigger(_trigger_name)) {
-			get_trigger(_trigger_name).set_method(_trigger_method);
+			(get_trigger(_trigger_name)).set_method(_trigger_method);
 		}
 		return self;
 	};
@@ -202,7 +205,7 @@ function TriggerContainer() constructor {
 		/// @return {Action} self
 		///
 		if (has_trigger(_trigger_name)) {
-			get_trigger(_trigger_name).set_data(_trigger_data);
+			(get_trigger(_trigger_name)).set_data(_trigger_data);
 		}
 		return self;
 	};
