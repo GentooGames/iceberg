@@ -24,6 +24,11 @@ iceberg:
 	- should object event methods, utilizing method_inherit, do their event_publish() in the callback?
 		- yes? i think this is already implemented
 	- update util functions documentation and blend with existing functions from totem and other projects
+	- try catch block when doing something that you dont know if it will work
+	- array optimizations
+		- initialize arrays to possible max size using array_create()
+		- setting an array reference to 0 will deallocate the memory associated for it
+		- my_array[@ 0] will access the array directly and not the array copy
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width

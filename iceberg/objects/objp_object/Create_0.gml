@@ -92,6 +92,6 @@ render	 = method_inherit(,function() {
 	}
 	return self;
 });
-	
-	
+////////////////////////////////////////
+implements(IIntegralComplete);	
 

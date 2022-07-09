@@ -1,256 +1,93 @@
 //////////////////////////////////////////////////////
 //	Interfaces										//					
-//		-	interfaces are abstract containers that //
-//			define functionality, but interfaces DO //
-//			NOT implement said functionality.		//	
-//		-	this allows an "object" to initialize 	//
-//			multiple interfaces that modularly 		//
-//			define what functionality should be 	//
-//			included without creating a relational	//
-//			dependency.								//								
+//		--- interfaces are pre-defined definitions 	//
+//		|	of which methods should be implemented 	//
+//		|	in a given object (constructor or 		//
+//		|	GameMaker object)						//
+//		--- interfaces can contain definitions of	//
+//		|	methods that are required and/or 		//
+//		|	methods that are optional. required 	//
+//		|	methods defined in an interface and not	//
+//		|	properly declared in the object will 	//
+//		|	cause the game to close on failure, but	//
+//		|	methods that are defined as optional in	//
+//		|	the interface and not properly declared //
+//		|	in the object will not cause the game 	//
+//		|	to close, but will log those failures 	//
+//		|	into the console.						//
 //////////////////////////////////////////////////////
 
-function Interface(_methods) {
-	for (var _i = 0, _len = array_length(_methods); _i < _len; _i++) {
-		var _method = _methods[_i];
-		try {
-			var _check = self[$ _method];
-		}
-		catch (_exception) {
-			var _error_msg = "<ERROR:Interface>	method " + _method + "() not implemented in class: " + instanceof(self);
-			show_message(_error_msg);
-		}
-	};
-};
-function IIntegral() {
-	return Interface([
-		"setup",
-		"update",
-		"render",
-		"teardown",
-	]);
-};
-
-
-
-function TriggerContainer() constructor {
-	/// @func	TriggerContainer()
-	/// @return {TriggerContainer} self
+function implements(_interface) {
+	/// @func	implements(interface)
+	/// @param	{function} interface
+	/// @return NA
 	///
-	__owner		= other;
-	__ITriggers = {
-		__active:   true,
-		__names:    [],
-		__count:    0,
-		__triggers: {},
-	};
-	
-	static add_trigger	    = function(_trigger_name, _trigger_method) {
-		/// @func	add_trigger(trigger_name, trigger_method)
-		/// @param	{string} trigger_name
-		/// @param	{method} trigger_method
-		/// @return {Action} self
-		///
-		if (!has_trigger(_trigger_name)) {
-			var _action = self;
-			with (__ITriggers) {
-				__triggers[$ _trigger_name] = new Trigger({
-					owner:  _action,
-					name:	_trigger_name,
-					method: _trigger_method,
-				});
-				array_push(__names, _trigger_name);
-				__count++;
-			}
-			/// Register Trigger PubSub Event
-			var _component = get_owner();
-			_component.event_register( "trigger_executed_" + _trigger_name);
-			_component.event_subscribe("trigger_executed_" + _trigger_name, method(self, execute));
-		}
-		return self;
-	};
-	static destroy_trigger  = function(_trigger_name) {
-		/// @func	destroy_trigger(trigger_name)
-		/// @param	{string} trigger_name
-		/// @return {Action} self
-		///
-		if (has_trigger(_trigger_name)) {
-			with (__ITriggers) {
-				variable_struct_remove(__triggers, _trigger_name);
-			
-				/// array_find_delete();
-				for (var _i = array_length(__names) - 1; _i >= 0; _i--) {
-					if (__names[_i] == _trigger_name) {
-						array_delete(__names, _i, 1);
-						break;
-					}
-				}
-				__count--;
-			}
-		}
-		return self;
-	};
-	static destroy_triggers = function() {
-		/// @func	destroy_triggers()
-		/// @return {Action} self
-		///
-		__ITriggers = {
-			__names:	[],
-			__count:	0,
-			__triggers: {},
-		};
-		return self;
-	};
-	static update_triggers	= function() {
-		/// @func	update_triggers()
-		/// @return {Action} self
-		///
-		with (__ITriggers) {
-			if (__active) {
-				for (var _i = 0; _i < __count; _i++) {
-					var _name	 = __names[_i];
-					var _trigger = __triggers[$ _name];
-					if (_trigger.get_active()) {
-						_trigger.execute();
-					}
-				}
-			}
-		}
-		return self;
-	};
-	
-	#region Getters ////////////
-		
-	static get_triggers_active = function() {
-		/// @func	get_triggers_active()
-		/// @return {boolean} are_active?
-		///
-		return __ITriggers.__active;
-	};
-	static get_trigger		   = function(_trigger_name) {
-		/// @func	get_trigger(trigger_name)
-		/// @param	{string} trigger_name
-		/// @return {Trigger} trigger
-		///
-		return __ITriggers.__triggers[$ _trigger_name];
-	};
-	static get_trigger_active  = function(_trigger_name) {
-		/// @func	get_trigger_active(trigger_name)
-		/// @param	{string}  trigger_name
-		/// @return {boolean} active?
-		///
-		if (has_trigger(_trigger_name)) {
-			return (get_trigger(_trigger_name)).get_active();
-		}
-		return false;
-	};
-	static get_trigger_method  = function(_trigger_name) {
-		/// @func	get_trigger_method(trigger_name)
-		/// @param	{string} trigger_name
-		/// @return {method} method
-		///
-		if (has_trigger(_trigger_name)) {
-			return (get_trigger(_trigger_name)).get_method();
-		}
-		return undefined;
-	};
-	static get_trigger_data	   = function(_trigger_name) {
-		/// @func	get_trigger_data(trigger_name)
-		/// @param	{string} trigger_name
-		/// @return {method} method
-		///
-		if (has_trigger(_trigger_name)) {
-			return (get_trigger(_trigger_name)).get_data();
-		}
-		return undefined;
-	};
-		
-	#endregion
-	#region Setters	////////////
-		
-	static set_triggers_active = function(_active) {
-		/// @func	set_triggers_active(active?)
-		/// @param	{boolean} active?
-		/// @return {Action} self
-		///
-		__ITriggers.__active = _active;
-		return self;
-	};
-	static set_trigger_active  = function(_trigger_name, _active) {
-		/// @func	set_trigger_active(trigger_name, active?)
-		/// @param	{string}  trigger_name
-		/// @param	{boolean} active?
-		/// @return {Action} self
-		///
-		if (has_trigger(_trigger_name)) {
-			(get_trigger(_trigger_name)).set_active(_active);
-		}
-		return self;
-	};
-	static set_trigger_method  = function(_trigger_name, _trigger_method) {
-		/// @func	set_trigger_active(trigger_name, trigger_method)
-		/// @param	{string} trigger_name
-		/// @param	{method} method
-		/// @return {Action} self
-		///
-		if (has_trigger(_trigger_name)) {
-			(get_trigger(_trigger_name)).set_method(_trigger_method);
-		}
-		return self;
-	};
-	static set_trigger_data	   = function(_trigger_name, _trigger_data) {
-		/// @func	set_trigger_data(trigger_name, trigger_data)
-		/// @param	{string} trigger_name
-		/// @param	{method} method
-		/// @return {Action} self
-		///
-		if (has_trigger(_trigger_name)) {
-			(get_trigger(_trigger_name)).set_data(_trigger_data);
-		}
-		return self;
-	};
-		
-	#endregion
-	#region Checkers ///////////
-		
-	static has_trigger = function(_trigger_name) {
-		/// @func	has_trigger(trigger_name)
-		/// @param	{string}  trigger_name
-		/// @return {boolean} has_trigger?
-		///
-		return get_trigger(_trigger_name) != undefined;
-	};
-			
-	#endregion
-	
-	var _self = self;
-	with (__owner) {
-		trigger_container_add_trigger = method(_self, function(_trigger_name, _trigger_method) {
-			return add_trigger(_trigger_name, _trigger_method);
-		});
-	}
+	return Interface(_interface());
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function Interface(_methods_struct) {
+	/// @func	Interface(methods_struct)
+	/// @param	{struct} methods_struct
+	/// @return NA
+	///
+	var _methods_required = _methods_struct[$ "required"] ?? [];
+	var _methods_optional = _methods_struct[$ "optional"] ?? [];
+	
+	/// Optional
+	for (var _i = 0, _len = array_length(_methods_optional); _i < _len; _i++) {
+		var _method = _methods_optional[_i];
+		if (!variable_struct_exists(self, _method)) {
+			if (instanceof(self) == "instance") {
+				var _error = "<INTERFACE> optional method " + _method + "() not implemented in object " + object_get_name(self.object_index);
+			}
+			else {
+				var _error = "<INTERFACE> optional method " + _method + "() not implemented in constructor " + instanceof(self) + "()";
+			}
+			log(_error);
+		}
+	}
+	
+	/// Required
+	for (var _i = 0, _len = array_length(_methods_required); _i < _len; _i++) {
+		var _method = _methods_required[_i];
+		if (!variable_struct_exists(self, _method)) {
+			if (instanceof(self) == "instance") {
+				var _error = "<INTERFACE> required method " + _method + "() not implemented in object " + object_get_name(self.object_index);
+			}
+			else {
+				var _error = "<INTERFACE> required method " + _method + "() not implemented in constructor " + instanceof(self) + "()";
+			}
+			show_message(_error);
+			game_end();
+		}
+	};
+};
+////////////////////////////////////////////////////////////////
+function IIntegral() {
+	/// @func	IIntegral()
+	/// @return {struct} method_data
+	///
+	return {
+		optional: [
+			"setup",
+			"teardown",
+		],
+		required: [
+			"update",	
+			"render",	
+		],
+	};
+};
+function IIntegralComplete() {
+	/// @func	IIntegralComplete()
+	/// @return {struct} method_data
+	///
+	return {
+		required: [
+			"setup",
+			"teardown",
+			"rebuild",
+			"update",	
+			"render",	
+		],
+	};
+};

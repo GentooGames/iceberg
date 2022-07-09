@@ -1,23 +1,23 @@
 //////////////////////////////////////////////////////
 //	Components										//								
-//		-	components are class objects that 		//
-//			containerize reusable functionality.    //	
-//		-	components can be instantiated as stand //
-//			alone objects, or be tied into a 		//
-//			greater component system designed to 	//
-//			organize and provide structure to a 	//
-//			series of components.					//							
-//		-	any form of generalized logic that can 	//
-//			be shared across multiple objects 		//
-//			(regardless of object inheritence) 		//
-//			should be encapsulated into a component //
+//		--- components are class objects that 		//
+//		|	containerize reusable functionality.    //	
+//		--- components can be instantiated as stand //
+//		|	alone objects, or be tied into a 		//
+//		|	greater component system designed to 	//
+//		|	organize and provide structure to a 	//
+//		|	series of components.					//							
+//		--- any form of generalized logic that can 	//
+//		|	be shared across multiple objects 		//
+//		|	(regardless of object inheritence) 		//
+//		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
 function Component() constructor {
 	/// @func	Component()
 	/// @return {Component} self
 	///
-	IIntegral();
+	implements(IIntegral);
 
 	__owner  = other;
 	__name	 = undefined;
@@ -26,7 +26,7 @@ function Component() constructor {
 	static setup    = function() {}; /// @OVERRIDE
 	static update   = function() {}; /// @OVERRIDE
 	static render   = function() {}; /// @OVERRIDE
-	//static teardown = function() {}; /// @OVERRIDE
+	static teardown = function() {}; /// @OVERRIDE
 	
 	static actvate	  = function() {
 		/// @func	actvate()
@@ -44,3 +44,4 @@ function Component() constructor {
 	};
 		
 };
+
