@@ -18,7 +18,7 @@ function Moveable() : Component() constructor {
 	
 	// v-- to implement later
 	__dir		 = undefined;
-	__collisions = undefined;	// instantiated in setup()
+	__collisions = undefined;	// MOVE INTO COLLIDABLE()
 	__path		 = undefined;	// instantiated in setup()
 	
 	static setup	= function() {
