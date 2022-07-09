@@ -19,18 +19,11 @@
 
 function implements(_interface) {
 	/// @func	implements(interface)
-	/// @param	{function} interface
+	/// @param	{struct} interface_data
 	/// @return NA
 	///
-	return Interface(_interface());
-};
-function Interface(_methods_struct) {
-	/// @func	Interface(methods_struct)
-	/// @param	{struct} methods_struct
-	/// @return NA
-	///
-	var _methods_required = _methods_struct[$ "required"] ?? [];
-	var _methods_optional = _methods_struct[$ "optional"] ?? [];
+	var _methods_required = _interface[$ "required"] ?? [];
+	var _methods_optional = _interface[$ "optional"] ?? [];
 	
 	/// Optional
 	for (var _i = 0, _len = array_length(_methods_optional); _i < _len; _i++) {
