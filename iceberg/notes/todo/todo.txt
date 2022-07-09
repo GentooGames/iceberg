@@ -1,10 +1,6 @@
 iceberg:
 	- encapsulate game logic into components
 	- abstracted component management system
-	- what to do with "sub-components"?
-	- interfaces?
-		- interfaces could act as a way to help handle dependencies in github repos, 
-		where errors are thrown when the proper implementation is not declared?
 	- replace all instance_destroy() with instance.destroy()
 	- standardize FluidProperty method implementation
 		- make sure that spring setters are not just setting local value, but also spring's actual value

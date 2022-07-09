@@ -1,7 +1,7 @@
 /// @desc obj_test : Create
 event_inherited();
 
-setup  = method_inherit(setup, function() {
+setup  = method_inherit(setup,  function() {
 	/// @func setup()
 	///
 	/// var _method = new Method();
