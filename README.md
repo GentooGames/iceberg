@@ -37,10 +37,10 @@ open source/free assets included in this repository are:
 - bfrymire's crispy (https://github.com/bfrymire/crispy)
 
 custom systems written by __gentoo__ and included in this repository are:
-- gentui (https://github.com/GentooGames/gentui)
-- orderly (https://github.com/GentooGames/orderly)
-- weestate (https://github.com/GentooGames/weestate)
-- gstat (https://github.com/GentooGames/gstat)
-- floe (https://github.com/GentooGames/floe)
+- gentui : ui
+- orderly : action queueing
+- weestate : minimal state machine
+- gstat : complex stats that can contain different stacked modifiers
+- floe : room transition effects
 
 please support these awesome developers financially with donations when possible.
