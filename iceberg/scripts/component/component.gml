@@ -149,10 +149,6 @@ function Components() : Component() constructor {
 	/// @return {Coop} self
 	///
 	__interfaces = new Interfaces();
-	
-	//static add = method(self, function(_name, _component) {
-	//	
-	//});
 };
 	
 //////////////////////////////////////////////////////
@@ -164,8 +160,7 @@ function Interfaces() : Component() constructor {
 	/// @func	Interfaces()
 	/// @return {Interfaces} self
 	///
-	__interfaces  = new Stash();
-	__iInterfaces = new IStash(__interfaces);
+	__interfaces = new Stash();
 };
 function Interface(_component, _owner = _component.get_owner()) constructor {
 	/// @func	Interface(component, owner*)
@@ -188,7 +183,38 @@ function Interface(_component, _owner = _component.get_owner()) constructor {
 		///
 		return __owner;
 	};		
+	
+	/// Init Stash To Hold Component Instances
+	var _comp_name  = string_lower(instanceof(_component));
+	var _stash_name = "__stash_" + _comp_name;	/// __stash_actionable
+	if (!variable_struct_exists(__owner, _stash_name)) {
+		variable_struct_set(__owner, _stash_name, undefined);
+		variable_struct_set(__owner, _stash_name, new Stash());
+		
+		variable_struct_set(__owner, _comp_name + "_get", method(__component, function(_name) {
+			
+			
+		}));
+	}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

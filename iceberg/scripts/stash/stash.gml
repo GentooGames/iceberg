@@ -3,6 +3,34 @@
 //		--- ... 									//
 //////////////////////////////////////////////////////
 
+/// Interface
+function IStash(_stash, _owner = _stash.get_owner()) : Interface(_stash, _owner) constructor {
+	/// @func	IStash(stash, owner*)
+	/// @param	{Stash}  stash
+	/// @param	{struct} owner=stash.get_owner()
+	/// @return {IStash} self
+	///
+	__owner.stash_get			  = method(__component, __component.get);
+	__owner.stash_set			  = method(__component, __component.set);
+	__owner.stash_add			  = method(__component, __component.add);
+	__owner.stash_exists		  = method(__component, __component.exists);
+	__owner.stash_remove		  = method(__component, __component.remove);
+	__owner.stash_clear			  = method(__component, __component.clear);
+	__owner.stash_get_items		  = method(__component, __component.get_items);
+	__owner.stash_get_items_array = method(__component, __component.get_items_array);
+	__owner.stash_get_names		  = method(__component, __component.get_names);
+	__owner.stash_get_count		  = method(__component, __component.get_count);
+	
+	if (!variable_struct_exists(__owner, "__stash_stash")) {
+		variable_struct_set(__owner, "__stash_stash", undefined);	
+		variable_struct_set(__owner, "__stash_stash", new Stash());	
+		
+		__owner.get_stash = method(__owner, function(_stash_name) {
+			return __stash_stash.get(_stash_name);
+		});
+	}
+};
+
 /// Component
 function Stash(_config = {}) : Component(_config) constructor {
 	/// @func	Stash(config*)
@@ -25,17 +53,6 @@ function Stash(_config = {}) : Component(_config) constructor {
 			return __items[$ _name];
 		}
 	};
-	static set			   = function(_name, _value) {
-		/// @func	set(name, value)
-		/// @param	{string} name
-		/// @param	{any}    value
-		/// @return {Stash}  self
-		///
-		with (__stash) {
-			__items[$ _name] = _value;
-		}
-		return self;
-	};
 	static add			   = function(_name, _value) {
 		/// @func	add(name, value)
 		/// @param	{string} name
@@ -43,10 +60,10 @@ function Stash(_config = {}) : Component(_config) constructor {
 		/// @return {Stash}  self
 		///
 		with (__stash) {
+			__items[$ _name] = _value;
 			array_push(__names, _name);
 			__count++;
 		}
-		set(_name, _value);
 		return self;
 	};
 	static exists		   = function(_name) {
@@ -112,23 +129,4 @@ function Stash(_config = {}) : Component(_config) constructor {
 		///
 		return __stash.__count;
 	};
-};
-
-/// Interface
-function IStash(_stash, _owner = _stash.get_owner()) : Interface(_stash, _owner) constructor {
-	/// @func	IStash(stash, owner*)
-	/// @param	{Stash}  stash
-	/// @param	{struct} owner=stash.get_owner()
-	/// @return {IStash} self
-	///
-	__owner.stash_get			  = method(__component, __component.get);
-	__owner.stash_set			  = method(__component, __component.set);
-	__owner.stash_add			  = method(__component, __component.add);
-	__owner.stash_exists		  = method(__component, __component.exists);
-	__owner.stash_remove		  = method(__component, __component.remove);
-	__owner.stash_clear			  = method(__component, __component.clear);
-	__owner.stash_get_items		  = method(__component, __component.get_items);
-	__owner.stash_get_items_array = method(__component, __component.get_items_array);
-	__owner.stash_get_names		  = method(__component, __component.get_names);
-	__owner.stash_get_count		  = method(__component, __component.get_count);
 };
