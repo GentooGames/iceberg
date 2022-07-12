@@ -1,3 +1,390 @@
+//////////////////////////////////////////////////////
+//	Components										//								
+//		--- components are class objects that 		//
+//		|	containerize reusable functionality.    //	
+//		--- components can be instantiated as stand //
+//		|	alone objects, or be tied into a 		//
+//		|	greater component system designed to 	//
+//		|	organize and provide structure to a 	//
+//		|	series of components.					//							
+//		--- any form of generalized logic that can 	//
+//		|	be shared across multiple objects 		//
+//		|	(regardless of object inheritence) 		//
+//		|	should be encapsulated into a component //
+//////////////////////////////////////////////////////
+
+function Component(_config = {}) constructor {
+	/// @func	Component(config*)
+	/// @param	{struct}    config={}
+	/// @return {Component} self
+	///
+	__initialized =  false;
+	__config	  = _config;
+	__owner		  = _config[$ "owner" ] ?? other;
+	__active	  = _config[$ "active"] ?? true;
+	__name		  = _config[$ "name"  ] ?? __get_name_unique();
+	
+	#region Private ////////
+	
+	static __update_data	 = function() {
+		/// @func	__update_data()
+		/// @return {Component} self
+		///
+		if (__config[$ "active"] != undefined) set_active(__config.active);
+		if (__config[$ "owner "] != undefined) set_owner (__config.owner );
+		if (__config[$ "name  "] != undefined) set_name  (__config.name  );
+		
+		return self;
+	};
+	static __get_name_unique = function() {
+		/// @func	__get_name_unique()
+		/// @return {string} name
+		///
+		return instanceof(self) + "_" + string(ptr(self));
+	};
+	
+	#endregion
+	
+	static setup    = function() {		/// @OVERRIDE
+		/// @func	setup()
+		/// @return {Component} self
+		///
+		__initialized = true;
+		return self;
+	}; 
+	static teardown = function() {		/// @OVERRIDE
+		/// @func	teardown()
+		/// @return {Component} self
+		///
+		__initialized = false;
+		return self;
+	}; 
+	static update   = function() {};	/// @OVERRIDE
+	static render   = function() {};	/// @OVERRIDE
+	
+	#region Actions ////////
+	
+	static actvate	  = function() {
+		/// @func	actvate()
+		/// @return {Component} self
+		///
+		return set_active(true);
+	};
+	static deactivate = function() {
+		/// @func	deactivate()
+		/// @return {Component} self
+		///
+		return set_active(false);
+	};
+	
+	#endregion
+	#region Getters ////////
+	
+	static get_config = function() {
+		/// @func	get_config()
+		/// @return {struct} config
+		///
+		return __config;
+	};
+	static get_owner  = function() {
+		/// @func	get_owner()
+		/// @return {struct} owner
+		///
+		return __owner;
+	};
+	static get_active = function() {
+		/// @func	get_active()
+		/// @return {boolean} active?
+		///
+		return __active;
+	};
+	static get_name   = function() {
+		/// @func	get_name()
+		/// @return {string} name
+		///
+		return __name;
+	};
+		
+	#endregion
+	#region Setters	////////
+	
+	static set_config = function(_config) {
+		/// @func	set_config(config)
+		/// @param	{struct}	config
+		/// @return {Component} self
+		///
+		__config = _config;
+		__update_data();
+		return self;
+	};
+	static set_owner  = function(_owner) {
+		/// @func	set_owner(owner)
+		/// @param	{instance/struct} owner
+		/// @return {Component}	  self
+		///
+		__owner = _owner;
+		return self;
+	};
+	static set_active = function(_active) {
+		/// @func	set_active(active?)
+		/// @param	{boolean}	active?
+		/// @return {Component} self
+		///
+		__active = _active;
+		return self;
+	};
+	static set_name   = function(_name) {
+		/// @func	set_name(name)
+		/// @param	{string}	name
+		/// @return {Component} self
+		///
+		__name = _name;
+		return self;
+	};
+		
+	#endregion
+};
+function Components() : Component() constructor {
+	/// @func	Components()
+	/// @return {Coop} self
+	///
+	__interfaces = new Interfaces();
+};
+	
+
+
+function Interfaces() : Component() constructor {
+	/// @func	Interfaces()
+	/// @return {Interfaces} self
+	///
+	__interfaces = new Stash();
+};
+
+
+#region Moveable ///////////////////
+
+#region Moveable
+
+#region Components /////
+
+function Moveable() : Component() constructor {
+	/// @func	Moveable()
+	/// @return	{Moveable} self
+	///
+	__owner	   = other;
+	__hspd	   = 0;
+	__vspd	   = 0;
+	__speed	   = 0;
+	__accel	   = 1;
+	__fric	   = 1;
+	__movesets = {
+		__sets:	   {},
+		__names:   [],
+		__current: {
+			__set:  undefined,
+			__name: undefined,
+		},
+	};
+	///__dir  = undefined;
+	///__path = undefined;	// instantiated in setup()
+	
+	static setup_super	  = setup;
+	static setup		  = function() {
+		/// @func	setup()
+		/// @return {Moveable} self
+		///
+		if (!__initialized) {
+			setup_super();
+			//__path = path_add();
+			//path_set_kind(__path, 1);
+			//path_set_closed(__path, false);
+		}
+		return self;
+	};
+	static teardown_super = teardown;
+	static teardown		  = function() {
+		/// @func	teardown()
+		/// @return {Moveable} self
+		///
+		if (__initialized) {
+			teardown_super();
+			//path_delete(__path);
+			//__path = undefined;
+		}
+		return self;
+	};
+	static update		  = function() {
+		/// @func	update()
+		/// @return {Moveable} self
+		///
+		//__update_hspd_vspd();
+		//__update_xy();
+		return self;
+	};
+		
+	#region MoveSet
+	
+	#region MoveSet - Private
+	
+	static __moveset_update_values	  = function(_moveset = __moveset_get_current()) {
+		/// @func	__moveset_update_values(moveset*)
+		/// @param	{MoveableMoveset} moveset = moveset_current
+		/// @return {Actionable}	  self
+		///
+		__speed = _moveset.__speed;
+		__accel = _moveset.__accel;
+		__fric  = _moveset.__fric;
+		return self;
+	};
+	static __moveset_get_current_name = function() {
+		/// @func	__moveset_get_current_name()
+		///	@return {string} name
+		///
+		return __movesets.__current.__name;
+	};
+	static __moveset_get_current	  = function() {
+		/// @func	__moveset_get_current()
+		/// @return {struct} move_set
+		///
+		return __movesets.__current.__set;
+	};
+	static __moveset_get			  = function(_moveset_name) {
+		///	@func	__moveset_get(moveset_name)
+		/// @param	{string} moveset_name
+		/// @return {struct} moveset
+		///
+		return __movesets.__sets[$ _moveset_name];
+	};
+	static __moveset_set_current	  = function(_moveset_name) {
+		/// @func	__moveset_set_current(moveset_name)
+		/// @param	{string}	 moveset_name
+		/// @return {Actionable} self
+		///
+		if (__moveset_exists(_moveset_name)) {
+			__movesets.__current.__name = _moveset_name;
+			__movesets.__current.__set  = __moveset_get(_moveset_name);
+			__moveset_update_values();
+		}
+		return self;
+	};
+	static __moveset_exists			  = function(_moveset_name) {
+		/// @func	__moveset_exists(moveset_name)
+		/// @param	{string}  moveset_name
+		/// @return {boolean} exists?
+		///
+		return __moveset_get(_moveset_name) != undefined;
+	};
+	static __moveset_add			  = function(_moveset_name, _moveset) {
+		/// @func	__moveset_add(moveset_name, moveset)
+		/// @param	{string}   moveset_name
+		/// @param	{MoveSet}  moveset
+		/// @return {Moveable} self
+		///
+		__movesets.__sets[$ _moveset_name] = _moveset;
+		array_push(__movesets.__names, _moveset_name);
+		return self;
+	};
+	static __moveset_remove			  = function(_moveset_name) {
+		/// @func	__moveset_remove(moveset_name)
+		/// @param	{string}   moveset_name
+		/// @return {Moveable} self
+		///
+		if (__moveset_exists(_moveset_name)) {
+			variable_struct_remove(__movesets.__sets, _moveset_name);
+			
+			/// array_find_delete()
+			for (var _i = array_length(__movesets.__names) - 1; _i >= 0; _i--) {
+				if (__movesets.__names[_i] == _moveset_name) {
+					array_delete(__movesets.__names, _i, 1);
+					break;
+				}
+			}
+		}
+		return self;
+	};
+	
+	#endregion
+	
+	static moveset_new		   = function(_moveset_name, _moveset_data) {
+		/// @func	moveset_new(moveset_name, moveset_data)
+		/// @param	{string}   moveset_name
+		/// @param	{struct}   moveset_data
+		/// @return {Moveable} self
+		///
+		var _moveset = new MoveableMoveSet(_moveset_name, _moveset_data);
+		__moveset_add(_moveset_name, _moveset);
+		return self;
+	};
+	static moveset_exists	   = function(_moveset_name) {
+		/// @func	moveset_exists(moveset_name)
+		/// @param	{string}  moveset_name
+		/// @return {boolean} moveset_exists?
+		///
+		return __moveset_exists(_moveset_name);
+	};
+	static moveset_change	   = function(_moveset_name) {
+		/// @func	moveset_change(moveset_name)
+		/// @param	{string}   moveset_name
+		/// @return {Moveable} self
+		///
+		if (__moveset_exists(_moveset_name)) {
+			var _moveset = __moveset_get(_moveset_name);
+			__moveset_set_current(_moveset);
+		}
+		return self;
+	};
+	static moveset_add_trigger = function(_moveset_name, _trigger_name, _trigger) {
+		/// @func	moveset_add_trigger(moveset_name, trigger_name, trigger)
+		/// @param	...
+		/// @return {Moveable} self
+		///
+		
+	};
+		
+	#endregion
+};
+function MoveableTopDown() : Moveable() constructor {
+	/// @func	MoveableTopDown()
+	/// @return {Component} self
+	///
+	
+};
+
+#endregion
+#region Interfaces /////
+
+function IMoveable(_moveable, _owner = _moveable.get_owner()) : Interface(_moveable, _owner) constructor {
+	/// @func	IMoveable(moveable, owner*)
+	/// @param	{Moveable}  moveable
+	/// @param	{struct}	owner=moveable.get_owner()
+	/// @return {IMoveable} self
+	///
+	__owner.moveset_new = method(__component, __component.moveset_new);
+};
+	
+#endregion
+#region Util ///////////
+
+function MoveableMoveSet(_name, _config) constructor {
+	/// @func	MoveableMoveSet(name, config)
+	/// @param	{string}		  name
+	/// @param	{struct}		  config
+	/// @return {MoveableMoveSet} self
+	///
+	__moveable	=  other;
+	__name		= _name;
+	__config	= _config;
+	__speed		= _config[$ "speed"] ?? 0;
+	__accel		= _config[$ "accel"] ?? 0;
+	__fric		= _config[$ "fric" ] ?? 0;
+	__mult		= _config[$ "mult" ] ?? 1;
+};
+
+#endregion
+
+#endregion
+
+#endregion
 #region Actionable /////////////////
 
 function Actionable() : Component() constructor {
@@ -617,148 +1004,14 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 };
 
 #endregion
-#region Util ///////////////////////
-
-#region Method, Action, Trigger ////
-
-function Method(_config = {}) : Component(_config) constructor {
-	/// @func	Method(config*)
-	/// @param	{struct} config={}
-	/// @return {Method} self
-	///
-	__method = _config[$ "method"] ?? undefined;
-	__data	 = _config[$ "data"  ] ?? undefined;
-	
-	static execute = function() {	/// @OVERRIDE
-		/// @func	execute(data)
-		/// @param  {any} data
-		/// @return {any} execute_return
-		///
-		if (is_method(__method)) {
-			return __method_execute();	
-		}
-		return __method_execute_script();
-	};
-	
-	#region Private ////////
-	
-	static __method_execute		   = function() {
-		/// @func	__method_execute()
-		/// @return {any} method_return
-		///
-		return __method(__data);
-	};
-	static __method_execute_script = function() {
-		/// @func	__method_execute_script()
-		/// @return {any} method_return
-		///
-		return script_execute_ext(__method, __data);
-	};
-	
-	#endregion
-	#region Getters ////////
-	
-	static get_method = function() {
-		/// @func	get_method()
-		/// @return {method} method
-		///
-		return __method;
-	};
-	static get_data	  = function() {
-		/// @func	get_data()
-		/// @return {any} data
-		///
-		return __data;
-	};
-		
-	#endregion
-	#region Setters ////////
-	
-	static set_method = function(_method) {
-		/// @func	set_method(method)
-		/// @param	{method} method
-		/// @return {Method} self
-		///
-		__method = _method;
-		return self;
-	};
-	static set_data	  = function(_data) {
-		/// @func	set_data(data)
-		/// @param	{any} data
-		/// @return {Method} self
-		///
-		__data = _data;
-		return self;
-	}
-		
-	#endregion
-};
-function Action(_config = {}) : Method(_config) constructor {
-	/// @func	Action(config*)
-	/// @param	{struct} config={}
-	/// @return {Action} self
-	///
-	ITrigger();
-		
-	/// Register Trigger PubSub Event
-	var _component = get_owner();
-	_component.event_register( "action_executed_" + get_name());
-	
-	static update  = function() {
-		/// @func	update()
-		/// @return {Action} self
-		///
-		if (get_active()) {
-			update_triggers();
-		}
-		return self;
-	};
-	static execute = function() {	/// @OVERIDE
-		/// @func	execute()
-		/// @return {any} execute_return
-		///
-		var _method =  get_method();
-		var _return = _method(get_data());
-		set_data(undefined);	// <--	wipe data after execution, so that temporarily
-								//		set data through action_send_payload() does not 
-								//		become persistent.
-		var _component = get_owner();
-		_component.event_publish("action_executed_" + get_name(), self);
-		
-		return _return;
-	};
-};
-function Trigger(_config = {}) : Method(_config) constructor {
-	/// @func	Trigger(config*)
-	/// @param	{struct} config={}
-	/// @return {Trigger} self
-	///
-	static execute_super = execute;
-	static execute		 = function() {
-		/// @func	execute(data)
-		/// @param  {any} data
-		/// @return {any} execute_return
-		///
-		var _result = execute_super();
-		if (_result) {
-			var _action	   =  get_owner();
-			var _component = _action.get_owner();
-			_component.event_publish("trigger_executed_" + get_name());
-		}
-		return _result;
-	};
-};
-
-#endregion
-
-
-
-#endregion
 
 function Triggers() constructor {
 	/// @func	Triggers()
 	/// @return {Triggers} self
 	///
+	__triggers = new Stash("triggers");
+	__actions  = new Stash("actions");
+	
 	__owner		= other;
 	__triggers  = {
 		__active:   true,

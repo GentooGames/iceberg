@@ -4,18 +4,14 @@ event_inherited();
 setup  = method_inherit(setup,  function() {
 	/// @func setup()
 	///
+	triggers = new Stash("trigger");
+	actions  = new Stash("action");
 	
-	stash = new Stash();
-	stash.add("entry_1", 10);
-	show_message(stash.get("entry_1"));
-	stash.add("entry_1", 20);
-	stash.add("entry_1", 40);
-	show_message(stash.get("entry_1"));
-	stash.remove("entry_1", 20);
-	show_message(stash.get("entry_1"));
-	stash.remove("entry_1");
-	show_message(stash.get("entry_1"));
-	//show_message(stash.get_count());
+	trigger_add("test_trigger", "method()");
+	show_message(trigger_get("test_trigger"));
+	show_message(trigger_get_count());
+	
+	
 	
 	//components = new Components();
 	

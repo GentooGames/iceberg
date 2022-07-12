@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "components",
-    "path": "folders/scripts/components.yy",
+    "name": "scripts",
+    "path": "folders/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Component",
+  "name": "Interfaces",
   "tags": [],
   "resourceType": "GMScript",
 }

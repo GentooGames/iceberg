@@ -6,7 +6,7 @@
     "path": "folders/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "__components",
+  "name": "Components",
   "tags": [],
   "resourceType": "GMScript",
 }

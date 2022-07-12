@@ -45,6 +45,13 @@ function ___gui() {
 		
 				#endregion
 			}
+			
+			//label = new UiLabel({
+			//	text: "test label here...",
+			//	x: SURF_W * 0.5,
+			//	y: SURF_H * 0.5,
+			//});
+			
 			return self;
 	    },    
 		update:	  function() {
@@ -59,6 +66,9 @@ function ___gui() {
 		
 				#endregion
 			}
+				
+			//label.update();
+				
 			return self;
 		},
 		render:   function() {
@@ -73,6 +83,9 @@ function ___gui() {
 		
 				#endregion
 			}
+				
+			//label.render();
+			
 			return self;
 		},
 		teardown: function() {
