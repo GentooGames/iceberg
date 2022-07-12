@@ -2,11 +2,11 @@
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
-    "name": "gentoo",
-    "path": "folders/scripts/libraries/gentoo.yy",
+    "name": "scripts",
+    "path": "folders/scripts.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Coop",
+  "name": "__components",
   "tags": [],
   "resourceType": "GMScript",
 }

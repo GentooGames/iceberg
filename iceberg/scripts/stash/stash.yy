@@ -6,7 +6,7 @@
     "path": "folders/scripts/components.yy",
   },
   "resourceVersion": "1.0",
-  "name": "Scriptable",
+  "name": "Stash",
   "tags": [],
   "resourceType": "GMScript",
 }

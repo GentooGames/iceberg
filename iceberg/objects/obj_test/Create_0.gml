@@ -4,12 +4,15 @@ event_inherited();
 setup  = method_inherit(setup,  function() {
 	/// @func setup()
 	///
-	/// var _method = new Method();
-	/// show_message(object_get_name(_method.__owner.object_index));
+	components = new Components();
+	//show_message(stash_get("components"));
+	//interfaces = new Stash({ name: "interfaces" });
 	
-	coop = new Coop()
-		//.add_component(new Actionable(), "fsm")
-		.add_component(new Moveable())
+	
+	
+	//coop = new Coop()
+	//	//.add_component(new Actionable(), "fsm")
+	//	.add_component(new Moveable())
 		
 	//coop.get_component("fsm")
 	//	.actionable_state_add("test_state", {
@@ -20,21 +23,27 @@ setup  = method_inherit(setup,  function() {
 	//	})
 		
 	//coop.get_component("Moveable")
-	//	.add_moveset("default", {
-	//		
+	//	.moveset_new("default", {
+	//		speed: 4.0,
+	//		accel: 0.5,
+	//		fric:  0.3,
 	//	})
-	//	.add_moveset("ice", {
-	//		
+	//	.moveset_new("ice", {
+	//		speed: 6.0,
+	//		accel: 0.2, 
+	//		fric:  0.1, 
 	//	})
 		
 })();
 update = method_inherit(update, function() {
 	/// @func update()
 	///
-	coop.update();
+	
+	//coop.update();
 });
 render = method_inherit(render, function() {
 	/// @func render()
 	///
-	coop.render();
+	
+	//coop.render();
 });

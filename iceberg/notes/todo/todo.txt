@@ -1,4 +1,5 @@
 iceberg:
+	- normalize usage of custom array functions, thats why they exist and part of this project
 	- encapsulate game logic into components
 	- abstracted component management system
 	- replace all instance_destroy() with instance.destroy()
@@ -25,6 +26,7 @@ iceberg:
 		- initialize arrays to possible max size using array_create()
 		- setting an array reference to 0 will deallocate the memory associated for it
 		- my_array[@ 0] will access the array directly and not the array copy
+	- specify all methods with method()? this would add clarity and easy ability to change method binding later if needed?
 	
 __gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width
