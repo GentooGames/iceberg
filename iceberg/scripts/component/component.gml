@@ -185,15 +185,19 @@ function Interface(_component, _owner = _component.get_owner()) constructor {
 	};		
 	
 	/// Init Stash To Hold Component Instances
-	var _comp_name  = string_lower(instanceof(_component));
-	var _stash_name = "__stash_" + _comp_name;	/// __stash_actionable
-	if (!variable_struct_exists(__owner, _stash_name)) {
-		variable_struct_set(__owner, _stash_name, undefined);
-		variable_struct_set(__owner, _stash_name, new Stash());
+	var _component_name = string_lower(instanceof(_component));
+	var _stash_var_name = "__stash_" + _component_name;
+	if (!variable_struct_exists(__owner, _stash_var_name)) {
+		variable_struct_set(__owner, _stash_var_name, undefined);
+		__owner[$ _stash_var_name] = new Stash();
 		
-		variable_struct_set(__owner, _comp_name + "_get", method(__component, function(_name) {
-			
-			
+		var _bridge	= {
+			stash: _owner[$ _stash_var_name],
+		};
+		
+		/// __stash_moveable_get = function() {};
+		variable_struct_set(__owner, _component_name + "_add", method(_bridge, function(_name, _value) {
+			return stash.add(_name, _value);
 		}));
 	}
 };

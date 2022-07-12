@@ -21,14 +21,14 @@ function IStash(_stash, _owner = _stash.get_owner()) : Interface(_stash, _owner)
 	__owner.stash_get_names		  = method(__component, __component.get_names);
 	__owner.stash_get_count		  = method(__component, __component.get_count);
 	
-	if (!variable_struct_exists(__owner, "__stash_stash")) {
-		variable_struct_set(__owner, "__stash_stash", undefined);	
-		variable_struct_set(__owner, "__stash_stash", new Stash());	
-		
-		__owner.get_stash = method(__owner, function(_stash_name) {
-			return __stash_stash.get(_stash_name);
-		});
-	}
+	//if (!variable_struct_exists(__owner, "__stash_stash")) {
+	//	variable_struct_set(__owner, "__stash_stash", undefined);	
+	//	variable_struct_set(__owner, "__stash_stash", new Stash());	
+	//	
+	//	__owner.get_stash = method(__owner, function(_stash_name) {
+	//		return __stash_stash.get(_stash_name);
+	//	});
+	//}
 };
 
 /// Component
