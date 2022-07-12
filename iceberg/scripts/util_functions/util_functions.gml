@@ -639,6 +639,19 @@ function struct_get_random_weighted(_data) {
 	}
 	return _data[irandom(array_length(_data) - 1)];
 };
+function struct_to_array(_struct, _names_array = variable_struct_get_names(_struct), _count = array_length(_names_array)) {
+	/// @func	struct_to_array(struct, names*, count*)
+	/// @param	{struct} struct
+	/// @param	{array}  names_array=struct_names
+	/// @param	{real}   count=-1
+	/// @return {array}  array
+	///
+	var _items  = array_create(_count);
+	for (var _i = 0; _i < _count; _i++) {
+		array_push(_items, _struct[$ _names_array[_i]]);
+	};
+	return _items;
+};
 
 #endregion
 #region buffers ////////////

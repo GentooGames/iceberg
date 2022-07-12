@@ -1,5 +1,3 @@
-
-
 #region Actionable /////////////////
 
 function Actionable() : Component() constructor {
@@ -757,12 +755,6 @@ function Trigger(_config = {}) : Method(_config) constructor {
 
 #endregion
 
-
-
-
-
-
-
 function Triggers() constructor {
 	/// @func	Triggers()
 	/// @return {Triggers} self
@@ -955,39 +947,4 @@ function Triggers() constructor {
 	
 	
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

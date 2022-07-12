@@ -4,6 +4,7 @@ function IMoveable(_moveable, _owner = _moveable.get_owner()) : Interface(_movea
 	/// @param	{struct}	owner=moveable.get_owner()
 	/// @return {IMoveable} self
 	///
+	__owner.moveset_new = method(__component, __component.moveset_new);
 };
 function Moveable() : Component() constructor {
 	/// @func	Moveable()
@@ -197,4 +198,3 @@ function MoveableMoveSet(_name, _config) constructor {
 	__fric		= _config[$ "fric" ] ?? 0;
 	__mult		= _config[$ "mult" ] ?? 1;
 };
-	

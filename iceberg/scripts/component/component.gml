@@ -186,7 +186,7 @@ function Interface(_component, _owner = _component.get_owner()) constructor {
 	
 	/// Init Stash To Hold Component Instances
 	var _component_name = string_lower(instanceof(_component));
-	var _stash_var_name = "__stash_" + _component_name;
+	var _stash_var_name = "__" + _component_name + "es"
 	if (!variable_struct_exists(__owner, _stash_var_name)) {
 		variable_struct_set(__owner, _stash_var_name, undefined);
 		__owner[$ _stash_var_name] = new Stash();
@@ -194,7 +194,6 @@ function Interface(_component, _owner = _component.get_owner()) constructor {
 		var _bridge	= {
 			stash: _owner[$ _stash_var_name],
 		};
-		
 		/// __stash_moveable_get = function() {};
 		variable_struct_set(__owner, _component_name + "_add", method(_bridge, function(_name, _value) {
 			return stash.add(_name, _value);

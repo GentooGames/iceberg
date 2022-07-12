@@ -4,7 +4,20 @@ event_inherited();
 setup  = method_inherit(setup,  function() {
 	/// @func setup()
 	///
-	components = new Components();
+	
+	stash = new Stash();
+	stash.add("entry_1", 10);
+	show_message(stash.get("entry_1"));
+	stash.add("entry_1", 20);
+	stash.add("entry_1", 40);
+	show_message(stash.get("entry_1"));
+	stash.remove("entry_1", 20);
+	show_message(stash.get("entry_1"));
+	stash.remove("entry_1");
+	show_message(stash.get("entry_1"));
+	//show_message(stash.get_count());
+	
+	//components = new Components();
 	
 	//coop = new Coop()
 	//	//.add_component(new Actionable(), "fsm")
