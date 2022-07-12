@@ -148,14 +148,12 @@ function Components() : Component() constructor {
 	/// @func	Components()
 	/// @return {Coop} self
 	///
-	__instanceof = instanceof(self);
 	__interfaces = new Interfaces();
 	
 	//static add = method(self, function(_name, _component) {
 	//	
 	//});
 };
-
 	
 //////////////////////////////////////////////////////
 //	Interfaces										//					
@@ -166,15 +164,30 @@ function Interfaces() : Component() constructor {
 	/// @func	Interfaces()
 	/// @return {Interfaces} self
 	///
-	__interfaces = new Stash();
-	show_message(__interfaces.get_name());
-	
+	__interfaces  = new Stash();
+	__iInterfaces = new IStash(__interfaces);
 };
-function Interface() constructor {
-	/// @func	Interface()
+function Interface(_component, _owner = _component.get_owner()) constructor {
+	/// @func	Interface(component, owner*)
+	/// @param	{Component} component
+	/// @param	{struct}	owner=component.get_owner()
 	/// @return {Interface} self
 	///
+	__component = _component;
+	__owner		= _owner;
 	
+	static get_component = function() {
+		/// @func	get_component()
+		/// @return {Component} component
+		///
+		return __component;
+	};
+	static get_owner	 = function() {
+		/// @func	get_owner()
+		/// @return {struct} owner
+		///
+		return __owner;
+	};		
 };
 
 

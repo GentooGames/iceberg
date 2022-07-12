@@ -5,10 +5,6 @@ setup  = method_inherit(setup,  function() {
 	/// @func setup()
 	///
 	components = new Components();
-	//show_message(stash_get("components"));
-	//interfaces = new Stash({ name: "interfaces" });
-	
-	
 	
 	//coop = new Coop()
 	//	//.add_component(new Actionable(), "fsm")
