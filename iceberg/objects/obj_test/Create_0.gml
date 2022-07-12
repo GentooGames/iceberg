@@ -1,15 +1,16 @@
 /// @desc obj_test : Create
 event_inherited();
+event_id = "test";
 
 setup  = method_inherit(setup,  function() {
 	/// @func setup()
 	///
-	triggers = new Stash("trigger");
-	actions  = new Stash("action");
-	
-	trigger_add("test_trigger", "method()");
-	show_message(trigger_get("test_trigger"));
-	show_message(trigger_get_count());
+	triggers = new Stash({
+		name: "triggers",
+	});
+	triggers_add("test_trigger", "method()");
+	//show_message(triggers_get("test_trigger"));
+	//show_message(trigger_get_count());
 	
 	
 	

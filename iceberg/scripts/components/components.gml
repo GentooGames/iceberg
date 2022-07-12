@@ -13,37 +13,12 @@
 //		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
-function Component(_config = {}) constructor {
+function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
 	/// @param	{struct}    config={}
 	/// @return {Component} self
 	///
-	__initialized =  false;
-	__config	  = _config;
-	__owner		  = _config[$ "owner" ] ?? other;
-	__active	  = _config[$ "active"] ?? true;
-	__name		  = _config[$ "name"  ] ?? __get_name_unique();
-	
-	#region Private ////////
-	
-	static __update_data	 = function() {
-		/// @func	__update_data()
-		/// @return {Component} self
-		///
-		if (__config[$ "active"] != undefined) set_active(__config.active);
-		if (__config[$ "owner "] != undefined) set_owner (__config.owner );
-		if (__config[$ "name  "] != undefined) set_name  (__config.name  );
-		
-		return self;
-	};
-	static __get_name_unique = function() {
-		/// @func	__get_name_unique()
-		/// @return {string} name
-		///
-		return instanceof(self) + "_" + string(ptr(self));
-	};
-	
-	#endregion
+	__initialized = false;
 	
 	static setup    = function() {		/// @OVERRIDE
 		/// @func	setup()
@@ -78,71 +53,6 @@ function Component(_config = {}) constructor {
 	};
 	
 	#endregion
-	#region Getters ////////
-	
-	static get_config = function() {
-		/// @func	get_config()
-		/// @return {struct} config
-		///
-		return __config;
-	};
-	static get_owner  = function() {
-		/// @func	get_owner()
-		/// @return {struct} owner
-		///
-		return __owner;
-	};
-	static get_active = function() {
-		/// @func	get_active()
-		/// @return {boolean} active?
-		///
-		return __active;
-	};
-	static get_name   = function() {
-		/// @func	get_name()
-		/// @return {string} name
-		///
-		return __name;
-	};
-		
-	#endregion
-	#region Setters	////////
-	
-	static set_config = function(_config) {
-		/// @func	set_config(config)
-		/// @param	{struct}	config
-		/// @return {Component} self
-		///
-		__config = _config;
-		__update_data();
-		return self;
-	};
-	static set_owner  = function(_owner) {
-		/// @func	set_owner(owner)
-		/// @param	{instance/struct} owner
-		/// @return {Component}	  self
-		///
-		__owner = _owner;
-		return self;
-	};
-	static set_active = function(_active) {
-		/// @func	set_active(active?)
-		/// @param	{boolean}	active?
-		/// @return {Component} self
-		///
-		__active = _active;
-		return self;
-	};
-	static set_name   = function(_name) {
-		/// @func	set_name(name)
-		/// @param	{string}	name
-		/// @return {Component} self
-		///
-		__name = _name;
-		return self;
-	};
-		
-	#endregion
 };
 function Components() : Component() constructor {
 	/// @func	Components()
@@ -150,9 +60,6 @@ function Components() : Component() constructor {
 	///
 	__interfaces = new Interfaces();
 };
-	
-
-
 function Interfaces() : Component() constructor {
 	/// @func	Interfaces()
 	/// @return {Interfaces} self
