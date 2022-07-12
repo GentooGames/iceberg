@@ -9,7 +9,7 @@ setup  = method_inherit(setup,  function() {
 		name: "triggers",
 	});
 	triggers_add("test_trigger", "method()");
-	show_message(triggers_get("test_trigger"));
+	//show_message(triggers_get("test_trigger"));
 	//show_message(trigger_get_count());
 	
 	

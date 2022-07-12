@@ -10,13 +10,13 @@ function Class(_config = {}) constructor {
 	
 	#region Private ////////
 	
-	static __get_name_unique = function() {	/// @OVERRIDE
+	static __get_name_unique = function() {	
 		/// @func	__get_name_unique()
 		/// @return {string} name
 		///
 		return instanceof(self) + "_" + string(ptr(self));
 	};
-	static __update_data	 = function() {
+	static __update_data	 = function() {	/// @OVERRIDE
 		/// @func	__update_data()
 		/// @return {Component} self
 		///
@@ -211,17 +211,13 @@ function Stash(_config) : Class(_config) constructor {
 #endregion
 #region Methods ////////////////
 
-function Method(_config = {}) constructor {
+function Method(_config = {}) : Class(_config) constructor {
 	/// @func	Method(config*)
 	/// @param	{struct} config={}
 	/// @return {Method} self
 	///
-	__config = _config;
-	__owner  = _config[$ "owner" ] ?? other;
-	__active = _config[$ "active"] ?? true;
 	__method = _config[$ "method"] ?? undefined;
 	__data	 = _config[$ "data"  ] ?? undefined;
-	__name	 = _config[$ "name"  ] ?? __get_name_unique();
 	
 	#region Private ////////
 	
@@ -236,12 +232,6 @@ function Method(_config = {}) constructor {
 		/// @return {any} method_return
 		///
 		return script_execute_ext(__method, __data);
-	};
-	static __get_name_unique	   = function() {
-		/// @func	__get_name_unique()
-		/// @return {string} name
-		///
-		return instanceof(self) + "_" + string(ptr(self));
 	};
 	
 	#endregion
@@ -259,18 +249,6 @@ function Method(_config = {}) constructor {
 	
 	#region Getters ////////
 	
-	static get_owner  = function() {
-		/// @func	get_owner()
-		/// @return {struct} owner
-		///
-		return __owner;
-	};
-	static get_active = function() {
-		/// @func	get_active()
-		/// @return {boolean} active?
-		///
-		return __active;
-	};
 	static get_method = function() {
 		/// @func	get_method()
 		/// @return {method} method
@@ -283,32 +261,10 @@ function Method(_config = {}) constructor {
 		///
 		return __data;
 	};
-	static get_name   = function() {
-		/// @func	get_name()
-		/// @return {string} name
-		///
-		return __name;
-	};
 		
 	#endregion
 	#region Setters ////////
 	
-	static set_owner  = function(_owner) {
-		/// @func	set_owner(owner)
-		/// @param	{struct} owner
-		/// @return {Method} self
-		///
-		__owner = _owner;
-		return self;
-	};
-	static set_active = function(_active) {
-		/// @func	set_active(active?)
-		/// @param	{boolean} active?
-		/// @return {Method}  self
-		///
-		__active = _active;
-		return self;
-	};
 	static set_method = function(_method) {
 		/// @func	set_method(method)
 		/// @param	{method} method
@@ -325,14 +281,6 @@ function Method(_config = {}) constructor {
 		__data = _data;
 		return self;
 	}
-	static set_name   = function(_name) {
-		/// @func	set_name(name)
-		/// @param	{string} name
-		/// @return {Method} self
-		///
-		__name = _name;
-		return self;
-	};
 		
 	#endregion
 };
