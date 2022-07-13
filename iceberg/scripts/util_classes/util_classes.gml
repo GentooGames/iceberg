@@ -89,19 +89,11 @@ function Stash(_config) : Class(_config) constructor {
 	/// @param	{struct} config
 	/// @return {Stash}  self
 	///
-	__items			= {};
-	__names			= [];
-	__size			= 0;
-	__name			= _config.name;	/// @REQUIRED
-	__has_interface = _config[$ "has_interface"] ?? true;
-	
-	if (__has_interface) {
-		__interface = new IStash({
-			component: other, 
-			owner:	   get_owner(), 
-			name:	   get_name(),
-		});
-	}
+	__items	= {};
+	__names	= [];
+	__size	= 0;
+	__name	= _config.name;	/// @REQUIRED
+
 	
 	static get				  = function(_name) {
 		/// @func	get(name)
@@ -276,8 +268,7 @@ function Action (_config = {}) : Method(_config) constructor {
 	/// @return {Action} self
 	///
 	__triggers = new Stash({
-		name:		  "triggers",
-		has_interface: true,
+		name: "triggers",
 	});
 	
 	/// Register Trigger PubSub Event
@@ -289,11 +280,11 @@ function Action (_config = {}) : Method(_config) constructor {
 		/// @return {Action} self
 		///
 		if (is_active()) {
-			if (triggers_is_active()) {
-				var _names = triggers_get_names();
-				var _size  = triggers_get_size();
+			if (__triggers.is_active()) {
+				var _names = __triggers.get_names();
+				var _size  = __triggers.get_size();
 				for (var _i = 0; _i < _size; _i++) {
-					var _trigger = triggers_get(_names[_i]);
+					var _trigger = __triggers.get(_names[_i]);
 					if (_trigger.is_active()) {
 						_trigger.execute();
 					}

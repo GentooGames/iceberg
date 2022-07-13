@@ -4,7 +4,6 @@
     {"id":{"name":"__spr_transition_border_silhouette_bones","path":"sprites/__spr_transition_border_silhouette_bones/__spr_transition_border_silhouette_bones.yy",},"order":3,},
     {"id":{"name":"objc_game","path":"objects/objc_game/objc_game.yy",},"order":0,},
     {"id":{"name":"shdr_gradient_fade_up","path":"shaders/shdr_gradient_fade_up/shdr_gradient_fade_up.yy",},"order":7,},
-    {"id":{"name":"Interfaces","path":"scripts/Interfaces/Interfaces.yy",},"order":10,},
     {"id":{"name":"scr_totemic_move","path":"scripts/scr_totemic_move/scr_totemic_move.yy",},"order":8,},
     {"id":{"name":"___particle","path":"scripts/___particle/___particle.yy",},"order":7,},
     {"id":{"name":"objc_save","path":"objects/objc_save/objc_save.yy",},"order":1,},

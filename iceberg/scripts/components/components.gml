@@ -57,8 +57,6 @@ function Component(_config = {}) : Class(_config) constructor {
 
 #region Moveable ///////////////////
 
-#region Moveable
-
 #region Components /////
 
 function Moveable() : Component() constructor {
@@ -245,18 +243,6 @@ function MoveableTopDown() : Moveable() constructor {
 };
 
 #endregion
-#region Interfaces /////
-
-function IMoveable(_moveable, _owner = _moveable.get_owner()) : Interface(_moveable, _owner) constructor {
-	/// @func	IMoveable(moveable, owner*)
-	/// @param	{Moveable}  moveable
-	/// @param	{struct}	owner=moveable.get_owner()
-	/// @return {IMoveable} self
-	///
-	__owner.moveset_new = method(__component, __component.moveset_new);
-};
-	
-#endregion
 #region Util ///////////
 
 function MoveableMoveSet(_name, _config) constructor {
@@ -273,8 +259,6 @@ function MoveableMoveSet(_name, _config) constructor {
 	__fric		= _config[$ "fric" ] ?? 0;
 	__mult		= _config[$ "mult" ] ?? 1;
 };
-
-#endregion
 
 #endregion
 
