@@ -19,8 +19,8 @@ function ___window() {
 				#endregion
 				#region Events /////////
 			
-				EventObject("window");
-				event_register([
+				eventer = new Eventable();
+				eventer.register([
 					"fullscreen_assigned",
 					"position_assigned",
 				]);
@@ -97,7 +97,7 @@ function ___window() {
 			//log("fullscreen: {2}, w:{0}, h:{1}", _w, _h, _fullscreen);
 			//surface_resize(application_surface, _w, _h);
 			//display_set_gui_size(_w, _h);
-			event_publish("fullscreen_assigned", _fullscreen);
+			eventer.publish("fullscreen_assigned", _fullscreen);
 			return self;
 	    },
 	    set_position:   function(_x, _y) {
@@ -107,7 +107,7 @@ function ___window() {
 	        /// @return {struct} self
 	        ///
 	        window_set_position(_x, _y);  
-			event_publish("position_assigned", { x: _x, y: _y });
+			eventer.publish("position_assigned", { x: _x, y: _y });
 			return self;
 	    },
 			

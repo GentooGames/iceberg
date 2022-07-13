@@ -154,8 +154,8 @@ function ___input() {
 				#endregion
 				#region Events /////////
 		
-				EventObject("input");
-				event_register([
+				eventer = new Eventable();
+				eventer.register([
 					/// mouse_button_pressed
 					"mouse_button_pressed",
 					"mouse_left_button_pressed",
@@ -241,7 +241,7 @@ function ___input() {
 			/// @return {struct} self
 			///
 			if (mouse.button(mb_any)) {
-				event_publish("mouse_button", {
+				eventer.publish("mouse_button", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -250,7 +250,7 @@ function ___input() {
 				});
 			}
 			if (mouse.button_pressed(mb_any)) {
-				event_publish("mouse_button_pressed", {
+				eventer.publish("mouse_button_pressed", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -259,7 +259,7 @@ function ___input() {
 				});
 			}
 	        if (mouse.button_released(mb_any)) {
-				event_publish("mouse_button_released", {
+				eventer.publish("mouse_button_released", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -268,7 +268,7 @@ function ___input() {
 				});	
 			}
 			if (mouse.wheel_up()) {
-				event_publish("mouse_wheel_up", {
+				eventer.publish("mouse_wheel_up", {
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
 					x_gui:	INPUT.mouse.get_x_gui(),
@@ -276,7 +276,7 @@ function ___input() {
 				});
 			}
 			if (mouse.wheel_down()) {
-				event_publish("mouse_wheel_down", {
+				eventer.publish("mouse_wheel_down", {
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
 					x_gui:	INPUT.mouse.get_x_gui(),
@@ -290,17 +290,17 @@ function ___input() {
 			/// @return {struct} self
 			///
 			if (keyboard.button(vk_anykey)) {
-				event_publish("keyboard_button", {
+				eventer.publish("keyboard_button", {
 					button: keyboard_key,
 				});
 			}
 	        if (keyboard.button_pressed(vk_anykey)) {
-				event_publish("keyboard_button_pressed", {
+				eventer.publish("keyboard_button_pressed", {
 					button: keyboard_key,
 				});
 			}
 	        if (keyboard.button_released(vk_anykey)) {
-				event_publish("keyboard_button_released", {
+				eventer.publish("keyboard_button_released", {
 					button: keyboard_key,
 				});
 			}

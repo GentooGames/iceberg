@@ -32,7 +32,7 @@ function FluidProperty(_data) constructor {
 		speed		= __SPRING_DEFAULT_SPEED;
 		spring_main	= new Spring(tension, dampening);
 	};
-	EventObject("FluidProperty");
+	eventer = new Eventable();
 	
 	#region Public /////////
 	
@@ -219,7 +219,7 @@ function FluidProperty(_data) constructor {
 		}
 		interp.complete = true;
 		
-		event_publish(__interp_get_event_name() + "_interp_completed", other);
+		eventer.publish(__interp_get_event_name() + "_interp_completed", other);
 	};
 	static __interp_get_event_name	= function() {
 		/// @func __interp_get_event_name()
@@ -243,7 +243,7 @@ function FluidProperty(_data) constructor {
 	
 	#endregion
 	
-	if (!event_registered(__interp_get_event_name() + "_interp_completed")) {
-		event_register(__interp_get_event_name() + "_interp_completed");	
+	if (!eventer.is_registered(__interp_get_event_name() + "_interp_completed")) {
+		eventer.register([__interp_get_event_name() + "_interp_completed"]);	
 	}
 };	

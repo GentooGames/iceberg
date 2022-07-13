@@ -5,7 +5,7 @@ setup_callback		= function() {
 	/// @return {struct} self
 	///
 	initialized = true;
-	event_publish("setup_completed");
+	eventer.publish("setup_completed");
 	return self;
 };
 teardown_callback	= function() {
@@ -13,14 +13,14 @@ teardown_callback	= function() {
 	/// @return {struct} self
 	///
 	initialized = false;
-	event_publish("teardown_completed");
+	eventer.publish("teardown_completed");
 	return self;
 };
 rebuild_callback	= function() {
 	/// @func	rebuild_callback()
 	/// @return {struct} self
 	///
-	event_publish("rebuild_completed");
+	eventer.publish("rebuild_completed");
 	return self;
 };
 activate_callback	= function() {
@@ -28,7 +28,7 @@ activate_callback	= function() {
 	/// @return {struct} self
 	///
 	active = true;
-	event_publish("activated",,true);
+	eventer.publish("activated",,true);
 	return self;
 };
 deactivate_callback = function() {
@@ -36,7 +36,7 @@ deactivate_callback = function() {
 	/// @return {struct} self
 	///
 	active = false;
-	event_publish("deactivated",,true);
+	eventer.publish("deactivated",,true);
 	return self;
 };
 destroy_callback	= function() {
@@ -44,7 +44,7 @@ destroy_callback	= function() {
 	/// @return {struct} self
 	///
 	destroyed = true;
-	event_publish("destroyed",,true);
+	eventer.publish("destroyed",,true);
 	instance_destroy();
 	return self;
 };

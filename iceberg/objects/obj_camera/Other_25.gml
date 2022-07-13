@@ -95,7 +95,7 @@ _update_zoom   = function() {
 	/// @event: zoom complete
 	if (dist_thresh(zoom, zoom_to, 0.01, true)) {
 		if (!zoom_complete) {
-			event_publish("zoom_completed");
+			eventer.publish("zoom_completed");
 			zoom_complete = true;
 		}
 	}

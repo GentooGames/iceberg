@@ -8,7 +8,6 @@ global._player = self;
 /////////////////////////////////////////
 event_inherited();
 events_user(CALLBACKS, EVENTS, METHODS);
-event_id = "player";
 
 setup	 = method_inherit(setup,	function() {
 	/// @func	setup()

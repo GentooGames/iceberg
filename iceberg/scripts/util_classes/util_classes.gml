@@ -8,39 +8,35 @@ function Class(_config = {}) constructor {
 	__config = _config;
 	__owner	 = _config[$ "owner" ] ?? other;
 	__active = _config[$ "active"] ?? true;
-	__name	 = _config[$ "name"  ] ?? __get_name_unique();
-	
-	#region Private ////////
-	
-	static __get_name_unique = function() {	
-		/// @func	__get_name_unique()
-		/// @return {string} name
-		///
-		return instanceof(self) + "_" + string(ptr(self));
-	};
+	__name	 = _config[$ "name"  ] ?? get_name_unique();
 
-	#endregion
 	#region Getters ////////
 	
-	static get_owner  = function() {
+	static get_owner	   = function() {
 		/// @func	get_owner()
 		/// @return {struct} owner
 		///
 		return __owner;
 	};
-	static get_active = function() {
+	static get_active	   = function() {
 		/// @func	get_active()
 		/// @return {boolean} active?
 		///
 		return __active;
 	};
-	static get_name   = function() {
+	static get_name		   = function() {
 		/// @func	get_name()
 		/// @return {string} name
 		///
 		return __name;
 	};
-		
+	static get_name_unique = function() {	
+		/// @func	get_name_unique()
+		/// @return {string} name
+		///
+		return instanceof(self) + "_" + string(ptr(self));
+	};
+	
 	#endregion
 	#region Setters	////////
 	
@@ -271,7 +267,7 @@ function Action (_config = {}) : Method(_config) constructor {
 	
 	/// Register Trigger PubSub Event
 	var _component = get_owner();
-	_component.event_register("action_executed_" + get_name());
+	_component.eventer.register(["action_executed_" + get_name()]);
 	
 	static update  = function() {
 		/// @func	update()
@@ -301,7 +297,7 @@ function Action (_config = {}) : Method(_config) constructor {
 								//		set data through action_send_payload() does not 
 								//		become persistent.
 		var _component = get_owner();
-		_component.event_publish("action_executed_" + get_name(), self);
+		_component.eventer.publish("action_executed_" + get_name(), self);
 		
 		return _return;
 	};
@@ -318,8 +314,8 @@ function Action (_config = {}) : Method(_config) constructor {
 		}));
 		/// Register Trigger PubSub Event
 		var _component = get_owner();
-		_component.event_register( "trigger_executed_" + _name);
-		_component.event_subscribe("trigger_executed_" + _name, method(self, execute));
+		_component.eventer.register(["trigger_executed_" + _name]);
+		_component.eventer.subscribe("trigger_executed_" + _name, method(self, execute));
 		return self;
 	};
 };
@@ -338,7 +334,7 @@ function Trigger(_config = {}) : Method(_config) constructor {
 		if (_result) {
 			var _action	   =  get_owner();
 			var _component = _action.get_owner();
-			_component.event_publish("trigger_executed_" + get_name());
+			_component.eventer.publish("trigger_executed_" + get_name());
 		}
 		return _result;
 	};

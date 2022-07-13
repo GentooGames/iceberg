@@ -6,7 +6,6 @@ log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + strin
 // L---J L---J L---J L---- L----   |   //
 /////////////////////////////////////////
 events_user(CALLBACKS, EVENTS, METHODS);
-event_id	= "object";
 initialized	= false;
 updating	= true;
 rendering	= true;
@@ -28,8 +27,8 @@ setup	 = method_inherit(,function() {
 		#endregion
 		#region Events /////
 	
-		EventObject(event_id);
-		event_register([
+		eventer = new Eventable();
+		eventer.register([
 			"setup_completed",
 			"teardown_completed",
 			"rebuild_completed",
@@ -38,9 +37,9 @@ setup	 = method_inherit(,function() {
 			"destroyed",
 		]);
 		
-		INPUT.event_subscribe("mouse_button_pressed",  on_mouse_button_pressed);
-		INPUT.event_subscribe("mouse_button",		   on_mouse_button);
-		INPUT.event_subscribe("mouse_button_released", on_mouse_button_released);
+		INPUT.eventer.subscribe("mouse_button_pressed",  on_mouse_button_pressed);
+		INPUT.eventer.subscribe("mouse_button",		   on_mouse_button);
+		INPUT.eventer.subscribe("mouse_button_released", on_mouse_button_released);
 		
 		#endregion
 	}

@@ -49,8 +49,8 @@ function ___transition() {
 				#endregion
 				#region Events /////////////
 		
-				EventObject("transition");
-				event_register([
+				eventer = new Eventable();
+				eventer.register([
 					"enter_started",
 					"enter_completed",
 					"change_started",

@@ -25,8 +25,8 @@ function ___gui() {
 				#endregion
 				#region Events /////////
 			
-				EventObject("gui");
-				//event_register([]);
+				eventer = new Eventable();
+				//eventer.register([]);
 			
 				#endregion
 				#region Border /////////

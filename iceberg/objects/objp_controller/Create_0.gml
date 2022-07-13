@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////
 event_inherited();
 events_user(CALLBACKS, EVENTS, METHODS);
-event_id = "controller";
 
 setup	 = method_inherit(setup,	function() {
 	/// @func	setup()

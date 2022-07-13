@@ -19,8 +19,8 @@ function ___display() {
 				#endregion
 				#region Events /////////
 			
-				EventObject("display");
-				//event_register([]);
+				eventer = new Eventable();
+				//eventer.register([]);
 			
 				#endregion
 			}

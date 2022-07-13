@@ -7,7 +7,6 @@ global._game = self;
 // L---J |   | |   | L---- //
 /////////////////////////////
 event_inherited();
-event_id = "game";
 
 //////////////////////////////////////////////////////////////////////
 /// Game Instances, Libraries, & Data Files Loaded In "Game Start" ///

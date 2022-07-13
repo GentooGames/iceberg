@@ -478,7 +478,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		set_visible(true);
-		event_publish("show_toggled");
+		eventer.publish("show_toggled");
 		return self;
 	};
 	static hide		  = function() {
@@ -487,7 +487,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		set_visible(false);
-		event_publish("hide_toggled");
+		eventer.publish("hide_toggled");
 		return self;
 	};
 	static activate   = function() {
@@ -496,7 +496,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		set_active(true);
-		event_publish("activated");
+		eventer.publish("activated");
 		return self;
 	};
 	static deactivate = function() {
@@ -505,7 +505,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		set_active(false);
-		event_publish("deactivated");
+		eventer.publish("deactivated");
 		return self;
 	};
 	
@@ -1729,7 +1729,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		///
 		if (state_exists(_state_name)) {
 			state_set_current(_state_name, _config, _sync_config_to_state);
-			event_publish("state_changed", _state_name);
+			eventer.publish("state_changed", _state_name);
 		}
 		return self;
 	};
@@ -2026,7 +2026,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		__this.__pin.__xoff   = _parent.get_x() - get_x();
 		__this.__pin.__yoff   = _parent.get_y() - get_y();
 		__this.__pin.__parent = _parent;
-		event_publish("pin_parent_assigned", _parent);
+		eventer.publish("pin_parent_assigned", _parent);
 		return self;
 	};
 		
@@ -2116,7 +2116,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		///
 		if (config_exists(_config_name)) {
 			config_set_current(_config_name, config_get(_config_name));
-			event_publish("config_changed", _config_name);
+			eventer.publish("config_changed", _config_name);
 		}
 		return self;
 	};
@@ -2389,8 +2389,8 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	#endregion
 	#region Events /////////////////////////
 	
-	EventObject("gentui");
-	event_register([
+	eventer = new Eventable();
+	eventer.register([
 		"activated", 
 		"deactivated",
 		"show_toggled",
@@ -2977,7 +2977,7 @@ function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 			if (__bottom_most == undefined || _y > __bottom_most) __bottom_most = _y;	
 		}
 		
-		event_publish("point_added", { x: _x, y: _y });
+		eventer.publish("point_added", { x: _x, y: _y });
 		
 		return self;
 	};

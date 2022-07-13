@@ -40,8 +40,8 @@ function ___clock() {
 				#endregion
 				#region Events /////////
 			
-				EventObject("clock");
-				//event_register([]);
+				eventer = new Eventable();
+				//eventer.register([]);
 			
 				#endregion
 			}

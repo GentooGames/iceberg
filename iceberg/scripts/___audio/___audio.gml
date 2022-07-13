@@ -35,8 +35,8 @@ function ___audio() {
 				#endregion
 				#region Events /////////
 		
-				EventObject("audio");
-				event_register([
+				eventer = new Eventable();
+				eventer.register([
 					"played",
 					"stopped",
 					"all_stopped",

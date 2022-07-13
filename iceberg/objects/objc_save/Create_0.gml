@@ -8,7 +8,6 @@ global._save = self;
 /////////////////////////////
 event_inherited();
 events_user(CALLBACKS, EVENTS, METHODS);
-event_id = "save";
 
 /*	ToDo
 	- setup buffer_save_async_groups() that spit out save data to multiple files inside of a defined group folder
@@ -79,7 +78,7 @@ setup	 = method_inherit(setup,	function() {
 		#endregion
 		#region Events /////////
 	
-		TRANSITION.event_subscribe("hold_started", function(_data) {
+		TRANSITION.eventer.subscribe("hold_started", function(_data) {
 			save_game(,, function() {
 				TRANSITION.end_transition();
 			});
