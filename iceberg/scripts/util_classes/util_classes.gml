@@ -1,3 +1,5 @@
+/// Insert Ascii Art Here***
+
 function Class(_config = {}) constructor {
 	/// @func	Class(config*)
 	/// @param	{struct} config={}
@@ -84,24 +86,15 @@ function Class(_config = {}) constructor {
 
 #region Collections ////////////
 
-function Stash(_config) : Class(_config) constructor {
-	/// @func	Stash(config)
-	/// @param	{struct} config
+function Stash(_config = {}) : Class(_config) constructor {
+	/// @func	Stash(config*)
+	/// @param	{struct} config={}
 	/// @return {Stash}  self
 	///
-	__items	= {};
-	__names	= [];
-	__size	= 0;
-	__name	= _config.name;	/// @REQUIRED
-
+	__items = {};
+	__names = [];
+	__size  = 0;
 	
-	static get				  = function(_name) {
-		/// @func	get(name)
-		/// @param	{string} name
-		/// @return {any}    item
-		///
-		return __items[$ _name];
-	};
 	static add				  = function(_name, _item) {
 		/// @func	add(name, item)
 		/// @param	{string} name
@@ -160,6 +153,13 @@ function Stash(_config) : Class(_config) constructor {
 		__names = [];
 		__items = {};
 		return self;
+	};
+	static get				  = function(_name) {
+		/// @func	get(name)
+		/// @param	{string} name
+		/// @return {any}    item
+		///
+		return __items[$ _name];
 	};
 	static get_names		  = function() {
 		/// @func	get_names()
@@ -267,9 +267,7 @@ function Action (_config = {}) : Method(_config) constructor {
 	/// @param	{struct} config={}
 	/// @return {Action} self
 	///
-	__triggers = new Stash({
-		name: "triggers",
-	});
+	__triggers = new Stash();
 	
 	/// Register Trigger PubSub Event
 	var _component = get_owner();

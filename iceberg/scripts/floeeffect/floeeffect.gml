@@ -1067,11 +1067,11 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 };
 ////////////////////////////////////////////////////////////////////////////
 function FloeEffectBorderTrees() : FloeEffectBorderSprite(__spr_transition_border_silhouette_trees) constructor {	// <-- custom implementation example. remove
-	__overlay_edge = true;
-	__draw_shadow  = true;
-	__shadow_alpha = 0.8;
-	__shadow_inset = 20;
-	__color		   = CONFIG.color.orange;
+	__overlay_edge =  true;
+	__draw_shadow  =  true;
+	__shadow_alpha =  0.8;
+	__shadow_inset =  20;
+	__color		   =  CONFIG.color.orange;
 	__x_offset	   = -50;
 	__y_offset	   = -60;
 };

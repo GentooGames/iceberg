@@ -1,3 +1,4 @@
+/// Insert Ascii Art Here***
 //////////////////////////////////////////////////////
 //	Components										//								
 //		--- components are class objects that 		//
@@ -57,8 +58,6 @@ function Component(_config = {}) : Class(_config) constructor {
 
 #region Moveable ///////////////////
 
-#region Components /////
-
 function Moveable() : Component() constructor {
 	/// @func	Moveable()
 	/// @return	{Moveable} self
@@ -69,14 +68,9 @@ function Moveable() : Component() constructor {
 	__speed	   = 0;
 	__accel	   = 1;
 	__fric	   = 1;
-	__movesets = {
-		__sets:	   {},
-		__names:   [],
-		__current: {
-			__set:  undefined,
-			__name: undefined,
-		},
-	};
+	__movesets = new Stash();
+	__moveset  = undefined;
+	
 	///__dir  = undefined;
 	///__path = undefined;	// instantiated in setup()
 	
@@ -115,141 +109,92 @@ function Moveable() : Component() constructor {
 	};
 		
 	#region MoveSet
-	
-	#region MoveSet - Private
-	
-	static __moveset_update_values	  = function(_moveset = __moveset_get_current()) {
-		/// @func	__moveset_update_values(moveset*)
-		/// @param	{MoveableMoveset} moveset = moveset_current
-		/// @return {Actionable}	  self
+
+	static moveset_get		   = function(_name) {
+		/// @func	moveset_get(name)
+		/// @param	{string}  name
+		/// @return {MoveSet} moveset
 		///
-		__speed = _moveset.__speed;
-		__accel = _moveset.__accel;
-		__fric  = _moveset.__fric;
-		return self;
+		return __movesets.get(_name);
 	};
-	static __moveset_get_current_name = function() {
-		/// @func	__moveset_get_current_name()
-		///	@return {string} name
-		///
-		return __movesets.__current.__name;
-	};
-	static __moveset_get_current	  = function() {
-		/// @func	__moveset_get_current()
-		/// @return {struct} move_set
-		///
-		return __movesets.__current.__set;
-	};
-	static __moveset_get			  = function(_moveset_name) {
-		///	@func	__moveset_get(moveset_name)
-		/// @param	{string} moveset_name
-		/// @return {struct} moveset
-		///
-		return __movesets.__sets[$ _moveset_name];
-	};
-	static __moveset_set_current	  = function(_moveset_name) {
-		/// @func	__moveset_set_current(moveset_name)
-		/// @param	{string}	 moveset_name
-		/// @return {Actionable} self
-		///
-		if (__moveset_exists(_moveset_name)) {
-			__movesets.__current.__name = _moveset_name;
-			__movesets.__current.__set  = __moveset_get(_moveset_name);
-			__moveset_update_values();
-		}
-		return self;
-	};
-	static __moveset_exists			  = function(_moveset_name) {
-		/// @func	__moveset_exists(moveset_name)
-		/// @param	{string}  moveset_name
-		/// @return {boolean} exists?
-		///
-		return __moveset_get(_moveset_name) != undefined;
-	};
-	static __moveset_add			  = function(_moveset_name, _moveset) {
-		/// @func	__moveset_add(moveset_name, moveset)
-		/// @param	{string}   moveset_name
+	static moveset_set		   = function(_moveset) {
+		/// @func	moveset_set(moveset)
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		__movesets.__sets[$ _moveset_name] = _moveset;
-		array_push(__movesets.__names, _moveset_name);
+		__moveset = _moveset;
+		__moveset_update();
 		return self;
 	};
-	static __moveset_remove			  = function(_moveset_name) {
-		/// @func	__moveset_remove(moveset_name)
-		/// @param	{string}   moveset_name
+	static moveset_add		   = function(_name, _moveset) {
+		/// @func	moveset_add(name, moveset)
+		/// @param	{string}   name
+		/// @param	{Moveset}  moveset
 		/// @return {Moveable} self
 		///
-		if (__moveset_exists(_moveset_name)) {
-			variable_struct_remove(__movesets.__sets, _moveset_name);
-			
-			/// array_find_delete()
-			for (var _i = array_length(__movesets.__names) - 1; _i >= 0; _i--) {
-				if (__movesets.__names[_i] == _moveset_name) {
-					array_delete(__movesets.__names, _i, 1);
-					break;
-				}
-			}
+		__movesets.add(_name, _moveset);
+		return self;
+	};
+	static moveset_new		   = function(_name, _data) {
+		/// @func	moveset_new(name, data)
+		/// @param	{string}   name
+		/// @param	{struct}   data
+		/// @return {Moveable} self
+		///
+		return moveset_add(_name, new MoveSet(_name, _data));
+	};
+	static moveset_exists	   = function(_name) {
+		/// @func	moveset_exists(name)
+		/// @param	{string}  name
+		/// @return {boolean} exists?
+		///
+		return __movesets.exists(_name);
+	};
+	static moveset_clear	   = function() {
+		/// @func	moveset_clear()
+		/// @return {Moveable} self
+		///
+		return moveset_set(undefined);
+	};
+	static moveset_change	   = function(_name) {
+		/// @func	moveset_change(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (moveset_exists(_name)) {
+			moveset_set(moveset_get(_name));
 		}
 		return self;
 	};
-	
-	#endregion
-	
-	static moveset_new		   = function(_moveset_name, _moveset_data) {
-		/// @func	moveset_new(moveset_name, moveset_data)
-		/// @param	{string}   moveset_name
-		/// @param	{struct}   moveset_data
+	static moveset_apply	   = function() {
+		/// @func	moveset_apply()
 		/// @return {Moveable} self
 		///
-		var _moveset = new MoveableMoveSet(_moveset_name, _moveset_data);
-		__moveset_add(_moveset_name, _moveset);
+		__speed = __moveset.__speed;
+		__accel = __moveset.__accel;
+		__fric  = __moveset.__fric;
 		return self;
 	};
-	static moveset_exists	   = function(_moveset_name) {
-		/// @func	moveset_exists(moveset_name)
-		/// @param	{string}  moveset_name
-		/// @return {boolean} moveset_exists?
-		///
-		return __moveset_exists(_moveset_name);
-	};
-	static moveset_change	   = function(_moveset_name) {
-		/// @func	moveset_change(moveset_name)
-		/// @param	{string}   moveset_name
-		/// @return {Moveable} self
-		///
-		if (__moveset_exists(_moveset_name)) {
-			var _moveset = __moveset_get(_moveset_name);
-			__moveset_set_current(_moveset);
-		}
-		return self;
-	};
-	static moveset_add_trigger = function(_moveset_name, _trigger_name, _trigger) {
-		/// @func	moveset_add_trigger(moveset_name, trigger_name, trigger)
-		/// @param	...
-		/// @return {Moveable} self
-		///
-		
-	};
+	
+	static moveset_add_trigger = function(_moveset_name, _trigger_name, _trigger) {};
 		
 	#endregion
 };
 function MoveableTopDown() : Moveable() constructor {
 	/// @func	MoveableTopDown()
-	/// @return {Component} self
+	/// @return {Moveable} self
 	///
-	
 };
-
-#endregion
-#region Util ///////////
-
-function MoveableMoveSet(_name, _config) constructor {
-	/// @func	MoveableMoveSet(name, config)
-	/// @param	{string}		  name
-	/// @param	{struct}		  config
-	/// @return {MoveableMoveSet} self
+function MoveablePlatformer() : Moveable() constructor {
+	/// @func	MoveablePlatformer()
+	/// @return {Moveable} self
+	///
+};
+function MoveSet(_name, _config) constructor {
+	/// @func	MoveSet(name, config)
+	/// @param	{string}  name
+	/// @param	{struct}  config
+	/// @return {MoveSet} self
 	///
 	__moveable	=  other;
 	__name		= _name;
@@ -258,9 +203,9 @@ function MoveableMoveSet(_name, _config) constructor {
 	__accel		= _config[$ "accel"] ?? 0;
 	__fric		= _config[$ "fric" ] ?? 0;
 	__mult		= _config[$ "mult" ] ?? 1;
+	
+	__triggers = {};
 };
-
-#endregion
 
 #endregion
 #region Actionable /////////////////
