@@ -1,4 +1,5 @@
 iceberg:
+	- rework pubsub events in Method(), Action(), Trigger() classes
 	- normalize usage of custom array functions, thats why they exist and part of this project
 	- encapsulate game logic into components
 	- abstracted component management system
