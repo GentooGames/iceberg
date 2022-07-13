@@ -50,8 +50,8 @@ function ___gui() {
 				text: "test label here...",
 				x: SURF_W * 0.5,
 				y: SURF_H * 0.5,
-			});
-			label.action_add("change_color", function() {
+			})
+			.action_add("change_color", function() {
 				set_color(c_red);
 			})
 			.action_add_trigger("change_color", "space_bar", function() {

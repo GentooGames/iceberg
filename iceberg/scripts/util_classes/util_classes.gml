@@ -281,8 +281,8 @@ function Action (_config = {}) : Method(_config) constructor {
 	});
 	
 	/// Register Trigger PubSub Event
-	//var _component = get_owner();
-	//_component.event_register("action_executed_" + get_name());
+	var _component = get_owner();
+	_component.event_register("action_executed_" + get_name());
 	
 	static update  = function() {
 		/// @func	update()
@@ -311,8 +311,8 @@ function Action (_config = {}) : Method(_config) constructor {
 		set_data(undefined);	// <--	wipe data after execution, so that temporarily
 								//		set data through action_send_payload() does not 
 								//		become persistent.
-		//var _component = get_owner();
-		//_component.event_publish("action_executed_" + get_name(), self);
+		var _component = get_owner();
+		_component.event_publish("action_executed_" + get_name(), self);
 		
 		return _return;
 	};
@@ -327,6 +327,10 @@ function Action (_config = {}) : Method(_config) constructor {
 			name:	_name, 
 			method: _method,
 		}));
+		/// Register Trigger PubSub Event
+		var _component = get_owner();
+		_component.event_register( "trigger_executed_" + _name);
+		_component.event_subscribe("trigger_executed_" + _name, method(self, execute));
 		return self;
 	};
 };
@@ -343,9 +347,9 @@ function Trigger(_config = {}) : Method(_config) constructor {
 		///
 		var _result = execute_super();
 		if (_result) {
-			//var _action	   =  get_owner();
-			//var _component = _action.get_owner();
-			//_component.event_publish("trigger_executed_" + get_name());
+			var _action	   =  get_owner();
+			var _component = _action.get_owner();
+			_component.event_publish("trigger_executed_" + get_name());
 		}
 		return _result;
 	};
