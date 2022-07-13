@@ -297,7 +297,7 @@ function Action (_config = {}) : Method(_config) constructor {
 								//		set data through action_send_payload() does not 
 								//		become persistent.
 		var _component = get_owner();
-		_component.eventer.publish("action_executed_" + get_name(), self);
+		_component.eventer.broadcast("action_executed_" + get_name(), self);
 		
 		return _return;
 	};
@@ -315,7 +315,7 @@ function Action (_config = {}) : Method(_config) constructor {
 		/// Register Trigger PubSub Event
 		var _component = get_owner();
 		_component.eventer.register(["trigger_executed_" + _name]);
-		_component.eventer.subscribe("trigger_executed_" + _name, method(self, execute));
+		_component.eventer.listen("trigger_executed_" + _name, method(self, execute));
 		return self;
 	};
 };
@@ -334,7 +334,7 @@ function Trigger(_config = {}) : Method(_config) constructor {
 		if (_result) {
 			var _action	   =  get_owner();
 			var _component = _action.get_owner();
-			_component.eventer.publish("trigger_executed_" + get_name());
+			_component.eventer.broadcast("trigger_executed_" + get_name());
 		}
 		return _result;
 	};

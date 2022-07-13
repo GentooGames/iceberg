@@ -28,9 +28,9 @@ function state_system_transition_transitioning() {
 	///
 	return {
 		enter: function() {
-			eventer.publish("enter_started");
+			eventer.broadcast("enter_started");
 			effect = new effect_in();
-			effect.eventer.subscribe("enter_completed", function(_data) {
+			effect.eventer.listen("enter_completed", function(_data) {
 				fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
 			});
 			effect.enter()
@@ -39,7 +39,7 @@ function state_system_transition_transitioning() {
 			effect.update();
 		},
 		leave: function() {
-			eventer.publish("enter_completed");
+			eventer.broadcast("enter_completed");
 		},
 	};
 };
@@ -49,14 +49,14 @@ function state_system_transition_change() {
 	///
 	return {
 		enter: function() {
-			eventer.publish("change_started");
+			eventer.broadcast("change_started");
 			
 			/// Move To state.leave?
 			var _event_name = (room_target == room)
 				? "room_restarted"
 				: "room_changed";
 			room_goto(room_target);		
-			eventer.publish(_event_name, room_target);	
+			eventer.broadcast(_event_name, room_target);	
 			
 			fsm.change(STATE_SYSTEM_TRANSITION_HOLD);
 		},
@@ -64,7 +64,7 @@ function state_system_transition_change() {
 			effect.update();
 		},
 		leave: function() {
-			eventer.publish("change_completed");
+			eventer.broadcast("change_completed");
 		},
 	};
 };
@@ -74,8 +74,8 @@ function state_system_transition_hold() {
 	///
 	return {
 		enter: function() {
-			eventer.publish("hold_started");
-			effect.eventer.subscribe("hold_completed", function(_data) {
+			eventer.broadcast("hold_started");
+			effect.eventer.listen("hold_completed", function(_data) {
 				room_to_release = true;
 				if (end_transition_is_ready()) {
 					end_transition();
@@ -87,7 +87,7 @@ function state_system_transition_hold() {
 			effect.update();
 		},
 		leave: function() {
-			eventer.publish("hold_completed");
+			eventer.broadcast("hold_completed");
 			effect.teardown();
 			effect_in = undefined;
 		},
@@ -99,9 +99,9 @@ function state_system_transition_ending() {
 	///
 	return {
 		enter: function() {
-			eventer.publish("exit_started");
+			eventer.broadcast("exit_started");
 			effect = new effect_out();
-			effect.eventer.subscribe("enter_completed", function(_data) {
+			effect.eventer.listen("enter_completed", function(_data) {
 				fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
 			});
 			effect.reverse();
@@ -111,7 +111,7 @@ function state_system_transition_ending() {
 			effect.update();
 		},
 		leave: function() {
-			eventer.publish("exit_completed");
+			eventer.broadcast("exit_completed");
 			effect.teardown();
 			effect_out = undefined;
 			effect	   = undefined;

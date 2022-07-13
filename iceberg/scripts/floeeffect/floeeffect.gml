@@ -125,7 +125,7 @@ function FloeEffect() constructor {
 					var _play_method = get_audio_play_method();
 					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
 				}
-				eventer.publish("enter_started", self);
+				eventer.broadcast("enter_started", self);
 				set_running(true);
 				set_state(__FLOE_STATE.ENTER);
 				break;	
@@ -137,13 +137,13 @@ function FloeEffect() constructor {
 				
 				if (abs(_progress - _target) <= get_threshold()) {
 					set_progress(_target);
-					eventer.publish("enter_completed", self);
+					eventer.broadcast("enter_completed", self);
 					set_state(__FLOE_STATE.CHANGE_PREP);
 				}
 				break;	
 			}
 			case __FLOE_STATE.CHANGE_PREP: {
-				eventer.publish("change_started", self);
+				eventer.broadcast("change_started", self);
 				set_state(__FLOE_STATE.CHANGE);
 				break;	
 			}
@@ -155,12 +155,12 @@ function FloeEffect() constructor {
 					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
 				}
 				__this.__control.__hold_timer = get_hold_time();
-				eventer.publish("change_completed", self);
+				eventer.broadcast("change_completed", self);
 				set_state(__FLOE_STATE.HOLD_PREP);
 				break;	
 			}
 			case __FLOE_STATE.HOLD_PREP: {
-				eventer.publish("hold_started", self);
+				eventer.broadcast("hold_started", self);
 				set_state(__FLOE_STATE.HOLD);
 				break;	
 			}
@@ -169,7 +169,7 @@ function FloeEffect() constructor {
 					__this.__control.__hold_timer--;
 				}
 				else {
-					eventer.publish("hold_completed", self);
+					eventer.broadcast("hold_completed", self);
 					set_state(__FLOE_STATE.LEAVE_PREP);
 				}
 				break;	
@@ -181,7 +181,7 @@ function FloeEffect() constructor {
 					var _play_method = get_audio_play_method();
 					_play_method(get_audio_emitter(), _leave_sound, 0, 0);
 				}
-				eventer.publish("leave_started", self);
+				eventer.broadcast("leave_started", self);
 				set_state(__FLOE_STATE.LEAVE);
 				break;	
 			}
@@ -192,13 +192,13 @@ function FloeEffect() constructor {
 				
 				if (abs(_progress - _target) <= get_threshold()) {
 					set_progress(_target);
-					eventer.publish("leave_completed", self);
+					eventer.broadcast("leave_completed", self);
 					set_state(__FLOE_STATE.END);
 				}
 				break;	
 			}
 			case __FLOE_STATE.END: {
-				eventer.publish("ended", self);
+				eventer.broadcast("ended", self);
 				set_running(false);
 				set_state(__FLOE_STATE.HIDDEN);
 				break;	
@@ -566,7 +566,7 @@ function FloeEffect() constructor {
 			var _progress = 1 - get_progress();
 			set_progress(_progress);
 		}
-		eventer.publish("reversed", self);
+		eventer.broadcast("reversed", self);
 		return self;
 	};
 	static reset   = function() {
@@ -576,7 +576,7 @@ function FloeEffect() constructor {
 		set_running(false);
 		set_progress(0);
 		set_state(__FLOE_STATE.HIDDEN);
-		eventer.publish("reset_completed", self);
+		eventer.broadcast("reset_completed", self);
 	};
 		
 	#endregion

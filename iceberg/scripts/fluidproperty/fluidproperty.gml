@@ -219,7 +219,7 @@ function FluidProperty(_data) constructor {
 		}
 		interp.complete = true;
 		
-		eventer.publish(__interp_get_event_name() + "_interp_completed", other);
+		eventer.broadcast(__interp_get_event_name() + "_interp_completed", other);
 	};
 	static __interp_get_event_name	= function() {
 		/// @func __interp_get_event_name()

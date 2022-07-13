@@ -23,7 +23,7 @@ on_mouse_left_button_pressed	= method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_left_button_pressed"); });
+},	function() { eventer.broadcast("mouse_left_button_pressed"); });
 on_mouse_right_button_pressed   = method_inherit(,function(_data) {
 	/// @func	on_mouse_right_button_pressed(data)
 	/// @param	{struct} data
@@ -33,7 +33,7 @@ on_mouse_right_button_pressed   = method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_right_button_pressed"); });
+},	function() { eventer.broadcast("mouse_right_button_pressed"); });
 on_mouse_middle_button_pressed  = method_inherit(,function(_data) {
 	/// @func	on_mouse_middle_button_pressed(data)
 	/// @param	{struct} data
@@ -43,7 +43,7 @@ on_mouse_middle_button_pressed  = method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-}, function() { eventer.publish("mouse_middle_button_pressed"); });
+}, function() { eventer.broadcast("mouse_middle_button_pressed"); });
 on_mouse_button					= method_inherit(,function(_data) { /// encapsulation
 	/// @func	on_mouse_button(data)
 	/// @param	{struct} data
@@ -67,7 +67,7 @@ on_mouse_left_button			= method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_left_button"); });
+},	function() { eventer.broadcast("mouse_left_button"); });
 on_mouse_right_button		    = method_inherit(,function(_data) {
 	/// @func	on_mouse_right_button(data)
 	/// @param	{struct} data
@@ -77,7 +77,7 @@ on_mouse_right_button		    = method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_right_button"); });
+},	function() { eventer.broadcast("mouse_right_button"); });
 on_mouse_middle_button		    = method_inherit(,function(_data) {
 	/// @func	on_mouse_middle_button(data)
 	/// @param	{struct} data
@@ -87,7 +87,7 @@ on_mouse_middle_button		    = method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_middle_button"); });
+},	function() { eventer.broadcast("mouse_middle_button"); });
 on_mouse_button_released		= method_inherit(,function(_data) { /// encapsulation
 	/// @func	on_mouse_button_released(data)
 	/// @param	{struct} data
@@ -111,7 +111,7 @@ on_mouse_left_button_released   = method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_left_button_released"); });
+},	function() { eventer.broadcast("mouse_left_button_released"); });
 on_mouse_right_button_released  = method_inherit(,function(_data) {
 	/// @func	on_mouse_right_button_released(data)
 	/// @param	{struct} data
@@ -121,7 +121,7 @@ on_mouse_right_button_released  = method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_right_button_released"); });
+},	function() { eventer.broadcast("mouse_right_button_released"); });
 on_mouse_middle_button_released = method_inherit(,function(_data) {
 	/// @func	on_mouse_middle_button_released(data)
 	/// @param	{struct} data
@@ -131,7 +131,7 @@ on_mouse_middle_button_released = method_inherit(,function(_data) {
 		/// ...
 	}
 	return self;
-},	function() { eventer.publish("mouse_middle_button_released"); });
+},	function() { eventer.broadcast("mouse_middle_button_released"); });
 
 
 

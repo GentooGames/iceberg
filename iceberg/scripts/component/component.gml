@@ -72,82 +72,88 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}	config={}
 	/// @return {Eventable} self
 	///
-	__publisher = new Publisher();
-	__publisher.register_channel("channel_registered");
+	__broadcaster = new Publisher();
+	register([
+		"register",
+		"broadcast",
+		"listen",
+		"clear_listeners",
+	]);
 	
-	static get_publisher	 = function() {
-		/// @func	get_publisher()
+	static get_broadcaster	= function() {
+		/// @func	get_broadcaster()
 		/// @return {Publisher} publisher
 		///
-		return __publisher;
+		return __broadcaster;
 	};
-	static register			 = function(_events, _push_to_global = false) {
-		/// @func	register(events, push_to_global?*)
+	static register			= function(_events) {
+		/// @func	register(events)
 		/// @param	{array}		events
-		/// @parma	{boolean}	push_to_global=false
 		/// @return	{Eventable} self
 		///
 		if (!is_array(_events)) {
 			_events = [_events];	
 		}
 		for (var _i = 0, _len = array_length(_events); _i < _len; _i++) {
-			__publisher.register_channel(_events[_i]);
+			get_broadcaster().register_channel(_events[_i]);
 		}
+		broadcast("register", _events);
 		return self;
 	};
-	static is_registered	 = function(_event_name) {
-		/// @func	is_registered(event_name)
-		/// @param	{string}  event_name
-		/// @return {boolean} event_is_registered?
-		///
-		return __publisher.has_registered_channel(_event_name);
-	};
-	static publish			 = function(_event_name, _payload = undefined, _push_to_global = false) {
-		/// @func	 publish(event_name, payload*, push_to_global?*)
+	static broadcast		= function(_event_name, _payload = undefined) {
+		/// @func	 broadcast(event_name, payload*)
 		/// @param	{string}	event_name
 		/// @param	{any}		payload=undefined
-		/// @param	{bool}		push_to_global=false
 		/// @return	{Eventable} self
 		///
 		/*	<data_struct>: {
-				id:		 self,
-				payload: any,
+				eventable: self,
+				instance:  owner,
+				payload:   <any>,
 			}
 		*/
+		var _self  = self;
+		var _owner = get_owner();
 		var _data_struct = {
-			self:	  get_owner(),
-			payload: _payload,
+			eventable: _self,
+			instance:  _owner,
+			payload:   _payload,
 		}
-		__publisher.publish(_event_name, _data_struct);
+		get_broadcaster().publish(_event_name, _data_struct);
+		get_broadcaster().publish("broadcast", _data_struct);
 		return self;
 	};
-	static subscribe		 = function(_event_name, _callback, _weak_reference = false) {
-		/// @func	subscribe(event_name, callback, weak_reference?)
+	static listen			= function(_event_name, _callback, _weak_reference = false) {
+		/// @func	listen(event_name, callback, weak_reference?)
 		/// @param	{string}	event_name
 		/// @param	{method}	callback_method
 		/// @param	{boolean}	weak_reference=false
 		/// @return	{Eventable} self
 		///
-		__publisher.subscribe(_event_name, _callback, _weak_reference);
+		get_broadcaster().subscribe(_event_name, _callback, _weak_reference);
+		broadcast("listen", { 
+			event_name: _event_name,
+			callback:   _callback,
+		});
 		return self;
 	};
-	static unsubscribe		 = function(_event_name, _force = false) {
-		/// @func	unsubscribe(event_name, force?*)
-		/// @param	{string}	event_name
-		/// @parma	{boolean}	force=false
-		/// @return	{Eventable} self
-		///
-		__publisher.unsubscribe(_event_name, _force);
-		return self;
-	};
-	static clear_subscribers = function(_event_name) {
-		/// @func	clear_subscribers(event_name)
+	static clear_listeners	= function(_event_name) {
+		/// @func	clear_listeners(event_name)
 		/// @param	{string}	event_name
 		/// @return	{Eventable} self
 		///
 		__publisher.clear_channel(_event_name);
+		broadcast("clear_listeners", _event_name);
 		return self;
 	};
+	static is_registered	= function(_event_name) {
+		/// @func	is_registered(event_name)
+		/// @param	{string}  event_name
+		/// @return {boolean} is_registered?
+		///
+		return get_broadcaster().has_registered_channel(_event_name);
+	};
+	//static unsubscribe_subscriber = function(_subscriber, _force = false) {};
 };
 
 #endregion

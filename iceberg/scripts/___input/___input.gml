@@ -241,7 +241,7 @@ function ___input() {
 			/// @return {struct} self
 			///
 			if (mouse.button(mb_any)) {
-				eventer.publish("mouse_button", {
+				eventer.broadcast("mouse_button", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -250,7 +250,7 @@ function ___input() {
 				});
 			}
 			if (mouse.button_pressed(mb_any)) {
-				eventer.publish("mouse_button_pressed", {
+				eventer.broadcast("mouse_button_pressed", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -259,7 +259,7 @@ function ___input() {
 				});
 			}
 	        if (mouse.button_released(mb_any)) {
-				eventer.publish("mouse_button_released", {
+				eventer.broadcast("mouse_button_released", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -268,7 +268,7 @@ function ___input() {
 				});	
 			}
 			if (mouse.wheel_up()) {
-				eventer.publish("mouse_wheel_up", {
+				eventer.broadcast("mouse_wheel_up", {
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
 					x_gui:	INPUT.mouse.get_x_gui(),
@@ -276,7 +276,7 @@ function ___input() {
 				});
 			}
 			if (mouse.wheel_down()) {
-				eventer.publish("mouse_wheel_down", {
+				eventer.broadcast("mouse_wheel_down", {
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
 					x_gui:	INPUT.mouse.get_x_gui(),
@@ -290,17 +290,17 @@ function ___input() {
 			/// @return {struct} self
 			///
 			if (keyboard.button(vk_anykey)) {
-				eventer.publish("keyboard_button", {
+				eventer.broadcast("keyboard_button", {
 					button: keyboard_key,
 				});
 			}
 	        if (keyboard.button_pressed(vk_anykey)) {
-				eventer.publish("keyboard_button_pressed", {
+				eventer.broadcast("keyboard_button_pressed", {
 					button: keyboard_key,
 				});
 			}
 	        if (keyboard.button_released(vk_anykey)) {
-				eventer.publish("keyboard_button_released", {
+				eventer.broadcast("keyboard_button_released", {
 					button: keyboard_key,
 				});
 			}

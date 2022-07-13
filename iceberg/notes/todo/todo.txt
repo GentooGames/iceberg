@@ -1,5 +1,6 @@
 iceberg:
 	- rework pubsub events in Method(), Action(), Trigger() classes
+	- remove past tense -ed from events
 	- string properties (explicit or default) that are initialized to undefined should be set to "" (empty string)
 		- use the default value to help indicate var typing
 	- normalize usage of custom array functions, thats why they exist and part of this project

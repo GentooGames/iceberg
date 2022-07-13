@@ -37,9 +37,9 @@ setup	 = method_inherit(,function() {
 			"destroyed",
 		]);
 		
-		INPUT.eventer.subscribe("mouse_button_pressed",  on_mouse_button_pressed);
-		INPUT.eventer.subscribe("mouse_button",		   on_mouse_button);
-		INPUT.eventer.subscribe("mouse_button_released", on_mouse_button_released);
+		INPUT.eventer.listen("mouse_button_pressed",  on_mouse_button_pressed);
+		INPUT.eventer.listen("mouse_button",		  on_mouse_button);
+		INPUT.eventer.listen("mouse_button_released", on_mouse_button_released);
 		
 		#endregion
 	}
