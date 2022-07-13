@@ -48,6 +48,7 @@ __window:
 	- rework screen resolution resizing and fullscreen
 
 gentui:
+	- implement new Stash() and IStash() for actions, triggers, etc
 	- add surface support
 	- finish UiCircle()
 	- finish UiTextbox

@@ -16,26 +16,10 @@ function Class(_config = {}) constructor {
 		///
 		return instanceof(self) + "_" + string(ptr(self));
 	};
-	static __update_data	 = function() {	/// @OVERRIDE
-		/// @func	__update_data()
-		/// @return {Component} self
-		///
-		if (__config[$ "active"] != undefined) set_active(__config.active);
-		if (__config[$ "owner "] != undefined) set_owner (__config.owner );
-		if (__config[$ "name  "] != undefined) set_name  (__config.name  );
-		
-		return self;
-	};
-	
+
 	#endregion
 	#region Getters ////////
 	
-	static get_config = function() {
-		/// @func	get_config()
-		/// @return {struct} config
-		///
-		return __config;
-	};
 	static get_owner  = function() {
 		/// @func	get_owner()
 		/// @return {struct} owner
@@ -58,15 +42,6 @@ function Class(_config = {}) constructor {
 	#endregion
 	#region Setters	////////
 	
-	static set_config = function(_config) {
-		/// @func	set_config(config)
-		/// @param	{struct}	config
-		/// @return {Component} self
-		///
-		__config = _config;
-		__update_data();
-		return self;
-	};
 	static set_owner  = function(_owner) {
 		/// @func	set_owner(owner)
 		/// @param	{instance/struct} owner
@@ -93,6 +68,18 @@ function Class(_config = {}) constructor {
 	};
 		
 	#endregion
+	#region Checkers ///////
+	
+	static is_active = function() {
+		/// @func	is_active()
+		/// @return {boolean} is_active?
+		///
+		return get_active();
+	};
+	
+	#endregion
+	
+	/// ANY CHANGES MADE TO CONFIG STRUCT SHOULD BE UPDATED IN CODE_SNIPPET
 };
 
 #region Collections ////////////
@@ -104,8 +91,8 @@ function Stash(_config) : Class(_config) constructor {
 	///
 	__items			= {};
 	__names			= [];
-	__count			= 0;
-	__name			= _config.name;	// required
+	__size			= 0;
+	__name			= _config.name;	/// @REQUIRED
 	__has_interface = _config[$ "has_interface"] ?? true;
 	
 	if (__has_interface) {
@@ -142,7 +129,7 @@ function Stash(_config) : Class(_config) constructor {
 		else {
 			__items[$ _name] = _item;
 			array_push(__names, _name);
-			__count++;
+			__size++;
 		}
 		return self;
 	};
@@ -168,7 +155,7 @@ function Stash(_config) : Class(_config) constructor {
 			else {
 				variable_struct_remove(__items, _name);
 				array_find_delete(__names, _name);
-				__count--;		
+				__size--;		
 			}
 		}
 		return self;
@@ -177,7 +164,7 @@ function Stash(_config) : Class(_config) constructor {
 		/// @func	clear()
 		/// @return {Stash} self
 		///
-		__count = 0;
+		__size  = 0;
 		__names = [];
 		__items = {};
 		return self;
@@ -200,24 +187,35 @@ function Stash(_config) : Class(_config) constructor {
 		/// 
 		return struct_to_array(__items, __names, __count);
 	};
-	static get_count		  = function() {
-		/// @func	get_count()
-		/// @return {real} count
+	static get_size			  = function() {
+		/// @func	get_size()
+		/// @return {real} size
 		///
-		return __count;
+		return __size;
 	};
 };
 
 #endregion
 #region Methods ////////////////
 
-function Method(_config = {}) : Class(_config) constructor {
+function Method (_config = {}) : Class (_config) constructor {
 	/// @func	Method(config*)
 	/// @param	{struct} config={}
 	/// @return {Method} self
 	///
 	__method = _config[$ "method"] ?? undefined;
 	__data	 = _config[$ "data"  ] ?? undefined;
+	
+	static execute = function() {	/// @OVERRIDE
+		/// @func	execute(data)
+		/// @param  {any} data
+		/// @return {any} execute_return
+		///
+		if (is_method(__method)) {
+			return __method_execute();	
+		}
+		return __method_execute_script();
+	};
 	
 	#region Private ////////
 	
@@ -235,18 +233,6 @@ function Method(_config = {}) : Class(_config) constructor {
 	};
 	
 	#endregion
-	
-	static execute = function() {	/// @OVERRIDE
-		/// @func	execute(data)
-		/// @param  {any} data
-		/// @return {any} execute_return
-		///
-		if (is_method(__method)) {
-			return __method_execute();	
-		}
-		return __method_execute_script();
-	};
-	
 	#region Getters ////////
 	
 	static get_method = function() {
@@ -284,23 +270,35 @@ function Method(_config = {}) : Class(_config) constructor {
 		
 	#endregion
 };
-function Action(_config = {}) : Method(_config) constructor {
+function Action (_config = {}) : Method(_config) constructor {
 	/// @func	Action(config*)
 	/// @param	{struct} config={}
 	/// @return {Action} self
 	///
-	///ITrigger();
-		
+	__triggers = new Stash({
+		name:		  "triggers",
+		has_interface: true,
+	});
+	
 	/// Register Trigger PubSub Event
 	var _component = get_owner();
-	_component.event_register( "action_executed_" + get_name());
+	_component.event_register("action_executed_" + get_name());
 	
 	static update  = function() {
 		/// @func	update()
 		/// @return {Action} self
 		///
-		if (get_active()) {
-			update_triggers();
+		if (is_active()) {
+			if (triggers_is_active()) {
+				var _names = triggers_get_names();
+				var _size  = triggers_get_size();
+				for (var _i = 0; _i < _size; _i++) {
+					var _trigger = triggers_get(_names[_i]);
+					if (_trigger.is_active()) {
+						_trigger.execute();
+					}
+				}
+			}
 		}
 		return self;
 	};
@@ -317,6 +315,19 @@ function Action(_config = {}) : Method(_config) constructor {
 		_component.event_publish("action_executed_" + get_name(), self);
 		
 		return _return;
+	};
+	
+	triggers_add   = function(_name, _method) {	/// @OVERRIDE
+		/// @func	triggers_add(name, method)
+		/// @param	{string} name
+		/// @param	{method} method
+		/// @return {Action} self
+		///
+		__triggers.add(_name, new Trigger({
+			name:	_name, 
+			method: _method,
+		}));
+		return self;
 	};
 };
 function Trigger(_config = {}) : Method(_config) constructor {
@@ -341,3 +352,4 @@ function Trigger(_config = {}) : Method(_config) constructor {
 };
 
 #endregion
+

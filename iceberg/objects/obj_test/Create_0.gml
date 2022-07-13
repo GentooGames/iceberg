@@ -5,14 +5,21 @@ event_id = "test";
 setup  = method_inherit(setup,  function() {
 	/// @func setup()
 	///
-	triggers = new Stash({
-		name: "triggers",
-	});
-	triggers_add("test_trigger", "method()");
+	//triggers = new Stash({
+	//	name: "triggers",
+	//});
+	//triggers_add("test_trigger", "method()");
 	//show_message(triggers_get("test_trigger"));
 	//show_message(trigger_get_count());
 	
-	
+	//var _self = self;
+	//component = new Component();
+	//interface = new Interface({ 
+	//	owner:	  _self,
+	//	name:	  "component", 
+	//	component: component,
+	//});
+	//component_get_owner();
 	
 	//components = new Components();
 	

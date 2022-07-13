@@ -163,12 +163,13 @@
 #endregion
 #region default config values ///////
 
-#macro __GENTUI_DEFAULT_CONFIG_NAME_START	  "__start__"
-#macro __GENTUI_DEFAULT_CONFIG_NAME_DEFAULT   "__default__"
-#macro __GENTUI_DEFAULT_UPDATE_TRIGGER_NAME   "__default__"
-#macro __GENTUI_DEFAULT_UPDATE_TRIGGER_METHOD function() { return true; }
-#macro __GENTUI_DEFAULT_RENDER_TRIGGER_NAME   "__default__"
-#macro __GENTUI_DEFAULT_RENDER_TRIGGER_METHOD function() { return true; }
+#macro __GENTUI_DEFAULT_CONFIG_NAME_START			"__start__"
+#macro __GENTUI_DEFAULT_CONFIG_NAME_DEFAULT			"__default__"
+#macro __GENTUI_DEFAULT_UPDATE_TRIGGER_NAME			"__default__"
+#macro __GENTUI_DEFAULT_UPDATE_TRIGGER_METHOD		function() { return true; }
+#macro __GENTUI_DEFAULT_RENDER_TRIGGER_NAME			"__default__"
+#macro __GENTUI_DEFAULT_RENDER_TRIGGER_METHOD		function() { return true; }
+#macro __GENTUI_DEFAULT_AUTO_BIND_METHODS_TO_SELF	true
 
 #macro __GENTUI_PUBLISHER	Publisher	// <-- this system utilizes a PubSub design pattern. you can replace
 										// the existing implementation with a custom implementation by first
@@ -388,7 +389,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			thickness:						1,
 			input_device:				    0,
 			use_gui_space:					true,
-			auto_bind_methods_to_self:				true,
+			auto_bind_methods_to_self:		__GENTUI_DEFAULT_AUTO_BIND_METHODS_TO_SELF,
 			state_execute_on_enter:			true,
 			state_execute_on_exit:			true,
 			state_on_change_sync_config:	true,
@@ -1106,7 +1107,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_bind_to_self) {
 				_trigger_method = method(self, _trigger_method);
 			}
-			(__action_get(_action_context, _action_name)).add_trigger(_trigger_name, _trigger_method);
+			(__action_get(_action_context, _action_name)).triggers_add(_trigger_name, _trigger_method);
 		}
 		return self;
 	};
@@ -1118,7 +1119,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Trigger} trigger
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return (__action_get(_action_context, _action_name)).get_trigger(_trigger_name);
+			return (__action_get(_action_context, _action_name)).triggers_get(_trigger_name);
 		}
 		return undefined;
 	};
@@ -1130,7 +1131,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} trigger_exists?
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return (__action_get(_action_context, _action_name)).has_trigger(_trigger_name);	
+			return (__action_get(_action_context, _action_name)).triggers_exists(_trigger_name);	
 		}
 		return false;
 	};
@@ -1142,7 +1143,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			(__action_get(_action_context, _action_name)).destroy_trigger(_trigger_name);
+			(__action_get(_action_context, _action_name)).triggers_remove(_trigger_name);
 		}
 		return self;
 	};
@@ -1153,7 +1154,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			(__action_get(_action_context, _action_name)).destroy_triggers();
+			(__action_get(_action_context, _action_name)).triggers_clear();
 		}
 		return self;
 		
@@ -1168,7 +1169,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {UiAction} action_trigger
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return (__action_get(_action_context, _action_name)).get_trigger_method(_trigger_name);	
+			return (__action_get(_action_context, _action_name)).triggers_get(_trigger_name).get_method();	
 		}
 		return undefined;
 	};
@@ -1180,7 +1181,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} triggers_active?
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return (__action_get(_action_context, _action_name)).get_trigger_data(_trigger_name);
+			return (__action_get(_action_context, _action_name)).triggers_get(_trigger_name).get_data();
 		}
 		return false;
 	};
@@ -1203,7 +1204,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {boolean} triggers_active?
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			return (__action_get(_action_context, _action_name)).get_triggers_active();
+			return (__action_get(_action_context, _action_name)).triggers_get_active();
 		}
 		return false;
 	};
@@ -1221,7 +1222,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_bind_to_self) {
 				_trigger_method = method(self, _trigger_method);	
 			}
-			(__action_get(_action_context, _action_name)).set_trigger_method(_trigger_name, _trigger_method);
+			(__action_get(_action_context, _action_name)).triggers_get(_trigger_name).set_method(_trigger_method);
 		}
 		return self;
 	};
@@ -1234,7 +1235,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui}	 self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			(__action_get(_action_context, _action_name)).set_trigger_data(_trigger_name, _trigger_data);
+			(__action_get(_action_context, _action_name)).triggers_get(_trigger_name).set_data(_trigger_data);
 		}
 		return self;
 	};
@@ -1247,7 +1248,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return	{Ui}	  self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			(__action_get(_action_context, _action_name)).set_trigger_active(_trigger_name, _active);
+			(__action_get(_action_context, _action_name)).triggers_get(_trigger_name).set_active(_active);
 		}
 		return self;
 	};
@@ -1259,7 +1260,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		if (__action_exists(_action_context, _action_name)) {
-			(__action_get(_action_context, _action_name)).set_triggers_active(_active);
+			(__action_get(_action_context, _action_name)).triggers_set_active(_active);
 		}
 		return self;
 	};

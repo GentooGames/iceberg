@@ -46,11 +46,17 @@ function ___gui() {
 				#endregion
 			}
 			
-			//label = new UiLabel({
-			//	text: "test label here...",
-			//	x: SURF_W * 0.5,
-			//	y: SURF_H * 0.5,
-			//});
+			label = new UiLabel(, {
+				text: "test label here...",
+				x: SURF_W * 0.5,
+				y: SURF_H * 0.5,
+			});
+			label.action_add("change_color", function() {
+				set_color(c_red);
+			})
+			.action_add_trigger("change_color", "space_bar", function() {
+				return keyboard_check_pressed(vk_space);	
+			})
 			
 			return self;
 	    },    
@@ -67,7 +73,7 @@ function ___gui() {
 				#endregion
 			}
 				
-			//label.update();
+			label.update();
 				
 			return self;
 		},
@@ -84,7 +90,7 @@ function ___gui() {
 				#endregion
 			}
 				
-			//label.render();
+			label.render();
 			
 			return self;
 		},
