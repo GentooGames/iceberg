@@ -18,7 +18,6 @@
     {"id":{"name":"___window","path":"scripts/___window/___window.yy",},"order":11,},
     {"id":{"name":"PathFinder","path":"scripts/PathFinder/PathFinder.yy",},"order":0,},
     {"id":{"name":"objp_object","path":"objects/objp_object/objp_object.yy",},"order":1,},
-    {"id":{"name":"___publisher","path":"scripts/___publisher/___publisher.yy",},"order":8,},
     {"id":{"name":"___transition","path":"scripts/___transition/___transition.yy",},"order":9,},
     {"id":{"name":"___truInst","path":"scripts/___truInst/___truInst.yy",},"order":2,},
     {"id":{"name":"shdr_alpha_dither","path":"shaders/shdr_alpha_dither/shdr_alpha_dither.yy",},"order":0,},

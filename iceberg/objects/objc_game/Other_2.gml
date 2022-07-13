@@ -25,7 +25,6 @@ ___user_settings();
 #region Systems ////////
 
 log("<OBJC_GAME> initializing systems...");
-___publisher();
 ___clock();
 ___input();
 ___audio();

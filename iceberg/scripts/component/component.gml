@@ -73,7 +73,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @return {Eventable} self
 	///
 	__publisher = new Publisher();
-	//__publisher.register_channel("channel_registered");
+	__publisher.register_channel("channel_registered");
 	
 	static get_publisher	 = function() {
 		/// @func	get_publisher()
@@ -93,9 +93,6 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		for (var _i = 0, _len = array_length(_events); _i < _len; _i++) {
 			__publisher.register_channel(_events[_i]);
 		}
-		//if (_push_to_global) {
-		//	PUBLISHER.register(_events, false);
-		//}
 		return self;
 	};
 	static is_registered	 = function(_event_name) {
@@ -122,10 +119,6 @@ function Eventable(_config = {}) : Component(_config) constructor {
 			payload: _payload,
 		}
 		__publisher.publish(_event_name, _data_struct);
-			
-		//if (_push_to_global) {
-		//	PUBLISHER.publish(get_name() + "_" + _event_name, _data_struct, false);
-		//}
 		return self;
 	};
 	static subscribe		 = function(_event_name, _callback, _weak_reference = false) {
