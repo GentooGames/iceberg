@@ -56,20 +56,176 @@ function Component(_config = {}) : Class(_config) constructor {
 	#endregion
 };
 
+#region Scriptable /////////////////
+
+function Scriptable() : Component() constructor {
+	/// @func	Scriptable()
+	/// @return {Component} self
+	///
+};
+
+#endregion
+#region Eventable //////////////////
+
+function EventObject(_name = "") {
+	/// @func	EventObject(name*)
+	/// @param	{string} name=""
+	/// @return	{struct} event_instance
+	///
+	__event_instance  =  self;
+	__event_publisher =  new Publisher();
+	__event_name	  = _name;
+
+	event_setup				= method(__event_instance, function() {
+		/// @func	event_setup()
+		/// @return	{struct} event_instance
+		///
+		return __event_instance;
+	});
+	event_update			= method(__event_instance, function() {
+		/// @func	event_update()
+		/// @return	{struct} event_instance
+		///
+		return __event_instance;
+	});
+	event_teardown			= method(__event_instance, function() {
+		/// @func	event_teardown()
+		/// @return	{struct} event_instance
+		///
+		return __event_instance;
+	});
+	////////////////////////////////////////////////////
+	event_get_instance		= method(__event_instance, function() {
+		/// @func	event_get_instance()
+		/// @return	{struct} event_instance
+		///
+		return __event_instance;
+	});
+	event_get_publisher		= method(__event_instance, function() {
+		/// @func	event_get_publisher()
+		/// @return {Publisher} event_publisher
+		///
+		return __event_publisher;
+	});
+	event_get_context_name	= method(__event_instance, function() {
+		/// @func	event_get_context_name()
+		/// @return {string} event_name
+		///
+		return __event_name;
+	});
+	event_register			= method(__event_instance, function(_event_array, _push_to_global = false) {
+		/// @func	event_register(event_array, push_to_global?)
+		/// @param	{array}	 event_array
+		/// @parma	{bool}	 push_to_global=false
+		/// @return	{struct} event_instance
+		///
+		/// Cast And Normalize Argument To Array
+		if (!is_array(_event_array)) {
+			_event_array = [_event_array];	
+		}
+		/// Register Each Channel
+		var _publisher = event_get_publisher();
+		for (var _i = 0, _len = array_length(_event_array); _i < _len; _i++) {
+			_publisher.register_channel(_event_array[_i]);
+		}
+		/// Send To Global?
+		if (_push_to_global) {
+			PUBLISHER.register(_event_array, false);
+		}
+		return __event_instance;
+	});
+	event_registered		= method(__event_instance, function(_event_name) {
+		/// @func	event_registered(event_name)
+		/// @param	{string}  event_name
+		/// @return {boolean} event_is_registered?
+		///
+		var _publisher = event_get_publisher();
+		return _publisher.has_registered_channel(_event_name);
+	});
+	event_publish			= method(__event_instance, function(_event_name, _payload = undefined, _push_to_global = false) {
+		/// @func	 event_publish(event_name, payload*, push_to_global?*)
+		/// @param	{string} event_name
+		/// @param	{any}	 payload=undefined
+		/// @param	{bool}	 push_to_global=false
+		/// @return	{struct} event_instance
+		///
+		/*	<data_struct>: {
+				id:		 self,
+				payload: any,
+			}
+		*/
+		var _publisher   = event_get_publisher();
+		var _data_struct = {
+			self:	  event_get_instance(),
+			payload: _payload,
+		}
+		_publisher.publish(_event_name, _data_struct);
+			
+		if (_push_to_global) {
+			PUBLISHER.publish(get_event_context_name() + "_" + _event_name, _data_struct, false);
+		}
+		return __event_instance;
+	});
+	event_subscribe			= method(__event_instance, function(_event_name, _callback, _weak_reference = false) {
+		/// @func	event_subscribe(event_name, callback, weak_reference?)
+		/// @param	{string}  event_name
+		/// @param	{method}  callback_method
+		/// @param	{boolean} weak_reference=false
+		/// @return	{struct}  event_instance
+		///
+		var _publisher = event_get_publisher();
+		_publisher.subscribe(_event_name, _callback, _weak_reference);
+		return __event_instance;
+	});
+	event_unsubscribe		= method(__event_instance, function(_event_name, _force = false) {
+		/// @func	event_unsubscribe(event_name, force?*)
+		/// @param	{string}  event_name
+		/// @parma	{boolean} force=false
+		/// @return	{struct}  event_instance
+		///
+		var _publisher = event_get_publisher();
+		_publisher.unsubscribe(_event_name, _force);
+		return __event_instance;
+	});
+	event_clear_subscribers = method(__event_instance, function(_event_name) {
+		/// @func	event_clear_subscribers(event_name)
+		/// @param	{string} event_name
+		/// @return	{struct} event_instance
+		///
+		var _publisher = event_get_publisher();
+		_publisher.clear_channel(_event_name);
+		return __event_instance;
+	});	
+	////////////////////////////////////////////////////
+	event_setup(); /// <-- automatically invoke setup
+	
+	return __event_instance;
+};
+
+#endregion
 #region Moveable ///////////////////
 
-function Moveable() : Component() constructor {
-	/// @func	Moveable()
+function Moveable(_config = {}) : Component(_config) constructor {
+	/// @func	Moveable(config*)
+	/// @param	{struct}   config={}
 	/// @return	{Moveable} self
 	///
 	__owner	   = other;
 	__hspd	   = 0;
 	__vspd	   = 0;
-	__speed	   = 0;
-	__accel	   = 1;
-	__fric	   = 1;
-	__movesets = new Stash();
-	__moveset  = undefined;
+	__movesets = {}; with (__movesets) {
+		__default  = {}; with (__default) {
+			__name	  = "";
+			__moveset = moveset_new(__name, {
+				speed: 0,
+				accel: 1,
+				fric:  1,
+				mult:  1,
+			});
+		};
+		__movesets = new Stash();
+		__moveset  = __default;
+	};
 	
 	///__dir  = undefined;
 	///__path = undefined;	// instantiated in setup()
@@ -108,53 +264,70 @@ function Moveable() : Component() constructor {
 		return self;
 	};
 		
-	#region MoveSet
-
+	/// MoveSet
 	static moveset_get		   = function(_name) {
 		/// @func	moveset_get(name)
 		/// @param	{string}  name
 		/// @return {MoveSet} moveset
 		///
-		return __movesets.get(_name);
+		with (__movesets) {
+			return __movesets.get(_name);
+		}
+	};
+	static moveset_get_default = function() {
+		/// @func	moveset_get_default()
+		/// @return {MoveSet} moveset
+		///
+		with (__movesets.__default) {
+			return __moveset;
+		}
 	};
 	static moveset_set		   = function(_moveset) {
 		/// @func	moveset_set(moveset)
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		__moveset = _moveset;
-		__moveset_update();
+		with (__movesets) {
+			__moveset = _moveset;
+		}
+		moveset_apply();
 		return self;
 	};
 	static moveset_add		   = function(_name, _moveset) {
 		/// @func	moveset_add(name, moveset)
 		/// @param	{string}   name
-		/// @param	{Moveset}  moveset
+		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		__movesets.add(_name, _moveset);
+		with (__movesets) {
+			__movesets.add(_name, _moveset);
+		}
 		return self;
 	};
 	static moveset_new		   = function(_name, _data) {
 		/// @func	moveset_new(name, data)
-		/// @param	{string}   name
-		/// @param	{struct}   data
-		/// @return {Moveable} self
+		/// @param	{string}  name
+		/// @param	{struct}  data
+		/// @return {MoveSet} moveset
 		///
-		return moveset_add(_name, new MoveSet(_name, _data));
+		var _moveset = new MoveSet(_name, _data);
+		moveset_add(_name, _moveset);
+		return _moveset;
 	};
 	static moveset_exists	   = function(_name) {
 		/// @func	moveset_exists(name)
 		/// @param	{string}  name
 		/// @return {boolean} exists?
 		///
-		return __movesets.exists(_name);
+		with (__movesets) {
+			return __movesets.exists(_name);
+		}
 	};
-	static moveset_clear	   = function() {
-		/// @func	moveset_clear()
+	static moveset_reset	   = function() {
+		/// @func	moveset_reset()
 		/// @return {Moveable} self
 		///
-		return moveset_set(undefined);
+		return moveset_set(moveset_get_default());
 	};
 	static moveset_change	   = function(_name) {
 		/// @func	moveset_change(name)
@@ -170,15 +343,23 @@ function Moveable() : Component() constructor {
 		/// @func	moveset_apply()
 		/// @return {Moveable} self
 		///
-		__speed = __moveset.__speed;
-		__accel = __moveset.__accel;
-		__fric  = __moveset.__fric;
+		var _moveset = __movesets.__moveset;
+		__speed		 =  _moveset.__speed;
+		__accel		 =  _moveset.__accel;
+		__fric		 =  _moveset.__fric;
+		__mult		 =  _moveset.__mult;
 		return self;
 	};
-	
-	static moveset_add_trigger = function(_moveset_name, _trigger_name, _trigger) {};
+	static moveset_trigger_add = function(_moveset_name, _trigger_method) {
+		/// @func	moveset_trigger_add(moveset_name, trigger_method)
+		/// @param	{string}   moveset_name
+		/// @param	{method}   trigger_method
+		/// @return {Moveable} self
+		///
 		
-	#endregion
+	};
+		
+	/// WIRE EVENT TO TRIGGER PUBSUB TO TRIGGER MOVESET CHANGE
 };
 function MoveableTopDown() : Moveable() constructor {
 	/// @func	MoveableTopDown()
@@ -203,8 +384,17 @@ function MoveSet(_name, _config) constructor {
 	__accel		= _config[$ "accel"] ?? 0;
 	__fric		= _config[$ "fric" ] ?? 0;
 	__mult		= _config[$ "mult" ] ?? 1;
+	__triggers	= new Stash();
 	
-	__triggers = {};
+	static trigger_add = function(_trigger_name, _trigger_method) {
+		/// @func	trigger_add(moveset_name, trigger_method)
+		/// @param	{string}  moveset_name
+		/// @param	{method}  trigger_method
+		/// @return {MoveSet} self
+		///
+		__triggers.add(_moveset_name, _trigger_method);
+		return self;
+	};
 };
 
 #endregion
@@ -350,153 +540,6 @@ function Collidable() : Component() constructor {
 		}
 		return self;
 	};
-};
-
-#endregion
-#region Scriptable /////////////////
-
-function Scriptable() : Component() constructor {
-	/// @func	Scriptable()
-	/// @return {Component} self
-	///
-};
-
-#endregion
-#region Eventable //////////////////
-
-function EventObject(_name = "") {
-	/// @func	EventObject(name*)
-	/// @param	{string} name=""
-	/// @return	{struct} event_instance
-	///
-	__event_instance  =  self;
-	__event_publisher =  new Publisher();
-	__event_name	  = _name;
-
-	event_setup				= method(__event_instance, function() {
-		/// @func	event_setup()
-		/// @return	{struct} event_instance
-		///
-		return __event_instance;
-	});
-	event_update			= method(__event_instance, function() {
-		/// @func	event_update()
-		/// @return	{struct} event_instance
-		///
-		return __event_instance;
-	});
-	event_teardown			= method(__event_instance, function() {
-		/// @func	event_teardown()
-		/// @return	{struct} event_instance
-		///
-		return __event_instance;
-	});
-	////////////////////////////////////////////////////
-	event_get_instance		= method(__event_instance, function() {
-		/// @func	event_get_instance()
-		/// @return	{struct} event_instance
-		///
-		return __event_instance;
-	});
-	event_get_publisher		= method(__event_instance, function() {
-		/// @func	event_get_publisher()
-		/// @return {Publisher} event_publisher
-		///
-		return __event_publisher;
-	});
-	event_get_context_name	= method(__event_instance, function() {
-		/// @func	event_get_context_name()
-		/// @return {string} event_name
-		///
-		return __event_name;
-	});
-	event_register			= method(__event_instance, function(_event_array, _push_to_global = false) {
-		/// @func	event_register(event_array, push_to_global?)
-		/// @param	{array}	 event_array
-		/// @parma	{bool}	 push_to_global=false
-		/// @return	{struct} event_instance
-		///
-		/// Cast And Normalize Argument To Array
-		if (!is_array(_event_array)) {
-			_event_array = [_event_array];	
-		}
-		/// Register Each Channel
-		var _publisher = event_get_publisher();
-		for (var _i = 0, _len = array_length(_event_array); _i < _len; _i++) {
-			_publisher.register_channel(_event_array[_i]);
-		}
-		/// Send To Global?
-		if (_push_to_global) {
-			PUBLISHER.register(_event_array, false);
-		}
-		return __event_instance;
-	});
-	event_registered		= method(__event_instance, function(_event_name) {
-		/// @func	event_registered(event_name)
-		/// @param	{string}  event_name
-		/// @return {boolean} event_is_registered?
-		///
-		var _publisher = event_get_publisher();
-		return _publisher.has_registered_channel(_event_name);
-	});
-	event_publish			= method(__event_instance, function(_event_name, _payload = undefined, _push_to_global = false) {
-		/// @func	 event_publish(event_name, payload*, push_to_global?*)
-		/// @param	{string} event_name
-		/// @param	{any}	 payload=undefined
-		/// @param	{bool}	 push_to_global=false
-		/// @return	{struct} event_instance
-		///
-		/*	<data_struct>: {
-				id:		 self,
-				payload: any,
-			}
-		*/
-		var _publisher   = event_get_publisher();
-		var _data_struct = {
-			self:	  event_get_instance(),
-			payload: _payload,
-		}
-		_publisher.publish(_event_name, _data_struct);
-			
-		if (_push_to_global) {
-			PUBLISHER.publish(get_event_context_name() + "_" + _event_name, _data_struct, false);
-		}
-		return __event_instance;
-	});
-	event_subscribe			= method(__event_instance, function(_event_name, _callback, _weak_reference = false) {
-		/// @func	event_subscribe(event_name, callback, weak_reference?)
-		/// @param	{string}  event_name
-		/// @param	{method}  callback_method
-		/// @param	{boolean} weak_reference=false
-		/// @return	{struct}  event_instance
-		///
-		var _publisher = event_get_publisher();
-		_publisher.subscribe(_event_name, _callback, _weak_reference);
-		return __event_instance;
-	});
-	event_unsubscribe		= method(__event_instance, function(_event_name, _force = false) {
-		/// @func	event_unsubscribe(event_name, force?*)
-		/// @param	{string}  event_name
-		/// @parma	{boolean} force=false
-		/// @return	{struct}  event_instance
-		///
-		var _publisher = event_get_publisher();
-		_publisher.unsubscribe(_event_name, _force);
-		return __event_instance;
-	});
-	event_clear_subscribers = method(__event_instance, function(_event_name) {
-		/// @func	event_clear_subscribers(event_name)
-		/// @param	{string} event_name
-		/// @return	{struct} event_instance
-		///
-		var _publisher = event_get_publisher();
-		_publisher.clear_channel(_event_name);
-		return __event_instance;
-	});	
-	////////////////////////////////////////////////////
-	event_setup(); /// <-- automatically invoke setup
-	
-	return __event_instance;
 };
 
 #endregion
@@ -827,3 +870,25 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 };
 
 #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
