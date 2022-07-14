@@ -126,10 +126,10 @@ function Eventable(_config = {}) : Component(_config) constructor {
 			setup_super();
 			__broadcaster = new Publisher();
 			register([
-				"register",
-				"broadcast",
-				"listen",
-				"clear_listeners",
+				"registered",
+				"broadcasted",
+				"listened",
+				"listeners_cleared",
 			]);
 		}
 		return self;
@@ -162,7 +162,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		for (var _i = 0, _len = array_length(_events); _i < _len; _i++) {
 				get_broadcaster().register_channel(_events[_i]);
 			}
-		broadcast("register", _events);
+		broadcast("registered", _events);
 		return self;
 	};
 	static broadcast		= function(_event_name, _payload = undefined) {
@@ -186,7 +186,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 				payload:   _payload,
 			}
 			get_broadcaster().publish(_event_name, _data);
-			get_broadcaster().publish("broadcast", _data);
+			get_broadcaster().publish("broadcasted", _data);
 
 			if (__logging) {
 				log("<PUBLISHER> {0} \n\t event : {1} \n\t payload : {2}", instanceof(_owner), _event_name, _payload);
@@ -202,7 +202,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		/// @return	{Eventable} self
 		///
 		get_broadcaster().subscribe(_event_name, _callback, _weak_reference);
-		broadcast("listen", { 
+		broadcast("listened", { 
 			event_name: _event_name,
 			callback:   _callback,
 		});
@@ -214,7 +214,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		/// @return	{Eventable} self
 		///
 		__publisher.clear_channel(_event_name);
-		broadcast("clear_listeners", _event_name);
+		broadcast("listeners_cleared", _event_name);
 		return self;
 	};
 	static is_registered	= function(_event_name) {

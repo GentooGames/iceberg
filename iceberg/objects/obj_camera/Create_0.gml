@@ -91,6 +91,6 @@ CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );
 // events
 eventer = new Eventable().setup();
 eventer.register([
-	"zoom_complete",
+	"zoom_completed",
 ]);
 

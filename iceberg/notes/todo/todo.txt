@@ -1,6 +1,5 @@
 iceberg:
 	- rework pubsub events in Method(), Action(), Trigger() classes
-	- remove past tense -ed from events
 	- IMPLEMENT EVENTABLE() EVERYWHERE!
 	- replace Action() iterating over all Triggers() and instead just wire a PubSub between them
 	- make sure the sub-classes of Class() are utilizing is_active()
