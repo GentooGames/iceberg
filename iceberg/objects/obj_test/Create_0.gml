@@ -5,19 +5,19 @@ setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///	
 	mover = new Moveable().setup();
-	mover.moveset_default({
+	mover.set_moveset_default({
 			speed: 6.0,
 			accel: 1.0,
 			fric:  0.0,
 			mult:  1.0,
 		})
-		.moveset_new("sand", {
+		.new_moveset("sand", {
 			speed: 4.0,
 			accel: 0.3,
 			fric:  0.2,
 			mult:  1.0,
 		})
-		.moveset_new("ice", {
+		.new_moveset("ice", {
 			speed: 8.0,
 			accel: 0.2,
 			fric:  0.1,

@@ -446,7 +446,8 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};	
 	__config_init(_config_name, _config);
 	
-	#region Core ///////////////////////////
+	/// NEED TO REFORMAT
+	#region Core ///////////////////
 	
 	static update	  = function() {
 		/// @func	update()
@@ -510,7 +511,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 	
 	#endregion
-	#region Getters & Setters //////////////
+	#region Getters & Setters //////
 	
 	#region Getters //////////////////////// 
 	
@@ -944,7 +945,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	#endregion
 	
 	#endregion
-	#region Actions ////////////////////////
+	#region Actions ////////////////
 	
 	#region Action Method Abstractions /////
 	
@@ -1119,7 +1120,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_bind_to_self) {
 				_trigger_method = method(self, _trigger_method);
 			}
-			(__action_get(_action_context, _action_name)).trigger_add(_trigger_name, _trigger_method);
+			(__action_get(_action_context, _action_name)).add_trigger(_trigger_name, _trigger_method);
 		}
 		return self;
 	};
@@ -1681,7 +1682,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 	
 	#endregion
-	#region State Machine //////////////////
+	#region State Machine //////////
 
 	/// Core ///////////////////////////////
 	static states_update	= function() {
@@ -2021,7 +2022,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 	
 	#endregion
-	#region Pins ///////////////////////////
+	#region Pins ///////////////////
 	
 	static pin_components = function() {
 		/// @func	pin_components(component1, ..., componentN)	
@@ -2052,7 +2053,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 		
 	#endregion
-	#region Configs & Properties ///////////
+	#region Configs & Properties ///
 	
 	/// Configs ////////////////////////////////////////////////////////////////
 	static config_add				 = function(_config_name, _config_struct) {
@@ -2370,7 +2371,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 	
 	#endregion
-	#region Interactions ///////////////////
+	#region Interactions ///////////
 	
 	static mouse_touching = function() {
 		/// @func	mouse_touching()
@@ -2385,7 +2386,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 	
 	#endregion
-	#region Util Functions /////////////////
+	#region Util Functions /////////
 	
 	static __draw_rectangle_width_color = function(_x1, _y1, _x2, _y2, _width, _color) {	
 		/// @func   __draw_rectangle_width_color(x1, y1, x2, y2, width, color)
@@ -2408,7 +2409,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 	
 	#endregion
-	#region Events /////////////////////////
+	#region Events /////////////////
 	
 	eventer = new Eventable().setup();
 	eventer.register([
@@ -2432,7 +2433,7 @@ function UiPanel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	///
 	__outline = __property_add(_config, "outline", false);
 	
-	#region Core ///////////////////
+	#region Core ///////////
 	
 	static render = function() {
 		/// @func	render()
@@ -2477,17 +2478,18 @@ function UiPanel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	};
 	
 	#endregion
-	#region Getters & Setters //////
+	#region Getters ////////
 	
-	/// Getters
 	static get_outline = function() {
 		/// @func	get_outline()
 		/// @return {real} outline
 		///
 		return __outline;
 	};
-		
-	/// Setters
+	
+	#endregion
+	#region Setters ////////
+	
 	static set_outline = function(_outline) {
 		/// @func	set_outline(outline)
 		/// @param	{real} outline
@@ -2517,7 +2519,7 @@ function UiLabel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	__halign	 = __property_add(_config, "halign",	  fa_left);
 	__valign	 = __property_add(_config, "valign",	  fa_top);
 		
-	#region Core ///////////////////
+	#region Core ///////////
 	
 	static render = function() {
 		/// @func	render()
@@ -2562,9 +2564,8 @@ function UiLabel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	};
 	
 	#endregion
-	#region Getters & Setters //////
+	#region Getters ////////
 		
-	/// Getters
 	static get_text		  = function() {
 		/// @func	get_text()
 		/// @return {string} text
@@ -2658,7 +2659,9 @@ function UiLabel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		return get_top() + get_height() * 0.5;
 	};
 
-	/// Setters
+	#endregion
+	#region Setters ////////
+	
 	static set_text		  = function(_text) {
 		/// @func	set_text(text)
 		/// @param	{string} text
@@ -2707,8 +2710,10 @@ function UiLabel  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		__valign = _valign;
 		return self;
 	};
-		
-	/// Checkers
+	
+	#endregion
+	#region Checkers ///////
+	
 	static has_text = function() {
 		/// @func	has_text()
 		/// @return {boolean} has_text?
@@ -2735,7 +2740,7 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	__image  = __property_add(_config, "image",  0);
 	__speed  = __property_add(_config, "speed",  1);
 
-	#region Core ///////////////////
+	#region Core ///////////
 	
 	static update = function() {
 		/// @func	update()
@@ -2765,9 +2770,8 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	};
 	
 	#endregion
-	#region Getters & Setters //////
+	#region Getters ////////
 	
-	/// Getters
 	static get_sprite	= function() {
 		/// @func	get_sprite()
 		/// @return {real} sprite_index
@@ -2859,8 +2863,10 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		return get_top() + get_height() * 0.5;
 	};
 	
-	/// Setters
-	static set_sprite	= function(_sprite) {
+	#endregion
+	#region Setters/////////
+	
+	static set_sprite = function(_sprite) {
 		/// @func	set_sprite(sprite)
 		/// @param	{real}	   sprite_index
 		/// @return {UiSprite} self
@@ -2868,14 +2874,14 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		__sprite = _sprite;
 		return self;
 	};
-	static set_index	= function(_index) {
+	static set_index  = function(_index) {
 		/// @func	set_sprite(index)
 		/// @param	{real}	   sprite_index
 		/// @return {UiSprite} self
 		///
 		return set_sprite(_index);
 	};
-	static set_image	= function(_image) {
+	static set_image  = function(_image) {
 		/// @func	set_image(image)
 		/// @param	{real}	   image
 		/// @return {UiSprite} self
@@ -2883,14 +2889,14 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		__image = _image;
 		return self;
 	};
-	static set_frame	= function(_frame) {
+	static set_frame  = function(_frame) {
 		/// @func	set_frame(frame)
 		/// @param	{real}	   frame
 		/// @return {UiSprite} self
 		///
 		return set_image(_frame);
 	};
-	static set_speed	= function(_speed) {
+	static set_speed  = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real}	   speed
 		/// @return {UiSprite} self
@@ -2898,7 +2904,7 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		__speed = _speed;
 		return self;
 	};
-	static set_scale	= function(_scale, _yscale = _scale) {
+	static set_scale  = function(_scale, _yscale = _scale) {
 		/// @func	set_scale(scale, yscale*)
 		/// @param	{real}	   scale
 		/// @param	{real}	   yscale=scale
@@ -2908,7 +2914,7 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 		__yscale = _yscale;
 		return self;
 	};
-	static set_angle	= function(_angle) {
+	static set_angle  = function(_angle) {
 		/// @func	set_angle(angle)
 		/// @param	{real}	   angle
 		/// @return {UiSprite} self
@@ -2925,6 +2931,7 @@ function UiSprite (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
 	/// @func  UiLine(config) : Ui(config)
 	///
+	/// MOVE INTO SETUP()
 	#region __this /////////////////
 	
 	with (__this) {
@@ -2951,7 +2958,7 @@ function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	);
 	
 	#endregion
-	#region Core ///////////////////
+	#region Core ///////////
 	
 	static render	 = function() {
 		/// @func	render()
@@ -3004,9 +3011,8 @@ function UiLine   (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	};
 	
 	#endregion
-	#region Getters & Setters //////
+	#region Getters ////////
 	
-	/// Getters
 	static get_width	= function() {	/// @OVERRIDE
 		/// @func	get_width()
 		/// @return {real} width
@@ -3078,64 +3084,12 @@ function UiCircle (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	///
 	exit; // <-- not yet ready
 	
+	#region Core ///////////
+	
 	static render = function() {};
 	
-	static __draw_circle_curve = function(_x, _y, _radius, _precision, _angle_start, _angle_end, _thickness, _outline, _alpha = undefined) {
-		/// @func   draw_circle_curve(x, y, radius, precision, angle_start, angle_end, thickness, outline?, alpha*)
-		/// @desc   extended functionality to allow more advanced circle drawing options.
-		/// @param  x			-> {real}
-		/// @param  y			-> {real}
-		/// @param  radius		-> {real}
-		/// @param  precision	-> {real}
-		/// @param  angle_start	-> {angle}
-		/// @param  angle_end	-> {angle}
-		/// @param  thickness	-> {real}
-		/// @param  outline		-> {bool}
-		/// @param  alpha		-> {real}
-		/// @return NA
-		///
-		static _precision_min = 3;
-		_precision = max(_precision_min, _precision);
+	#endregion
 	
-		var _angle_iter	   = _angle_end / _precision;
-		var _len_perimeter = _radius + (_thickness * 0.5);
-		var _len_middle	   = _radius - (_thickness * 0.5);
-		var _angle		   = _angle_start + _angle_end;
-		var _dist_perimeter, _dist_middle;
-	
-		if (_alpha != undefined) {
-			draw_set_alpha(_alpha);
-		}
-		if (_outline) {
-			draw_primitive_begin(pr_trianglestrip);
-			draw_vertex(_x + lengthdir_x(_len_middle, _angle_start), _y + lengthdir_y(_len_middle, _angle_start));
-
-			for (var i = 1; i <= _precision; i += 1) {
-				_dist_perimeter = _angle_start    + _angle_iter * i;
-				_dist_middle	= _dist_perimeter - _angle_iter;
-				draw_vertex(_x + lengthdir_x(_len_perimeter, _dist_middle),		_y + lengthdir_y(_len_perimeter, _dist_middle));
-				draw_vertex(_x + lengthdir_x(_len_middle,	 _dist_perimeter),	_y + lengthdir_y(_len_middle,	 _dist_perimeter));
-			}
-			draw_vertex(_x + lengthdir_x(_len_perimeter, _angle), _y + lengthdir_y(_len_perimeter, _angle));
-			draw_vertex(_x + lengthdir_x(_len_middle, _angle), _y + lengthdir_y(_len_middle, _angle));
-		}
-		else {
-			draw_primitive_begin(pr_trianglefan);
-			draw_vertex(_x, _y);
-
-			for (i = 1; i <= _precision; i += 1) {
-				_dist_perimeter = _angle_start	  + _angle_iter * i;
-				_dist_middle	= _dist_perimeter - _angle_iter;
-				draw_vertex(_x + lengthdir_x(_len_perimeter, _dist_middle), _y + lengthdir_y(_len_perimeter, _dist_middle));
-			}
-			draw_vertex(_x + lengthdir_x(_len_perimeter, _angle), _y + lengthdir_y(_len_perimeter, _angle));
-		}	
-		draw_primitive_end();
-		if (_alpha != undefined) {
-			draw_set_alpha(1.0);
-		}
-	};
-		
 	action_render_add("render_main", render, true);
 };
 function UiArc	  (_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) : Gentui(_config_name, _config) constructor {
@@ -3146,7 +3100,11 @@ function UiTextbox(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = 
 	///
 	exit; // <-- not yet ready
 	
+	#region Core ///////////
+	
 	static render = function() {};
+	
+	#endregion
 	
 	action_render_add("render_main", render, true);
 };

@@ -9,7 +9,7 @@ function Class(_config = {}) constructor {
 	__owner	 = _config[$ "owner" ] ?? other;
 	__name	 = _config[$ "name"  ] ?? __get_name_unique();
 
-	#region Private ////////////////
+	#region Private ////////
 	
 	static __get_name_unique = function() {	
 		/// @func	__get_name_unique()
@@ -19,7 +19,8 @@ function Class(_config = {}) constructor {
 	};
 	
 	#endregion
-
+	#region Getters ////////
+	
 	static get_owner = function() {
 		/// @func	get_owner()
 		/// @return {struct} owner
@@ -32,6 +33,10 @@ function Class(_config = {}) constructor {
 		///
 		return __name;
 	};
+	
+	#endregion
+	#region Setters ////////
+	
 	static set_owner = function(_owner) {
 		/// @func	set_owner(owner)
 		/// @param	{struct} owner
@@ -49,6 +54,8 @@ function Class(_config = {}) constructor {
 		return self;
 	};
 	
+	#endregion
+	
 	/// ANY CHANGES MADE TO CONFIG STRUCT SHOULD BE UPDATED IN CODE_SNIPPET
 };
 
@@ -63,18 +70,19 @@ function Container(_config = {}) : Class(_config) constructor {
 	__names = [];
 	__size  = 0;
 	
-	/// Basic Functionality
-	static store  = function(_name, _item) {
-		/// @func	store(name, item)
+	#region Actions ////////
+	
+	static add	  = function(_name, _item) {
+		/// @func	add(name, item)
 		/// @param	{string}	name
 		/// @param	{any}		item
 		/// @return {Container} self
 		/// 
 		/// Add To Existing Entry
-		if (has(_name)) {
-			var _entry = fetch(_name);
+		if (exists(_name)) {
+			var _entry = get(_name);
 			if (!is_array(_entry)) {
-				_entry = [ fetch(_name) ];	
+				_entry = [ get(_name) ];	
 			}
 			array_push(_entry, _item);
 			__items[$ _name] = _entry;
@@ -87,28 +95,14 @@ function Container(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};
-	static fetch  = function(_name) {
-		/// @func	fetch(name)
-		/// @param	{string} name
-		/// @return {any}    item
-		///
-		return __items[$ _name];
-	};
-	static has	  = function(_name) {
-		/// @func	has(name)
-		/// @param	{string}  name
-		/// @return {boolean} exists?
-		///
-		return fetch(_name) != undefined;
-	};
 	static remove = function(_name, _item = undefined) {
 		/// @func	remove(name, item*)
 		/// @param	{string}	name
 		/// @param	{any}		item=undefined
 		/// @return {Container} self
 		///
-		if (has(_name)) {
-			var _entry = fetch(_name);
+		if (exists(_name)) {
+			var _entry = get(_name);
 			if (_item != undefined && is_array(_entry)) {
 				array_find_delete(_entry, _item);
 				__items[$ _name] = _entry;
@@ -131,48 +125,98 @@ function Container(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 
-	/// Extra Functionality
-	static get_size			  = function() {
+	#endregion
+	#region Getters ////////
+	
+	static get		 = function(_name) {
+		/// @func	get(name)
+		/// @param	{string} name
+		/// @return {any}    item
+		///
+		return __items[$ _name];
+	};
+	static get_size	 = function() {
 		/// @func	get_size()
 		/// @return {real} size
 		///
 		return __size;
 	};
-	static get_names		  = function() {
+	static get_names = function() {
 		/// @func	get_names()
 		/// @return {array} names
 		/// 
 		return __names;
 	};
-	static get_items		  = function() {
+	static get_items = function() {
 		/// @func	get_items()
 		/// @return {struct} items
 		/// 
 		return __items;
 	};
-	static get_items_as_array = function() {
-		/// @func	get_items_as_array()
-		/// @return {array} items
-		/// 
-		return struct_to_array(__items, __names, __count);
+		
+	#endregion
+	#region Checkers ///////
+	
+	static exists = function(_name) {
+		/// @func	exists(name)
+		/// @param	{string}  name
+		/// @return {boolean} exists?
+		///
+		return get(_name) != undefined;
 	};
+		
+	#endregion
 };
 function Batch(_config = {}) : Container(_config) constructor {
 	/// @func	Batch(config*)
 	/// @param	{struct} config={}
 	/// @return {Batch}  self
 	///
-	static execute = function() {
-		/// @func	execute()
-		/// @return {Batch} self
+	__empty_on_execute = _config[$ "emtpy_on_execute"] ?? false;
+	
+	#region Actions ////////////
+	
+	static execute = function(_empty_after = false) {
+		/// @func	execute(empty_after?*)
+		/// @param	{boolean} empty_after=false
+		/// @return {Batch}   self
 		///
-		for (var _i = 0, _len = __size; _i < _len; _i++) {
-			var _name = __names[_i];
-			var _item = __items[$ _name];
+		var _items = get_items();
+		var _names = get_names();
+		for (var _i = 0, _len = get_size(); _i < _len; _i++) {
+			var _name = _names[_i];
+			var _item = _items[$ _name];
 			_item();
+		}
+		if (__empty_on_execute || _empty_after) {
+			empty();	
 		}
 		return self;
 	};
+	
+	#endregion
+	#region Getters ////////////
+	
+	static get_empty_on_execute = function() {
+		/// @func	get_empty_on_execute()
+		/// @return {bool} empty_on_execute?
+		///
+		return __empty_on_execute;
+	};
+	
+	#endregion
+	#region Setters ////////////
+	
+	static set_empty_on_execute = function(_empty) {
+		/// @func	set_empty_on_execute(empty?)
+		/// @param	{bool}  empty?
+		/// @return {Batch} self
+		///
+		__empty_on_execute = _empty;
+		return self;
+	};
+		
+	#endregion
 };
 
 #endregion
@@ -188,30 +232,34 @@ function Method(_config = {}) : Class (_config) constructor {
 	
 	#region Private ////////
 	
-	static __method_execute		   = function() {
-		/// @func	__method_execute()
+	static __execute_method		   = function() {
+		/// @func	__execute_method()
 		/// @return {any} method_return
 		///
 		return __method(__data);
 	};
-	static __method_execute_script = function() {
-		/// @func	__method_execute_script()
+	static __execute_method_script = function() {
+		/// @func	__execute_method_script()
 		/// @return {any} method_return
 		///
 		return script_execute_ext(__method, __data);
 	};
 	
 	#endregion
+	#region Actions ////////
 	
 	static execute = function() {	/// @OVERRIDE
 		/// @func	execute()
 		/// @return {any} execute_return
 		///
 		if (is_method(__method)) {
-			return __method_execute();	
+			return __execute_method();	
 		}
-		return __method_execute_script();
+		return __execute_method_script();
 	};
+	
+	#endregion
+	#region Getters ////////
 	
 	static get_method = function() {
 		/// @func	get_method()
@@ -225,6 +273,10 @@ function Method(_config = {}) : Class (_config) constructor {
 		///
 		return __data;
 	};
+	
+	#endregion
+	#region Setters ////////
+	
 	static set_method = function(_method) {
 		/// @func	set_method(method)
 		/// @param	{method} method
@@ -241,6 +293,8 @@ function Method(_config = {}) : Class (_config) constructor {
 		__data = _data;
 		return self;
 	}
+		
+	#endregion
 };
 function Action(_config = {}) : Method(_config) constructor {
 	/// @func	Action(config*)
@@ -249,17 +303,23 @@ function Action(_config = {}) : Method(_config) constructor {
 	///
 	__triggers = new Container();
 		
-	static update	   = function() {
+	#region Core ///////////
+	
+	static update = function() {
 		/// @func	update()
 		/// @return {Action} self
 		///
 		var _names = __triggers.get_names();
 		for (var _i = 0; _i < __triggers.get_size(); _i++) {
-			var _trigger = __triggers.fetch(_names[_i]);
+			var _trigger = __triggers.get(_names[_i]);
 			_trigger.execute();
 		}
 		return self;
 	};
+	
+	#endregion
+	#region Actions ////////
+	
 	static execute	   = function() {	/// @OVERRIDE
 		/// @func	execute()
 		/// @return {any} execute_return
@@ -274,13 +334,13 @@ function Action(_config = {}) : Method(_config) constructor {
 		
 		return _return;
 	};
-	static trigger_add = function(_name, _method) {
-		/// @func	trigger_add(name, method)
+	static add_trigger = function(_name, _method) {
+		/// @func	add_trigger(name, method)
 		/// @param	{string} name
 		/// @param	{method} method
 		/// @return {Action} self
 		///
-		__triggers.store(_name, new Trigger({
+		__triggers.add(_name, new Trigger({
 			name:	_name, 
 			method: _method,
 		}));
@@ -291,21 +351,28 @@ function Action(_config = {}) : Method(_config) constructor {
 		
 		return self;
 	};
-		
-	var _component = get_owner();
-	_component.eventer.register(["action_executed_" + get_name()]);
+	
+	#endregion
+	
+	get_owner().eventer.register(["action_executed_" + get_name()]);
 };
 function Trigger(_config = {}) : Method(_config) constructor {
 	/// @func	Trigger(config*)
 	/// @param	{struct} config={}
 	/// @return {Trigger} self
 	///
-	static execute_super = execute;
-	static execute		 = function() {
+	#region Private ////////
+	
+	static __execute = execute;
+	
+	#endregion
+	#region Core ///////////
+	
+	static execute = function() {
 		/// @func	execute()
 		/// @return {any} result
 		///
-		var _result = execute_super();
+		var _result = __execute();
 		if (_result) {
 			var _action	   =  get_owner();
 			var _component = _action.get_owner();
@@ -313,6 +380,8 @@ function Trigger(_config = {}) : Method(_config) constructor {
 		}
 		return _result;
 	};
+		
+	#endregion
 };
 
 #endregion
@@ -331,6 +400,8 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 	__fric		= _config[$ "fric" ] ?? 0;
 	__mult		= _config[$ "mult" ] ?? 1;
 	
+	#region Setters ////////
+	
 	static set_data = function(_data) {
 		/// @func	set_data(data)
 		/// @param	{struct}  data
@@ -343,31 +414,7 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 		
 		return self;
 	};
+		
+	#endregion
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

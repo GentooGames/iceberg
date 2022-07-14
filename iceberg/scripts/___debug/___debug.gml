@@ -20,7 +20,9 @@ function ___debug() {
 				#endregion
 				#region gm_live ////////
 		
-			instance_create_depth(0, 0, 0, obj_gmlive);
+			if (asset_get_index("obj_gmlive") != -1) {
+				instance_create_depth(0, 0, 0, obj_gmlive);
+			}
 		
 			#endregion
 			}
