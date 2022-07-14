@@ -14,6 +14,8 @@
 //		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
+/// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS
+
 function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
 	/// @param	{struct}    config={}

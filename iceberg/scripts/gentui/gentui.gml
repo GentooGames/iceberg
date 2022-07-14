@@ -372,8 +372,8 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	/// @return {Gentui} self
 	///
 	__owner = other;
-	__this  = {			/// <-- change default starting values here
-		__default: {	/// <-- change default starting values here
+	__this  = {			// <-- change default starting values here
+		__default: {	// <-- change default starting values here
 			active:							true,
 			x:								0,
 			y:								0,
@@ -424,15 +424,15 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			__names:   [],
 			__current: {
 				__state: undefined,
-				__name:  "",
+				__name:  undefined,
 			},	
 			__states:  {},
 		},
 		__config:  {
-			__current:		undefined,	/// current config struct pointer
-			__configs:		{},			/// all stored configs keyed out by config_name
-			__properties:	{},			/// stored properties for dynamic updating
-			__name:			"",			/// current config name
+			__current:		undefined,	// current config struct pointer
+			__configs:		{},			// all stored configs keyed out by config_name
+			__properties:	{},			// stored properties for dynamic updating
+			__name:			undefined,	// current config name
 			__name_start:	__GENTUI_DEFAULT_CONFIG_NAME_START,
 			__name_default:	__GENTUI_DEFAULT_CONFIG_NAME_DEFAULT,
 		},
@@ -1706,13 +1706,13 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	static state_add_ext	= function(_state_name, _on_enter_method = undefined, _on_loop_method, _on_exit_method = undefined, _config_name = undefined, _auto_bind_method = default_get_auto_bind_methods_to_self()) {
 		/// @func	state_add_ext(state_name, on_enter_method*, on_loop_method, on_exit_method*, config_name*, auto_bind_methods_to_self?*)
 		/// @desc	add a new state_method bound to a given state_name
-		/// @param	{string}		  state_name
-		/// @param	{method/function} on_enter=undefined
-		/// @param	{method/function} on_loop
-		/// @param	{method/function} on_exit=undefined
-		/// @param	{struct}		  config_name=undefined
-		/// @param	{boolean}		  auto_bind_methods_to_self?*
-		/// @return	{Ui}			  self
+		/// @param	{string}  state_name
+		/// @param	{method}  on_enter=undefined
+		/// @param	{method}  on_loop
+		/// @param	{method}  on_exit=undefined
+		/// @param	{struct}  config_name=undefined
+		/// @param	{boolean} auto_bind_methods_to_self?*
+		/// @return	{Ui}	  self
 		///
 		if (_auto_bind_method) {
 			if (_on_enter_method != undefined) _on_enter_method = method(self, _on_enter_method);	
@@ -1847,7 +1847,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			/// Update Current State
 			__this.__states.__current.__state =  state_get(_state_name);
 			__this.__states.__current.__name  = _state_name;
-			#region Sync Config ////////////////////////////////////////
+			#region Sync Config ////////////
 			
 			var _config = undefined;
 			

@@ -51,7 +51,7 @@ function WeeState() constructor {
     owner              = other;
     default_draw       = undefined;
     states             = {};
-    state_current_name = "";
+    state_current_name = undefined;
     state_current      = undefined;
     
     // System
@@ -91,7 +91,7 @@ function WeeState() constructor {
         /// @return self {struct}
         ///
         /// Execute Previous State's Leave Event
-        if (state_current_name != "") {
+        if (state_current_name != undefined) {
             if (state_current.has_leave) {
                 state_current.data.leave();
             }

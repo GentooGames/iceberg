@@ -15,7 +15,7 @@ function FluidProperty(_data) constructor {
 	///			offset values, and swappable interpolation strategies.
 	///
 	owner   = _data[$ "owner" ] ?? other;
-	name    = _data[$ "name"  ] ?? "";
+	name    = _data[$ "name"  ] ?? undefined;
 	value   = _data[$ "value" ] ?? 0.0;
 	offset  = _data[$ "offset"] ?? 0.0;
 	target  = _data[$ "target"] ?? value;

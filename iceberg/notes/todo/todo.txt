@@ -3,8 +3,7 @@ iceberg:
 	- IMPLEMENT EVENTABLE() EVERYWHERE!
 	- replace Action() iterating over all Triggers() and instead just wire a PubSub between them
 	- make sure the sub-classes of Class() are utilizing is_active()
-	- string properties (explicit or default) that are initialized to undefined should be set to "" (empty string)
-		- use the default value to help indicate var typing
+	- remove auto-binding from components and gentui
 	- normalize usage of custom array functions, thats why they exist and part of this project
 	- encapsulate game logic into components
 	- abstracted component management system

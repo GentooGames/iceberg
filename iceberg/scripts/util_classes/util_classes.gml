@@ -60,7 +60,6 @@ function Container(_config = {}) : Class(_config) constructor {
 	/// @return {Container} self
 	///
 	__owner = other;
-	__name  = "";
 	__items = {};
 	__names = [];
 	__size  = 0;
