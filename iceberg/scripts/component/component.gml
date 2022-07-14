@@ -244,10 +244,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	__owner	  = other;
 	__hspd	  = 0;
 	__vspd	  = 0;
-	__speed	  = 0;
-	__accel	  = 0;
-	__fric	  = 0;
-	__mult	  = 1;
+	__speed	  = _config[$ "speed"] ?? 0;
+	__accel	  = _config[$ "accel"] ?? 0;
+	__fric	  = _config[$ "fric" ] ?? 0;
+	__mult	  = _config[$ "mult" ] ?? 0;
 	__moveset = {
 		__movesets:	undefined,	// collection 
 		__default:	undefined,	// default
@@ -258,11 +258,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__smooth: true,
 		__closed: false,
 	};
-	/// eventer = new Eventable().setup();
-	
-	//action = new Action({
-	//	
-	//});
 	
 	static setup_super	  = setup;
 	static teardown_super = teardown;
@@ -275,6 +270,15 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			setup_super();
 			__moveset_setup();
 			//__path_setup();
+			
+			/// ACTION & TRIGGER TESTING
+			/// rework and move into setup()
+			eventer = new Eventable().setup();	
+			action_change_moveset = new Action({ 
+				method: method(self, function(_moveset_name) {
+					moveset_change("test");
+				})
+			});
 		}
 		return self;
 	};
@@ -309,12 +313,19 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {Moveable} self
 		///
 		var _movesets = new Stash({ name: "movesets" });
-		var _moveset  = new MoveSet({ name: _default_name });
+		var _moveset  = new MoveSet({ 
+			name:  _default_name,
+			speed: __speed,
+			accel: __accel,
+			fric:  __fric,
+			mult:  __mult,
+		});
 		
 		__moveset.__movesets = _movesets;
 		__moveset_set_default(_moveset);
 		__moveset_set_current(_moveset);
 		  moveset_add(_default_name, _moveset);
+		  moveset_apply();
 		  
 		return self;
 	};
@@ -350,8 +361,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @func	__moveset_get_default()
 		/// @return {MoveSet} moveset
 		///
-		with (__moveset.__default) {
-			return __moveset;
+		with (__moveset) {
+			return __default;
 		}
 	};
 	static __moveset_set_default = function(_moveset) {
@@ -359,8 +370,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		with (__moveset.__default) {
-			__moveset = _moveset;
+		with (__moveset) {
+			__default = _moveset;
 		}
 		return self;
 	};
@@ -396,15 +407,15 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	};
 	static moveset_new		   = function(_name, _data) {
 		/// @func	moveset_new(name, data)
-		/// @param	{string}  name
-		/// @param	{struct}  data
-		/// @return {MoveSet} moveset
+		/// @param	{string}   name
+		/// @param	{struct}   data
+		/// @return {Moveable} self
 		///
 		_data[$ "name"] = _name;	// append name onto data struct
 		
 		var _moveset = new MoveSet(_data);
 		moveset_add(_name, _moveset);
-		return _moveset;
+		return self;
 	};
 	static moveset_exists	   = function(_name) {
 		/// @func	moveset_exists(name)
@@ -431,15 +442,25 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-	static moveset_apply	   = function() {
-		/// @func	moveset_apply()
+	static moveset_apply	   = function(_moveset = __moveset_get_current()) {
+		/// @func	moveset_apply(moveset*)
+		/// @param	{MoveSet}  moveset=moveset_get_current
 		/// @return {Moveable} self
 		///
-		__speed = __moveset.__moveset.__speed;
-		__accel = __moveset.__moveset.__accel;
-		__fric  = __moveset.__moveset.__fric;
-		__mult  = __moveset.__moveset.__mult;
+		__speed = _moveset.__speed;
+		__accel = _moveset.__accel;
+		__fric  = _moveset.__fric;
+		__mult  = _moveset.__mult;
 		return self;
+	};
+	static moveset_default	   = function(_data) {
+		/// @func	moveset_default(data)
+		/// @param	{struct}   data
+		/// @return {Moveable} self
+		///
+		__moveset_get_default().set_data(_data);
+		return self;
+		
 	};
 	static moveset_trigger_add = function(_moveset_name, _trigger_method) {};
 	
@@ -482,7 +503,6 @@ function MoveablePlatformer() : Moveable() constructor {
 	/// @return {Moveable} self
 	///
 };
-
 
 #endregion
 #region Actionable /////////////////

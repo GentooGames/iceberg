@@ -352,6 +352,19 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 	__accel		= _config[$ "accel"] ?? 0;
 	__fric		= _config[$ "fric" ] ?? 0;
 	__mult		= _config[$ "mult" ] ?? 1;
+	
+	static set_data = function(_data) {
+		/// @func	set_data(data)
+		/// @param	{struct}  data
+		/// @return {MoveSet} self
+		///
+		if (_data[$ "speed"] != undefined) __speed = _data.speed;
+		if (_data[$ "accel"] != undefined) __accel = _data.accel;
+		if (_data[$ "fric" ] != undefined) __fric  = _data.fric;
+		if (_data[$ "mult" ] != undefined) __mult  = _data.mult;
+		
+		return self;
+	};
 };
 
 

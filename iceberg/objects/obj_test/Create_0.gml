@@ -5,6 +5,25 @@ setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///	
 	mover = new Moveable().setup();
+	mover.moveset_default({
+			speed: 6.0,
+			accel: 1.0,
+			fric:  0.0,
+			mult:  1.0,
+		})
+		.moveset_new("sand", {
+			speed: 4.0,
+			accel: 0.3,
+			fric:  0.2,
+			mult:  1.0,
+		})
+		.moveset_new("ice", {
+			speed: 8.0,
+			accel: 0.2,
+			fric:  0.1,
+			mult:  1.0,
+		})
+	
 })();
 teardown = method_inherit(teardown, function() {
 	/// @func teardown()
@@ -22,11 +41,13 @@ update	 = method_inherit(update, function() {
 	if (INPUT.keyboard.button(vk_up))    y -= _speed;
 	
 	mover.update();
-	log("hspd: {0}, vspd: {1}, speed: {2}, accel: {3}, fric: {4}, mult: {5}",
-		mover.__hspd, mover.__vspd, mover.__speed, mover.__accel, mover.__fric, mover.__mult);
+	log("moveset: {0}", mover.__moveset.__moveset.get_name());
+	//log("hspd: {0}, vspd: {1}, speed: {2}, accel: {3}, fric: {4}, mult: {5}",
+	//	mover.__hspd, mover.__vspd, mover.__speed, mover.__accel, mover.__fric, mover.__mult);
 });
 render	 = method_inherit(render, function() {
 	/// @func render()
 	///
 	draw_circle_color(x, y, 20, c_red, c_red, false);
 });
+	
