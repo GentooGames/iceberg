@@ -27,7 +27,7 @@ setup	 = method_inherit(,function() {
 		#endregion
 		#region Events /////
 	
-		eventer = new Eventable();
+		eventer = new Eventable().setup();
 		eventer.register([
 			"setup_completed",
 			"teardown_completed",

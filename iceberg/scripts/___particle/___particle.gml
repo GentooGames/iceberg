@@ -21,7 +21,7 @@ function ___particle() {
 				#endregion
 				#region Events /////////
 			
-				eventer = new Eventable();
+				eventer = new Eventable().setup();
 				//eventer.register([]);
 			
 				#endregion

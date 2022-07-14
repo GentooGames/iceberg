@@ -19,7 +19,7 @@ function ___window() {
 				#endregion
 				#region Events /////////
 			
-				eventer = new Eventable();
+				eventer = new Eventable().setup();
 				eventer.register([
 					"fullscreen_assigned",
 					"position_assigned",

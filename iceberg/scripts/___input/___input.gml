@@ -154,7 +154,7 @@ function ___input() {
 				#endregion
 				#region Events /////////
 		
-				eventer = new Eventable();
+				eventer = new Eventable().setup();
 				eventer.disable_logging();
 				eventer.register([
 					/// mouse_button_pressed

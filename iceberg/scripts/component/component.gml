@@ -25,35 +25,67 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @func	setup()
 		/// @return {Component} self
 		///
-		__initialized = true;
+		if (!is_initialized()) {
+			__initialized = true;
+		}
 		return self;
 	}; 
 	static teardown = function() {		/// @OVERRIDE
 		/// @func	teardown()
 		/// @return {Component} self
 		///
-		__initialized = false;
+		if (is_initialized()) {
+			__initialized = false;
+		}
 		return self;
 	}; 
-	static update   = function() {};	/// @OVERRIDE
-	static render   = function() {};	/// @OVERRIDE
+	static rebuild  = function() {		/// @OVERRIDE
+		/// @func	rebuild()
+		/// @return {Component} self
+		///
+		if (is_initialized()) {
+			teardown();
+			setup();
+		}
+		return self;
+	};
+	static update   = function() {		/// @OVERRIDE
+		/// @func	update()
+		/// @return {Component} self
+		///
+		if (is_initialized()) {
+			
+		}
+		return self;
+	};	
+	static render   = function() {		/// @OVERRIDE
+		/// @func	render()
+		/// @return {Component} self
+		///
+		if (is_initialized()) {
+			
+		}
+		return self;
+	};	
 	
-	#region Actions ////////
-	
-	static actvate	  = function() {
+	static actvate		  = function() {
 		/// @func	actvate()
 		/// @return {Component} self
 		///
 		return set_active(true);
 	};
-	static deactivate = function() {
+	static deactivate	  = function() {
 		/// @func	deactivate()
 		/// @return {Component} self
 		///
 		return set_active(false);
 	};
-	
-	#endregion
+	static is_initialized = function() {
+		/// @func	is_initialized()
+		/// @return {bool} is_initialized?
+		///
+		return __initialized;
+	};
 };
 
 #region Scriptable /////////////////
@@ -72,14 +104,37 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}	config={}
 	/// @return {Eventable} self
 	///
-	__broadcaster = new Publisher();
+	__broadcaster = undefined;	/// <-- instantiated in setup()
 	__logging	  = DEBUGGING && 1;
-	register([
-		"register",
-		"broadcast",
-		"listen",
-		"clear_listeners",
-	]);
+
+	static setup_super	  = setup;
+	static setup		  = function() {
+		/// @func	setup()
+		/// @return {Eventable} self
+		///
+		if (!is_initialized()) {
+			setup_super();
+			
+			__broadcaster = new Publisher();
+			register([
+				"register",
+				"broadcast",
+				"listen",
+				"clear_listeners",
+			]);
+		}
+		return self;
+	};
+	static teardown_super = teardown;
+	static teardown		  = function() {
+		/// @func	teardown()
+		/// @return {Eventable} self
+		///
+		if (is_initialized()) {
+			__broadcaster = undefined;
+		}
+		return self;
+	};
 	
 	static get_broadcaster	= function() {
 		/// @func	get_broadcaster()
@@ -189,29 +244,25 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	__owner	   = other;
 	__hspd	   = 0;
 	__vspd	   = 0;
-	__movesets = {}; with (__movesets) {
-		__default  = {}; with (__default) {
-			__name	  = "";
-			__moveset = moveset_new(__name, {
-				speed: 0,
-				accel: 1,
-				fric:  1,
-				mult:  1,
-			});
-		};
-		__movesets = new Stash();
-		__moveset  = __default;
+	__movesets = {
+		__default:	{
+			__name:	   "",
+			__moveset: undefined,
+		},
+		__movesets:	new Stash(),
+		__moveset:	undefined,
 	};
 	
-	///__dir  = undefined;
-	///__path = undefined;	// instantiated in setup()
+	/// eventer = new Eventable().setup();
+	///__dir	= undefined;
+	///__path	= undefined;	// instantiated in setup()
 	
 	static setup_super	  = setup;
 	static setup		  = function() {
 		/// @func	setup()
 		/// @return {Moveable} self
 		///
-		if (!__initialized) {
+		if (!is_initialized()) {
 			setup_super();
 			//__path = path_add();
 			//path_set_kind(__path, 1);
@@ -224,19 +275,22 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @func	teardown()
 		/// @return {Moveable} self
 		///
-		if (__initialized) {
+		if (is_initialized()) {
 			teardown_super();
 			//path_delete(__path);
 			//__path = undefined;
 		}
 		return self;
 	};
+	static update_super	  = update;
 	static update		  = function() {
 		/// @func	update()
 		/// @return {Moveable} self
 		///
-		//__update_hspd_vspd();
-		//__update_xy();
+		if (is_initialized()) {
+			//__update_hspd_vspd();
+			//__update_xy();
+		}
 		return self;
 	};
 		
@@ -286,7 +340,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{struct}  data
 		/// @return {MoveSet} moveset
 		///
-		var _moveset = new MoveSet(_name, _data);
+		_data[$ "name"] = _name;
+		var _moveset = new MoveSet(_data);
 		moveset_add(_name, _moveset);
 		return _moveset;
 	};
@@ -347,14 +402,12 @@ function MoveablePlatformer() : Moveable() constructor {
 	/// @return {Moveable} self
 	///
 };
-function MoveSet(_name, _config) constructor {
-	/// @func	MoveSet(name, config)
-	/// @param	{string}  name
-	/// @param	{struct}  config
+function MoveSet(_config = {}) : Class(_config) constructor {
+	/// @func	MoveSet(config*)
+	/// @param	{struct}  config={}
 	/// @return {MoveSet} self
 	///
 	__moveable	=  other;
-	__name		= _name;
 	__config	= _config;
 	__speed		= _config[$ "speed"] ?? 0;
 	__accel		= _config[$ "accel"] ?? 0;

@@ -2389,7 +2389,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	#endregion
 	#region Events /////////////////////////
 	
-	eventer = new Eventable();
+	eventer = new Eventable().setup();
 	eventer.register([
 		"activated", 
 		"deactivated",

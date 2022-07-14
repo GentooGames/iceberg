@@ -32,7 +32,7 @@ function FluidProperty(_data) constructor {
 		speed		= __SPRING_DEFAULT_SPEED;
 		spring_main	= new Spring(tension, dampening);
 	};
-	eventer = new Eventable();
+	eventer = new Eventable().setup();
 	
 	#region Public /////////
 	

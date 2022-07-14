@@ -89,7 +89,7 @@ CLOCK_STABLE.variable_interpolate("pos_y",	   "iota_pos_y");
 CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );
 
 // events
-eventer = new Eventable();
+eventer = new Eventable().setup();
 eventer.register([
 	"zoom_completed",
 ]);

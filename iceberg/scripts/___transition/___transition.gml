@@ -49,7 +49,7 @@ function ___transition() {
 				#endregion
 				#region Events /////////////
 		
-				eventer = new Eventable();
+				eventer = new Eventable().setup();
 				eventer.register([
 					"enter_started",
 					"enter_completed",

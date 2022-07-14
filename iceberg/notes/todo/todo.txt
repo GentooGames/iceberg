@@ -1,6 +1,7 @@
 iceberg:
 	- rework pubsub events in Method(), Action(), Trigger() classes
 	- remove past tense -ed from events
+	- IMPLEMENT EVENTABLE() EVERYWHERE!
 	- make sure the sub-classes of Class() are utilizing is_active()
 	- string properties (explicit or default) that are initialized to undefined should be set to "" (empty string)
 		- use the default value to help indicate var typing
