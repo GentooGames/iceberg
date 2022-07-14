@@ -102,15 +102,6 @@ function FloeEffect() constructor {
 			__is_reversed: false,
 			__hold_timer:  0,
 		},
-		__audio:   {
-			__emitter: audio_emitter_create(),
-			__method:  audio_play_sound_on,
-			__sounds:  {
-				__enter:  undefined,
-				__change: undefined,
-				__leave:  undefined,
-			},
-		},
 	};
 	
 	static update   = function() {
@@ -119,12 +110,6 @@ function FloeEffect() constructor {
 		///
 		switch (get_state()) {
 			case __FLOE_STATE.ENTER_PREP: {
-				/// Play Sound
-				var _enter_sound  = get_audio_sound_enter();
-				if (_enter_sound != undefined) {
-					var _play_method = get_audio_play_method();
-					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
-				}
 				eventer.broadcast("enter_started");
 				set_running(true);
 				set_state(__FLOE_STATE.ENTER);
@@ -148,12 +133,6 @@ function FloeEffect() constructor {
 				break;	
 			}
 			case __FLOE_STATE.CHANGE: {
-				/// Play On Change Sound
-				var _change_sound  = get_audio_sound_enter();
-				if (_change_sound != undefined) {
-					var _play_method = get_audio_play_method();
-					_play_method(get_audio_emitter(), _enter_sound, 0, 0);
-				}
 				__this.__control.__hold_timer = get_hold_time();
 				eventer.broadcast("change_completed");
 				set_state(__FLOE_STATE.HOLD_PREP);
@@ -175,12 +154,6 @@ function FloeEffect() constructor {
 				break;	
 			}
 			case __FLOE_STATE.LEAVE_PREP: {
-				/// Play On Change Sound
-				var _leave_sound  = get_audio_sound_leave();
-				if (_leave_sound != undefined) {
-					var _play_method = get_audio_play_method();
-					_play_method(get_audio_emitter(), _leave_sound, 0, 0);
-				}
 				eventer.broadcast("leave_started");
 				set_state(__FLOE_STATE.LEAVE);
 				break;	
@@ -210,11 +183,6 @@ function FloeEffect() constructor {
 		/// @func	teardown()
 		/// @return {FloeEffect} self
 		///
-		var _emitter = get_audio_emitter();
-		if (audio_emitter_exists(_emitter)) {
-			audio_emitter_free(_emitter);
-			set_audio_emitter(undefined);
-		}
 		return self;
 	};
 	
@@ -279,42 +247,6 @@ function FloeEffect() constructor {
 		/// @return {enum} state
 		///
 		return __this.__control.__state;
-	};
-	static get_audio_emitter			 = function() {
-		/// @func	get_audio_emitter()
-		/// @return {emitter_id} audio_emitter
-		///
-		return __this.__audio.__emitter;
-	};
-	static get_audio_play_method		 = function() {
-		/// @func	get_audio_play_method()
-		/// @return {method} play_method
-		///
-		return __this.__audio.__method;
-	};
-	static get_audio_sound_enter		 = function() {
-		/// @func	get_audio_sound_enter()
-		/// @return {sound_id} sound_enter
-		/// 
-		with (__this.__audio.__sounds) {
-			return __enter;	
-		}
-	};
-	static get_audio_sound_change		 = function() {
-		/// @func	get_audio_sound_change()
-		/// @return {sound_id} sound_change
-		/// 
-		with (__this.__audio.__sounds) {
-			return __change;	
-		}
-	};
-	static get_audio_sound_leave		 = function() {
-		/// @func	get_audio_sound_leave()
-		/// @return {sound_id} sound_leave
-		/// 
-		with (__this.__audio.__sounds) {
-			return __leave;	
-		}
 	};
 	static get_callback_on_enter_method  = function() {
 		/// @func	get_callback_on_enter_method()
@@ -466,56 +398,6 @@ function FloeEffect() constructor {
 		__this.__control.__state = _state;
 		return self;
 	};
-	static set_audio_emitter	  = function(_emitter) {
-		/// @func	set_audio_emitter(emitter)
-		/// @param	{audio_emitter} emitter
-		/// @return {FloeEffect} self
-		/// 
-		with (__this.__audio) {
-			__emitter = _emitter;
-		}
-		return self;
-	};
-	static set_audio_play_method  = function(_method) {
-		/// @func	set_audio_play_method(method)
-		/// @param	{method} play_method
-		/// @return {FloeEffect} self
-		/// 
-		with (__this.__audio) {
-			__method = _method;
-		}
-		return self;
-	};
-	static set_audio_sound_enter  = function(_sound) {
-		/// @func	set_audio_sound_enter(sound)
-		/// @param	{sound_id} sound
-		/// @return {FloeEffect} self
-		/// 
-		with (__this.__audio.__sounds) {
-			__enter = _sound;
-		}
-		return self;
-	};
-	static set_audio_sound_change = function(_sound) {
-		/// @func	set_audio_sound_change(sound)
-		/// @param	{sound_id} sound
-		/// @return {FloeEffect} self
-		/// 
-		with (__this.__audio.__sounds) {
-			__change = _sound;
-		}
-		return self;
-	};
-	static set_audio_sound_leave  = function(_sound) {
-		/// @func	set_audio_sound_leave(sound)
-		/// @param	{sound_id} sound
-		/// @return {FloeEffect} self
-		/// 
-		with (__this.__audio.__sounds) {
-			__leave = _sound;
-		}
-		return self;
-	};
 	
 	#endregion
 	#region Checkers ///////////////
@@ -537,7 +419,6 @@ function FloeEffect() constructor {
 		set_state(__FLOE_STATE.ENTER_PREP);
 		var _target = __this.__control.__is_reversed ? 0 : 1;
 		set_target(_target);
-		
 		return self;
 	};
 	static leave   = function() {
@@ -547,7 +428,6 @@ function FloeEffect() constructor {
 		set_state(__FLOE_STATE.LEAVE_PREP);
 		var _target = __this.__control.__is_reversed ? 1 : 0;
 		set_target(_target);
-		
 		return self;
 	};
 	static reverse = function(_reverse_progress = true) {
@@ -618,7 +498,6 @@ function FloeEffectSurface() : FloeEffect() constructor {
 			surface_free(_surface);
 		}
 		set_surface(undefined);
-		
 		return self;
 	};
 	static render_begin   = function() {
@@ -630,7 +509,6 @@ function FloeEffectSurface() : FloeEffect() constructor {
 			_surface = surface_create(SURF_W, SURF_H);
 			set_surface(_surface);
 		}
-		
 		surface_set_target(get_surface()); 
 		draw_clear_alpha(c_black, 0.0);
 		return self;
@@ -641,7 +519,6 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		/// @return {FloeEffect} self
 		///
 		surface_reset_target();	
-		
 		if (_surface_shader_method != undefined) {
 			_surface_shader_method();	
 		}
