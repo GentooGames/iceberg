@@ -81,8 +81,8 @@ function ___transition() {
 				if (keyboard_check_pressed(ord("R"))) {
 					TRANSITION.restart({
 						room_hold:  true,
-						effect_in:  FloeEffectBorderTrees,
-						effect_out: FloeEffectBorderTrees
+						//effect_in:  FloeEffectBorderTrees,
+						//effect_out: FloeEffectBorderTrees
 					});
 				}
 			}

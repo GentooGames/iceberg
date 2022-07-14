@@ -8,7 +8,7 @@ function ___macros() {
 	#macro METHODS   15
 	#macro EVENTS	 14
 	#macro CALLBACKS 13
-
+	
 	#macro lmb_held			INPUT.mouse.button(mb_left)
 	#macro lmb_pressed		INPUT.mouse.button_pressed(mb_left)
 	#macro lmb_released		INPUT.mouse.button_released(mb_left)

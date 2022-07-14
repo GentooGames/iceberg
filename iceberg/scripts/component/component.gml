@@ -108,13 +108,13 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	__logging	  = DEBUGGING && 1;
 
 	static setup_super	  = setup;
+	static teardown_super = teardown;
 	static setup		  = function() {
 		/// @func	setup()
 		/// @return {Eventable} self
 		///
 		if (!is_initialized()) {
 			setup_super();
-			
 			__broadcaster = new Publisher();
 			register([
 				"register",
@@ -125,12 +125,12 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-	static teardown_super = teardown;
 	static teardown		  = function() {
 		/// @func	teardown()
 		/// @return {Eventable} self
 		///
 		if (is_initialized()) {
+			teardown_super();
 			__broadcaster = undefined;
 		}
 		return self;
@@ -241,75 +241,129 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}   config={}
 	/// @return	{Moveable} self
 	///
-	__owner	   = other;
-	__hspd	   = 0;
-	__vspd	   = 0;
-	__movesets = {
-		__default:	{
-			__name:	   "",
-			__moveset: undefined,
-		},
-		__movesets:	new Stash(),
-		__moveset:	undefined,
+	__owner	  = other;
+	__hspd	  = 0;
+	__vspd	  = 0;
+	__moveset = {
+		__movesets:	undefined,	// collection 
+		__default:	undefined,	// default
+		__moveset:	undefined,	// current
 	};
-	
+	__path	  = {
+		__index:  undefined,
+		__smooth: true,
+		__closed: false,
+	};
 	/// eventer = new Eventable().setup();
-	///__dir	= undefined;
-	///__path	= undefined;	// instantiated in setup()
 	
 	static setup_super	  = setup;
+	static teardown_super = teardown;
+	static update_super	  = update;
 	static setup		  = function() {
 		/// @func	setup()
 		/// @return {Moveable} self
 		///
 		if (!is_initialized()) {
 			setup_super();
-			//__path = path_add();
-			//path_set_kind(__path, 1);
-			//path_set_closed(__path, false);
+			__moveset_setup();
+			//__path_setup();
 		}
 		return self;
 	};
-	static teardown_super = teardown;
 	static teardown		  = function() {
 		/// @func	teardown()
 		/// @return {Moveable} self
 		///
 		if (is_initialized()) {
 			teardown_super();
-			//path_delete(__path);
-			//__path = undefined;
+			__moveset_teardown();
+			//__path_teardown();
 		}
 		return self;
 	};
-	static update_super	  = update;
 	static update		  = function() {
 		/// @func	update()
 		/// @return {Moveable} self
 		///
 		if (is_initialized()) {
+			update_super();
 			//__update_hspd_vspd();
 			//__update_xy();
 		}
 		return self;
 	};
+	
+	#region MoveSet ////////////
+	
+	static __moveset_setup		 = function(_default_name = "__default__") {
+		/// @func	__moveset_setup(default_name*)
+		/// @param	{string}   default_name=__default__
+		/// @return {Moveable} self
+		///
+		var _movesets = new Stash({ name: "movesets" });
+		var _moveset  = new MoveSet({ name: _default_name });
 		
-	/// MoveSet
+		__moveset.__movesets = _movesets;
+		__moveset_set_default(_moveset);
+		__moveset_set_current(_moveset);
+		  moveset_add(_default_name, _moveset);
+		  
+		return self;
+	};
+	static __moveset_teardown	 = function() {
+		/// @func	__moveset_teardown()
+		/// @return {Moveable} self
+		///
+		__moveset.__movesets = undefined;
+		__moveset_set_default(undefined);
+		__moveset_set_current(undefined);
+		
+		return self;
+	};
+	static __moveset_get_current = function() {
+		/// @func	__moveset_get_current()
+		/// @return {MoveSet} moveset
+		///
+		with (__moveset) {
+			return __moveset;
+		}
+	};
+	static __moveset_set_current = function(_moveset) {
+		/// @func	__moveset_set_current(moveset)
+		/// @param	{MoveSet}  moveset
+		/// @return {Moveable} self
+		///
+		with (__moveset) {
+			__moveset = _moveset;
+		}
+		return self;
+	};
+	static __moveset_get_default = function() {
+		/// @func	__moveset_get_default()
+		/// @return {MoveSet} moveset
+		///
+		with (__moveset.__default) {
+			return __moveset;
+		}
+	};
+	static __moveset_set_default = function(_moveset) {
+		/// @func	__moveset_set_default(moveset)
+		/// @param	{MoveSet}  moveset
+		/// @return {Moveable} self
+		///
+		with (__moveset.__default) {
+			__moveset = _moveset;
+		}
+		return self;
+	};
+
 	static moveset_get		   = function(_name) {
 		/// @func	moveset_get(name)
 		/// @param	{string}  name
 		/// @return {MoveSet} moveset
 		///
-		with (__movesets) {
+		with (__moveset) {
 			return __movesets.get(_name);
-		}
-	};
-	static moveset_get_default = function() {
-		/// @func	moveset_get_default()
-		/// @return {MoveSet} moveset
-		///
-		with (__movesets.__default) {
-			return __moveset;
 		}
 	};
 	static moveset_set		   = function(_moveset) {
@@ -317,9 +371,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		with (__movesets) {
-			__moveset = _moveset;
-		}
+		__moveset_set_current(_moveset);
 		moveset_apply();
 		return self;
 	};
@@ -329,7 +381,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		with (__movesets) {
+		with (__moveset) {
 			__movesets.add(_name, _moveset);
 		}
 		return self;
@@ -340,7 +392,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{struct}  data
 		/// @return {MoveSet} moveset
 		///
-		_data[$ "name"] = _name;
+		_data[$ "name"] = _name;	// append name onto data struct
+		
 		var _moveset = new MoveSet(_data);
 		moveset_add(_name, _moveset);
 		return _moveset;
@@ -350,7 +403,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{string}  name
 		/// @return {boolean} exists?
 		///
-		with (__movesets) {
+		with (__moveset) {
 			return __movesets.exists(_name);
 		}
 	};
@@ -358,7 +411,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @func	moveset_reset()
 		/// @return {Moveable} self
 		///
-		return moveset_set(moveset_get_default());
+		return moveset_set(__moveset_get_default());
 	};
 	static moveset_change	   = function(_name) {
 		/// @func	moveset_change(name)
@@ -374,22 +427,41 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @func	moveset_apply()
 		/// @return {Moveable} self
 		///
-		var _moveset = __movesets.__moveset;
-		__speed		 =  _moveset.__speed;
-		__accel		 =  _moveset.__accel;
-		__fric		 =  _moveset.__fric;
-		__mult		 =  _moveset.__mult;
+		__speed = __moveset.__moveset.__speed;
+		__accel = __moveset.__moveset.__accel;
+		__fric  = __moveset.__moveset.__fric;
+		__mult  = __moveset.__moveset.__mult;
 		return self;
 	};
-	static moveset_trigger_add = function(_moveset_name, _trigger_method) {
-		/// @func	moveset_trigger_add(moveset_name, trigger_method)
-		/// @param	{string}   moveset_name
-		/// @param	{method}   trigger_method
+	static moveset_trigger_add = function(_moveset_name, _trigger_method) {};
+	
+	#endregion
+	#region Path ///////////////
+	
+	static __path_setup    = function() {
+		/// @func	__path_setup()
 		/// @return {Moveable} self
 		///
-		
+		with (__path) {
+			__index = path_add();
+			path_set_kind(__index, __smooth);
+			path_set_closed(__index, __closed);
+		}
+		return self;
 	};
-		
+	static __path_teardown = function() {
+		/// @func	__path_teardown()
+		/// @return {Moveable} self
+		///
+		with (__path) {
+			path_delete(__index);
+			__index = undefined;
+		}
+		return self;
+	};
+	
+	#endregion
+	
 	/// WIRE EVENT TO TRIGGER PUBSUB TO TRIGGER MOVESET CHANGE
 };
 function MoveableTopDown() : Moveable() constructor {
