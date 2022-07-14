@@ -7,101 +7,76 @@ function Class(_config = {}) constructor {
 	///
 	__config = _config;
 	__owner	 = _config[$ "owner" ] ?? other;
-	__active = _config[$ "active"] ?? true;
-	__name	 = _config[$ "name"  ] ?? get_name_unique();
+	__name	 = _config[$ "name"  ] ?? __get_name_unique();
 
-	#region Getters ////////
+	#region Private ////////////////
 	
-	static get_owner	   = function() {
-		/// @func	get_owner()
-		/// @return {struct} owner
-		///
-		return __owner;
-	};
-	static get_active	   = function() {
-		/// @func	get_active()
-		/// @return {boolean} active?
-		///
-		return __active;
-	};
-	static get_name		   = function() {
-		/// @func	get_name()
-		/// @return {string} name
-		///
-		return __name;
-	};
-	static get_name_unique = function() {	
-		/// @func	get_name_unique()
+	static __get_name_unique = function() {	
+		/// @func	__get_name_unique()
 		/// @return {string} name
 		///
 		return instanceof(self) + "_" + string(ptr(self));
 	};
 	
 	#endregion
-	#region Setters	////////
-	
-	static set_owner  = function(_owner) {
+
+	static get_owner = function() {
+		/// @func	get_owner()
+		/// @return {struct} owner
+		///
+		return __owner;
+	};
+	static get_name	 = function() {
+		/// @func	get_name()
+		/// @return {string} name
+		///
+		return __name;
+	};
+	static set_owner = function(_owner) {
 		/// @func	set_owner(owner)
-		/// @param	{instance/struct} owner
-		/// @return {Component}	  self
+		/// @param	{struct} owner
+		/// @return {Class}	 self
 		///
 		__owner = _owner;
 		return self;
 	};
-	static set_active = function(_active) {
-		/// @func	set_active(active?)
-		/// @param	{boolean}	active?
-		/// @return {Component} self
-		///
-		__active = _active;
-		return self;
-	};
-	static set_name   = function(_name) {
+	static set_name	 = function(_name) {
 		/// @func	set_name(name)
-		/// @param	{string}	name
-		/// @return {Component} self
+		/// @param	{string} name
+		/// @return {Class}  self
 		///
 		__name = _name;
 		return self;
 	};
-		
-	#endregion
-	#region Checkers ///////
-	
-	static is_active = function() {
-		/// @func	is_active()
-		/// @return {boolean} is_active?
-		///
-		return get_active();
-	};
-	
-	#endregion
 	
 	/// ANY CHANGES MADE TO CONFIG STRUCT SHOULD BE UPDATED IN CODE_SNIPPET
 };
 
 #region Collections ////////////
 
-function Stash(_config = {}) : Class(_config) constructor {
-	/// @func	Stash(config*)
-	/// @param	{struct} config={}
-	/// @return {Stash}  self
+function Container(_config = {}) : Class(_config) constructor {
+	/// @func	Container(config*)
+	/// @param	{struct}	config={}
+	/// @return {Container} self
 	///
+	__owner = other;
+	__name  = "";
 	__items = {};
 	__names = [];
 	__size  = 0;
 	
-	static add				  = function(_name, _item) {
-		/// @func	add(name, item)
-		/// @param	{string} name
-		/// @param	{any}	 item
-		/// @return {Stash}  self
+	/// Basic Functionality
+	static store  = function(_name, _item) {
+		/// @func	store(name, item)
+		/// @param	{string}	name
+		/// @param	{any}		item
+		/// @return {Container} self
 		/// 
 		/// Add To Existing Entry
-		if (exists(_name)) {
-			var _entry = get(_name);
+		if (has(_name)) {
+			var _entry = fetch(_name);
 			if (!is_array(_entry)) {
-				_entry = [ get(_name) ];	
+				_entry = [ fetch(_name) ];	
 			}
 			array_push(_entry, _item);
 			__items[$ _name] = _entry;
@@ -114,21 +89,28 @@ function Stash(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};
-	static exists			  = function(_name) {
-		/// @func	exists(name)
+	static fetch  = function(_name) {
+		/// @func	fetch(name)
+		/// @param	{string} name
+		/// @return {any}    item
+		///
+		return __items[$ _name];
+	};
+	static has	  = function(_name) {
+		/// @func	has(name)
 		/// @param	{string}  name
 		/// @return {boolean} exists?
 		///
-		return get(_name) != undefined;
+		return fetch(_name) != undefined;
 	};
-	static remove			  = function(_name, _item = undefined) {
+	static remove = function(_name, _item = undefined) {
 		/// @func	remove(name, item*)
-		/// @param	{string} name
-		/// @param	{any}	 item=undefined
-		/// @return {Stash}  self
+		/// @param	{string}	name
+		/// @param	{any}		item=undefined
+		/// @return {Container} self
 		///
-		if (exists(_name)) {
-			var _entry = get(_name);
+		if (has(_name)) {
+			var _entry = fetch(_name);
 			if (_item != undefined && is_array(_entry)) {
 				array_find_delete(_entry, _item);
 				__items[$ _name] = _entry;
@@ -141,21 +123,22 @@ function Stash(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};
-	static clear			  = function() {
-		/// @func	clear()
-		/// @return {Stash} self
+	static empty  = function() {
+		/// @func	empty()
+		/// @return {Container} self
 		///
 		__size  = 0;
 		__names = [];
 		__items = {};
 		return self;
 	};
-	static get				  = function(_name) {
-		/// @func	get(name)
-		/// @param	{string} name
-		/// @return {any}    item
+
+	/// Extra Functionality
+	static get_size			  = function() {
+		/// @func	get_size()
+		/// @return {real} size
 		///
-		return __items[$ _name];
+		return __size;
 	};
 	static get_names		  = function() {
 		/// @func	get_names()
@@ -175,34 +158,18 @@ function Stash(_config = {}) : Class(_config) constructor {
 		/// 
 		return struct_to_array(__items, __names, __count);
 	};
-	static get_size			  = function() {
-		/// @func	get_size()
-		/// @return {real} size
-		///
-		return __size;
-	};
 };
 
 #endregion
 #region Methods ////////////////
 
-function Method (_config = {}) : Class (_config) constructor {
+function Method(_config = {}) : Class (_config) constructor {
 	/// @func	Method(config*)
 	/// @param	{struct} config={}
 	/// @return {Method} self
 	///
 	__method = _config[$ "method"] ?? undefined;
 	__data	 = _config[$ "data"  ] ?? undefined;
-	
-	static execute = function() {	/// @OVERRIDE
-		/// @func	execute()
-		/// @return {any} execute_return
-		///
-		if (is_method(__method)) {
-			return __method_execute();	
-		}
-		return __method_execute_script();
-	};
 	
 	#region Private ////////
 	
@@ -220,7 +187,16 @@ function Method (_config = {}) : Class (_config) constructor {
 	};
 	
 	#endregion
-	#region Getters ////////
+	
+	static execute = function() {	/// @OVERRIDE
+		/// @func	execute()
+		/// @return {any} execute_return
+		///
+		if (is_method(__method)) {
+			return __method_execute();	
+		}
+		return __method_execute_script();
+	};
 	
 	static get_method = function() {
 		/// @func	get_method()
@@ -234,10 +210,6 @@ function Method (_config = {}) : Class (_config) constructor {
 		///
 		return __data;
 	};
-		
-	#endregion
-	#region Setters ////////
-	
 	static set_method = function(_method) {
 		/// @func	set_method(method)
 		/// @param	{method} method
@@ -254,31 +226,22 @@ function Method (_config = {}) : Class (_config) constructor {
 		__data = _data;
 		return self;
 	}
-		
-	#endregion
 };
-function Action (_config = {}) : Method(_config) constructor {
+function Action(_config = {}) : Method(_config) constructor {
 	/// @func	Action(config*)
 	/// @param	{struct} config={}
 	/// @return {Action} self
 	///
-	__triggers = new Stash();
+	__triggers = new Container();
 		
 	static update	   = function() {
 		/// @func	update()
 		/// @return {Action} self
 		///
-		if (is_active()) {
-			if (__triggers.is_active()) {
-				var _names = __triggers.get_names();
-				var _size  = __triggers.get_size();
-				for (var _i = 0; _i < _size; _i++) {
-					var _trigger = __triggers.get(_names[_i]);
-					if (_trigger.is_active()) {
-						_trigger.execute();
-					}
-				}
-			}
+		var _names = __triggers.get_names();
+		for (var _i = 0; _i < __triggers.get_size(); _i++) {
+			var _trigger = __triggers.fetch(_names[_i]);
+			_trigger.execute();
 		}
 		return self;
 	};
@@ -302,7 +265,7 @@ function Action (_config = {}) : Method(_config) constructor {
 		/// @param	{method} method
 		/// @return {Action} self
 		///
-		__triggers.add(_name, new Trigger({
+		__triggers.store(_name, new Trigger({
 			name:	_name, 
 			method: _method,
 		}));

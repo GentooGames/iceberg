@@ -10,62 +10,6 @@ function do_every_frame(_interval) {
 	return (CURRENT_FRAME % _interval == 0);
 }
 
-#region DYNAMIC GETTERS AND SETTERS
-/*
-function System() constructor {
-    static __Param = function(_name, _val) constructor {
-        name = _name;
-        val = {
-            init: _val,
-            curr: _val,
-        };
-        static get = function() {
-            return val.curr;        
-        };
-        static set = function(_val) {
-            val.curr = _val;
-        };
-        static reset = function() {
-            val.curr = val.init;
-        };
-    };
-    
-    __params = {};
-    static add_param = function(_name, _val) {
-        __params[$ _name] = new __Param(_name, _val);
-        
-        var _system = self;
-        var _bridge = {
-            param_name: _name,
-            system: _system,
-        };
-        
-        // Add getter:
-        var _getter_name = "get_" + _name;
-        self[$ _getter_name] = method(_bridge, function() {
-            return system.__params[$ param_name].get();
-        });
-        
-        // Add setter:
-        var _setter_name = "set_" + _name;
-        self[$ _setter_name] = method(_bridge, function(_val) {
-            system.__params[$ param_name].set(_val);
-            return system;
-        });
-        
-        // Add resetter:
-        var _resetter_name = "reset_" + _name;
-        self[$ _resetter_name] = method(_bridge, function() {
-            system.__params[$ param_name].reset();
-            return system;
-        });
-        
-        return self;
-    };
-};
-*/
-#endregion
-
 #endregion
 #region unit tests /////////
 

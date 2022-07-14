@@ -19,9 +19,10 @@ function Component(_config = {}) : Class(_config) constructor {
 	/// @param	{struct}    config={}
 	/// @return {Component} self
 	///
-	__initialized = false;
+	__initialized =  false;
+	__active	  = _config[$ "active"] ?? true;
 	
-	static setup    = function() {		/// @OVERRIDE
+	static setup    = function() {	/// @OVERRIDE
 		/// @func	setup()
 		/// @return {Component} self
 		///
@@ -30,7 +31,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	}; 
-	static teardown = function() {		/// @OVERRIDE
+	static teardown = function() {	/// @OVERRIDE
 		/// @func	teardown()
 		/// @return {Component} self
 		///
@@ -39,7 +40,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	}; 
-	static rebuild  = function() {		/// @OVERRIDE
+	static rebuild  = function() {	/// @OVERRIDE
 		/// @func	rebuild()
 		/// @return {Component} self
 		///
@@ -49,42 +50,50 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};
-	static update   = function() {		/// @OVERRIDE
+	static update   = function() {	/// @OVERRIDE
 		/// @func	update()
 		/// @return {Component} self
 		///
-		if (is_initialized()) {
-			
+		if (is_initialized() && is_active()) {
+			// ...
 		}
 		return self;
 	};	
-	static render   = function() {		/// @OVERRIDE
+	static render   = function() {	/// @OVERRIDE
 		/// @func	render()
 		/// @return {Component} self
 		///
-		if (is_initialized()) {
-			
+		if (is_initialized() && is_active()) {
+			// ...
 		}
 		return self;
 	};	
 	
-	static actvate		  = function() {
-		/// @func	actvate()
+	static is_initialized = function() {
+		/// @func	is_initialized()
+		/// @return {bool} initialized?
+		///
+		return __initialized;
+	};
+	static is_active	  = function() {
+		/// @func	is_active()
+		/// @return {bool} active?
+		///
+		return __active;
+	};
+	static activate		  = function() {
+		/// @func	activate()
 		/// @return {Component} self
 		///
-		return set_active(true);
+		__active = true;
+		return self;
 	};
 	static deactivate	  = function() {
 		/// @func	deactivate()
 		/// @return {Component} self
 		///
-		return set_active(false);
-	};
-	static is_initialized = function() {
-		/// @func	is_initialized()
-		/// @return {bool} is_initialized?
-		///
-		return __initialized;
+		__active = false;
+		return self;
 	};
 };
 
@@ -312,7 +321,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{string}   default_name=__default__
 		/// @return {Moveable} self
 		///
-		var _movesets = new Stash({ name: "movesets" });
+		var _movesets = new Container({ name: "movesets" });
 		var _moveset  = new MoveSet({ 
 			name:  _default_name,
 			speed: __speed,
@@ -382,7 +391,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {MoveSet} moveset
 		///
 		with (__moveset) {
-			return __movesets.get(_name);
+			return __movesets.fetch(_name);
 		}
 	};
 	static moveset_set		   = function(_moveset) {
@@ -401,7 +410,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {Moveable} self
 		///
 		with (__moveset) {
-			__movesets.add(_name, _moveset);
+			__movesets.store(_name, _moveset);
 		}
 		return self;
 	};
@@ -423,7 +432,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {boolean} exists?
 		///
 		with (__moveset) {
-			return __movesets.exists(_name);
+			return __movesets.has(_name);
 		}
 	};
 	static moveset_reset	   = function() {
