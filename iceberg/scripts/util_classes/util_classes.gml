@@ -59,7 +59,6 @@ function Container(_config = {}) : Class(_config) constructor {
 	/// @param	{struct}	config={}
 	/// @return {Container} self
 	///
-	__owner = other;
 	__items = {};
 	__names = [];
 	__size  = 0;
@@ -156,6 +155,23 @@ function Container(_config = {}) : Class(_config) constructor {
 		/// @return {array} items
 		/// 
 		return struct_to_array(__items, __names, __count);
+	};
+};
+function Batch(_config = {}) : Container(_config) constructor {
+	/// @func	Batch(config*)
+	/// @param	{struct} config={}
+	/// @return {Batch}  self
+	///
+	static execute = function() {
+		/// @func	execute()
+		/// @return {Batch} self
+		///
+		for (var _i = 0, _len = __size; _i < _len; _i++) {
+			var _name = __names[_i];
+			var _item = __items[$ _name];
+			_item();
+		}
+		return self;
 	};
 };
 
