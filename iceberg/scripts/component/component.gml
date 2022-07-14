@@ -93,11 +93,11 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		/// @return	{Eventable} self
 		///
 		if (!is_array(_events)) {
-			_events = [_events];	
-		}
+				_events = [_events];	
+			}
 		for (var _i = 0, _len = array_length(_events); _i < _len; _i++) {
-			get_broadcaster().register_channel(_events[_i]);
-		}
+				get_broadcaster().register_channel(_events[_i]);
+			}
 		broadcast("register", _events);
 		return self;
 	};
@@ -113,20 +113,21 @@ function Eventable(_config = {}) : Component(_config) constructor {
 				payload:   <any>,
 			}
 		*/
-		var _self  = self;
-		var _owner = get_owner();
-		var _data  = {
-			eventable: _self,
-			instance:  _owner,
-			payload:   _payload,
-		}
-		get_broadcaster().publish(_event_name, _data);
-		get_broadcaster().publish("broadcast", _data);
+		if (is_active()) {
+			var _self  = self;
+			var _owner = get_owner();
+			var _data  = {
+				eventable: _self,
+				instance:  _owner,
+				payload:   _payload,
+			}
+			get_broadcaster().publish(_event_name, _data);
+			get_broadcaster().publish("broadcast", _data);
 
-		if (__logging) {
-			log("<PUBLISHER> {0} \n\t event : {1} \n\t payload : {2}", instanceof(_owner), _event_name, _payload);
+			if (__logging) {
+				log("<PUBLISHER> {0} \n\t event : {1} \n\t payload : {2}", instanceof(_owner), _event_name, _payload);
+			}
 		}
-
 		return self;
 	};
 	static listen			= function(_event_name, _callback, _weak_reference = false) {
@@ -845,25 +846,4 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 };
 
 #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
