@@ -46,17 +46,21 @@ function ___gui() {
 				#endregion
 			}
 			
-			//label = new UiLabel(, {
-			//	text: "test label here...",
-			//	x: SURF_W * 0.5,
-			//	y: SURF_H * 0.5,
-			//})
-			//.action_add("change_color", function() {
-			//	set_color(c_red);
-			//})
-			//.action_add_trigger("change_color", "space_bar", function() {
-			//	return keyboard_check_pressed(vk_space);	
-			//})
+			label = new UiLabel(, {
+				text: "test label here...",
+				x: SURF_W * 0.5,
+				y: SURF_H * 0.5,
+			})
+			.action_add("change_color", function(_color) {
+				set_color(_color);
+			})
+			.action_add_trigger("change_color", "space_bar", function() {
+				var _result = keyboard_check_pressed(vk_space);	
+				if (_result) {
+					action_send_payload("change_color", c_red);
+				}
+				return _result;
+			})
 			
 			return self;
 	    },    
@@ -73,7 +77,7 @@ function ___gui() {
 				#endregion
 			}
 				
-			//label.update();
+			label.update();
 				
 			return self;
 		},
@@ -90,7 +94,7 @@ function ___gui() {
 				#endregion
 			}
 				
-			//label.render();
+			label.render();
 			
 			return self;
 		},

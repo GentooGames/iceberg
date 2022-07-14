@@ -1091,7 +1091,19 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			(__action_get(_action_context, _action_name)).set_method(_action_method);
 		}
 		return self;
-	}
+	};
+	static __action_set_data   = function(_action_context, _action_name, _action_data) {
+		/// @func	__action_set_data(action_name, action_data)
+		/// @param	{struct}  action_context
+		/// @param	{string}  action_name 
+		/// @param	{any}	  action_data
+		/// @return {Ui} self
+		///
+		if (__action_exists(_action_context, _action_name)) {
+			(__action_get(_action_context, _action_name)).set_data(_action_data);
+		}
+		return self;
+	};
 	
 	/// Action Triggers
 	static __action_add_trigger		 = function(_action_context, _action_name, _trigger_name, _trigger_method, _bind_to_self = default_get_auto_bind_methods_to_self()) {
@@ -1107,7 +1119,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			if (_bind_to_self) {
 				_trigger_method = method(self, _trigger_method);
 			}
-			(__action_get(_action_context, _action_name)).triggers_add(_trigger_name, _trigger_method);
+			(__action_get(_action_context, _action_name)).trigger_add(_trigger_name, _trigger_method);
 		}
 		return self;
 	};
@@ -1285,7 +1297,6 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		///
 		return __action_add(__this.__actions.__custom, _action_name, _action_method, _bind_to_self);
 	};
-	static action_add_ext = function() {}; /// be able to define n trigger bindings?
 	static action_get	  = function(_action_name) {
 		/// @func	action_get(action_name)
 		/// @param	{string} action_name
@@ -1347,6 +1358,14 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		/// @return {Ui} self
 		///
 		return __action_set_method(__this.__actions.__custom, _action_name, _action_method, _bind_to_self);
+	};
+	static action_set_data   = function(_action_name, _action_data) {
+		/// @func	action_set_data(action_name, action_data)
+		/// @param	{string} action_name
+		/// @param  {any}	 action_data
+		/// @return {Ui}	 self
+		///
+		return __action_set_data(__this.__actions.__custom, _action_name, _action_data);
 	};
 		
 	/// Action Custom: Triggers Core
@@ -1463,11 +1482,13 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};
 	
 	/// Action Custom: Triggers Util
-	static action_set_trigger_result  = function(_result, _data) {
-		/// @func	action_set_trigger_result(result, data)
+	static action_send_payload = function(_action_name, _data) {
+		/// @func	action_send_payload(action_name, data)
+		/// @param	{string} action_name
+		/// @param	{any}    data
+		/// @return {Ui}	 self
 		///
-		other.set_data(_data);
-		return _result;
+		return action_set_data(_action_name, _data);
 	};
 			
 	#endregion

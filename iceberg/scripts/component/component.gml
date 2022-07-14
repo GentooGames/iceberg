@@ -260,6 +260,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	};
 	/// eventer = new Eventable().setup();
 	
+	//action = new Action({
+	//	
+	//});
+	
 	static setup_super	  = setup;
 	static teardown_super = teardown;
 	static update_super	  = update;
@@ -289,9 +293,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @func	update()
 		/// @return {Moveable} self
 		///
-		if (is_initialized()) {
+		if (is_initialized() && is_active()) {
 			update_super();
-			__moveset_update();
 			//__update_hspd_vspd();
 			//__update_xy();
 		}
@@ -323,12 +326,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__moveset_set_default(undefined);
 		__moveset_set_current(undefined);
 		
-		return self;
-	};
-	static __moveset_update		 = function() {
-		/// @func	__moveset_update()
-		/// @return {Moveable} self
-		///
 		return self;
 	};
 	static __moveset_get_current = function() {
@@ -485,29 +482,7 @@ function MoveablePlatformer() : Moveable() constructor {
 	/// @return {Moveable} self
 	///
 };
-function MoveSet(_config = {}) : Class(_config) constructor {
-	/// @func	MoveSet(config*)
-	/// @param	{struct}  config={}
-	/// @return {MoveSet} self
-	///
-	__moveable	=  other;
-	__config	= _config;
-	__speed		= _config[$ "speed"] ?? 0;
-	__accel		= _config[$ "accel"] ?? 0;
-	__fric		= _config[$ "fric" ] ?? 0;
-	__mult		= _config[$ "mult" ] ?? 1;
-	__triggers	= new Stash();
-	
-	static trigger_add = function(_trigger_name, _trigger_method) {
-		/// @func	trigger_add(moveset_name, trigger_method)
-		/// @param	{string}  moveset_name
-		/// @param	{method}  trigger_method
-		/// @return {MoveSet} self
-		///
-		__triggers.add(_moveset_name, _trigger_method);
-		return self;
-	};
-};
+
 
 #endregion
 #region Actionable /////////////////

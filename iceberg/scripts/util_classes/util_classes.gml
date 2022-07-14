@@ -195,8 +195,7 @@ function Method (_config = {}) : Class (_config) constructor {
 	__data	 = _config[$ "data"  ] ?? undefined;
 	
 	static execute = function() {	/// @OVERRIDE
-		/// @func	execute(data)
-		/// @param  {any} data
+		/// @func	execute()
 		/// @return {any} execute_return
 		///
 		if (is_method(__method)) {
@@ -264,12 +263,8 @@ function Action (_config = {}) : Method(_config) constructor {
 	/// @return {Action} self
 	///
 	__triggers = new Stash();
-	
-	/// Register Trigger PubSub Event
-	var _component = get_owner();
-	_component.eventer.register(["action_executed_" + get_name()]);
-	
-	static update  = function() {
+		
+	static update	   = function() {
 		/// @func	update()
 		/// @return {Action} self
 		///
@@ -287,7 +282,7 @@ function Action (_config = {}) : Method(_config) constructor {
 		}
 		return self;
 	};
-	static execute = function() {	/// @OVERIDE
+	static execute	   = function() {	/// @OVERRIDE
 		/// @func	execute()
 		/// @return {any} execute_return
 		///
@@ -301,9 +296,8 @@ function Action (_config = {}) : Method(_config) constructor {
 		
 		return _return;
 	};
-	
-	triggers_add   = function(_name, _method) {	/// @OVERRIDE
-		/// @func	triggers_add(name, method)
+	static trigger_add = function(_name, _method) {
+		/// @func	trigger_add(name, method)
 		/// @param	{string} name
 		/// @param	{method} method
 		/// @return {Action} self
@@ -312,12 +306,16 @@ function Action (_config = {}) : Method(_config) constructor {
 			name:	_name, 
 			method: _method,
 		}));
-		/// Register Trigger PubSub Event
+		
 		var _component = get_owner();
 		_component.eventer.register(["trigger_executed_" + _name]);
 		_component.eventer.listen("trigger_executed_" + _name, method(self, execute));
+		
 		return self;
 	};
+		
+	var _component = get_owner();
+	_component.eventer.register(["action_executed_" + get_name()]);
 };
 function Trigger(_config = {}) : Method(_config) constructor {
 	/// @func	Trigger(config*)
@@ -326,9 +324,8 @@ function Trigger(_config = {}) : Method(_config) constructor {
 	///
 	static execute_super = execute;
 	static execute		 = function() {
-		/// @func	execute(data)
-		/// @param  {any} data
-		/// @return {any} execute_return
+		/// @func	execute()
+		/// @return {any} result
 		///
 		var _result = execute_super();
 		if (_result) {
@@ -341,4 +338,45 @@ function Trigger(_config = {}) : Method(_config) constructor {
 };
 
 #endregion
+
+/// MOVE BACK INTO COMPONENTS
+function MoveSet(_config = {}) : Class(_config) constructor {
+	/// @func	MoveSet(config*)
+	/// @param	{struct}  config={}
+	/// @return {MoveSet} self
+	///
+	__moveable	= other;
+	__owner		= __moveable.get_owner();
+	__config	= _config;
+	__speed		= _config[$ "speed"] ?? 0;
+	__accel		= _config[$ "accel"] ?? 0;
+	__fric		= _config[$ "fric" ] ?? 0;
+	__mult		= _config[$ "mult" ] ?? 1;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
