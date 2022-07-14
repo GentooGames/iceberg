@@ -244,6 +244,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	__owner	  = other;
 	__hspd	  = 0;
 	__vspd	  = 0;
+	__speed	  = 0;
+	__accel	  = 0;
+	__fric	  = 0;
+	__mult	  = 1;
 	__moveset = {
 		__movesets:	undefined,	// collection 
 		__default:	undefined,	// default
@@ -287,6 +291,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		if (is_initialized()) {
 			update_super();
+			__moveset_update();
 			//__update_hspd_vspd();
 			//__update_xy();
 		}
@@ -318,6 +323,12 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__moveset_set_default(undefined);
 		__moveset_set_current(undefined);
 		
+		return self;
+	};
+	static __moveset_update		 = function() {
+		/// @func	__moveset_update()
+		/// @return {Moveable} self
+		///
 		return self;
 	};
 	static __moveset_get_current = function() {

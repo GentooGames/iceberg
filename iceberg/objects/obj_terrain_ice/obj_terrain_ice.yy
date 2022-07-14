@@ -1,14 +1,14 @@
 {
-  "spriteId": null,
+  "spriteId": {
+    "name": "spr_terrain_ice",
+    "path": "sprites/spr_terrain_ice/spr_terrain_ice.yy",
+  },
   "solid": false,
   "visible": true,
   "managed": true,
   "spriteMaskId": null,
   "persistent": false,
-  "parentObjectId": {
-    "name": "objp_object",
-    "path": "objects/objp_object/objp_object.yy",
-  },
+  "parentObjectId": null,
   "physicsObject": false,
   "physicsSensor": false,
   "physicsShape": 1,
@@ -21,10 +21,7 @@
   "physicsStartAwake": true,
   "physicsKinematic": false,
   "physicsShapePoints": [],
-  "eventList": [
-    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":64,"eventType":8,"collisionObjectId":null,"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-  ],
+  "eventList": [],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
@@ -32,7 +29,7 @@
     "path": "folders/__TEST__/objects.yy",
   },
   "resourceVersion": "1.0",
-  "name": "obj_test",
+  "name": "obj_terrain_ice",
   "tags": [],
   "resourceType": "GMObject",
 }
