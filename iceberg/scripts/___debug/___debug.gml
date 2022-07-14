@@ -85,7 +85,7 @@ function ___debug() {
 	#region Macros /////////
 	
 	#macro DEBUG	 global.___system_debug
-	#macro DEBUGGING 0
+	#macro DEBUGGING 1
 	#macro LOGGING   1
 	
 	#endregion

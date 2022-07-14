@@ -73,6 +73,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @return {Eventable} self
 	///
 	__broadcaster = new Publisher();
+	__logging	  = DEBUGGING && 1;
 	register([
 		"register",
 		"broadcast",
@@ -114,13 +115,18 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		*/
 		var _self  = self;
 		var _owner = get_owner();
-		var _data_struct = {
+		var _data  = {
 			eventable: _self,
 			instance:  _owner,
 			payload:   _payload,
 		}
-		get_broadcaster().publish(_event_name, _data_struct);
-		get_broadcaster().publish("broadcast", _data_struct);
+		get_broadcaster().publish(_event_name, _data);
+		get_broadcaster().publish("broadcast", _data);
+
+		if (__logging) {
+			log("<PUBLISHER> {0} \n\t event : {1} \n\t payload : {2}", instanceof(_owner), _event_name, _payload);
+		}
+
 		return self;
 	};
 	static listen			= function(_event_name, _callback, _weak_reference = false) {
@@ -154,6 +160,21 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		return get_broadcaster().has_registered_channel(_event_name);
 	};
 	//static unsubscribe_subscriber = function(_subscriber, _force = false) {};
+	
+	static enable_logging	= function() {
+		/// @func	enable_logging()
+		/// @return {Eventable} self
+		///
+		__logging = true;
+		return self;
+	};
+	static disable_logging	= function() {
+		/// @func	disable_logging()
+		/// @return {Eventable} self
+		///
+		__logging = false;
+		return self;
+	};
 };
 
 #endregion

@@ -297,7 +297,7 @@ function Action (_config = {}) : Method(_config) constructor {
 								//		set data through action_send_payload() does not 
 								//		become persistent.
 		var _component = get_owner();
-		_component.eventer.broadcast("action_executed_" + get_name(), self);
+		_component.eventer.broadcast("action_executed_" + get_name());
 		
 		return _return;
 	};
