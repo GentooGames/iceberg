@@ -22,20 +22,25 @@ function Component(_config = {}) : Class(_config) constructor {
 	/// @return {Component} self
 	///
 	__initialized =  false;
-	__active	  = _config[$ "active"] ?? true;
+	__config	  = _config;
+	__active	  =  true;
 	
-	#region Core ///////////////
+	#region Core ///////////
 	
-	static setup    = function() {	/// @OVERRIDE
+	static setup    = function() {						/// @OVERRIDE
 		/// @func	setup()
 		/// @return {Component} self
 		///
 		if (!is_initialized()) {
 			__initialized = true;
+			
+			if (__config[$ "active"] != undefined) {
+				__active = __config.active;
+			}
 		}
 		return self;
 	}; 
-	static teardown = function() {	/// @OVERRIDE
+	static teardown = function() {						/// @OVERRIDE
 		/// @func	teardown()
 		/// @return {Component} self
 		///
@@ -44,17 +49,21 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	}; 
-	static rebuild  = function() {	/// @OVERRIDE
-		/// @func	rebuild()
+	static rebuild  = function(_config = undefined) {	/// @OVERRIDE
+		/// @func	rebuild(config*)
+		/// @param	{struct}	config=undefined
 		/// @return {Component} self
 		///
 		if (is_initialized()) {
+			if (_config != undefined) {
+				__config = _config;	
+			}
 			teardown();
 			setup();
 		}
 		return self;
-	};
-	static update   = function() {	/// @OVERRIDE
+	}; 
+	static update   = function() {						/// @OVERRIDE
 		/// @func	update()
 		/// @return {Component} self
 		///
@@ -63,7 +72,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};	
-	static render   = function() {	/// @OVERRIDE
+	static render   = function() {						/// @OVERRIDE
 		/// @func	render()
 		/// @return {Component} self
 		///
@@ -74,25 +83,7 @@ function Component(_config = {}) : Class(_config) constructor {
 	};	
 	
 	#endregion
-	#region Actions ////////////
-	
-	static activate	  = function() {
-		/// @func	activate()
-		/// @return {Component} self
-		///
-		__active = true;
-		return self;
-	};
-	static deactivate = function() {
-		/// @func	deactivate()
-		/// @return {Component} self
-		///
-		__active = false;
-		return self;
-	};
-		
-	#endregion
-	#region Checkers ///////////
+	#region Checkers ///////
 	
 	static is_initialized = function() {
 		/// @func	is_initialized()
@@ -108,32 +99,23 @@ function Component(_config = {}) : Class(_config) constructor {
 	};
 		
 	#endregion
-};
 	
-#region Component Manager //////////
-
-function ComponentManager(_config = {}) : Component(_config) constructor {
-	/// @func	ComponentManager(config*)
-	/// @param	{struct}		   config={}
-	/// @return {ComponentManager} self
-	///
-	__components = new Container();
-	
-	static add_component = function() {};
-	static get_component = function() {};
-	static has_component = function() {};
+	static activate	  = function() {
+		/// @func	activate()
+		/// @return {Component} self
+		///
+		__active = true;
+		return self;
+	};
+	static deactivate = function() {
+		/// @func	deactivate()
+		/// @return {Component} self
+		///
+		__active = false;
+		return self;
+	};
 };
 
-#endregion
-#region Scriptable /////////////////
-
-function Scriptable() : Component() constructor {
-	/// @func	Scriptable()
-	/// @return {Component} self
-	///
-};
-
-#endregion
 #region Eventable //////////////////
 
 function Eventable(_config = {}) : Component(_config) constructor {
@@ -146,8 +128,29 @@ function Eventable(_config = {}) : Component(_config) constructor {
 
 	#region Private ////////
 	
-	static __setup	  = setup;
-	static __teardown = teardown;
+	static __setup			   = setup;
+	static __setup_broadcaster = function() {
+		/// @func	__setup_broadcaster()
+		/// @return {Eventable} self
+		///
+		__broadcaster = new Publisher();
+		register([
+			"registered",
+			"broadcasted",
+			"listened",
+			"listeners_cleared",
+		]);
+		return self;
+	};
+	
+	static __teardown			  = teardown;
+	static __teardown_broadcaster = function() {
+		/// @func	__teardown_broadcaster()
+		/// @return {Eventable} self
+		///
+		__broadcaster = undefined;
+		return self;
+	};
 	
 	#endregion
 	#region Core ///////////
@@ -158,13 +161,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		///
 		if (!is_initialized()) {
 			__setup();
-			__broadcaster = new Publisher();
-			register([
-				"registered",
-				"broadcasted",
-				"listened",
-				"listeners_cleared",
-			]);
+			__setup_broadcaster();
 		}
 		return self;
 	};
@@ -173,14 +170,34 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		/// @return {Eventable} self
 		///
 		if (is_initialized()) {
+			__teardown_broadcaster();
 			__teardown();
-			__broadcaster = undefined;
 		}
 		return self;
 	};
 	
 	#endregion
-	#region Actions ////////
+	#region Getters ////////
+	
+	static get_broadcaster = function() {
+		/// @func	get_broadcaster()
+		/// @return {Publisher} publisher
+		///
+		return __broadcaster;
+	};
+	
+	#endregion
+	#region Checkers ///////
+	
+	static is_registered = function(_event_name) {
+		/// @func	is_registered(event_name)
+		/// @param	{string}  event_name
+		/// @return {boolean} is_registered?
+		///
+		return get_broadcaster().has_registered_channel(_event_name);
+	};
+		
+	#endregion
 	
 	static register			= function(_events) {
 		/// @func	register(events)
@@ -262,31 +279,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		__logging = false;
 		return self;
 	};
-	
 	//static unsubscribe_subscriber = function(_subscriber, _force = false) {};
-	
-	#endregion
-	#region Getters ////////
-	
-	static get_broadcaster = function() {
-		/// @func	get_broadcaster()
-		/// @return {Publisher} publisher
-		///
-		return __broadcaster;
-	};
-	
-	#endregion
-	#region Checkers ///////
-	
-	static is_registered = function(_event_name) {
-		/// @func	is_registered(event_name)
-		/// @param	{string}  event_name
-		/// @return {boolean} is_registered?
-		///
-		return get_broadcaster().has_registered_channel(_event_name);
-	};
-		
-	#endregion
 };
 
 #endregion
@@ -315,12 +308,24 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__closed: false,
 	};
 	
+	//action_change_moveset = new Action({ 
+	//	method: method(self, function(_moveset_name) {
+	//		change_moveset("test");
+	//	})
+	//});
+	//static add_moveset_trigger = function(_moveset_name, _trigger_method) {};
+	
 	#region Private ////////////
 	
-	#region Setup //////////////
-	
-	static __setup		   = setup;
-	static __setup_moveset = function(_default_name = "__default__") {
+	static __setup				 = setup;
+	static __setup_eventer		 = function() {
+		/// @func	__setup_eventer()
+		/// @return {Moveable} self
+		///
+		eventer = new Eventable().setup();	
+		return self;
+	};
+	static __setup_moveset		 = function(_default_name = "__default__") {
 		/// @func	__setup_moveset(default_name*)
 		/// @param	{string}   default_name=__default__
 		/// @return {Moveable} self
@@ -342,7 +347,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		  
 		return self;
 	};
-	static __setup_path    = function() {
+	static __setup_path			 = function() {
 		/// @func	__setup_path()
 		/// @return {Moveable} self
 		///
@@ -354,11 +359,16 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		return self;
 	};
 	
-	#endregion
-	#region Teardown ///////////
-	
-	static __teardown		  = teardown;
-	static __teardown_moveset = function() {
+	static __teardown			 = teardown;
+	static __teardown_eventer	 = function() {
+		/// @func	__teardown_eventer()
+		/// @return {Moveable} self
+		///
+		eventer.teardown();
+		eventer = undefined;
+		return self;
+	};
+	static __teardown_moveset	 = function() {
 		/// @func	__teardown_moveset()
 		/// @return {Moveable} self
 		///
@@ -368,7 +378,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		
 		return self;
 	};
-	static __teardown_path	  = function() {
+	static __teardown_path		 = function() {
 		/// @func	__teardown_path()
 		/// @return {Moveable} self
 		///
@@ -379,13 +389,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		return self;
 	};
 	
-	#endregion
-	#region Update /////////////
-	
-	static __update = update;
-	
-	#endregion
-	#region Getters ////////////
+	static __update				 = update;
 	
 	static __get_moveset_current = function() {
 		/// @func	__get_moveset_current()
@@ -403,9 +407,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			return __default;
 		}
 	};
-	
-	#endregion
-	#region Setters ////////////
 	
 	static __set_moveset_current = function(_moveset) {
 		/// @func	__set_moveset_current(moveset)
@@ -429,8 +430,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	};
 	
 	#endregion
-	
-	#endregion
 	#region Core ///////////////
 	
 	static setup	= function() {
@@ -439,17 +438,9 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		if (!is_initialized()) {
 			__setup();
+			__setup_eventer();
 			__setup_moveset();
 			//__setup_path();
-			
-			/// ACTION & TRIGGER TESTING
-			/// rework and move into setup()
-			eventer = new Eventable().setup();	
-			action_change_moveset = new Action({ 
-				method: method(self, function(_moveset_name) {
-					change_moveset("test");
-				})
-			});
 		}
 		return self;
 	};
@@ -458,9 +449,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {Moveable} self
 		///
 		if (is_initialized()) {
-			__teardown();
-			__teardown_moveset();
 			//__teardown_path();
+			__teardown_moveset();
+			__teardown_eventer();
+			__teardown();
 		}
 		return self;
 	};
@@ -477,8 +469,9 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	};
 	
 	#endregion
+	#region Getters ////////////
 	
-	static get_moveset		   = function(_name) {
+	static get_moveset = function(_name) {
 		/// @func	get_moveset(name)
 		/// @param	{string}  name
 		/// @return {MoveSet} moveset
@@ -487,6 +480,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			return __movesets.get(_name);
 		}
 	};
+		
+	#endregion
+	#region Setters ////////////
+	
 	static set_moveset		   = function(_moveset) {
 		/// @func	set_moveset(moveset)
 		/// @param	{MoveSet}  moveset
@@ -494,65 +491,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		__set_moveset_current(_moveset);
 		apply_moveset();
-		return self;
-	};
-	static add_moveset		   = function(_name, _moveset) {
-		/// @func	add_moveset(name, moveset)
-		/// @param	{string}   name
-		/// @param	{MoveSet}  moveset
-		/// @return {Moveable} self
-		///
-		with (__moveset) {
-			__movesets.add(_name, _moveset);
-		}
-		return self;
-	};
-	static new_moveset		   = function(_name, _data) {
-		/// @func	new_moveset(name, data)
-		/// @param	{string}   name
-		/// @param	{struct}   data
-		/// @return {Moveable} self
-		///
-		_data[$ "name"] = _name;	// append name onto data struct
-		
-		var _moveset = new MoveSet(_data);
-		add_moveset(_name, _moveset);
-		return self;
-	};
-	static has_moveset		   = function(_name) {
-		/// @func	has_moveset(name)
-		/// @param	{string}  name
-		/// @return {boolean} exists?
-		///
-		with (__moveset) {
-			return __movesets.exists(_name);
-		}
-	};
-	static reset_moveset	   = function() {
-		/// @func	reset_moveset()
-		/// @return {Moveable} self
-		///
-		return set_moveset(__get_moveset_default());
-	};
-	static change_moveset	   = function(_name) {
-		/// @func	change_moveset(name)
-		/// @param	{string}   name
-		/// @return {Moveable} self
-		///
-		if (has_moveset(_name)) {
-			set_moveset(get_moveset(_name));
-		}
-		return self;
-	};
-	static apply_moveset	   = function(_moveset = __get_moveset_current()) {
-		/// @func	apply_moveset(moveset*)
-		/// @param	{MoveSet}  moveset=moveset_get_current
-		/// @return {Moveable} self
-		///
-		__speed = _moveset.__speed;
-		__accel = _moveset.__accel;
-		__fric  = _moveset.__fric;
-		__mult  = _moveset.__mult;
 		return self;
 	};
 	static set_moveset_default = function(_data) {
@@ -564,7 +502,72 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		return self;
 		
 	};
-	static add_moveset_trigger = function(_moveset_name, _trigger_method) {};
+		
+	#endregion
+	#region Checkers ///////////
+	
+	static has_moveset = function(_name) {
+		/// @func	has_moveset(name)
+		/// @param	{string}  name
+		/// @return {boolean} exists?
+		///
+		with (__moveset) {
+			return __movesets.exists(_name);
+		}
+	};
+	
+	#endregion
+	
+	static add_moveset	  = function(_name, _moveset) {
+		/// @func	add_moveset(name, moveset)
+		/// @param	{string}   name
+		/// @param	{MoveSet}  moveset
+		/// @return {Moveable} self
+		///
+		with (__moveset) {
+			__movesets.add(_name, _moveset);
+		}
+		return self;
+	};
+	static new_moveset	  = function(_name, _data) {
+		/// @func	new_moveset(name, data)
+		/// @param	{string}   name
+		/// @param	{struct}   data
+		/// @return {Moveable} self
+		///
+		_data[$ "name"] = _name;	// append name onto data struct
+		
+		var _moveset = new MoveSet(_data);
+		add_moveset(_name, _moveset);
+		return self;
+	};
+	static reset_moveset  = function() {
+		/// @func	reset_moveset()
+		/// @return {Moveable} self
+		///
+		return set_moveset(__get_moveset_default());
+	};
+	static change_moveset = function(_name) {
+		/// @func	change_moveset(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (has_moveset(_name)) {
+			set_moveset(get_moveset(_name));
+		}
+		return self;
+	};
+	static apply_moveset  = function(_moveset = __get_moveset_current()) {
+		/// @func	apply_moveset(moveset*)
+		/// @param	{MoveSet}  moveset=moveset_get_current
+		/// @return {Moveable} self
+		///
+		__speed = _moveset.__speed;
+		__accel = _moveset.__accel;
+		__fric  = _moveset.__fric;
+		__mult  = _moveset.__mult;
+		return self;
+	};
 	
 	/// WIRE EVENT TO TRIGGER PUBSUB TO TRIGGER MOVESET CHANGE
 };
@@ -588,9 +591,36 @@ function Actionable() : Component() constructor {
 	///
 	__fsm = undefined;
 	
+	#region Private ////////////
+	
+	static __setup	   = setup;
+	static __setup_fsm = function() {
+		/// @func	__setup_fsm()
+		/// @return {Actionable} self
+		///
+		__fsm = new SnowState();
+	};
+	
+	static __teardown	  = teardown;
+	static __teardown_fsm = function() {
+		/// @func	__teardown_fsm()
+		/// @return {Actionable} self
+		///
+	};
+	
+	static __render		= render;
+	static __render_fsm = function() {
+		/// @func	__render_fsm()
+		/// @return {Actionable} self
+		///
+	};
+	
+	#endregion
 	#region Core ///////////////
 	
-	static update = function() {
+	static setup	= function() {};
+	static teardown = function() {};
+	static update	= function() {
 		/// @func	update()
 		/// @return {Actionable} self
 		///
@@ -599,7 +629,7 @@ function Actionable() : Component() constructor {
 		}
 		return self;
 	};
-	static render = function() {
+	static render	= function() {
 		/// @func	render()
 		/// @return {Actionable} self
 		///
@@ -689,6 +719,31 @@ function Actionable() : Component() constructor {
 	static state_get_previous			 = actionable_state_get_previous;
 	static state_get_time				 = actionable_state_get_time;
 	static state_set_time				 = actionable_state_set_time;
+};
+
+#endregion
+////////////////////////////////////
+#region Component Manager //////////
+
+function ComponentManager(_config = {}) : Component(_config) constructor {
+	/// @func	ComponentManager(config*)
+	/// @param	{struct}		   config={}
+	/// @return {ComponentManager} self
+	///
+	__components = new Container();
+	
+	static add_component = function() {};
+	static get_component = function() {};
+	static has_component = function() {};
+};
+
+#endregion
+#region Scriptable /////////////////
+
+function Scriptable() : Component() constructor {
+	/// @func	Scriptable()
+	/// @return {Component} self
+	///
 };
 
 #endregion

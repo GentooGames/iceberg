@@ -105,10 +105,53 @@ function FloeEffect() constructor {
 		},
 	};
 	
-	/// SETUP setup();
+	#region Private ////////
 	
+	static __setup_eventer	  = function() {
+		/// @func	__setup_eventer()
+		/// @return {FloeEffect} self
+		///
+		eventer = new Eventable().setup();
+		eventer.register([
+			"enter_started",
+			"enter_completed",
+			"change_started",
+			"change_completed",
+			"hold_started",
+			"hold_completed",
+			"leave_started",
+			"leave_completed",
+			"reversed",
+			"ended",
+			"reset_completed",
+		]);
+		return self;
+	};
+	static __teardown_eventer = function() {
+		/// @func	__teardown_eventer()
+		/// @return {FloeEffect} self
+		///
+		eventer = undefined;
+		return self;
+	};
+	
+	#endregion
 	#region Core ///////////
 	
+	static setup	= function() {
+		/// @func	setup()
+		/// @return {FloeEffect} self
+		///
+		__setup_eventer();
+		return self;
+	};
+	static teardown = function() {
+		/// @func	teardown()
+		/// @return {FloeEffect} self
+		///
+		__teardown_eventer();
+		return self;
+	};
 	static update   = function() {
 		/// @func	update()
 		/// @return {FloeEffect} self
@@ -184,63 +227,7 @@ function FloeEffect() constructor {
 		};
 		return self;
 	};
-	static teardown = function() {
-		/// @func	teardown()
-		/// @return {FloeEffect} self
-		///
-		return self;
-	};
 	
-	#endregion
-	#region Actions ////////
-	
-	static enter   = function() {
-		/// @func	enter()
-		/// @return {FloeEffect} self
-		///
-		set_state(__FLOE_STATE.ENTER_PREP);
-		var _target = __this.__control.__is_reversed ? 0 : 1;
-		set_target(_target);
-		return self;
-	};
-	static leave   = function() {
-		/// @func	leave()
-		/// @return {FloeEffect} self
-		///
-		set_state(__FLOE_STATE.LEAVE_PREP);
-		var _target = __this.__control.__is_reversed ? 1 : 0;
-		set_target(_target);
-		return self;
-	};
-	static reverse = function(_reverse_progress = true) {
-		/// @func	reverse(reverse_progress?*)
-		/// @param	{bool} reverse_progress=true
-		/// @return {FloeEffect} self
-		///
-		__this.__control.__is_reversed = !__this.__control.__is_reversed;
-		
-		/// Set Target
-		var _target = 1 - get_target();
-		set_target(_target);
-
-		/// Set Progress
-		if (_reverse_progress) {
-			var _progress = 1 - get_progress();
-			set_progress(_progress);
-		}
-		eventer.broadcast("reversed");
-		return self;
-	};
-	static reset   = function() {
-		/// @func	reset()
-		/// @return {FloeEffect} self
-		///
-		set_running(false);
-		set_progress(0);
-		set_state(__FLOE_STATE.HIDDEN);
-		eventer.broadcast("reset_completed");
-	};
-		
 	#endregion
 	#region Getters ////////
 	
@@ -467,64 +454,106 @@ function FloeEffect() constructor {
 	
 	#endregion
 	
-	
-	/// MOVE INTO SETUP();
-	#region Events /////////
-	
-	eventer = new Eventable().setup();
-	eventer.register([
-		"enter_started",
-		"enter_completed",
-		"change_started",
-		"change_completed",
-		"hold_started",
-		"hold_completed",
-		"leave_started",
-		"leave_completed",
-		"reversed",
-		"ended",
-		"reset_completed",
-	]);
-	
-	#endregion
+	static enter   = function() {
+		/// @func	enter()
+		/// @return {FloeEffect} self
+		///
+		set_state(__FLOE_STATE.ENTER_PREP);
+		var _target = __this.__control.__is_reversed ? 0 : 1;
+		set_target(_target);
+		return self;
+	};
+	static leave   = function() {
+		/// @func	leave()
+		/// @return {FloeEffect} self
+		///
+		set_state(__FLOE_STATE.LEAVE_PREP);
+		var _target = __this.__control.__is_reversed ? 1 : 0;
+		set_target(_target);
+		return self;
+	};
+	static reverse = function(_reverse_progress = true) {
+		/// @func	reverse(reverse_progress?*)
+		/// @param	{bool} reverse_progress=true
+		/// @return {FloeEffect} self
+		///
+		__this.__control.__is_reversed = !__this.__control.__is_reversed;
+		
+		/// Set Target
+		var _target = 1 - get_target();
+		set_target(_target);
+
+		/// Set Progress
+		if (_reverse_progress) {
+			var _progress = 1 - get_progress();
+			set_progress(_progress);
+		}
+		eventer.broadcast("reversed");
+		return self;
+	};
+	static reset   = function() {
+		/// @func	reset()
+		/// @return {FloeEffect} self
+		///
+		set_running(false);
+		set_progress(0);
+		set_state(__FLOE_STATE.HIDDEN);
+		eventer.broadcast("reset_completed");
+	};
 };
 function FloeEffectSurface() : FloeEffect() constructor {
 	/// @func FloeEffectSurface()
 	///
-	__this.__surface = {
-		__surface: surface_create(SURF_W, SURF_H),
-	};
+	__this.__surface = undefined;
 	
 	#region Private ////////
 	
-	static __teardown = teardown;
+	static __setup		   = setup;
+	static __setup_surface = function() {
+		/// @func	__setup_surface()
+		/// @return {FloeEffect} self
+		///
+		__this.__surface = surface_create(SURF_W, SURF_H);
+		return self;
+	};
+	
+	static __teardown		  = teardown;
+	static __teardown_surface = function() {
+		/// @func	__teardown_surface()
+		/// @return {FloeEffect} self
+		///
+		if (surface_exists(__this.__surface)) {
+			surface_free(__this.__surface);
+		}
+		__this.__surface = undefined;
+		return self;
+	};
 	
 	#endregion
 	#region Core ///////////
 	
+	static setup		= function() {
+		/// @func	setup()
+		/// @return {FloeEffect} self
+		///
+		__setup();
+		__setup_surface();
+		return self;
+	};
 	static teardown		= function() {
 		/// @func	teardown()
 		/// @return {FloeEffect} self
 		///
+		__teardown_surface();
 		__teardown();
-		
-		var _surface = get_surface();
-		if (surface_exists(_surface)) {
-			surface_free(_surface);
-		}
-		set_surface(undefined);
 		return self;
 	};
 	static render_begin = function() {
 		/// @func	render_begin()
 		/// @return {FloeEffect} self
 		///
-		var _surface = get_surface();
-		if (!surface_exists(_surface)) {
-			_surface = surface_create(SURF_W, SURF_H);
-			set_surface(_surface);
-		}
-		surface_set_target(get_surface()); 
+		__this.__surface = surface_ensure(__this.__surface, SURF_W, SURF_H);
+		surface_set_target(__this.__surface); 
 		draw_clear_alpha(c_black, 0.0);
 		return self;
 	};
@@ -537,33 +566,11 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		if (_surface_shader_method != undefined) {
 			_surface_shader_method();	
 		}
-		draw_surface(get_surface(), 0, 0);
+		draw_surface(__this.__surface, 0, 0);
 		
 		if (_surface_shader_method != undefined) {
 			shader_reset();	
 		}
-		return self;
-	};
-	
-	#endregion
-	#region Getters ////////
-	
-	static get_surface = function() {
-		/// @func	get_surface()
-		/// @return {surface_id} surface
-		///
-		return __this.__surface.__surface;
-	};
-		
-	#endregion
-	#region Setters ////////
-	
-	static set_surface = function(_surface) {
-		/// @func	set_surface(surface)
-		/// @param	{surface_id} surface
-		/// @return {FloeEffect} self
-		///
-		__this.__surface.__surface = _surface;
 		return self;
 	};
 	

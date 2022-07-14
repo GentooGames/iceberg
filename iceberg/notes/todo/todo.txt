@@ -1,6 +1,11 @@
 iceberg:
-	- rework pubsub events in Method(), Action(), Trigger() classes
+	- all core methods should check for initialized && is_initialized()
 	- encapsulate eventer into getter() for better accessing
+	- setup and rebuild should take data param
+	- rework pubsub events in Method(), Action(), Trigger() classes
+	- teardowns should execute in opposite order of setup()
+	- should every constructor be normalized to have setup, teardown, rebuild, update, render?
+	- if constructor does not utilize Core() but has an update, can that be replaced with a pubsub?
 	- IMPLEMENT EVENTABLE() EVERYWHERE!
 	- replace Action() iterating over all Triggers() and instead just wire a PubSub between them
 	- make sure the sub-classes of Class() are utilizing is_active()

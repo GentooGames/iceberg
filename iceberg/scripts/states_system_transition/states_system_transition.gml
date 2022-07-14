@@ -29,7 +29,7 @@ function state_system_transition_transitioning() {
 	return {
 		enter: function() {
 			eventer.broadcast("enter_started");
-			effect = new effect_in();
+			effect = new effect_in().setup();
 			effect.eventer.listen("enter_completed", function(_data) {
 				fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
 			});
@@ -100,7 +100,7 @@ function state_system_transition_ending() {
 	return {
 		enter: function() {
 			eventer.broadcast("exit_started");
-			effect = new effect_out();
+			effect = new effect_out().setup();
 			effect.eventer.listen("enter_completed", function(_data) {
 				fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
 			});

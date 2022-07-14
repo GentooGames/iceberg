@@ -70,7 +70,46 @@ function Container(_config = {}) : Class(_config) constructor {
 	__names = [];
 	__size  = 0;
 	
-	#region Actions ////////
+	#region Getters ////////
+	
+	static get		 = function(_name) {
+		/// @func	get(name)
+		/// @param	{string} name
+		/// @return {any}    item
+		///
+		return __items[$ _name];
+	};
+	static get_size	 = function() {
+		/// @func	get_size()
+		/// @return {real} size
+		///
+		return __size;
+	};
+	static get_names = function() {
+		/// @func	get_names()
+		/// @return {array} names
+		/// 
+		return __names;
+	};
+	static get_items = function() {
+		/// @func	get_items()
+		/// @return {struct} items
+		/// 
+		return __items;
+	};
+		
+	#endregion
+	#region Checkers ///////
+	
+	static exists = function(_name) {
+		/// @func	exists(name)
+		/// @param	{string}  name
+		/// @return {boolean} exists?
+		///
+		return get(_name) != undefined;
+	};
+		
+	#endregion
 	
 	static add	  = function(_name, _item) {
 		/// @func	add(name, item)
@@ -124,48 +163,6 @@ function Container(_config = {}) : Class(_config) constructor {
 		__items = {};
 		return self;
 	};
-
-	#endregion
-	#region Getters ////////
-	
-	static get		 = function(_name) {
-		/// @func	get(name)
-		/// @param	{string} name
-		/// @return {any}    item
-		///
-		return __items[$ _name];
-	};
-	static get_size	 = function() {
-		/// @func	get_size()
-		/// @return {real} size
-		///
-		return __size;
-	};
-	static get_names = function() {
-		/// @func	get_names()
-		/// @return {array} names
-		/// 
-		return __names;
-	};
-	static get_items = function() {
-		/// @func	get_items()
-		/// @return {struct} items
-		/// 
-		return __items;
-	};
-		
-	#endregion
-	#region Checkers ///////
-	
-	static exists = function(_name) {
-		/// @func	exists(name)
-		/// @param	{string}  name
-		/// @return {boolean} exists?
-		///
-		return get(_name) != undefined;
-	};
-		
-	#endregion
 };
 function Batch(_config = {}) : Container(_config) constructor {
 	/// @func	Batch(config*)
@@ -174,27 +171,6 @@ function Batch(_config = {}) : Container(_config) constructor {
 	///
 	__empty_on_execute = _config[$ "emtpy_on_execute"] ?? false;
 	
-	#region Actions ////////////
-	
-	static execute = function(_empty_after = false) {
-		/// @func	execute(empty_after?*)
-		/// @param	{boolean} empty_after=false
-		/// @return {Batch}   self
-		///
-		var _items = get_items();
-		var _names = get_names();
-		for (var _i = 0, _len = get_size(); _i < _len; _i++) {
-			var _name = _names[_i];
-			var _item = _items[$ _name];
-			_item();
-		}
-		if (__empty_on_execute || _empty_after) {
-			empty();	
-		}
-		return self;
-	};
-	
-	#endregion
 	#region Getters ////////////
 	
 	static get_empty_on_execute = function() {
@@ -217,6 +193,24 @@ function Batch(_config = {}) : Container(_config) constructor {
 	};
 		
 	#endregion
+	
+	static execute = function(_empty_after = false) {
+		/// @func	execute(empty_after?*)
+		/// @param	{boolean} empty_after=false
+		/// @return {Batch}   self
+		///
+		var _items = get_items();
+		var _names = get_names();
+		for (var _i = 0, _len = get_size(); _i < _len; _i++) {
+			var _name = _names[_i];
+			var _item = _items[$ _name];
+			_item();
+		}
+		if (__empty_on_execute || _empty_after) {
+			empty();	
+		}
+		return self;
+	};
 };
 
 #endregion
@@ -243,19 +237,6 @@ function Method(_config = {}) : Class (_config) constructor {
 		/// @return {any} method_return
 		///
 		return script_execute_ext(__method, __data);
-	};
-	
-	#endregion
-	#region Actions ////////
-	
-	static execute = function() {	/// @OVERRIDE
-		/// @func	execute()
-		/// @return {any} execute_return
-		///
-		if (is_method(__method)) {
-			return __execute_method();	
-		}
-		return __execute_method_script();
 	};
 	
 	#endregion
@@ -295,6 +276,16 @@ function Method(_config = {}) : Class (_config) constructor {
 	}
 		
 	#endregion
+	
+	static execute = function() {	/// @OVERRIDE
+		/// @func	execute()
+		/// @return {any} execute_return
+		///
+		if (is_method(__method)) {
+			return __execute_method();	
+		}
+		return __execute_method_script();
+	};
 };
 function Action(_config = {}) : Method(_config) constructor {
 	/// @func	Action(config*)
@@ -318,7 +309,6 @@ function Action(_config = {}) : Method(_config) constructor {
 	};
 	
 	#endregion
-	#region Actions ////////
 	
 	static execute	   = function() {	/// @OVERRIDE
 		/// @func	execute()
@@ -352,8 +342,6 @@ function Action(_config = {}) : Method(_config) constructor {
 		return self;
 	};
 	
-	#endregion
-	
 	get_owner().eventer.register(["action_executed_" + get_name()]);
 };
 function Trigger(_config = {}) : Method(_config) constructor {
@@ -366,7 +354,6 @@ function Trigger(_config = {}) : Method(_config) constructor {
 	static __execute = execute;
 	
 	#endregion
-	#region Core ///////////
 	
 	static execute = function() {
 		/// @func	execute()
@@ -380,8 +367,6 @@ function Trigger(_config = {}) : Method(_config) constructor {
 		}
 		return _result;
 	};
-		
-	#endregion
 };
 
 #endregion
