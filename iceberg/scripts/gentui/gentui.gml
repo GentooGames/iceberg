@@ -343,7 +343,78 @@ function GentuiState(_config) constructor {
 
 /// NEED TO REFORMAT METHODS
 /// NEED TO REPLACE WITH MORE GENERALIZED/ABSTRACTED ACTION & TRIGGER IMPLEMENTATION
-function GentuiAction (_config = {}) : Method(_config) constructor {
+function GentuiMethod (_config = {}) : Class(_config) constructor {
+	/// @func	GentuiMethod(config*)
+	/// @param	{struct} config={}
+	/// @return {Method} self
+	///
+	__method = _config[$ "method"] ?? undefined;
+	__data	 = _config[$ "data"  ] ?? undefined;
+	
+	#region Private ////////
+	
+	static __execute_method		   = function() {
+		/// @func	__execute_method()
+		/// @return {any} method_return
+		///
+		return __method(__data);
+	};
+	static __execute_method_script = function() {
+		/// @func	__execute_method_script()
+		/// @return {any} method_return
+		///
+		return script_execute_ext(__method, __data);
+	};
+	
+	#endregion
+	#region Getters ////////
+	
+	static get_method = function() {
+		/// @func	get_method()
+		/// @return {method} method
+		///
+		return __method;
+	};
+	static get_data	  = function() {
+		/// @func	get_data()
+		/// @return {any} data
+		///
+		return __data;
+	};
+	
+	#endregion
+	#region Setters ////////
+	
+	static set_method = function(_method) {
+		/// @func	set_method(method)
+		/// @param	{method} method
+		/// @return {Method} self
+		///
+		__method = _method;
+		return self;
+	};
+	static set_data	  = function(_data) {
+		/// @func	set_data(data)
+		/// @param	{any} data
+		/// @return {Method} self
+		///
+		__data = _data;
+		return self;
+	}
+		
+	#endregion
+	
+	static execute = function() {
+		/// @func	execute()
+		/// @return {any} execute_return
+		///
+		if (is_method(__method)) {
+			return __execute_method();	
+		}
+		return __execute_method_script();
+	};
+};
+function GentuiAction (_config = {}) : GentuiMethod(_config) constructor {
 	/// @func	GentuiAction(config*)
 	/// @param	{struct} config={}
 	/// @return {Action} self
@@ -398,7 +469,7 @@ function GentuiAction (_config = {}) : Method(_config) constructor {
 	
 	get_owner().eventer.register(["action_executed_" + get_name()]);
 };
-function GentuiTrigger(_config = {}) : Method(_config) constructor {
+function GentuiTrigger(_config = {}) : GentuiMethod(_config) constructor {
 	/// @func	GentuiTrigger(config*)
 	/// @param	{struct} config={}
 	/// @return {Trigger} self

@@ -175,11 +175,17 @@ function Set(_config = {}) : Collection(_config) constructor {
 	__items = {};
 	__names = [];	
 	
-	static get_names = function() {
+	static get_names		  = function() {
 		/// @func	get_names()
 		/// @return {array} names
 		///
 		return __names;
+	};
+	static get_items_as_array = function() {
+		/// @func	get_items_as_array()
+		/// @return {array} items
+		///
+		return struct_to_array(__items, __names, __size);
 	};
 		
 	////////////////////////////////////////
@@ -326,131 +332,42 @@ function Family(_config = {}) : Set(_config) constructor {
 	
 #endregion
 	
-//function Batch(_config = {}) : Family(_config) constructor {
-//	/// @func	Batch(config*)
-//	/// @param	{struct} config={}
-//	/// @return {Batch}  self
-//	///
-//	__empty_on_execute = _config[$ "empty_on_execute"] ?? false;
-	
-//	#region Getters ////////
-	
-//	static get_empty_on_execute = function() {
-//		/// @func	get_empty_on_execute()
-//		/// @return {bool} empty_on_execute?
-//		///
-//		return __empty_on_execute;
-//	};
-	
-//	#endregion
-//	#region Setters ////////
-	
-//	static set_empty_on_execute = function(_empty) {
-//		/// @func	set_empty_on_execute(empty?)
-//		/// @param	{bool}  empty?
-//		/// @return {Batch} self
-//		///
-//		__empty_on_execute = _empty;
-//		return self;
-//	};
-		
-//	#endregion
-	
-//	static execute = function(_empty_after = false) {
-//		/// @func	execute(empty_after?*)
-//		/// @param	{boolean} empty_after=false
-//		/// @return {Batch}   self
-//		///
-//		var _items = get_items();
-//		var _names = get_names();
-//		for (var _i = 0, _len = get_size(); _i < _len; _i++) {
-//			var _name = _names[_i];
-//			var _item = _items[$ _name];
-//			_item();
-//		}
-//		if (__empty_on_execute || _empty_after) {
-//			empty();	
-//		}
-//		return self;
-//	};
-//};
-
-/// method takes some method/function, may also contain some data, and executes when invoked
-function Method (_config = {}) : Class(_config) constructor {
-	/// @func	Method(config*)
-	/// @param	{struct} config={}
-	/// @return {Method} self
-	///
-	__method = _config[$ "method"] ?? undefined;
-	__data	 = _config[$ "data"  ] ?? undefined;
-	
-	#region Private ////////
-	
-	static __execute_method		   = function() {
-		/// @func	__execute_method()
-		/// @return {any} method_return
-		///
-		return __method(__data);
-	};
-	static __execute_method_script = function() {
-		/// @func	__execute_method_script()
-		/// @return {any} method_return
-		///
-		return script_execute_ext(__method, __data);
-	};
-	
-	#endregion
-	#region Getters ////////
-	
-	static get_method = function() {
-		/// @func	get_method()
-		/// @return {method} method
-		///
-		return __method;
-	};
-	static get_data	  = function() {
-		/// @func	get_data()
-		/// @return {any} data
-		///
-		return __data;
-	};
-	
-	#endregion
-	#region Setters ////////
-	
-	static set_method = function(_method) {
-		/// @func	set_method(method)
-		/// @param	{method} method
-		/// @return {Method} self
-		///
-		__method = _method;
-		return self;
-	};
-	static set_data	  = function(_data) {
-		/// @func	set_data(data)
-		/// @param	{any} data
-		/// @return {Method} self
-		///
-		__data = _data;
-		return self;
-	}
-		
-	#endregion
-	
-	static execute = function() {
-		/// @func	execute()
-		/// @return {any} execute_return
-		///
-		if (is_method(__method)) {
-			return __execute_method();	
-		}
-		return __execute_method_script();
-	};
-};
-
 function Trigger(_config = {}) : Class(_config) constructor {
 	/// @func	Trigger(config*)
 	/// @param	{struct}  config={}
 	/// @return	{Trigger} self
 	///
+	__conditions = new Set();
+	
+	static add_condition	= function(_name, _method) {
+		/// @func	add_condition(name, method)
+		/// @param	{string}  name
+		/// @param	{method}  method
+		/// @return {Trigger} self
+		///
+		__conditions.add_item(_name, _method);
+		return self;
+	};
+	static remove_condition = function(_name) {
+		/// @func	remove_condition(name, method)
+		/// @param	{string}  name
+		/// @return {Trigger} self
+		///
+		__conditions.remove_item(_name);
+		return self;
+	};
+	static check_activation = function() {
+		/// @func	check_activation()
+		/// @return {Trigger} self
+		///
+		var _names = __conditions.get_names();
+		var _count = __conditions.get_size();
+		for (var _i = 0; _i < _count; _i++) {
+			var _condition = __conditions.get_item(_names[_i]);
+			if (_condition()) {
+				return true;	
+			}
+		}
+		return false;
+	};
 };
