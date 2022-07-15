@@ -5,7 +5,7 @@ setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///	
 	mover = new Moveable().setup();
-	mover.set_moveset_default({
+	mover.set_moveset_default_data({
 			speed: 6.0,
 			accel: 1.0,
 			fric:  0.0,

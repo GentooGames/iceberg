@@ -127,7 +127,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}	config={}
 	/// @return {Eventable} self
 	///
-	__broadcaster = undefined;	/// <-- instantiated in setup()
+	__broadcaster = undefined;		/// <-- instantiated in setup()
 	__logging	  = DEBUGGING && 1;
 
 	#region Core ///////////
@@ -308,126 +308,16 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	//	})
 	//});
 	//static add_moveset_trigger = function(_moveset_name, _trigger_method) {};
-	
-	#region Private ////////////
-	
-	static __setup_eventer		 = function() {
-		/// @func	__setup_eventer()
-		/// @return {Moveable} self
-		///
-		eventer = new Eventable().setup();	
-		return self;
-	};
-	static __setup_moveset		 = function(_default_name = "__default__") {
-		/// @func	__setup_moveset(default_name*)
-		/// @param	{string}   default_name=__default__
-		/// @return {Moveable} self
-		///
-		var _movesets = new Container({ name: "movesets" });
-		var _moveset  = new MoveSet({ 
-			name:  _default_name,
-			speed: __speed,
-			accel: __accel,
-			fric:  __fric,
-			mult:  __mult,
-		});
-		
-		__moveset.__movesets = _movesets;
-		__set_moveset_default(_moveset);
-		__set_moveset_current(_moveset);
-		  add_moveset(_default_name, _moveset);
-		  apply_moveset();
-		  
-		return self;
-	};
-	static __setup_path			 = function() {
-		/// @func	__setup_path()
-		/// @return {Moveable} self
-		///
-		with (__path) {
-			__index = path_add();
-			path_set_kind(__index, __smooth);
-			path_set_closed(__index, __closed);
-		}
-		return self;
-	};
-	static __teardown_eventer	 = function() {
-		/// @func	__teardown_eventer()
-		/// @return {Moveable} self
-		///
-		eventer.teardown();
-		eventer = undefined;
-		return self;
-	};
-	static __teardown_moveset	 = function() {
-		/// @func	__teardown_moveset()
-		/// @return {Moveable} self
-		///
-		__moveset.__movesets = undefined;
-		__set_moveset_default(undefined);
-		__set_moveset_current(undefined);
-		
-		return self;
-	};
-	static __teardown_path		 = function() {
-		/// @func	__teardown_path()
-		/// @return {Moveable} self
-		///
-		with (__path) {
-			path_delete(__index);
-			__index = undefined;
-		}
-		return self;
-	};
-	
-	static __get_moveset_current = function() {
-		/// @func	__get_moveset_current()
-		/// @return {MoveSet} moveset
-		///
-		with (__moveset) {
-			return __moveset;
-		}
-	};
-	static __get_moveset_default = function() {
-		/// @func	__get_moveset_default()
-		/// @return {MoveSet} moveset
-		///
-		with (__moveset) {
-			return __default;
-		}
-	};
-	
-	static __set_moveset_current = function(_moveset) {
-		/// @func	__set_moveset_current(moveset)
-		/// @param	{MoveSet}  moveset
-		/// @return {Moveable} self
-		///
-		with (__moveset) {
-			__moveset = _moveset;
-		}
-		return self;
-	};
-	static __set_moveset_default = function(_moveset) {
-		/// @func	__set_moveset_default(moveset)
-		/// @param	{MoveSet}  moveset
-		/// @return {Moveable} self
-		///
-		with (__moveset) {
-			__default = _moveset;
-		}
-		return self;
-	};
-	
-	#endregion
+
 	#region Core ///////////////
 	
-	static __setup_moveable	= function() {
+	static __setup_moveable	   = function() {
 		/// @func	__setup_moveable()
 		/// @return {Moveable} self
 		///
 		if (!is_initialized()) {
 			__setup_component();
-			#region Properties
+			#region Props //////
 			
 			if (__config[$ "speed"] != undefined) __speed = __config.speed;
 			if (__config[$ "accel"] != undefined) __accel = __config.accel;
@@ -435,46 +325,87 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			if (__config[$ "mult" ] != undefined) __mult  = __config.mult;
 			
 			#endregion
-			#region Eventer
+			#region Eventer //// 
+			
+			eventer = new Eventable().setup();	
 			
 			#endregion
-			#region Moveset
+			#region Moveset ////
+			
+			__moveset.__movesets = new Container();
+			var _moveset		 = new MoveSet({ 
+				name:  "__default__",
+				speed: __speed,
+				accel: __accel,
+				fric:  __fric,
+				mult:  __mult,
+			});
+			
+			add_moveset("__default__", _moveset);
+			set_moveset_default(_moveset);
+			set_moveset(_moveset);
 			
 			#endregion
-			__setup_eventer();
-			__setup_moveset();
-			//__setup_path();
+			#region Path ///////
+			
+			with (__path) {
+				__index = path_add();
+				path_set_kind(__index, __smooth);
+				path_set_closed(__index, __closed);
+			}
+			
+			#endregion
 		}
 		return self;
 	};
-	static __teardown	= function() {
+	static __teardown_moveable = function() {
 		/// @func	__teardown_moveable()
 		/// @return {Moveable} self
 		///
 		if (is_initialized()) {
-			//__teardown_path();
-			__teardown_moveset();
-			__teardown_eventer();
-			__teardown_super();
+			#region Path ///////
+			
+			with (__path) {
+				path_delete(__index);
+				__index = undefined;
+			}
+			
+			#endregion
+			#region Moveset ////
+			
+			__moveset.__movesets = undefined;
+			__set_moveset_default(undefined);
+			__set_moveset_current(undefined);
+			
+			#endregion
+			#region Eventer ////
+			
+			eventer.teardown();
+			eventer = undefined;
+			
+			#endregion
+			__teardown_component();
 		}
 		return self;
 	};
-	static __update	= function() {
+	static __update_moveable   = function() {
 		/// @func	__update_moveable()
 		/// @return {Moveable} self
 		///
 		if (is_initialized() && is_active()) {
-			__update_super();
-			//__update_hspd_vspd();
-			//__update_xy();
+			__update_component();
 		}
 		return self;
 	};
 	
+	static setup	= __setup_moveable;
+	static teardown = __teardown_moveable;
+	static update	= __update_moveable;
+	
 	#endregion
 	#region Getters ////////////
 	
-	static get_moveset = function(_name) {
+	static get_moveset		   = function(_name) {
 		/// @func	get_moveset(name)
 		/// @param	{string}  name
 		/// @return {MoveSet} moveset
@@ -483,27 +414,55 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			return __movesets.get(_name);
 		}
 	};
+	static get_moveset_current = function() {
+		/// @func	get_moveset_current()
+		/// @return {MoveSet} moveset
+		///
+		with (__moveset) {
+			return __moveset;
+		}
+	};
+	static get_moveset_default = function() {
+		/// @func	get_moveset_default()
+		/// @return {MoveSet} moveset
+		///
+		with (__moveset) {
+			return __default;
+		}
+	};
 		
 	#endregion
 	#region Setters ////////////
 	
-	static set_moveset		   = function(_moveset) {
-		/// @func	set_moveset(moveset)
+	static set_moveset				= function(_moveset, _apply = true) {
+		/// @func	set_moveset(moveset, apply?*)
+		/// @param	{MoveSet}  moveset
+		/// @param	{boolean}  apply=true
+		/// @return {Moveable} self
+		///
+		__moveset.__moveset = _moveset;
+		if (_apply) {
+			apply_moveset(_moveset);
+		}
+		return self;
+	};
+	static set_moveset_default		= function(_moveset) {
+		/// @func	set_moveset_default(moveset)
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		__set_moveset_current(_moveset);
-		apply_moveset();
+		with (__moveset) {
+			__default = _moveset;
+		}
 		return self;
 	};
-	static set_moveset_default = function(_data) {
-		/// @func	set_moveset_default(data)
+	static set_moveset_default_data = function(_data) {
+		/// @func	set_moveset_default_data(data)
 		/// @param	{struct}   data
 		/// @return {Moveable} self
 		///
-		__get_moveset_default().set_data(_data);
+		get_moveset_default().set_data(_data);
 		return self;
-		
 	};
 		
 	#endregion
@@ -569,6 +528,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__accel = _moveset.__accel;
 		__fric  = _moveset.__fric;
 		__mult  = _moveset.__mult;
+		set_moveset(_moveset, false);
 		return self;
 	};
 	
@@ -594,42 +554,8 @@ function Actionable() : Component() constructor {
 	///
 	__fsm = undefined;
 	
-	#region Private ////////////
+	#region Private ////////
 	
-	static __setup_super	= setup;
-	static __setup_fsm		= function() {
-		/// @func	__setup_fsm()
-		/// @return {Actionable} self
-		///
-		__fsm = new SnowState("__empty__", false);
-		__fsm.add("__empty__", __get_state_empty());
-		return self;
-	};
-	static __teardown_super	 = teardown;
-	static __teardown_fsm	 = function() {
-		/// @func	__teardown_fsm()
-		/// @return {Actionable} self
-		///
-		__fsm = undefined;
-		return self;
-	};
-	static __update_super	 = update;
-	static __update_fsm		 = function() {
-		/// @func	__update_fsm()
-		/// @return {Actionable} self
-		///
-		__fsm.step();
-		return self;
-	};
-	static __render_super	 = render;
-	static __render_fsm		 = function() {
-		/// @func	__render_fsm()
-		/// @return {Actionable} self
-		///
-		__fsm.draw();
-		return self;
-	};
-		
 	static __get_state_empty = function() {
 		/// @func	__get_state_empty()
 		/// @return {struct} state
@@ -643,112 +569,104 @@ function Actionable() : Component() constructor {
 	};
 	
 	#endregion
-	#region Core ///////////////
+	#region Core ///////////
 	
-	static setup	= function() {
-		/// @func	setup()
+	static setup_actionable	   = function() {
+		/// @func	setup_actionable()
 		/// @return {Actionable} self
 		///
 		if (!is_initialized()) {
-			__setup_super();
-			__setup_fsm();
+			__setup_component();
+			#region fsm ////
+			
+			__fsm = new SnowState("__empty__", false);
+			__fsm.add("__empty__", __get_state_empty());
+			
+			#endregion
 		}
 		return self;
 	};
-	static teardown = function() {
-		/// @func	teardown()
+	static teardown_actionable = function() {
+		/// @func	teardown_actionable()
 		/// @return {Actionable} self
 		///
 		if (is_initialized()) {
-			__teardown_fsm();
-			__teardown_super();
+			#region fsm ////
+			
+			__fsm = undefined;
+			
+			#endregion
+			__teardown_component();
 		}
 		return self;
 	};
-	static update	= function() {
-		/// @func	update()
+	static update_actionable   = function() {
+		/// @func	update_actionable()
 		/// @return {Actionable} self
 		///
 		if (is_initialized()) {
-			__update_super();
-			__update_fsm();
+			__update_component();
+			#region fsm ////
+			
+			__fsm.step();
+			
+			#endregion
 		}
 		return self;
 	};
-	static render	= function() {
-		/// @func	render()
+	static render_actionable   = function() {
+		/// @func	render_actionable()
 		/// @return {Actionable} self
 		///
 		if (is_initialized()) {
-			__render_super();
-			__render_fsm();
+			__render_component();
+			#region fsm ////
+			
+			__fsm.draw();
+			
+			#endregion
 		}
 		return self;
 	};
+		
+	static setup	= setup_actionable;
+	static teardown = teardown_actionable;
+	static update	= update_actionable;
+	static render	= render_actionable;
 	
 	#endregion
+	#region Getters ////////
 	
-	/// States
-	static actionable_state_add			 = function(_state_name, _state_struct) {
-		/// @func	actionable_state_add(state_name, state_struct)
-		/// @param	{string}	 state_name
-		/// @param	{struct}	 state_struct
-		/// @return {Actionable} self
-		///
-		if (__fsm == undefined) {
-			__fsm  = new SnowState(_state_name, false);
-		}
-		__fsm.add(_state_name, _state_struct);
-		return self;
-	};
-	static actionable_state_change		 = function(_state_name) {
-		/// @func	actionable_state_change(state_name)
-		/// @param	{string}	 state_name
-		/// @return {Actionable} self
-		///
-		__fsm.change(_state_name);
-		return self;
-	};
-	static actionable_state_is			 = function(_state_name) {
-		/// @func	actionable_state_is(state_name)
-		/// @param	{string}	 state_name
-		/// @return {Actionable} self
-		///
-		return __fsm.state_is(_state_name);
-	};
-	static actionable_state_exists		 = function(_state_name) {
-		/// @func	actionable_state_exists(state_name)
-		/// @param	{string}	 state_name
-		/// @return {Actionable} self
-		///
-		return __fsm.state_exists(_state_name);
-	};
-	static actionable_state_get_states	 = function() {
-		/// @func	actionable_state_get_states()
+	static get_states		  = function() {
+		/// @func	state_get_states()
 		/// @return {Actionable} self
 		///
 		return __fsm.get_states();
 	};
-	static actionable_state_get_current  = function() {
-		/// @func	actionable_state_get_current()
+	static get_state_current  = function() {
+		/// @func	state_get_current()
 		/// @return {Actionable} self
 		///
 		return __fsm.get_current_state();
 	};
-	static actionable_state_get_previous = function() {
-		/// @func	actionable_state_get_previous()
+	static get_state_previous = function() {
+		/// @func	state_get_previous()
 		/// @return {Actionable} self
 		///
 		return __fsm.get_previous_state();
 	};
-	static actionable_state_get_time	 = function(_us = true) {
-		/// @func	actionable_state_get_time(us*)
+	static get_state_time	  = function(_us = true) {
+		/// @func	state_get_time(us*)
 		/// @param	{boolean}	 us?=true
 		/// @return {Actionable} self
 		///
 		return __fsm.get_time(_us);
 	};
-	static actionable_state_set_time	 = function(_time, _us = true) {
+	
+	#endregion
+	#region Setters ////////
+	
+	static set_state_time = function(_time, _us = true) {
 		/// @func	actionable_state_set_time(time, us*)
 		/// @param	{milliseconds} time
 		/// @param	{boolean}	   us?=true
@@ -757,15 +675,44 @@ function Actionable() : Component() constructor {
 		__fsm.set_time(_time, _us);
 		return self;
 	};
-	static state_add					 = actionable_state_add;
-	static state_change					 = actionable_state_change;
-	static state_is						 = actionable_state_is;
-	static state_exists					 = actionable_state_exists;
-	static state_get_states				 = actionable_state_get_states;
-	static state_get_current			 = actionable_state_get_current;
-	static state_get_previous			 = actionable_state_get_previous;
-	static state_get_time				 = actionable_state_get_time;
-	static state_set_time				 = actionable_state_set_time;
+	
+	#endregion
+	#region Checkers ///////
+	
+	static is_state	 = function(_state_name) {
+		/// @func	state_is(state_name)
+		/// @param	{string}	 state_name
+		/// @return {Actionable} self
+		///
+		return __fsm.state_is(_state_name);
+	};
+	static has_state = function(_state_name) {
+		/// @func	state_exists(state_name)
+		/// @param	{string}	 state_name
+		/// @return {Actionable} self
+		///
+		return __fsm.state_exists(_state_name);
+	};
+	
+	#endregion
+	
+	static add_state	= function(_state_name, _state_struct) {
+		/// @func	state_add(state_name, state_struct)
+		/// @param	{string}	 state_name
+		/// @param	{struct}	 state_struct
+		/// @return {Actionable} self
+		///
+		__fsm.add(_state_name, _state_struct);
+		return self;
+	};
+	static change_state	= function(_state_name) {
+		/// @func	state_change(state_name)
+		/// @param	{string}	 state_name
+		/// @return {Actionable} self
+		///
+		__fsm.change(_state_name);
+		return self;
+	};
 };
 
 #endregion
