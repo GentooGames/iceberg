@@ -34,9 +34,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		if (!is_initialized()) {
 			__initialized = true;
 			
-			if (__config[$ "active"] != undefined) {
-				__active = __config.active;
-			}
+			if (__config[$ "active"] != undefined) __active = __config.active;
 		}
 		return self;
 	}; 
@@ -49,7 +47,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	}; 
-	static rebuild  = function(_config = undefined) {	/// @OVERRIDE
+	static rebuild  = function(_config = undefined) {
 		/// @func	rebuild(config*)
 		/// @param	{struct}	config=undefined
 		/// @return {Component} self
@@ -128,7 +126,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 
 	#region Private ////////
 	
-	static __setup			   = setup;
+	static __setup_super	   = setup;
 	static __setup_broadcaster = function() {
 		/// @func	__setup_broadcaster()
 		/// @return {Eventable} self
@@ -143,7 +141,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		return self;
 	};
 	
-	static __teardown			  = teardown;
+	static __teardown_super		  = teardown;
 	static __teardown_broadcaster = function() {
 		/// @func	__teardown_broadcaster()
 		/// @return {Eventable} self
@@ -160,7 +158,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		/// @return {Eventable} self
 		///
 		if (!is_initialized()) {
-			__setup();
+			__setup_super();
 			__setup_broadcaster();
 		}
 		return self;
@@ -171,7 +169,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		///
 		if (is_initialized()) {
 			__teardown_broadcaster();
-			__teardown();
+			__teardown_super();
 		}
 		return self;
 	};
@@ -317,7 +315,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	
 	#region Private ////////////
 	
-	static __setup				 = setup;
+	static __setup_super		 = setup;
 	static __setup_eventer		 = function() {
 		/// @func	__setup_eventer()
 		/// @return {Moveable} self
@@ -438,6 +436,12 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		if (!is_initialized()) {
 			__setup();
+			
+			if (__config[$ "speed"] != undefined) 
+			if (__config[$ "accel"] != undefined) 
+			if (__config[$ "fric" ] != undefined) 
+			if (__config[$ "mult" ] != undefined) 
+			
 			__setup_eventer();
 			__setup_moveset();
 			//__setup_path();
