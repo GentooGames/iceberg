@@ -333,16 +333,16 @@ function array_reverse(_array) {
 	_array = _reversed;
 	return _array;
 };	
-function array_contains(_array, _entry) {
-	/// @func   array_contains(array, entry)
+function array_contains(_array, _value) {
+	/// @func   array_contains(array, value)
 	/// @param  array -> {array}
-	/// @param  entry -> {any}
+	/// @param  value -> {any}
 	/// @desc   check if an entry exists within a given array.
 	/// @return contains -> {bool}
 	/// @tested false
 	///
 	for (var _i = 0, _len = array_length(_array); _i < _len; _i++) {
-		if (_array[_i] == _entry) {
+		if (_array[_i] == _value) {
 			return true;	
 		}
 	}
