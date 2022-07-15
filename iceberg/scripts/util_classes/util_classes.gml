@@ -1,5 +1,13 @@
 /// Insert Ascii Art Here***
 
+//var _enemies = new Set();
+//_enemies.add_item("enemy1", obj_enemy1);
+//_enemies.add_item("enemy1", obj_enemy2);	// should fail
+
+//var _entities = new Family();
+//_entities.add_item("enemy", obj_enemy1);
+//_entities.add_item("enemy", obj_enemy2);	// should insert into array
+
 function Class(_config = {}) constructor {
 	/// @func	Class(config*)
 	/// @param	{struct} config={}
@@ -58,13 +66,10 @@ function Class(_config = {}) constructor {
 	
 	/// ANY CHANGES MADE TO CONFIG STRUCT SHOULD BE UPDATED IN CODE_SNIPPET
 };
-
-#region Collections ////////////
-
-function Container(_config = {}) : Class(_config) constructor {
-	/// @func	Container(config*)
-	/// @param	{struct}	config={}
-	/// @return {Container} self
+function Set(_config = {}) : Class(_config) constructor {
+	/// @func	Set(config*)
+	/// @param	{struct} config={}
+	/// @return {Set} self
 	///
 	__items = {};
 	__names = [];
@@ -72,151 +77,264 @@ function Container(_config = {}) : Class(_config) constructor {
 	
 	#region Getters ////////
 	
-	static get		 = function(_name) {
-		/// @func	get(name)
-		/// @param	{string} name
-		/// @return {any}    item
+	static get_items = function() {
+		/// @func	get_items()
+		/// @return {struct} items
 		///
-		return __items[$ _name];
+		return __items;
 	};
-	static get_size	 = function() {
+	static get_names = function() {
+		/// @func	get_names()
+		/// @return {array} names
+		///
+		return __names;
+	};
+	static get_size  = function() {
 		/// @func	get_size()
 		/// @return {real} size
 		///
 		return __size;
 	};
-	static get_names = function() {
-		/// @func	get_names()
-		/// @return {array} names
-		/// 
-		return __names;
+	static get_item  = function(_name) {
+		/// @func	get_item(name)
+		/// @param	{string} name
+		/// @return {any}	 item
+		///
+		return __items[$ _name];
 	};
-	static get_items = function() {
-		/// @func	get_items()
-		/// @return {struct} items
-		/// 
-		return __items;
-	};
-		
+	
 	#endregion
 	#region Checkers ///////
 	
-	static has = function(_name) {
-		/// @func	has(name)
-		/// @param	{string}  name
-		/// @return {boolean} exists?
+	static has_item = function(_name) {
+		/// @func	has_item(name)
+		/// @param	{bool} name
+		/// @return {any}  item
 		///
-		return get(_name) != undefined;
+		return get_item(_name) != undefined;
+	};	
+	static is_empty = function() {
+		/// @func	is_empty()
+		/// @return {bool} is_empty?
+		///
+		return get_size() == 0;
 	};
-		
+	
 	#endregion
 	
-	static add	  = function(_name, _item) {
-		/// @func	add(name, item)
-		/// @param	{string}	name
-		/// @param	{any}		item
-		/// @return {Container} self
-		/// 
-		/// Add To Existing Entry
-		if (has(_name)) {
-			var _entry = get(_name);
-			if (!is_array(_entry)) {
-				_entry = [ get(_name) ];	
-			}
-			array_push(_entry, _item);
-			__items[$ _name] = _entry;
-		}
-		/// Create New Entry
-		else {
+	static add_item	   = function(_name, _item) {
+		/// @func	add_item(name, item)
+		/// @param	{string} name
+		/// @param	{any}    item
+		/// @return {Set}    self
+		///
+		if (!has_item(_name)) {
 			__items[$ _name] = _item;
-			array_push(__names, _name);
 			__size++;
+			array_push(__names, _name);
 		}
 		return self;
 	};
-	static remove = function(_name, _item = undefined) {
-		/// @func	remove(name, item*)
-		/// @param	{string}	name
-		/// @param	{any}		item=undefined
-		/// @return {Container} self
+	static remove_item = function(_name) {
+		/// @func	remove_item(name)
+		/// @param	{string} name
+		/// @return {Set}    self
 		///
-		if (has(_name)) {
-			var _entry = get(_name);
-			if (_item != undefined && is_array(_entry)) {
-				array_find_delete(_entry, _item);
-				__items[$ _name] = _entry;
-			}
-			else {
-				variable_struct_remove(__items, _name);
-				array_find_delete(__names, _name);
-				__size--;		
-			}
+		if (has_item(_name)) {
+			variable_struct_remove(__items, _name);
+			array_find_delete(__names, _name);
+			__size--;
 		}
 		return self;
 	};
-	static empty  = function() {
+	static empty	   = function() {
 		/// @func	empty()
-		/// @return {Container} self
+		/// @return {Set} self
 		///
-		__size  = 0;
-		__names = [];
-		__items = {};
+		if (__size  > 0) {
+			__items = {};
+			__names = [];
+			__size  = 0;
+		}
 		return self;
 	};
 };
-function Batch(_config = {}) : Container(_config) constructor {
-	/// @func	Batch(config*)
+function Family(_config = {}) : Class(_config) constructor {
+	/// @func	Family(config*)
 	/// @param	{struct} config={}
-	/// @return {Batch}  self
+	/// @return {Family} self
 	///
-	__empty_on_execute = _config[$ "empty_on_execute"] ?? false;
+	__sets  = {};
+	__names = [];
+	__size  = 0;
 	
 	#region Getters ////////
 	
-	static get_empty_on_execute = function() {
-		/// @func	get_empty_on_execute()
-		/// @return {bool} empty_on_execute?
+	static get_sets  = function() {
+		/// @func	get_sets()
+		/// @return {struct} sets
 		///
-		return __empty_on_execute;
+		return __sets;
+	};
+	static get_names = function() {
+		/// @func	get_names()
+		/// @return {array} names
+		///
+		return __names;
+	};
+	static get_size  = function() {
+		/// @func	get_size()
+		/// @return {real} size
+		///
+		return __size;
+	};
+	static get_set	 = function(_name) {
+		/// @func	get_set(name)
+		/// @param	{string} name
+		/// @return {Set}	 set
+		///
+		return __sets[$ _name];
 	};
 	
 	#endregion
-	#region Setters ////////
+	#region Checkers ///////
 	
-	static set_empty_on_execute = function(_empty) {
-		/// @func	set_empty_on_execute(empty?)
-		/// @param	{bool}  empty?
-		/// @return {Batch} self
+	static has_set  = function(_name) {
+		/// @func	has_set(name)
+		/// @param	{string}  name
+		/// @return {boolean} has_set?
 		///
-		__empty_on_execute = _empty;
+		return get_set(_name) != undefined;
+	};
+	static is_empty = function() {
+		/// @func	is_empty()
+		/// @return {bool} is_empty?
+		///
+		return get_size() == 0;
+	};
+	
+	#endregion
+	
+	/// Set Operations
+	static add_set	   = function(_name) {
+		/// @func	add_set(name)
+		/// @param	{string} name
+		/// @return {Family} self
+		///
+		if (!has_set(_name)) {
+			__sets[$ _name] = new Set();
+			__size++;
+			array_push(__names, _name);
+		}
 		return self;
 	};
-		
-	#endregion
-	
-	static execute = function(_empty_after = false) {
-		/// @func	execute(empty_after?*)
-		/// @param	{boolean} empty_after=false
-		/// @return {Batch}   self
+	static remove_set  = function(_name) {
+		/// @func	remove_set(name)
+		/// @param	{string} name
+		/// @return {Family} self
 		///
-		var _items = get_items();
-		var _names = get_names();
-		for (var _i = 0, _len = get_size(); _i < _len; _i++) {
-			var _name = _names[_i];
-			var _item = _items[$ _name];
-			_item();
+		if (has_set(_name)) {
+			variable_struct_remove(__sets, _name);
+			array_find_delete(__names, _name);
+			__size--;
 		}
-		if (__empty_on_execute || _empty_after) {
-			empty();	
+		return self;
+	};
+	static empty_set   = function(_name) {
+		/// @func	empty_set(name)
+		/// @param	{string} name
+		/// @return {Family} self
+		///
+		if (has_set(_name)) {
+			get_set(_name).empty();
+		}
+		return self;
+	};
+	
+	/// Item Operations
+	static add_item	   = function(_name, _item) {	
+		/// @func	add_item(name, item)
+		/// @param	{string} name
+		/// @param	{any}    item
+		/// @return {Set}    self
+		///
+		if (!has_set(_name)) {
+			add_set(_name);
+		}
+		get_set(_name).add_item(_item);
+		return self;
+	};
+	static remove_item = function(_name) {			
+		/// @func	remove_item(name)
+		/// @param	{string} name
+		/// @return {Set}    self
+		///
+		variable_struct_remove(__items, _name);
+		return self;
+	};
+	static empty	   = function() {
+		/// @func	empty()
+		/// @return {Family} self
+		///
+		if (__size > 0) {
+			__sets  = {};
+			__names = [];
+			__size  = 0;
 		}
 		return self;
 	};
 };
+//function Batch(_config = {}) : Family(_config) constructor {
+//	/// @func	Batch(config*)
+//	/// @param	{struct} config={}
+//	/// @return {Batch}  self
+//	///
+//	__empty_on_execute = _config[$ "empty_on_execute"] ?? false;
+	
+//	#region Getters ////////
+	
+//	static get_empty_on_execute = function() {
+//		/// @func	get_empty_on_execute()
+//		/// @return {bool} empty_on_execute?
+//		///
+//		return __empty_on_execute;
+//	};
+	
+//	#endregion
+//	#region Setters ////////
+	
+//	static set_empty_on_execute = function(_empty) {
+//		/// @func	set_empty_on_execute(empty?)
+//		/// @param	{bool}  empty?
+//		/// @return {Batch} self
+//		///
+//		__empty_on_execute = _empty;
+//		return self;
+//	};
+		
+//	#endregion
+	
+//	static execute = function(_empty_after = false) {
+//		/// @func	execute(empty_after?*)
+//		/// @param	{boolean} empty_after=false
+//		/// @return {Batch}   self
+//		///
+//		var _items = get_items();
+//		var _names = get_names();
+//		for (var _i = 0, _len = get_size(); _i < _len; _i++) {
+//			var _name = _names[_i];
+//			var _item = _items[$ _name];
+//			_item();
+//		}
+//		if (__empty_on_execute || _empty_after) {
+//			empty();	
+//		}
+//		return self;
+//	};
+//};
 
-#endregion
-#region Methods ////////////////
-
-function Method(_config = {}) : Class (_config) constructor {
+/// method takes some method/function, may also contain some data, and executes when invoked
+function Method (_config = {}) : Class(_config) constructor {
 	/// @func	Method(config*)
 	/// @param	{struct} config={}
 	/// @return {Method} self
@@ -277,7 +395,7 @@ function Method(_config = {}) : Class (_config) constructor {
 		
 	#endregion
 	
-	static execute = function() {	/// @OVERRIDE
+	static execute = function() {
 		/// @func	execute()
 		/// @return {any} execute_return
 		///
@@ -287,119 +405,10 @@ function Method(_config = {}) : Class (_config) constructor {
 		return __execute_method_script();
 	};
 };
-function Action(_config = {}) : Method(_config) constructor {
-	/// @func	Action(config*)
-	/// @param	{struct} config={}
-	/// @return {Action} self
-	///
-	__triggers = new Container();
-		
-	#region Core ///////////
-	
-	static update = function() {
-		/// @func	update()
-		/// @return {Action} self
-		///
-		var _names = __triggers.get_names();
-		for (var _i = 0; _i < __triggers.get_size(); _i++) {
-			var _trigger = __triggers.get(_names[_i]);
-			_trigger.execute();
-		}
-		return self;
-	};
-	
-	#endregion
-	
-	static execute	   = function() {	/// @OVERRIDE
-		/// @func	execute()
-		/// @return {any} execute_return
-		///
-		var _method =  get_method();
-		var _return = _method(get_data());
-		set_data(undefined);	// <--	wipe data after execution, so that temporarily
-								//		set data through action_send_payload() does not 
-								//		become persistent.
-		var _component = get_owner();
-		_component.eventer.broadcast("action_executed_" + get_name());
-		
-		return _return;
-	};
-	static add_trigger = function(_name, _method) {
-		/// @func	add_trigger(name, method)
-		/// @param	{string} name
-		/// @param	{method} method
-		/// @return {Action} self
-		///
-		__triggers.add(_name, new Trigger({
-			name:	_name, 
-			method: _method,
-		}));
-		
-		var _component = get_owner();
-		_component.eventer.register(["trigger_executed_" + _name]);
-		_component.eventer.listen("trigger_executed_" + _name, method(self, execute));
-		
-		return self;
-	};
-	
-	get_owner().eventer.register(["action_executed_" + get_name()]);
-};
-function Trigger(_config = {}) : Method(_config) constructor {
+
+function Trigger(_config = {}) : Class(_config) constructor {
 	/// @func	Trigger(config*)
-	/// @param	{struct} config={}
-	/// @return {Trigger} self
-	///
-	#region Private ////////
-	
-	static __execute = execute;
-	
-	#endregion
-	
-	static execute = function() {
-		/// @func	execute()
-		/// @return {any} result
-		///
-		var _result = __execute();
-		if (_result) {
-			var _action	   =  get_owner();
-			var _component = _action.get_owner();
-			_component.eventer.broadcast("trigger_executed_" + get_name());
-		}
-		return _result;
-	};
-};
-
-#endregion
-
-/// MOVE BACK INTO COMPONENTS
-function MoveSet(_config = {}) : Class(_config) constructor {
-	/// @func	MoveSet(config*)
 	/// @param	{struct}  config={}
-	/// @return {MoveSet} self
+	/// @return	{Trigger} self
 	///
-	__moveable	= other;
-	__owner		= __moveable.get_owner();
-	__config	= _config;
-	__speed		= _config[$ "speed"] ?? 0;
-	__accel		= _config[$ "accel"] ?? 0;
-	__fric		= _config[$ "fric" ] ?? 0;
-	__mult		= _config[$ "mult" ] ?? 1;
-	
-	#region Setters ////////
-	
-	static set_data = function(_data) {
-		/// @func	set_data(data)
-		/// @param	{struct}  data
-		/// @return {MoveSet} self
-		///
-		if (_data[$ "speed"] != undefined) __speed = _data.speed;
-		if (_data[$ "accel"] != undefined) __accel = _data.accel;
-		if (_data[$ "fric" ] != undefined) __fric  = _data.fric;
-		if (_data[$ "mult" ] != undefined) __mult  = _data.mult;
-		
-		return self;
-	};
-		
-	#endregion
 };
-

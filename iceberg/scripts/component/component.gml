@@ -332,18 +332,16 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			#endregion
 			#region Moveset ////
 			
-			__moveset.__movesets = new Container();
-			var _moveset		 = new MoveSet({ 
+			__moveset.__movesets = new Set();
+			set_moveset_default(new MoveSet({ 
 				name:  "__default__",
 				speed: __speed,
 				accel: __accel,
 				fric:  __fric,
 				mult:  __mult,
-			});
-			
-			add_moveset("__default__", _moveset);
-			set_moveset_default(_moveset);
-			set_moveset(_moveset);
+			}));
+			add_moveset("__default__", get_moveset_default());
+			set_moveset(get_moveset_default());
 			
 			#endregion
 			#region Path ///////
@@ -374,8 +372,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			#region Moveset ////
 			
 			__moveset.__movesets = undefined;
-			__set_moveset_default(undefined);
-			__set_moveset_current(undefined);
+			set_moveset_default(undefined);	/// should this be resetting back to default moveset instead? should config be considered here?
+			set_moveset(undefined, false);	/// should this be resetting back to default moveset instead? should config be considered here?
 			
 			#endregion
 			#region Eventer ////
@@ -411,7 +409,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {MoveSet} moveset
 		///
 		with (__moveset) {
-			return __movesets.get(_name);
+			return __movesets.get_item(_name);
 		}
 	};
 	static get_moveset_current = function() {
@@ -456,7 +454,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-	static set_moveset_default_data = function(_data) {
+	static set_moveset_default_data = function(_data) {		// condense this with moveset_apply?
 		/// @func	set_moveset_default_data(data)
 		/// @param	{struct}   data
 		/// @return {Moveable} self
@@ -474,7 +472,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {boolean} exists?
 		///
 		with (__moveset) {
-			return __movesets.has(_name);
+			return __movesets.has_item(_name);
 		}
 	};
 	
@@ -487,7 +485,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {Moveable} self
 		///
 		with (__moveset) {
-			__movesets.add(_name, _moveset);
+			__movesets.add_item(_name, _moveset);
 		}
 		return self;
 	};
@@ -498,7 +496,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {Moveable} self
 		///
 		_data[$ "name"] = _name;	// append name onto data struct
-		
 		var _moveset = new MoveSet(_data);
 		add_moveset(_name, _moveset);
 		return self;
@@ -507,7 +504,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @func	reset_moveset()
 		/// @return {Moveable} self
 		///
-		return set_moveset(__get_moveset_default());
+		return set_moveset(get_moveset_default());
 	};
 	static change_moveset = function(_name) {
 		/// @func	change_moveset(name)
@@ -543,6 +540,36 @@ function MoveablePlatformer() : Moveable() constructor {
 	/// @func	MoveablePlatformer()
 	/// @return {Moveable} self
 	///
+};
+function MoveSet(_config = {}) : Class(_config) constructor {
+	/// @func	MoveSet(config*)
+	/// @param	{struct}  config={}
+	/// @return {MoveSet} self
+	///
+	__moveable	= other;
+	__owner		= __moveable.get_owner();
+	__config	= _config;
+	__speed		= _config[$ "speed"] ?? 0;
+	__accel		= _config[$ "accel"] ?? 0;
+	__fric		= _config[$ "fric" ] ?? 0;
+	__mult		= _config[$ "mult" ] ?? 1;
+	
+	#region Setters ////////
+	
+	static set_data = function(_data) {
+		/// @func	set_data(data)
+		/// @param	{struct}  data
+		/// @return {MoveSet} self
+		///
+		if (_data[$ "speed"] != undefined) __speed = _data.speed;
+		if (_data[$ "accel"] != undefined) __accel = _data.accel;
+		if (_data[$ "fric" ] != undefined) __fric  = _data.fric;
+		if (_data[$ "mult" ] != undefined) __mult  = _data.mult;
+		
+		return self;
+	};
+		
+	#endregion
 };
 
 #endregion
@@ -724,11 +751,6 @@ function ComponentManager(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}		   config={}
 	/// @return {ComponentManager} self
 	///
-	__components = new Container();
-	
-	static add_component = function() {};
-	static get_component = function() {};
-	static has_component = function() {};
 };
 
 #endregion

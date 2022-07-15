@@ -341,6 +341,88 @@ function GentuiState(_config) constructor {
 
 #endregion
 
+/// NEED TO REFORMAT METHODS
+/// NEED TO REPLACE WITH MORE GENERALIZED/ABSTRACTED ACTION & TRIGGER IMPLEMENTATION
+function GentuiAction (_config = {}) : Method(_config) constructor {
+	/// @func	GentuiAction(config*)
+	/// @param	{struct} config={}
+	/// @return {Action} self
+	///
+	__triggers = new Set();
+
+	#region Core ///////////
+	
+	static update = function() {
+		/// @func	update()
+		/// @return {Action} self
+		///
+		var _names = __triggers.get_names();
+		for (var _i = 0; _i < __triggers.get_size(); _i++) {
+			var _trigger = __triggers.get_item(_names[_i]);
+			_trigger.execute();
+		}
+		return self;
+	};
+	
+	#endregion
+	
+	static execute_method = execute;
+	static execute		  = function() {
+		/// @func	execute()
+		/// @return {any} execute_return
+		///
+		var _return = execute_method();
+		set_data(undefined);	// <--	wipe data after execution, so that temporarily
+								//		set data through action_send_payload() does not 
+								//		become persistent.
+		get_owner().eventer.broadcast("action_executed_" + get_name());
+		return _return;
+	};
+	static add_trigger = function(_name, _method) {
+		/// @func	add_trigger(name, method)
+		/// @param	{string} name
+		/// @param	{method} method
+		/// @return {Action} self
+		///
+		__triggers.add_item(_name, new GentuiTrigger({
+			name:	_name, 
+			method: _method,
+		}));
+		
+		var _component = get_owner();
+		_component.eventer.register(["trigger_executed_" + _name]);
+		_component.eventer.listen("trigger_executed_" + _name, method(self, execute));
+		
+		return self;
+	};
+	
+	get_owner().eventer.register(["action_executed_" + get_name()]);
+};
+function GentuiTrigger(_config = {}) : Method(_config) constructor {
+	/// @func	GentuiTrigger(config*)
+	/// @param	{struct} config={}
+	/// @return {Trigger} self
+	///
+	#region Private ////////
+	
+	static __execute = execute;
+	
+	#endregion
+	
+	static execute = function() {
+		/// @func	execute()
+		/// @return {any} result
+		///
+		var _result = __execute();
+		if (_result) {
+			var _action	   =  get_owner();
+			var _component = _action.get_owner();
+			_component.eventer.broadcast("trigger_executed_" + get_name());
+		}
+		return _result;
+	};
+};
+
 function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {}) constructor {
 	/// @func	Gentui(config_name*, config*)
 	/// @desc	this is the base ui component, containing all core features and functionality that is inherited and implemented
@@ -446,7 +528,6 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	};	
 	__config_init(_config_name, _config);
 	
-	/// NEED TO REFORMAT
 	#region Core ///////////////////
 	
 	static update	  = function() {
@@ -929,7 +1010,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		return __this.__default[$ _property_name];
 	};
 		
-	static default_get_auto_bind_methods_to_self		   = function() {
+	static default_get_auto_bind_methods_to_self   = function() {
 		/// @func	default_get_auto_bind_methods_to_self()
 		/// @return {boolean} auto_bind_methods_to_self?
 		///
@@ -980,7 +1061,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 			
 		var _component = self;
 		with (_action_context) {
-			__actions[$ _action_name] = new Action({
+			__actions[$ _action_name] = new GentuiAction({
 				owner:  _component,
 				name:   _action_name,
 				method: _action_method,

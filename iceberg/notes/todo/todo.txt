@@ -1,16 +1,13 @@
 iceberg:
-	- rename __x_super() to more context sensitive name to avoid overriding multiple nested layers
-		- __uppdate_component()
-		- __update_floe()
-		- etc.
+	- remove MoveSet() and implement with generic Set() 
 	- noramlize has() and/or exists() checker methods
 	- remove __this. nesting from FLOE
-	- all core methods should check for initialized && is_initialized()
 	- underscore object core private events to match components
+		- setup and rebuild should take data param
+		- teardowns should execute in opposite order of setup()
+	- make sure that callbacks dont try to handle params
 	- encapsulate eventer into getter() for better accessing
-	- setup and rebuild should take data param
 	- rework pubsub events in Method(), Action(), Trigger() classes
-	- teardowns should execute in opposite order of setup()
 	- should every constructor be normalized to have setup, teardown, rebuild, update, render?
 	- if constructor does not utilize Core() but has an update, can that be replaced with a pubsub?
 	- IMPLEMENT EVENTABLE() EVERYWHERE!
@@ -18,14 +15,13 @@ iceberg:
 	- make sure the sub-classes of Class() are utilizing is_active()
 	- remove auto-binding from components and gentui
 	- normalize usage of custom array functions, thats why they exist and part of this project
-	- encapsulate game logic into components
 	- abstracted component management system
 	- replace all instance_destroy() with instance.destroy()
 	- standardize FluidProperty method implementation
 		- make sure that spring setters are not just setting local value, but also spring's actual value
 	- re-evaluate publisher/subscriber weakref?
 	- replace timers and alarms with timesources
-	- need to test event inheritence?
+	- need to test object event methods inheritence?
 	- way for object to clear all subscriptions,
 		- should re-store into an array on event init
 	- add a did_transition flag for state transitions?
