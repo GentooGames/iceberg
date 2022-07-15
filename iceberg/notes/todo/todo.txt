@@ -1,5 +1,12 @@
 iceberg:
+	- rename __x_super() to more context sensitive name to avoid overriding multiple nested layers
+		- __uppdate_component()
+		- __update_floe()
+		- etc.
+	- noramlize has() and/or exists() checker methods
+	- remove __this. nesting from FLOE
 	- all core methods should check for initialized && is_initialized()
+	- underscore object core private events to match components
 	- encapsulate eventer into getter() for better accessing
 	- setup and rebuild should take data param
 	- rework pubsub events in Method(), Action(), Trigger() classes

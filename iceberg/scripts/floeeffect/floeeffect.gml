@@ -83,11 +83,11 @@ enum __FLOE_STATE {
 
 #endregion
 
-function FloeEffect() constructor {
-	/// @func	FloeEffect()
+function FloeEffect(_config = {}) : Component(_config) constructor {
+	/// @func	FloeEffect(config*)
+	/// @param	{struct}     config={}
 	/// @return {FloeEffect} self
 	///
-	__owner		=  other;
 	__padding	=  20;		// offset to move effects offscreen for smoother animations
 	__color		=  c_black;
 	__alpha		=  1.0;
@@ -97,7 +97,7 @@ function FloeEffect() constructor {
 	__this		=  {
 		__control: {
 			__running:	   false,
-			__state:	   __FLOE_STATE.HIDDEN,
+			__state:	 __FLOE_STATE.HIDDEN,
 			__progress:	   0.0,
 			__target:	   1.0,
 			__is_reversed: false,
@@ -107,6 +107,7 @@ function FloeEffect() constructor {
 	
 	#region Private ////////
 	
+	static __setup_super	  = setup;
 	static __setup_eventer	  = function() {
 		/// @func	__setup_eventer()
 		/// @return {FloeEffect} self
@@ -127,6 +128,7 @@ function FloeEffect() constructor {
 		]);
 		return self;
 	};
+	static __teardown_super   = teardown;
 	static __teardown_eventer = function() {
 		/// @func	__teardown_eventer()
 		/// @return {FloeEffect} self
@@ -134,26 +136,9 @@ function FloeEffect() constructor {
 		eventer = undefined;
 		return self;
 	};
-	
-	#endregion
-	#region Core ///////////
-	
-	static setup	= function() {
-		/// @func	setup()
-		/// @return {FloeEffect} self
-		///
-		__setup_eventer();
-		return self;
-	};
-	static teardown = function() {
-		/// @func	teardown()
-		/// @return {FloeEffect} self
-		///
-		__teardown_eventer();
-		return self;
-	};
-	static update   = function() {
-		/// @func	update()
+	static __update_super	  = update;
+	static __update_state	  = function() {
+		/// @func	__update_state()
 		/// @return {FloeEffect} self
 		///
 		switch (get_state()) {
@@ -225,6 +210,40 @@ function FloeEffect() constructor {
 				break;	
 			}
 		};
+		return self;
+	};
+	
+	#endregion
+	#region Core ///////////
+	
+	static setup	= function() {
+		/// @func	setup()
+		/// @return {FloeEffect} self
+		///
+		if (!is_initialized()) {
+			__setup_super();
+			__setup_eventer();
+		}
+		return self;
+	};
+	static teardown = function() {
+		/// @func	teardown()
+		/// @return {FloeEffect} self
+		///
+		if (is_initialized()) {
+			__teardown_eventer();
+			__teardown_super();
+		}
+		return self;
+	};
+	static update   = function() {
+		/// @func	update()
+		/// @return {FloeEffect} self
+		///
+		if (is_initialized()) {
+			__update_super();
+			__update_state();
+		}
 		return self;
 	};
 	
@@ -508,16 +527,15 @@ function FloeEffectSurface() : FloeEffect() constructor {
 	
 	#region Private ////////
 	
-	static __setup		   = setup;
-	static __setup_surface = function() {
+	static __setup_super      = setup;
+	static __setup_surface    = function() {
 		/// @func	__setup_surface()
 		/// @return {FloeEffect} self
 		///
 		__this.__surface = surface_create(SURF_W, SURF_H);
 		return self;
 	};
-	
-	static __teardown		  = teardown;
+	static __teardown_super   = teardown;
 	static __teardown_surface = function() {
 		/// @func	__teardown_surface()
 		/// @return {FloeEffect} self
@@ -536,16 +554,20 @@ function FloeEffectSurface() : FloeEffect() constructor {
 		/// @func	setup()
 		/// @return {FloeEffect} self
 		///
-		__setup();
-		__setup_surface();
+		if (!is_initialized()) {
+			__setup_super();
+			__setup_surface();
+		}
 		return self;
 	};
 	static teardown		= function() {
 		/// @func	teardown()
 		/// @return {FloeEffect} self
 		///
-		__teardown_surface();
-		__teardown();
+		if (is_initialized()) {
+			__teardown_surface();
+			__teardown_super();
+		}
 		return self;
 	};
 	static render_begin = function() {
@@ -581,12 +603,16 @@ function FloeEffectFade() : FloeEffect() constructor {
 	///
 	set_threshold(0.01);
 	
-	static render = function() {
+	static __render_super = render;
+	static render		  = function() {
 		/// @func	render()
 		/// @return {FloeEffect}
 		///
-		var _alpha = get_alpha() * get_progress();
-		draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), _alpha);
+		if (is_initialized()) {
+			__render_super();
+			var _alpha = get_alpha() * get_progress();
+			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), _alpha);
+		}
 		return self;
 	};	
 };
@@ -595,13 +621,17 @@ function FloeEffectWipeLeft() : FloeEffect() constructor {
 	///
 	set_threshold(0.01);
 	
-	static render = function() {
+	static __render_super = render;
+	static render		  = function() {
 		/// @func	render()
 		/// @return {FloeEffect} 
 		///
-		var _width = SURF_W + get_padding();
-		var _x	   = _width - (_width * get_progress()) - (get_padding() * 0.5);
-		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, get_color(), get_alpha());
+		if (is_initialized()) {
+			__render_super();
+			var _width = SURF_W + get_padding();
+			var _x	   = _width - (_width * get_progress()) - (get_padding() * 0.5);
+			draw_rectangle_alt(_x, 0, _width, SURF_H, 0, get_color(), get_alpha());
+		}
 		return self;
 	};	
 };
@@ -610,13 +640,17 @@ function FloeEffectWipeRight() : FloeEffect() constructor {
 	///
 	set_threshold(0.01);
 	
-	static render = function() {
+	static __render_super = render;
+	static render		  = function() {
 		/// @func	render()
 		/// @return {FloeEffect} self
 		///
-		var _width = SURF_W + get_padding();
-		var _x	   = -_width + (_width * get_progress()) - (get_padding() * 0.5);
-		draw_rectangle_alt(_x, 0, _width, SURF_H, 0, get_color(), get_alpha());
+		if (is_initialized()) {
+			__render_super();
+			var _width = SURF_W + get_padding();
+			var _x	   = -_width + (_width * get_progress()) - (get_padding() * 0.5);
+			draw_rectangle_alt(_x, 0, _width, SURF_H, 0, get_color(), get_alpha());
+		}
 		return self;
 	};	
 };
@@ -625,19 +659,22 @@ function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
 	///
 	set_threshold(0.01);
 	
-	static render = function() {
+	static __render_super = render;
+	static render		  = function() {
 		/// @func	render()
 		/// @return {FloeEffect} self
 		///
-		render_begin(); {
-			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), get_alpha());
-			gpu_set_blendmode(bm_subtract); {
+		if (is_initialized()) {
+			__render_super();
+			render_begin(); {
+				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), get_alpha());
+				gpu_set_blendmode(bm_subtract); {
 				var _base   = SURF_H;
 				var _radius = _base - (_base * get_progress());
 				draw_circle_color(SURF_W * 0.5, SURF_H * 0.5, _radius, c_white, c_white, false);
 			} gpu_set_blendmode(bm_normal);
-		} render_end();
-		
+			} render_end();
+		}
 		return self;
 	};	
 };
@@ -646,14 +683,20 @@ function FloeEffectCircleTarget() : FloeEffectSurface() constructor {
 	///
 	set_threshold(0.01);
 	
-	static render = function() {
-		/// @func render()
+	static __render_super = render;
+	static render		  = function() {
+		/// @func	render()
+		/// @return {FloeEffect} self
 		///
-		render_begin();
+		if (is_initialized()) {
+			__render_super();
+			render_begin();
 		
-		/// ...
+			/// ...
 		
-		render_end();
+			render_end();
+		}
+		return self;
 	};	
 };
 function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
@@ -661,13 +704,16 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 	///
 	set_threshold(0.01);
 	
-	static render = function() {
+	static __render_super = render;
+	static render		  = function() {
 		/// @func	render()
 		/// @return {FloeEffect} self
 		///
-		render_begin(); {
-			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), get_alpha());
-			gpu_set_blendmode(bm_subtract); {
+		if (is_initialized()) {
+			__render_super();
+			render_begin(); {
+				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), get_alpha());
+				gpu_set_blendmode(bm_subtract); {
 				var _padding  = get_padding();
 				var _progress = get_progress();
 				var _base_w   =  SURF_W + _padding;
@@ -678,8 +724,8 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 				var _y		  = (_base_h - _height) * 0.5 - (_padding * 0.5);
 				draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
 			} gpu_set_blendmode(bm_normal);
-		} render_end();
-		
+			} render_end();
+		}
 		return self;
 	};	
 };
@@ -688,16 +734,19 @@ function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
 	///
 	set_threshold(0.01);
 	
-	static render = function() {
+	static __render_super = render;
+	static render		  = function() {
 		/// @func	render()
 		/// @return {FloeEffect} self
 		///
-		render_begin();
+		if (is_initialized()) {
+			__render_super();
+			render_begin();
 		
-		/// ...
+			/// ...
 		
-		render_end();
-		
+			render_end();
+		}
 		return self;
 	};	
 };
@@ -748,57 +797,63 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	#endregion
 	#region Internal ///////
 	
-	static render = function() {
-		/// @func render()
+	static __render_super = render;
+	static render		  = function() {
+		/// @func	render()
+		/// @return {FloeEffect{ self
 		///
-		__validate_sprite();
+		if (is_initialized()) {
+			__render_super();
+			__validate_sprite();
 		
-		var _progress =  get_progress();
-		var _max_w	  =  SURF_W;
-		var _max_h	  =  SURF_H;
-		var _x_offset = get_x_offset();
-		var _y_offset = get_y_offset();
-		var _start_w  = _max_w + (-_x_offset * 2);
-		var _start_h  = _max_h + (-_y_offset * 2);
-		var _start_x  = (SURF_W - _max_w) + _x_offset;
-		var _start_y  = (SURF_H - _max_h) + _y_offset;
+			var _progress =  get_progress();
+			var _max_w	  =  SURF_W;
+			var _max_h	  =  SURF_H;
+			var _x_offset = get_x_offset();
+			var _y_offset = get_y_offset();
+			var _start_w  = _max_w + (-_x_offset * 2);
+			var _start_h  = _max_h + (-_y_offset * 2);
+			var _start_x  = (SURF_W - _max_w) + _x_offset;
+			var _start_y  = (SURF_H - _max_h) + _y_offset;
 		
-		var _x = _start_x + ((_max_w - _x_offset) * (0.5 * _progress));
-		var _y = _start_y + ((_max_h - _y_offset) * (0.5 * _progress));
-		var _w = _start_w - ((_max_w - _x_offset) * _progress);
-		var _h = _start_h - ((_max_h - _y_offset) * _progress);
+			var _x = _start_x + ((_max_w - _x_offset) * (0.5 * _progress));
+			var _y = _start_y + ((_max_h - _y_offset) * (0.5 * _progress));
+			var _w = _start_w - ((_max_w - _x_offset) * _progress);
+			var _h = _start_h - ((_max_h - _y_offset) * _progress);
 		
-		/// Sprite Shadow
-		if (get_draw_shadow()) {
-			shader_set(shdr_alpha_dither); {
-				var _shadow_x = _x +  __shadow_inset;
-				var _shadow_y = _y +  __shadow_inset;
-				var _shadow_w = _w - (__shadow_inset * 2);
-				var _shadow_h = _h - (__shadow_inset * 2);
-				draw_sprite_stretched_ext(__sprite, __image, _shadow_x, _shadow_y, _shadow_w, _shadow_h, __shadow_color, __shadow_alpha);
-			} shader_reset();
+			/// Sprite Shadow
+			if (get_draw_shadow()) {
+				shader_set(shdr_alpha_dither); {
+					var _shadow_x = _x +  __shadow_inset;
+					var _shadow_y = _y +  __shadow_inset;
+					var _shadow_w = _w - (__shadow_inset * 2);
+					var _shadow_h = _h - (__shadow_inset * 2);
+					draw_sprite_stretched_ext(__sprite, __image, _shadow_x, _shadow_y, _shadow_w, _shadow_h, __shadow_color, __shadow_alpha);
+				} shader_reset();
+			}
+		
+			/// Primary Sprite
+			draw_sprite_stretched_ext(get_sprite(), get_image(), _x, _y, _w, _h, get_color(), get_alpha());
+		
+			/// Overlay Edge
+			if (get_overlay_edge()) {
+				render_begin(); {
+					draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), 1);
+					gpu_set_blendmode(bm_subtract); {
+						draw_rectangle_alt(
+							_x + __overlay_inset_x,
+							_y + __overlay_inset_y,
+							max(0, _w - (__overlay_inset_x * 2)), 
+							max(0, _h - (__overlay_inset_y * 2)), 
+							0, 
+							c_white, 
+							1,
+						);
+					} gpu_set_blendmode(bm_normal);
+				} render_end();
+			}
 		}
-		
-		/// Primary Sprite
-		draw_sprite_stretched_ext(get_sprite(), get_image(), _x, _y, _w, _h, get_color(), get_alpha());
-		
-		/// Overlay Edge
-		if (get_overlay_edge()) {
-			render_begin(); {
-				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), 1);
-				gpu_set_blendmode(bm_subtract); {
-					draw_rectangle_alt(
-						_x + __overlay_inset_x,
-						_y + __overlay_inset_y,
-						max(0, _w - (__overlay_inset_x * 2)), 
-						max(0, _h - (__overlay_inset_y * 2)), 
-						0, 
-						c_white, 
-						1,
-					);
-				} gpu_set_blendmode(bm_normal);
-			} render_end();
-		}
+		return self;
 	};
 		
 	#endregion
