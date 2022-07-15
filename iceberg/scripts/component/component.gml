@@ -16,6 +16,9 @@
 
 /// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS
 
+/// Probably should have components become aware of the component system that they are part of
+/// this would allow us to call component().destroy(), which would then have the component
+/// remove itself from the system
 function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
 	/// @param	{struct}    config={}
@@ -24,6 +27,42 @@ function Component(_config = {}) : Class(_config) constructor {
 	__initialized =  false;
 	__config	  = _config;
 	__active	  =  true;
+	__system	  =  undefined;
+	
+	#region Component System 
+	
+	if (!variable_struct_exists(__owner, "__component_system")) {
+		__init_component_system();
+	}
+	
+	static __init_component_system   = function() {
+		/// @func	__init_component_system()
+		/// @return {Component} self
+		///
+		__system				   = new ComponentSystem();
+		__owner.__component_system = __system;
+		__owner.component_system   = function() {
+			/// @func	component_system()
+			/// @return {Component} component_system
+			///
+			return __component_system;	
+		};
+		
+		return self;
+	};
+	static __remove_component_system = function() {
+		/// @func	__remove_component_system()
+		/// @return {Component} self
+		///
+		if (__system != undefined) {
+			__system.teardown();	
+			__system = undefined;
+		}
+		return self;
+	};
+	
+	
+	#endregion
 	
 	#region Core ///////////
 	
@@ -120,6 +159,53 @@ function Component(_config = {}) : Class(_config) constructor {
 	};
 };
 
+#region Component System ///////////
+
+function ComponentSystem(_config = {}) : Component(_config) constructor {
+	/// @func	ComponentSystem(config*)
+	/// @param	{struct}		  config
+	/// @return {ComponentSystem} self
+	///
+	__components = new Set();
+	
+	#region Core ///////////
+	
+	#endregion
+	
+	static get_component	= function(_name) {
+		///	@func	get_component(name)
+		/// @param	{string}	name
+		/// @return {Component} component
+		///
+		return __components.get_item(_name);
+	};
+	static add_component	= function(_name, _component) {
+		///	@func	add_component(name, component)
+		/// @param	{string}		  name
+		/// @param	{Component}		  component
+		/// @return {ComponentSystem} self
+		///
+		__components.add_item(_name, _component);
+		return self;
+	};
+	static remove_component = function(_name) {
+		///	@func	remove_component(name)
+		/// @param	{string}		  name
+		/// @return {ComponentSystem} self
+		///
+		__components.remove_item(_name);
+		return self;
+	};
+	static clear_components = function() {
+		///	@func	clear_components()
+		/// @return {ComponentSystem} self
+		///
+		__components.empty();
+		return self;
+	};
+};
+
+#endregion
 #region Eventable //////////////////
 
 function Eventable(_config = {}) : Component(_config) constructor {
@@ -744,16 +830,6 @@ function Actionable() : Component() constructor {
 
 #endregion
 ////////////////////////////////////
-#region Component Manager //////////
-
-function ComponentManager(_config = {}) : Component(_config) constructor {
-	/// @func	ComponentManager(config*)
-	/// @param	{struct}		   config={}
-	/// @return {ComponentManager} self
-	///
-};
-
-#endregion
 #region Scriptable /////////////////
 
 function Scriptable() : Component() constructor {

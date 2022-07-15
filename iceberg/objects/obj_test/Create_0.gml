@@ -24,6 +24,10 @@ setup	 = method_inherit(setup,  function() {
 			mult:  1.0,
 		})
 		
+	//component_system()
+	//	.get_component("Eventable")
+	//	.destroy()
+		
 })();
 teardown = method_inherit(teardown, function() {
 	/// @func teardown()

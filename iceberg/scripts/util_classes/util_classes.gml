@@ -356,6 +356,13 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		__conditions.remove_item(_name);
 		return self;
 	};
+	static clear_conditions = function() {
+		/// @func	clear_conditions()
+		/// @return {Trigger} self
+		///
+		__conditions.empty();
+		return self;
+	};
 	static check_activation = function() {
 		/// @func	check_activation()
 		/// @return {Trigger} self
