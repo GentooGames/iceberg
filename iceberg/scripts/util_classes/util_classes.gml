@@ -101,8 +101,8 @@ function Container(_config = {}) : Class(_config) constructor {
 	#endregion
 	#region Checkers ///////
 	
-	static exists = function(_name) {
-		/// @func	exists(name)
+	static has = function(_name) {
+		/// @func	has(name)
 		/// @param	{string}  name
 		/// @return {boolean} exists?
 		///
@@ -118,7 +118,7 @@ function Container(_config = {}) : Class(_config) constructor {
 		/// @return {Container} self
 		/// 
 		/// Add To Existing Entry
-		if (exists(_name)) {
+		if (has(_name)) {
 			var _entry = get(_name);
 			if (!is_array(_entry)) {
 				_entry = [ get(_name) ];	
@@ -140,7 +140,7 @@ function Container(_config = {}) : Class(_config) constructor {
 		/// @param	{any}		item=undefined
 		/// @return {Container} self
 		///
-		if (exists(_name)) {
+		if (has(_name)) {
 			var _entry = get(_name);
 			if (_item != undefined && is_array(_entry)) {
 				array_find_delete(_entry, _item);
@@ -169,9 +169,9 @@ function Batch(_config = {}) : Container(_config) constructor {
 	/// @param	{struct} config={}
 	/// @return {Batch}  self
 	///
-	__empty_on_execute = _config[$ "emtpy_on_execute"] ?? false;
+	__empty_on_execute = _config[$ "empty_on_execute"] ?? false;
 	
-	#region Getters ////////////
+	#region Getters ////////
 	
 	static get_empty_on_execute = function() {
 		/// @func	get_empty_on_execute()
@@ -181,7 +181,7 @@ function Batch(_config = {}) : Container(_config) constructor {
 	};
 	
 	#endregion
-	#region Setters ////////////
+	#region Setters ////////
 	
 	static set_empty_on_execute = function(_empty) {
 		/// @func	set_empty_on_execute(empty?)

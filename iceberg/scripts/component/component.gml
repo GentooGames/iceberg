@@ -474,7 +474,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {boolean} exists?
 		///
 		with (__moveset) {
-			return __movesets.exists(_name);
+			return __movesets.has(_name);
 		}
 	};
 	
