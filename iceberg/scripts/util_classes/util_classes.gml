@@ -1,13 +1,5 @@
 /// Insert Ascii Art Here***
 
-//entities = new Family();
-//entities.add_item("enemy",  obj_enemy_1 );	// success!
-//entities.add_item("enemy",  obj_enemy_2 );	// success!
-//entities.add_item("enemy",  obj_enemy_2 );	// fails...
-//entities.add_item("player", obj_player_1);	// success!
-//entities.get_items("enemy");
-//entities.get_items("player");
-
 function Class(_config = {}) constructor {
 	/// @func	Class(config*)
 	/// @param	{struct} config={}
@@ -69,8 +61,9 @@ function Class(_config = {}) constructor {
 	
 #region Collections ////////////
 
-function Collection() : Class() constructor {
-	/// @func	Collection()
+function Collection(_config = {}) : Class(_config) constructor {
+	/// @func	Collection(config*)
+	/// @param	{struct}	 config={}
 	/// @return {Collection} self
 	///
 	__array =	[];
@@ -190,9 +183,10 @@ function Collection() : Class() constructor {
 		return self;
 	};
 };
-function Set() : Collection() constructor {
-	/// @func	Set()
-	/// @return {Set} self
+function Set(_config = {}) : Collection(_config) constructor {
+	/// @func	Set(config*)
+	/// @param	{struct} config={}
+	/// @return {Set}	 self
 	///
 	__items = {};
 	
@@ -266,8 +260,9 @@ function Set() : Collection() constructor {
 		return self
 	};
 };
-function Family() : Set() constructor {
-	/// @func	Family()
+function Family(_config = {}) : Set(_config) constructor {
+	/// @func	Family(config*)
+	/// @param	{struct} config={}
 	/// @return {Family} self
 	///
 	static get_sets		= get_items;
@@ -313,6 +308,16 @@ function Family() : Set() constructor {
 		}
 		return undefined;
 	};
+	static get_items	= function(_set_name) {
+		/// @func	get_items(set_name)
+		/// @param	{string} set_name
+		/// @return {array}  items
+		///
+		if (has_set(_set_name)) {
+			get_set(_set_name).get_items();
+		}
+		return [];
+	};
 	static has_item	    = function(_set_name, _item_name) {
 		/// @func	has_item(set_name, item_name, item)
 		/// @param	{string}  set_name
@@ -337,7 +342,7 @@ function Family() : Set() constructor {
 		get_set(_set_name).add_item(_item_name, _item);
 		return self;
 	};
-	static remove_item = function(_set_name, _item_name) {			
+	static remove_item  = function(_set_name, _item_name) {			
 		/// @func	remove_item(set_name, item_name)
 		/// @param	{string} set_name
 		/// @param	{string} item_name
