@@ -24,13 +24,6 @@ setup	 = method_inherit(setup,  function() {
 			mult:  1.0,
 		})
 		
-	//entities = new Family();
-	//entities.add_item("enemy",  "obj_enemy_1" );	// success!
-	//entities.add_item("enemy",  "obj_enemy_2" );	// success!
-	//entities.add_item("enemy",  "obj_enemy_2" );	// fails...
-	//entities.add_item("player", "obj_player_1");	// success!
-	//entities.get_items("enemy");
-	//entities.get_items("player");
 })();
 teardown = method_inherit(teardown, function() {
 	/// @func teardown()

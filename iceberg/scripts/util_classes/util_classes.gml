@@ -68,7 +68,6 @@ function Collection(_config = {}) : Class(_config) constructor {
 	///
 	__array =	[];
 	__items = __array;
-	__names =	[];
 	__size  =	0;
 	
 	static get_items = function() {			
@@ -76,12 +75,6 @@ function Collection(_config = {}) : Class(_config) constructor {
 		/// @return {array} items
 		///
 		return __items;
-	};
-	static get_names = function() {
-		/// @func	get_names()
-		/// @return {array} names
-		///
-		return __names;
 	};
 	static get_size  = function() {
 		/// @func	get_size()
@@ -108,27 +101,24 @@ function Collection(_config = {}) : Class(_config) constructor {
 	
 	////////////////////////////////////////
 	
-	static __add_item_collection	= function(_name, _item) {
-		/// @func	__add_item_collection(name, item)
-		/// @param	{string}	 name
+	static __add_item_collection	= function(_item) {
+		/// @func	__add_item_collection(item)
 		/// @param	{any}		 item
 		/// @return {Collection} self
 		///
 		array_push(__array, _item);
-		array_push(__names, _name);
 		__size++;
 		return self;
 	};
-	static __remove_item_collection = function(_name) {
-		/// @func	__remove_item_collection(name)
-		/// @param	{string}	 name
+	static __remove_item_collection = function(_item) {
+		/// @func	__remove_item_collection(item)
+		/// @param	{any}		 item
 		/// @return {Collection} self
 		///
-		var _index  = array_find_index(__names, _name);
+		var _index  = array_find_index(__array, _item);
 		if (_index != -1) {
 			array_delete(__array, _index, 1);
-			array_delete(__names, _index, 1);
-			__count--;	
+			__size--;	
 		}
 		return self;
 	};
@@ -137,39 +127,33 @@ function Collection(_config = {}) : Class(_config) constructor {
 		/// @return {Collection} self
 		///
 		__array = [];
-		__names = [];
 		__size  = 0;
 		return self;
 	};
 	
 	/// @OVERRIDE
-	static get_item    = function(_name) {
-		/// @func	get_item(name)
-		/// @param	{string} name
-		/// @return {any}	 item
+	static get_item    = function(_item) {
+		/// @func	get_item(item)
+		/// @param	{any} item
+		/// @return {any} item
 		///
-		var _index  =  array_find_index(__names, _name);
-		if (_index == -1) {
-			return __items[_index];	
-		}
-		return undefined;
+		return _item;
 	};
-	static add_item	   = function(_name, _item) {
-		/// @func	add_item(name, item)
-		/// @param	{string}	 name
+	static add_item	   = function(_item) {
+		/// @func	add_item(item)
 		/// @param	{any}		 item
 		/// @return {Collection} self
 		///	
-		__add_item_collection(_name, _item);
+		__add_item_collection(_item);
 		return self;
 	};
-	static remove_item = function(_name) {		
-		/// @func	remove_item(name)
-		/// @param	{string}	 name
+	static remove_item = function(_item) {		
+		/// @func	remove_item(item)
+		/// @param	{any}		 item
 		/// @return {Collection} self
 		///
 		if (!is_empty()) {
-			__remove_item_collection(_name);
+			__remove_item_collection(_item);
 		}
 		return self;
 	};
@@ -189,6 +173,16 @@ function Set(_config = {}) : Collection(_config) constructor {
 	/// @return {Set}	 self
 	///
 	__items = {};
+	__names = [];	
+	
+	static get_names = function() {
+		/// @func	get_names()
+		/// @return {array} names
+		///
+		return __names;
+	};
+		
+	////////////////////////////////////////
 	
 	/// @LOCAL
 	static __add_item_set	 = function(_name, _item) {
@@ -198,6 +192,7 @@ function Set(_config = {}) : Collection(_config) constructor {
 		/// @return {Set}    self
 		///
 		__items[$ _name] = _item;
+		array_push(__names, _name);
 		return self;
 	};
 	static __remove_item_set = function(_name) {
@@ -207,7 +202,6 @@ function Set(_config = {}) : Collection(_config) constructor {
 		///
 		variable_struct_remove(__items, _name);
 		array_find_delete(__names, _name);
-		__size--;
 		return self;
 	};
 	static __empty_set	     = function() {
@@ -215,6 +209,7 @@ function Set(_config = {}) : Collection(_config) constructor {
 		/// @return {Set} self
 		///
 		__items = {};
+		__names = [];
 		return self;
 	};
 		
@@ -233,7 +228,7 @@ function Set(_config = {}) : Collection(_config) constructor {
 		/// @return {Set}	 self
 		///	
 		if (!has_item(_name)) {
-			__add_item_collection(_name, _item);
+			__add_item_collection(_item);
 			__add_item_set(_name, _item);
 		}
 		return self
@@ -269,12 +264,15 @@ function Family(_config = {}) : Set(_config) constructor {
 	static get_set		= get_item;
 	static add_set		= add_item;
 	static has_set		= has_item;
-	static delete_set	= remove_item;
+	static remove_set	= remove_item;
 	static new_set		= function() {
 		/// @func	new_set()
-		/// @return {Coolection} set
+		/// @return {Collection} set
 		/// 
 		return new Collection();
+		/// if this changes from a Collection(). make sure to update
+		///	add_item(), remove_item(), and get_item() default return
+		/// to account for an item_name param and type change
 	};
 	static empty_set	= function(_set_name) {
 		/// @func	empty_set(set_name)
@@ -286,70 +284,41 @@ function Family(_config = {}) : Set(_config) constructor {
 		}
 		return self;
 	};
-	static is_set_empty = function(_set) {
-		/// @func	is_set_empty(set)
-		/// @param	{string}  set_name
-		/// @return {boolean} is_set_empty?
-		///
-		if (has_set(_set_name)) {
-			return get_set(_set_name).is_empty();
-		}
-		return true;
-	};
-	
-	static get_item	    = function(_set_name, _item_name) {
-		/// @func	get_item(set_name, item_name, item)
-		/// @param	{string} set_name
-		/// @param	{string} item_name
-		/// @return {any}    item
-		///
-		if (has_set(_set_name)) {
-			return get_set(_set_name).get_item(_item_name);	
-		}
-		return undefined;
-	};
 	static get_items	= function(_set_name) {
 		/// @func	get_items(set_name)
 		/// @param	{string} set_name
 		/// @return {array}  items
 		///
 		if (has_set(_set_name)) {
-			get_set(_set_name).get_items();
+			return get_set(_set_name).get_items();
 		}
 		return [];
 	};
-	static has_item	    = function(_set_name, _item_name) {
-		/// @func	has_item(set_name, item_name, item)
-		/// @param	{string}  set_name
-		/// @param	{string}  item_name
-		/// @return {boolean} has_item?
-		///
-		if (has_set(_set_name)) {
-			return get_set(_set_name).has_item(_item_name);	
-		}
-		return false;
-	};
-	static add_item	    = function(_set_name, _item_name, _item) {	
-		/// @func	add_item(set_name, item_name, item)
+	static add_item	    = function(_set_name, _item) {	
+		/// @func	add_item(set_name, item)
 		/// @param	{string} set_name
-		/// @param	{string} item_name
 		/// @param	{any}    item
 		/// @return {Family} self
 		///
 		if (!has_set(_set_name)) {
 			add_set(_set_name, new_set());
 		}
-		get_set(_set_name).add_item(_item_name, _item);
+		get_set(_set_name).add_item(_item);
 		return self;
 	};
-	static remove_item  = function(_set_name, _item_name) {			
-		/// @func	remove_item(set_name, item_name)
+	static remove_item  = function(_set_name, _item) {			
+		/// @func	remove_item(set_name, item)
 		/// @param	{string} set_name
-		/// @param	{string} item_name
+		/// @param	{any}    item
 		/// @return {Family} self
 		///
 		if (has_set(_set_name)) {
-			get_set(_set_name).remove_item(_item_name);	
+			var _set = get_set(_set_name);
+			_set.remove_item(_item);	
+			
+			if (_set.is_empty()) {
+				remove_set(_set_name);
+			};
 		}
 		return self;
 	};
