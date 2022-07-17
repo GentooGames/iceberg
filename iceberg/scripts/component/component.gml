@@ -32,35 +32,36 @@ function Component(_config = {}) : Class(_config) constructor {
 	#region Component System 
 	
 	if (!variable_struct_exists(__owner, "__component_system")) {
-		__init_component_system();
+		__setup_component_system();
 	}
 	
-	static __init_component_system   = function() {
-		/// @func	__init_component_system()
+	static __setup_component_system    = function() {
+		/// @func	__setup_component_system()
 		/// @return {Component} self
 		///
 		__system				   = new ComponentSystem();
 		__owner.__component_system = __system;
-		__owner.component_system   = function() {
+		__owner.component_system   = method(__owner, function() {
 			/// @func	component_system()
 			/// @return {Component} component_system
 			///
 			return __component_system;	
-		};
+		});
 		
 		return self;
 	};
-	static __remove_component_system = function() {
-		/// @func	__remove_component_system()
+	static __teardown_component_system = function() {
+		/// @func	__teardown_component_system()
 		/// @return {Component} self
 		///
 		if (__system != undefined) {
 			__system.teardown();	
 			__system = undefined;
+			variable_struct_remove(__owner, "component_system");
+			variable_struct_remove(__owner, "__component_system");
 		}
 		return self;
 	};
-	
 	
 	#endregion
 	
