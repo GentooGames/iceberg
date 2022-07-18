@@ -14,6 +14,9 @@
 //		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
+#macro __COMPONENT_SYSTEM_AUTO_NAME  "component_system"
+#macro __COMPONENT_AUTO_SETUP		 false
+
 /// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS
 
 /// Probably should have components become aware of the component system that they are part of
@@ -24,47 +27,75 @@ function Component(_config = {}) : Class(_config) constructor {
 	/// @param	{struct}    config={}
 	/// @return {Component} self
 	///
-	__initialized =  false;
 	__config	  = _config;
+	__initialized =  false;
 	__active	  =  true;
 	__system	  =  undefined;
 	
-	#region Component System 
+	#region Private ////////
 	
-	if (!variable_struct_exists(__owner, "__component_system")) {
-		__setup_component_system();
-	}
+	#region System /////////
 	
-	static __setup_component_system    = function() {
-		/// @func	__setup_component_system()
+	static __setup_owners_system	= function() {
+		///	@func	__setup_owners_system()
 		/// @return {Component} self
 		///
-		__system				   = new ComponentSystem();
-		__owner.__component_system = __system;
-		__owner.component_system   = method(__owner, function() {
-			/// @func	component_system()
-			/// @return {Component} component_system
-			///
-			return __component_system;	
-		});
-		
+		__set_owners_system(undefined);	// assign undefined first to avoid recursive loop 
+		__set_owners_system(__new_owners_system()); // <---------------------------------'
 		return self;
 	};
-	static __teardown_component_system = function() {
-		/// @func	__teardown_component_system()
+	static __teardown_owners_system = function() {
+		/// @func	__teardown_owners_system()
 		/// @return {Component} self
 		///
-		if (__system != undefined) {
-			__system.teardown();	
-			__system = undefined;
-			variable_struct_remove(__owner, "component_system");
-			variable_struct_remove(__owner, "__component_system");
-		}
+		variable_struct_remove(__owner, __COMPONENT_SYSTEM_AUTO_NAME);
 		return self;
+	};
+	static __new_owners_system		= function() {
+		/// @func	__new_owners_system()
+		/// @return {Component} self
+		///
+		return new ComponentSystem({ 
+			owner: __owner,
+		}).setup();
+		
+	};
+	static __get_owners_system		= function() {
+		/// @func	__get_owners_system() 
+		/// @return {Component} system
+		///
+		return __owner[$ __COMPONENT_SYSTEM_AUTO_NAME];
+	};
+	static __set_owners_system		= function(_system) {
+		/// @func	__set_owners_system(system)
+		/// @param	{Component) system
+		/// @return {Component} self
+		///
+		__owner[$ __COMPONENT_SYSTEM_AUTO_NAME] = _system;
+		return self;
+	};
+	static __is_owners_system_setup	= function() {
+		/// @func	__is_owners_system_setup()
+		/// @return {bool} owner_has_system?
+		///
+		if (instanceof(self) == "ComponentSystem") {
+			return true;	
+		}
+		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_AUTO_NAME);
+	};
+	static __is_owners_system_empty = function() {
+		/// @func	__is_owners_system_empty()
+		/// @return {bool} is_empty?
+		///
+		if (__get_owners_system() == undefined) {
+			return false;
+		}
+		return !__get_owners_system().has_components();
 	};
 	
 	#endregion
 	
+	#endregion
 	#region Core ///////////
 	
 	static __setup_component    = function() {
@@ -72,9 +103,22 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @return {Component} self
 		///
 		if (!is_initialized()) {
-			if (__config[$ "active"] != undefined) {
-				__active = __config.active;
+			#region System /////
+			
+			if (!__is_owners_system_setup()) {
+				__setup_owners_system();
 			}
+			__system = __get_owners_system();
+			
+			#endregion
+			#region Props //////
+			
+			if (__config[$ "active"] != undefined) {
+				__active = __config[$ "active"];
+			}
+			
+			#endregion
+			
 			__initialized = true;
 		}
 		return self;
@@ -84,6 +128,17 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @return {Component} self
 		///
 		if (is_initialized()) {
+			#region System /////
+			
+			if (has_system()) {
+				if (__is_owners_system_empty()) {
+					__teardown_owners_system();
+				}
+				__system.teardown();	
+				__system = undefined;
+			}
+			
+			#endregion
 			__initialized = false;
 		}
 		return self;
@@ -95,9 +150,13 @@ function Component(_config = {}) : Class(_config) constructor {
 		///
 		if (is_initialized()) {
 			teardown();
+			#region Props //////
+			
 			if (_config != undefined) {
 				__config = _config;	
 			}
+			
+			#endregion
 			setup();
 		}
 		return self;
@@ -127,6 +186,16 @@ function Component(_config = {}) : Class(_config) constructor {
 	static render	= __render_component;	/// @OVERRIDE
 	
 	#endregion
+	#region Getters ////////
+	
+	static get_system = function() {
+		/// @func	get_system()
+		/// @return {Component} system
+		///
+		return __system;
+	};
+	
+	#endregion
 	#region Checkers ///////
 	
 	static is_initialized = function() {
@@ -140,6 +209,12 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @return {bool} active?
 		///
 		return __active;
+	};
+	static has_system	  = function() {
+		/// @func	has_system()
+		/// @return {bool} has_system?
+		///
+		return get_system() != undefined;
 	};
 		
 	#endregion
@@ -159,9 +234,6 @@ function Component(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 };
-
-#region Component System ///////////
-
 function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @func	ComponentSystem(config*)
 	/// @param	{struct}		  config
@@ -169,17 +241,32 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	///
 	__components = new Set();
 	
-	#region Core ///////////
+	#region Core ///////
+	
+	static __setup_component_system		= function() {
+		/// @func	__setup_component_system()
+		/// @return	{Component} self
+		///
+		if (!is_initialized()) {
+			__setup_component();
+		}
+		return self;
+	};
+	static __teardown_component_system	= function() {
+		/// @func	__teardown_component_system()
+		/// @return	{Component} self
+		///
+		if (is_initialized()) {
+			__teardown_component();
+		}
+		return self;
+	};
+	
+	static setup	= __setup_component_system;
+	static teardown = __teardown_component_system;
 	
 	#endregion
 	
-	static get_component	= function(_name) {
-		///	@func	get_component(name)
-		/// @param	{string}	name
-		/// @return {Component} component
-		///
-		return __components.get_item(_name);
-	};
 	static add_component	= function(_name, _component) {
 		///	@func	add_component(name, component)
 		/// @param	{string}		  name
@@ -204,10 +291,24 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		__components.empty();
 		return self;
 	};
+	static get_component	= function(_name) {
+		///	@func	get_component(name)
+		/// @param	{string}	name
+		/// @return {Component} component
+		///
+		return __components.get_item(_name);
+	};
+	static has_components	= function() {
+		/// @func	has_components()
+		/// @return {bool} has_components?
+		///
+		return !__components.empty();
+	};
 };
 
-#endregion
 #region Eventable //////////////////
+
+/// DECOUPLE RENDERING FROM EVENTABLE AND PUT INTO RENDERABLE()?
 
 function Eventable(_config = {}) : Component(_config) constructor {
 	/// @func	Eventable(config*)
@@ -718,7 +819,7 @@ function Actionable() : Component() constructor {
 		/// @func	update_actionable()
 		/// @return {Actionable} self
 		///
-		if (is_initialized()) {
+		if (is_initialized() && is_active()) {
 			__update_component();
 			#region fsm ////
 			
@@ -732,7 +833,7 @@ function Actionable() : Component() constructor {
 		/// @func	render_actionable()
 		/// @return {Actionable} self
 		///
-		if (is_initialized()) {
+		if (is_initialized() && is_active()) {
 			__render_component();
 			#region fsm ////
 			
