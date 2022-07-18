@@ -14,8 +14,8 @@
 //		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
-#macro __COMPONENT_SYSTEM_AUTO_NAME  "component_system"
-#macro __COMPONENT_AUTO_SETUP		 false
+#macro __COMPONENT_SYSTEM_AUTO_VAR_NAME	"component_system"
+#macro __COMPONENT_AUTO_SETUP			false
 
 /// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS
 
@@ -48,7 +48,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @func	__teardown_owners_system()
 		/// @return {Component} self
 		///
-		variable_struct_remove(__owner, __COMPONENT_SYSTEM_AUTO_NAME);
+		variable_struct_remove(__owner, __COMPONENT_SYSTEM_AUTO_VAR_NAME);
 		return self;
 	};
 	static __new_owners_system		= function() {
@@ -64,14 +64,14 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @func	__get_owners_system() 
 		/// @return {Component} system
 		///
-		return __owner[$ __COMPONENT_SYSTEM_AUTO_NAME];
+		return __owner[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME];
 	};
 	static __set_owners_system		= function(_system) {
 		/// @func	__set_owners_system(system)
 		/// @param	{Component) system
 		/// @return {Component} self
 		///
-		__owner[$ __COMPONENT_SYSTEM_AUTO_NAME] = _system;
+		__owner[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME] = _system;
 		return self;
 	};
 	static __is_owners_system_setup	= function() {
@@ -81,7 +81,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		if (instanceof(self) == "ComponentSystem") {
 			return true;	
 		}
-		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_AUTO_NAME);
+		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_AUTO_VAR_NAME);
 	};
 	static __is_owners_system_empty = function() {
 		/// @func	__is_owners_system_empty()
@@ -109,6 +109,7 @@ function Component(_config = {}) : Class(_config) constructor {
 				__setup_owners_system();
 			}
 			__system = __get_owners_system();
+			__system.add_component(__name, self);
 			
 			#endregion
 			#region Props //////
@@ -131,6 +132,7 @@ function Component(_config = {}) : Class(_config) constructor {
 			#region System /////
 			
 			if (has_system()) {
+				__system.remove_component(__name);
 				if (__is_owners_system_empty()) {
 					__teardown_owners_system();
 				}
