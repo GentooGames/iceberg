@@ -14,13 +14,8 @@
 //		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
-#macro __COMPONENT_SYSTEM_AUTO_VAR_NAME	"component_system"
-//#macro __COMPONENT_AUTO_SETUP			false
-/// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS
+#macro __COMPONENT_SYSTEM_AUTO_VAR_NAME	"__component_system"
 
-/// Probably should have components become aware of the component system that they are part of
-/// this would allow us to call component().destroy(), which would then have the component
-/// remove itself from the system
 function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
 	/// @param	{struct}    config={}
@@ -55,7 +50,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @return {Component} self
 		///
 		return new ComponentSystem({ 
-			owner: __owner,
+			owner: get_owner(),
 		}).setup();
 	};
 	static __get_owners_system		= function() {
@@ -240,7 +235,8 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}		  config
 	/// @return {ComponentSystem} self
 	///
-	__components = new Set();
+	__components_set	= new Set();
+	__components_family = new Family();
 	
 	#region Core ///////
 	
@@ -268,13 +264,26 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	
 	#endregion
 	
-	static add_component	= function(_name, _component) {
-		///	@func	add_component(name, component)
-		/// @param	{string}		  name
-		/// @param	{Component}		  component
-		/// @return {ComponentSystem} self
+	static new_component	= function(_name, _component_instanceof) {
+		/// @func	new_component(name, component_instanceof)
+		/// @param	{string}	name 
+		/// @param	{Component} component_instanceof
+		/// @return {Component} self
 		///
-		__components.add_item(_name, _component);
+		return add_component(
+			new _component_instanceof({
+				owner: get_owner(),	
+				name: _name,
+			}).setup()
+		);
+	};
+	static add_component	= function(_component) {
+		///	@func	add_component(component)
+		/// @param	{Component}	component
+		/// @return {Component} self
+		///
+		__components_set.add_item(_component.get_name(), _component);
+		__components_family.add_item(instanceof(_component), _component);
 		return self;
 	};
 	static remove_component = function(_name) {
@@ -282,14 +291,19 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		/// @param	{string}		  name
 		/// @return {ComponentSystem} self
 		///
-		__components.remove_item(_name);
+		if (__components_set.has_item(_name)) {
+			var _component = __components_set.get_item(_name);
+			__components_set.remove_item(_name);
+			__components_family.remove_item(instanceof(_component), _component);
+		}
 		return self;
 	};
 	static clear_components = function() {
 		///	@func	clear_components()
 		/// @return {ComponentSystem} self
 		///
-		__components.empty();
+		__components_set.empty();
+		__components_family.empty();
 		return self;
 	};
 	static get_component	= function(_name) {
@@ -305,6 +319,13 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		return !__components.empty();
 	};
+};
+function component_system() {
+	/// @func	component_system()
+	/// @return {ComponentSystem} system
+	///
+	return self[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME];	
+	//return __component_system; // <-- can use more explicit accessor
 };
 
 #region Eventable //////////////////
@@ -1313,3 +1334,4 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 
 #endregion
 
+/// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS

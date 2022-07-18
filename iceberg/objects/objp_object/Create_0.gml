@@ -17,7 +17,7 @@ setup	 = method_inherit(,function() {
 	/// @return {struct} self
 	///
 	if (!initialized) {
-		#region ------------
+		#region __ /////////
 	
 		updating  = true;
 		rendering = true;
@@ -25,17 +25,25 @@ setup	 = method_inherit(,function() {
 		destroyed = false;
 	
 		#endregion
+		#region Components /
+		
+		//components = new ComponentSystem().setup();
+		
+		#endregion
 		#region Events /////
 	
+		//components.new_component("eventer", Eventable);
+		//components.get_component("eventer")
 		eventer = new Eventable().setup();
-		eventer.register([
-			"setup_completed",
-			"teardown_completed",
-			"rebuild_completed",
-			"activated",
-			"deactivated",
-			"destroyed",
-		]);
+		eventer
+			.register([
+				"setup_completed",
+				"teardown_completed",
+				"rebuild_completed",
+				"activated",
+				"deactivated",
+				"destroyed",
+			]);
 		
 		INPUT.eventer.listen("mouse_button_pressed",  on_mouse_button_pressed);
 		INPUT.eventer.listen("mouse_button",		  on_mouse_button);
