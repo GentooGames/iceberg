@@ -15,8 +15,7 @@
 //////////////////////////////////////////////////////
 
 #macro __COMPONENT_SYSTEM_AUTO_VAR_NAME	"component_system"
-#macro __COMPONENT_AUTO_SETUP			false
-
+//#macro __COMPONENT_AUTO_SETUP			false
 /// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS
 
 /// Probably should have components become aware of the component system that they are part of
@@ -41,7 +40,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @return {Component} self
 		///
 		__set_owners_system(undefined);	// assign undefined first to avoid recursive loop 
-		__set_owners_system(__new_owners_system()); // <---------------------------------'
+		__set_owners_system(__new_owners_system()); // <--------------------------------'
 		return self;
 	};
 	static __teardown_owners_system = function() {
@@ -58,7 +57,6 @@ function Component(_config = {}) : Class(_config) constructor {
 		return new ComponentSystem({ 
 			owner: __owner,
 		}).setup();
-		
 	};
 	static __get_owners_system		= function() {
 		/// @func	__get_owners_system() 
@@ -78,9 +76,6 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @func	__is_owners_system_setup()
 		/// @return {bool} owner_has_system?
 		///
-		if (instanceof(self) == "ComponentSystem") {
-			return true;	
-		}
 		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_AUTO_VAR_NAME);
 	};
 	static __is_owners_system_empty = function() {
@@ -105,11 +100,16 @@ function Component(_config = {}) : Class(_config) constructor {
 		if (!is_initialized()) {
 			#region System /////
 			
+			/// Initialize Owner's Hidden ComponentSystem()
 			if (!__is_owners_system_setup()) {
 				__setup_owners_system();
 			}
 			__system = __get_owners_system();
-			__system.add_component(__name, self);
+			
+			/// Add Self Component To ComponentSystem
+			if (has_system()) {
+				get_system().add_component(__name, self);
+			}
 			
 			#endregion
 			#region Props //////
@@ -119,7 +119,6 @@ function Component(_config = {}) : Class(_config) constructor {
 			}
 			
 			#endregion
-			
 			__initialized = true;
 		}
 		return self;
