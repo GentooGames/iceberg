@@ -83,19 +83,19 @@ enum __FLOE_STATE {
 
 #endregion
 
-function FloeEffect(_config = {}) : Component(_config) constructor {
-	/// @func	FloeEffect(config*)
-	/// @param	{struct}     config={}
+function FloeEffect() constructor {
+	/// @func	FloeEffect()
 	/// @return {FloeEffect} self
 	///
-	__padding	=  20;		// offset to move effects offscreen for smoother animations
-	__color		=  c_black;
-	__alpha		=  1.0;
-	__speed		=  0.1;
-	__threshold	=  0.1;
-	__hold_time = -1;
-	__this		=  {
+	__padding	  =  20;		// offset to move effects offscreen for smoother animations
+	__color		  =  c_black;
+	__alpha		  =  1.0;
+	__speed		  =  0.1;
+	__threshold	  =  0.1;
+	__hold_time   = -1;
+	__this		  =  {
 		__control: {
+			__initialized: false,
 			__running:	   false,
 			__state:	 __FLOE_STATE.HIDDEN,
 			__progress:	   0.0,
@@ -112,25 +112,27 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		/// @return {FloeEffect} self
 		///
 		if (!is_initialized()) {
-			__setup_component();
 			#region Components /////
 		
-			eventer = new Eventable().setup();
-			eventer.register([
-				"enter_started",
-				"enter_completed",
-				"change_started",
-				"change_completed",
-				"hold_started",
-				"hold_completed",
-				"leave_started",
-				"leave_completed",
-				"reversed",
-				"ended",
-				"reset_completed",
-			]);
+			components = new ComponentSystem().setup();
+			components.create(Eventable);
+			components.get(Eventable)
+				.register([
+					"enter_started",
+					"enter_completed",
+					"change_started",
+					"change_completed",
+					"hold_started",
+					"hold_completed",
+					"leave_started",
+					"leave_completed",
+					"reversed",
+					"ended",
+					"reset_completed",
+				]);
 		
 			#endregion
+			__this.__control.__initialized = true;
 		}
 		return self;
 	};
@@ -141,10 +143,11 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		if (is_initialized()) {
 			#region Components /////
 		
-			eventer = undefined;
+			components.teardown();
+			components = undefined;
 		
 			#endregion
-			__teardown_component();
+			__this.__control.__initialized = false;
 		}
 		return self;
 	};
@@ -153,12 +156,13 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__update_component();
 			#region State //////////
 		
 			switch (get_state()) {
 				case __FLOE_STATE.ENTER_PREP: {
-					eventer.broadcast("enter_started");
+					components.get(Eventable)
+						.broadcast("enter_started");
+						
 					set_running(true);
 					set_state(__FLOE_STATE.ENTER);
 					break;	
@@ -170,24 +174,34 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 				
 					if (abs(_progress - _target) <= get_threshold()) {
 						set_progress(_target);
-						eventer.broadcast("enter_completed");
+						
+						components.get(Eventable)
+							.broadcast("enter_completed");
+							
 						set_state(__FLOE_STATE.CHANGE_PREP);
 					}
 					break;	
 				}
 				case __FLOE_STATE.CHANGE_PREP: {
-					eventer.broadcast("change_started");
+					components.get(Eventable)
+						.broadcast("change_started");
+						
 					set_state(__FLOE_STATE.CHANGE);
 					break;	
 				}
 				case __FLOE_STATE.CHANGE: {
 					__this.__control.__hold_timer = get_hold_time();
-					eventer.broadcast("change_completed");
+					
+					components.get(Eventable)
+						.broadcast("change_completed");
+						
 					set_state(__FLOE_STATE.HOLD_PREP);
 					break;	
 				}
 				case __FLOE_STATE.HOLD_PREP: {
-					eventer.broadcast("hold_started");
+					components.get(Eventable)
+						.broadcast("hold_started");
+						
 					set_state(__FLOE_STATE.HOLD);
 					break;	
 				}
@@ -196,13 +210,17 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 						__this.__control.__hold_timer--;
 					}
 					else {
-						eventer.broadcast("hold_completed");
+						components.get(Eventable)
+							.broadcast("hold_completed");
+							
 						set_state(__FLOE_STATE.LEAVE_PREP);
 					}
 					break;	
 				}
 				case __FLOE_STATE.LEAVE_PREP: {
-					eventer.broadcast("leave_started");
+					components.get(Eventable)
+						.broadcast("leave_started");
+						
 					set_state(__FLOE_STATE.LEAVE);
 					break;	
 				}
@@ -213,13 +231,18 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 				
 					if (abs(_progress - _target) <= get_threshold()) {
 						set_progress(_target);
-						eventer.broadcast("leave_completed");
+						
+						components.get(Eventable)
+							.broadcast("leave_completed");
+							
 						set_state(__FLOE_STATE.END);
 					}
 					break;	
 				}
 				case __FLOE_STATE.END: {
-					eventer.broadcast("ended");
+					components.get(Eventable)
+						.broadcast("ended");
+						
 					set_running(false);
 					set_state(__FLOE_STATE.HIDDEN);
 					break;	
@@ -235,7 +258,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__render_component();
+			/// ...
 		}
 		return self;
 	};
@@ -376,7 +399,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 	#endregion
 	#region Setters ////////
 		
-	static set_running	 = function(_running) {
+	static set_running	   = function(_running) {
 		/// @func	set_running(running?)
 		/// @param	{boolean} is_running?
 		/// @return {FloeEffect} self
@@ -384,7 +407,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__this.__control.__running = _running;
 		return self;
 	};
-	static set_padding	 = function(_padding) {
+	static set_padding	   = function(_padding) {
 		/// @func	set_padding(padding)
 		/// @param	{real} padding
 		/// @param	{any} data=undefined
@@ -393,7 +416,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__padding = _padding;
 		return self;
 	};
-	static set_color	 = function(_color) {
+	static set_color	   = function(_color) {
 		/// @func	set_color(color)
 		/// @param	{color} color
 		/// @param	{any} data=undefined
@@ -402,7 +425,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__color = _color;
 		return self;
 	};
-	static set_alpha	 = function(_alpha) {
+	static set_alpha	   = function(_alpha) {
 		/// @func	set_alpha(alpha)
 		/// @param	{real} alpha
 		/// @return {FloeEffect} self
@@ -410,7 +433,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__alpha = _alpha;
 		return self;
 	};
-	static set_speed	 = function(_speed) {
+	static set_speed	   = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real} speed
 		/// @return {FloeEffect} self
@@ -418,7 +441,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__speed = _speed;
 		return self;
 	};
-	static set_threshold = function(_threshold) {
+	static set_threshold   = function(_threshold) {
 		/// @func	set_threshold(threshold)
 		/// @param	{real} threshold
 		/// @return {FloeEffect} self
@@ -426,7 +449,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__threshold = _threshold;
 		return self;
 	};
-	static set_hold_time = function(_hold_time) {
+	static set_hold_time   = function(_hold_time) {
 		/// @func	set_hold_time(hold_time)
 		/// @param	{real} hold_time
 		/// @return {FloeEffect} self
@@ -434,7 +457,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__hold_time = _hold_time;
 		return self;
 	};
-	static set_progress	 = function(_progress) {
+	static set_progress	   = function(_progress) {
 		/// @func	set_progress(progress)
 		/// @param	{real} progress
 		/// @return {FloeEffect} self
@@ -442,7 +465,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__this.__control.__progress = _progress;
 		return self;
 	};
-	static set_target	 = function(_target) {
+	static set_target	   = function(_target) {
 		/// @func	set_target(target)
 		/// @param	{real} target
 		/// @return {FloeEffect} self
@@ -450,7 +473,7 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		__this.__control.__target = _target;
 		return self;
 	};
-	static set_state	 = function(_state) {
+	static set_state	   = function(_state) {
 		/// @func	set_state(state)
 		/// @param	{enum} state
 		/// @return {FloeEffect} self
@@ -462,7 +485,13 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 	#endregion
 	#region Checkers ///////
 	
-	static is_running = function() {
+	static is_initialized = function() {
+		/// @func	is_initialized()
+		/// @return {bool} is_initialized?
+		///
+		return __this.__control.__initialized;
+	};
+	static is_running	  = function() {
 		/// @func	is_running()
 		/// @return {boolean} is_running?
 		///
@@ -505,7 +534,10 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 			var _progress = 1 - get_progress();
 			set_progress(_progress);
 		}
-		eventer.broadcast("reversed");
+			
+		components.get(Eventable)
+			.broadcast("reversed");
+			
 		return self;
 	};
 	static reset   = function() {
@@ -515,7 +547,11 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		set_running(false);
 		set_progress(0);
 		set_state(__FLOE_STATE.HIDDEN);
-		eventer.broadcast("reset_completed");
+		
+		components.get(Eventable)
+			.broadcast("reset_completed");
+			
+		return self;
 	};
 };
 function FloeEffectSurface() : FloeEffect() constructor {

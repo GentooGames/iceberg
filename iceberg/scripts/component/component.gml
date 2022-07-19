@@ -14,6 +14,8 @@
 //		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
+/// MAKE SURE IMPLMENTATIONS OF COMP_SYSTEM ARE INVOKING TEARDOWN
+
 #macro __COMPONENT_SYSTEM_VAR_NAME "components"
 
 function Component(_config = {}) : Class(_config) constructor {
@@ -48,7 +50,13 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @func	__is_owners_system_setup()
 		/// @return {bool} owner_has_system?
 		///
-		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
+		if (instanceof(self) == "ComponentSystem") {
+			return true;	
+		}
+		var _exists = variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
+		var _value  = variable_struct_get(__owner, __COMPONENT_SYSTEM_VAR_NAME);
+		log("self: {0}, value: {1}", instanceof(self), instanceof(_value));
+		return _exists;
 	};
 	
 	#endregion
@@ -257,6 +265,11 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 			for (var _i = 0, _len = array_length(_components); _i < _len; _i++) {
 				_components[_i].teardown();
 			}
+			
+			#endregion
+			#region __ /////////////
+			
+			__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
 			
 			#endregion
 		}

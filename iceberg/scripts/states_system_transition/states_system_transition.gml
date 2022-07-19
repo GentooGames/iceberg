@@ -32,9 +32,10 @@ function state_system_transition_transitioning() {
 				.broadcast("enter_started");
 				
 			effect = new effect_in().setup();
-			effect.eventer.listen("enter_completed", function(_data) {
-				fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
-			});
+			effect.components.get(Eventable)
+				.listen("enter_completed", function(_data) {
+					fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
+				});
 			effect.enter()
 		},
 		step:  function() {
@@ -84,12 +85,14 @@ function state_system_transition_hold() {
 			components.get(Eventable)
 				.broadcast("hold_started");
 				
-			effect.eventer.listen("hold_completed", function(_data) {
-				room_to_release = true;
-				if (end_transition_is_ready()) {
-					end_transition();
-				}
-			});
+			effect.components.get(Eventable)
+				.listen("hold_completed", function(_data) {
+					room_to_release = true;
+					if (end_transition_is_ready()) {
+						end_transition();
+					}
+				});
+				
 			room_holding = true;
 		},
 		step:  function() {
@@ -114,9 +117,10 @@ function state_system_transition_ending() {
 				.broadcast("exit_started");
 				
 			effect = new effect_out().setup();
-			effect.eventer.listen("enter_completed", function(_data) {
-				fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
-			});
+			effect.components.get(Eventable)
+				.listen("enter_completed", function(_data) {
+					fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
+				});
 			effect.reverse();
 			effect.enter();
 		},

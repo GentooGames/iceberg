@@ -592,7 +592,7 @@ function struct_to_array(_struct, _names_array = variable_struct_get_names(_stru
 	///
 	var _items  = array_create(_count);
 	for (var _i = 0; _i < _count; _i++) {
-		array_push(_items, _struct[$ _names_array[_i]]);
+		_items[_i] = _struct[$ _names_array[_i]];
 	};
 	return _items;
 };
