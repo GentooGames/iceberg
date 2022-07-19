@@ -30,7 +30,6 @@ setup	 = method_inherit(,function() {
 		components = new ComponentSystem().setup();
 		components
 			.create(Eventable)
-			//.create(Moveable)
 		
 		components
 			.get(Eventable)

@@ -21,11 +21,12 @@ function Component(_config = {}) : Class(_config) constructor {
 	/// @param	{struct}    config={}
 	/// @return {Component} self
 	///
+	__class		  =  Component;
 	__config	  = _config;
 	__initialized =  false;
 	__active	  =  true;
 	__system	  =  undefined;
-	__logging	  = DEBUGGING && 1;
+	__logging	  =  DEBUGGING && 1;
 	
 	#region Private ////////
 	
@@ -89,7 +90,7 @@ function Component(_config = {}) : Class(_config) constructor {
 			#region System /////
 			
 			if (has_system()) {
-				get_system().remove(instanceof(self));
+				get_system().remove(get_class());
 				get_system().teardown();	
 				set_system(undefined);
 			}
@@ -144,6 +145,12 @@ function Component(_config = {}) : Class(_config) constructor {
 	#endregion
 	#region Getters ////////
 	
+	static get_class  = function() {
+		/// @func	get_class()
+		/// @return {class} class
+		///
+		return __class;
+	};
 	static get_system = function() {
 		/// @func	get_system()
 		/// @return {Component} system
@@ -220,6 +227,7 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}		  config
 	/// @return {ComponentSystem} self
 	///
+	__class		 = ComponentSystem;
 	__components = new Set();
 	
 	#region Core ///////////
@@ -328,6 +336,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}	config={}
 	/// @return {Eventable} self
 	///
+	__class		  = Eventable;
 	__broadcaster = undefined;
 
 	#region Core ///////////
@@ -484,6 +493,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}   config={}
 	/// @return	{Moveable} self
 	///
+	__class	  = Moveable;
 	__owner	  = other;
 	__hspd	  = 0;
 	__vspd	  = 0;
@@ -781,7 +791,8 @@ function Actionable() : Component() constructor {
 	/// @func	Actionable()
 	/// @return {Component} self 
 	///
-	__fsm = undefined;
+	__class = Actionable;
+	__fsm	= undefined;
 	
 	#region Private ////////
 	
@@ -952,6 +963,7 @@ function Collidable() : Component() constructor {
 	/// @func	Collidable()
 	/// @return {Component} self
 	///
+	__class		 = Collidable;
 	__owner		 = other;
 	__collisions = undefined;
 	

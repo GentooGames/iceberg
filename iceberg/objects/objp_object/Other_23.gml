@@ -5,7 +5,7 @@ callback_on_setup	 = function() {
 	/// @func	callback_on_setup()
 	/// @return {struct} self
 	///
-	components.get_component("eventer")
+	components.get(Eventable)
 		.broadcast("setup_completed");
 			
 	initialized = true;
