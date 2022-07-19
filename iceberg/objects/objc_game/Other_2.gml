@@ -52,6 +52,6 @@ GAME.setup();
 //global._camera = new Camera(0, 0, 0, false);
 //#macro CAMERA global._camera
 //(instance_create_layer(0, 0, "Controllers", objc_world)).setup();
-(instance_create_layer(0, 0, "Controllers", objc_save)).setup();
+//(instance_create_layer(0, 0, "Controllers", objc_save)).setup();
 
 #endregion

@@ -28,25 +28,25 @@ setup	 = method_inherit(,function() {
 		#region Components /////
 		
 		component_system_setup();
-		component_system()
-			.new_component("eventer_1", Eventable)
-			.new_component("eventer_2", Eventable)
-		;
+		//component_system()
+		//	.new_component("eventer", Eventable)
+		//	//.new_component("eventer_2", Eventable)
+		//;
 		//show_message(component_system().get_components(Eventable));
 		
 		#endregion
 		#region Events /////////
 	
-		component_system()
-			.get_component("eventer")
-				.register([
-					"setup_completed",
-					"teardown_completed",
-					"rebuild_completed",
-					"activated",
-					"deactivated",
-					"destroyed",
-				]);
+		//component_system()
+		//	.get_component("eventer")
+		//		.register([
+		//			"setup_completed",
+		//			"teardown_completed",
+		//			"rebuild_completed",
+		//			"activated",
+		//			"deactivated",
+		//			"destroyed",
+		//		]);
 		
 		//INPUT.eventer.listen("mouse_button_pressed",  on_mouse_button_pressed);
 		//INPUT.eventer.listen("mouse_button",		  on_mouse_button);
