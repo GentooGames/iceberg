@@ -78,11 +78,12 @@ setup	 = method_inherit(setup,	function() {
 		#endregion
 		#region Events /////////
 	
-		TRANSITION.eventer.listen("hold_started", function(_data) {
-			save_game(,, function() {
-				TRANSITION.end_transition();
+		TRANSITION.components.get(Eventable)
+			.listen("hold_started", function(_data) {
+				save_game(,, function() {
+					TRANSITION.end_transition();
+				});
 			});
-		});
 	
 		#endregion
 		

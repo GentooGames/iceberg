@@ -11,7 +11,7 @@ function ___gui() {
 	        /// @return {struct} self
 	        ///
 	        if (!initialized) {
-				#region ----------------
+				#region __ /////////////
 		
 		        log("<GUI> setup()");
 		        initialized = true;
@@ -22,12 +22,6 @@ function ___gui() {
 				width_base  = 1600;
 				height_base = 900;
 		
-				#endregion
-				#region Events /////////
-			
-				eventer = new Eventable().setup();
-				//eventer.register([]);
-			
 				#endregion
 				#region Border /////////
 		

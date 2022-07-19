@@ -11,7 +11,7 @@ function ___debug() {
 	        /// @return {struct} self
 	        /// 
 	        if (DEBUGGING && !initialized) {
-				#region ----------------
+				#region __ /////////////
 		
 		        log("<DEBUG> setup()");
 				initialized = true;	

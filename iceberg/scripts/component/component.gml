@@ -91,7 +91,6 @@ function Component(_config = {}) : Class(_config) constructor {
 			
 			if (has_system()) {
 				get_system().remove(get_class());
-				get_system().teardown();	
 				set_system(undefined);
 			}
 			
@@ -214,7 +213,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @desc	removes self from the ComponentSystem(), if __system is not undefined.
 		///
 		if (has_system()) {
-			get_system().remove_component(get_name());
+			get_system().remove(get_class());
 		}
 		return self;
 	};
@@ -252,6 +251,14 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		if (is_initialized()) {
 			__teardown_component();
+			#region Components /////
+			
+			var _components = __components.get_items_as_array();
+			for (var _i = 0, _len = array_length(_components); _i < _len; _i++) {
+				_components[_i].teardown();
+			}
+			
+			#endregion
 		}
 		return self;
 	};
@@ -535,11 +542,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			if (__config[$ "mult" ] != undefined) __mult  = __config.mult;
 			
 			#endregion
-			#region Eventer //// 
-			
-			eventer = new Eventable().setup();	
-			
-			#endregion
 			#region Moveset ////
 			
 			__moveset.__movesets = new Set();
@@ -584,12 +586,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			__moveset.__movesets = undefined;
 			set_moveset_default(undefined);	/// should this be resetting back to default moveset instead? should config be considered here?
 			set_moveset(undefined, false);	/// should this be resetting back to default moveset instead? should config be considered here?
-			
-			#endregion
-			#region Eventer ////
-			
-			eventer.teardown();
-			eventer = undefined;
 			
 			#endregion
 			__teardown_component();

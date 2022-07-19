@@ -105,147 +105,145 @@ function FloeEffect(_config = {}) : Component(_config) constructor {
 		},
 	};
 	
-	#region Private ////////
-	
-	static __setup_super	  = setup;
-	static __setup_eventer	  = function() {
-		/// @func	__setup_eventer()
-		/// @return {FloeEffect} self
-		///
-		eventer = new Eventable().setup();
-		eventer.register([
-			"enter_started",
-			"enter_completed",
-			"change_started",
-			"change_completed",
-			"hold_started",
-			"hold_completed",
-			"leave_started",
-			"leave_completed",
-			"reversed",
-			"ended",
-			"reset_completed",
-		]);
-		return self;
-	};
-	static __teardown_super   = teardown;
-	static __teardown_eventer = function() {
-		/// @func	__teardown_eventer()
-		/// @return {FloeEffect} self
-		///
-		eventer = undefined;
-		return self;
-	};
-	static __update_super	  = update;
-	static __update_state	  = function() {
-		/// @func	__update_state()
-		/// @return {FloeEffect} self
-		///
-		switch (get_state()) {
-			case __FLOE_STATE.ENTER_PREP: {
-				eventer.broadcast("enter_started");
-				set_running(true);
-				set_state(__FLOE_STATE.ENTER);
-				break;	
-			}
-			case __FLOE_STATE.ENTER: {
-				var _target   = get_target();
-				var _progress = lerp(get_progress(), _target, get_speed());
-				set_progress(_progress);
-				
-				if (abs(_progress - _target) <= get_threshold()) {
-					set_progress(_target);
-					eventer.broadcast("enter_completed");
-					set_state(__FLOE_STATE.CHANGE_PREP);
-				}
-				break;	
-			}
-			case __FLOE_STATE.CHANGE_PREP: {
-				eventer.broadcast("change_started");
-				set_state(__FLOE_STATE.CHANGE);
-				break;	
-			}
-			case __FLOE_STATE.CHANGE: {
-				__this.__control.__hold_timer = get_hold_time();
-				eventer.broadcast("change_completed");
-				set_state(__FLOE_STATE.HOLD_PREP);
-				break;	
-			}
-			case __FLOE_STATE.HOLD_PREP: {
-				eventer.broadcast("hold_started");
-				set_state(__FLOE_STATE.HOLD);
-				break;	
-			}
-			case __FLOE_STATE.HOLD:	{
-				if (__this.__control.__hold_timer > 0) {
-					__this.__control.__hold_timer--;
-				}
-				else {
-					eventer.broadcast("hold_completed");
-					set_state(__FLOE_STATE.LEAVE_PREP);
-				}
-				break;	
-			}
-			case __FLOE_STATE.LEAVE_PREP: {
-				eventer.broadcast("leave_started");
-				set_state(__FLOE_STATE.LEAVE);
-				break;	
-			}
-			case __FLOE_STATE.LEAVE: {
-				var _target   = get_target();
-				var _progress = lerp(get_progress(), _target, get_speed());
-				set_progress(_progress);
-				
-				if (abs(_progress - _target) <= get_threshold()) {
-					set_progress(_target);
-					eventer.broadcast("leave_completed");
-					set_state(__FLOE_STATE.END);
-				}
-				break;	
-			}
-			case __FLOE_STATE.END: {
-				eventer.broadcast("ended");
-				set_running(false);
-				set_state(__FLOE_STATE.HIDDEN);
-				break;	
-			}
-		};
-		return self;
-	};
-	
-	#endregion
 	#region Core ///////////
 	
-	static setup	= function() {
-		/// @func	setup()
+	static __setup_effect	 = function() {
+		/// @func	__setup_effect()
 		/// @return {FloeEffect} self
 		///
 		if (!is_initialized()) {
-			__setup_super();
-			__setup_eventer();
+			__setup_component();
+			#region Components /////
+		
+			eventer = new Eventable().setup();
+			eventer.register([
+				"enter_started",
+				"enter_completed",
+				"change_started",
+				"change_completed",
+				"hold_started",
+				"hold_completed",
+				"leave_started",
+				"leave_completed",
+				"reversed",
+				"ended",
+				"reset_completed",
+			]);
+		
+			#endregion
 		}
 		return self;
 	};
-	static teardown = function() {
-		/// @func	teardown()
+	static __teardown_effect = function() {
+		/// @func	__teardown_effect()
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__teardown_eventer();
-			__teardown_super();
+			#region Components /////
+		
+			eventer = undefined;
+		
+			#endregion
+			__teardown_component();
 		}
 		return self;
 	};
-	static update   = function() {
-		/// @func	update()
+	static __update_effect	 = function() {
+		/// @func	__update_effect()
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__update_super();
-			__update_state();
+			__update_component();
+			#region State //////////
+		
+			switch (get_state()) {
+				case __FLOE_STATE.ENTER_PREP: {
+					eventer.broadcast("enter_started");
+					set_running(true);
+					set_state(__FLOE_STATE.ENTER);
+					break;	
+				}
+				case __FLOE_STATE.ENTER: {
+					var _target   = get_target();
+					var _progress = lerp(get_progress(), _target, get_speed());
+					set_progress(_progress);
+				
+					if (abs(_progress - _target) <= get_threshold()) {
+						set_progress(_target);
+						eventer.broadcast("enter_completed");
+						set_state(__FLOE_STATE.CHANGE_PREP);
+					}
+					break;	
+				}
+				case __FLOE_STATE.CHANGE_PREP: {
+					eventer.broadcast("change_started");
+					set_state(__FLOE_STATE.CHANGE);
+					break;	
+				}
+				case __FLOE_STATE.CHANGE: {
+					__this.__control.__hold_timer = get_hold_time();
+					eventer.broadcast("change_completed");
+					set_state(__FLOE_STATE.HOLD_PREP);
+					break;	
+				}
+				case __FLOE_STATE.HOLD_PREP: {
+					eventer.broadcast("hold_started");
+					set_state(__FLOE_STATE.HOLD);
+					break;	
+				}
+				case __FLOE_STATE.HOLD:	{
+					if (__this.__control.__hold_timer > 0) {
+						__this.__control.__hold_timer--;
+					}
+					else {
+						eventer.broadcast("hold_completed");
+						set_state(__FLOE_STATE.LEAVE_PREP);
+					}
+					break;	
+				}
+				case __FLOE_STATE.LEAVE_PREP: {
+					eventer.broadcast("leave_started");
+					set_state(__FLOE_STATE.LEAVE);
+					break;	
+				}
+				case __FLOE_STATE.LEAVE: {
+					var _target   = get_target();
+					var _progress = lerp(get_progress(), _target, get_speed());
+					set_progress(_progress);
+				
+					if (abs(_progress - _target) <= get_threshold()) {
+						set_progress(_target);
+						eventer.broadcast("leave_completed");
+						set_state(__FLOE_STATE.END);
+					}
+					break;	
+				}
+				case __FLOE_STATE.END: {
+					eventer.broadcast("ended");
+					set_running(false);
+					set_state(__FLOE_STATE.HIDDEN);
+					break;	
+				}
+			};
+		
+			#endregion
 		}
 		return self;
 	};
+	static __render_effect	 = function() {
+		/// @func	__render_effect()
+		/// @return {FloeEffect} self
+		///
+		if (is_initialized()) {
+			__render_component();
+		}
+		return self;
+	};
+	
+	static setup	= __setup_effect;
+	static teardown = __teardown_effect;
+	static update	= __update_effect;
+	static render	= __render_effect;
 	
 	#endregion
 	#region Getters ////////
@@ -525,51 +523,63 @@ function FloeEffectSurface() : FloeEffect() constructor {
 	///
 	__this.__surface = undefined;
 	
-	#region Private ////////
+	#region Core ///////////
 	
-	static __setup_super      = setup;
 	static __setup_surface    = function() {
 		/// @func	__setup_surface()
 		/// @return {FloeEffect} self
 		///
-		__this.__surface = surface_create(SURF_W, SURF_H);
+		if (!is_initialized()) {
+			__setup_effect();
+			#region Surface ////////
+		
+			__this.__surface = surface_create(SURF_W, SURF_H);
+		
+			#endregion
+		}
 		return self;
 	};
-	static __teardown_super   = teardown;
 	static __teardown_surface = function() {
 		/// @func	__teardown_surface()
 		/// @return {FloeEffect} self
 		///
-		if (surface_exists(__this.__surface)) {
-			surface_free(__this.__surface);
-		}
-		__this.__surface = undefined;
-		return self;
-	};
-	
-	#endregion
-	#region Core ///////////
-	
-	static setup		= function() {
-		/// @func	setup()
-		/// @return {FloeEffect} self
-		///
-		if (!is_initialized()) {
-			__setup_super();
-			__setup_surface();
+		if (is_initialized()) {
+			#region Surface ////////
+		
+			if (surface_exists(__this.__surface)) {
+				surface_free(__this.__surface);
+			}
+			__this.__surface = undefined;
+		
+			#endregion
+			__teardown_effect();
 		}
 		return self;
 	};
-	static teardown		= function() {
-		/// @func	teardown()
+	static __update_surface   = function() {
+		/// @func	__update_surface()
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__teardown_surface();
-			__teardown_super();
-		}
+			__update_effect();
+		};
 		return self;
 	};
+	static __render_surface   = function() {
+		/// @func	__render_surface()
+		/// @return {FloeEffect} self
+		///
+		if (is_initialized()) {
+			__render_effect();
+		};
+		return self;
+	};
+		
+	static setup	= __setup_surface;
+	static teardown = __teardown_surface;
+	static update	= __update_surface;
+	static render	= __render_surface;
+	
 	static render_begin = function() {
 		/// @func	render_begin()
 		/// @return {FloeEffect} self
@@ -603,69 +613,82 @@ function FloeEffectFade() : FloeEffect() constructor {
 	///
 	set_threshold(0.01);
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
+	static __render_fade = function() {
+		/// @func	__render_fade()
 		/// @return {FloeEffect}
 		///
 		if (is_initialized()) {
-			__render_super();
+			__render_effect();
+			#region Fade ///////
+			
 			var _alpha = get_alpha() * get_progress();
 			draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), _alpha);
+			
+			#endregion
 		}
 		return self;
 	};	
+	static render		 = __render_fade;
 };
 function FloeEffectWipeLeft() : FloeEffect() constructor {
 	/// @func FloeEffectWipeLeft()
 	///
 	set_threshold(0.01);
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
-		/// @return {FloeEffect} 
+	static __render_wipe = function() {
+		/// @func	__render_wipe()
+		/// @return {FloeEffect}
 		///
 		if (is_initialized()) {
-			__render_super();
+			__render_effect();
+			#region Wipe ///////
+			
 			var _width = SURF_W + get_padding();
 			var _x	   = _width - (_width * get_progress()) - (get_padding() * 0.5);
 			draw_rectangle_alt(_x, 0, _width, SURF_H, 0, get_color(), get_alpha());
+			
+			#endregion
 		}
 		return self;
 	};	
+	static render		 = __render_wipe;
 };
 function FloeEffectWipeRight() : FloeEffect() constructor {
 	/// @func FloeEffectWipeRight()
 	///
 	set_threshold(0.01);
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
-		/// @return {FloeEffect} self
+	static __render_wipe = function() {
+		/// @func	__render_wipe()
+		/// @return {FloeEffect}
 		///
 		if (is_initialized()) {
-			__render_super();
+			__render_effect();
+			#region Wipe ///////
+			
 			var _width = SURF_W + get_padding();
 			var _x	   = -_width + (_width * get_progress()) - (get_padding() * 0.5);
 			draw_rectangle_alt(_x, 0, _width, SURF_H, 0, get_color(), get_alpha());
+			
+			#endregion
 		}
 		return self;
 	};	
+	static render		 = __render_wipe;
 };
 function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
 	/// @func FloeEffectCircleCenter()
 	///
 	set_threshold(0.01);
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
+	static __render_circle_center = function() {
+		/// @func	__render_circle_center()
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__render_super();
+			__render_surface();
+			#region Circle /////
+			
 			render_begin(); {
 				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), get_alpha());
 				gpu_set_blendmode(bm_subtract); {
@@ -674,43 +697,51 @@ function FloeEffectCircleCenter() : FloeEffectSurface() constructor {
 				draw_circle_color(SURF_W * 0.5, SURF_H * 0.5, _radius, c_white, c_white, false);
 			} gpu_set_blendmode(bm_normal);
 			} render_end();
+				
+			#endregion
 		}
 		return self;
-	};	
+	};
+	static render				  = __render_circle_center;
 };
 function FloeEffectCircleTarget() : FloeEffectSurface() constructor {
 	/// @func FloeEffectCircleTarget()
 	///
 	set_threshold(0.01);
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
+	static __render_circle_target = function() {
+		/// @func	__render_circle_target()
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__render_super();
-			render_begin();
-		
-			/// ...
-		
-			render_end();
+			__render_surface();
+			#region Circle /////
+			
+			render_begin(); {
+				
+				/// ...
+				
+			} render_end();
+			
+			#endregion
 		}
 		return self;
-	};	
+	};
+	static render				  = __render_circle_target;
 };
 function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 	/// @func FloeEffectBorderCenter()
 	///
 	set_threshold(0.01);
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
+	static __render_border_center = function() {
+		/// @func	__render_border_center()
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__render_super();
+			__render_surface();
+			#region Border /////
+			
 			render_begin(); {
 				draw_rectangle_alt(0, 0, SURF_W, SURF_H, 0, get_color(), get_alpha());
 				gpu_set_blendmode(bm_subtract); {
@@ -725,30 +756,37 @@ function FloeEffectBorderCenter() : FloeEffectSurface() constructor {
 				draw_rectangle_alt(_x, _y, _width, _height, 0, c_white, 1.0);
 			} gpu_set_blendmode(bm_normal);
 			} render_end();
+				
+			#endregion
 		}
 		return self;
 	};	
+	static render				  = __render_border_center;
 };
 function FloeEffectBorderTarget() : FloeEffectSurface() constructor {
 	/// @func FloeEffectBorderTarget()
 	///
 	set_threshold(0.01);
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
+	static __render_border_target = function() {
+		/// @func	__render_border_target()
 		/// @return {FloeEffect} self
 		///
 		if (is_initialized()) {
-			__render_super();
+			__render_surface();
+			#region Border /////
+			
 			render_begin();
 		
 			/// ...
 		
 			render_end();
+			
+			#endregion
 		}
 		return self;
 	};	
+	static render				  = __render_border_target;
 };
 function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() constructor {
 	/// @func	FloeEffectBorderSprite(sprite, image*)
@@ -795,15 +833,16 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 	};
 	
 	#endregion
-	#region Internal ///////
+	#region Core ///////////
 	
-	static __render_super = render;
-	static render		  = function() {
-		/// @func	render()
+	static __render_sprite = function() {
+		/// @func	__render_sprite()
 		/// @return {FloeEffect{ self
 		///
 		if (is_initialized()) {
-			__render_super();
+			__render_surface();
+			#region Sprite /////
+			
 			__validate_sprite();
 		
 			var _progress =  get_progress();
@@ -852,9 +891,12 @@ function FloeEffectBorderSprite(_sprite, _image = 0) : FloeEffectSurface() const
 					} gpu_set_blendmode(bm_normal);
 				} render_end();
 			}
+				
+			#endregion
 		}
 		return self;
 	};
+	static render		   = __render_sprite;
 		
 	#endregion
 	#region Getters ////////

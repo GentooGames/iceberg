@@ -3,7 +3,6 @@ function ___audio() {
 	///
 	global.___system_audio = {
 	    initialized: false,
-		
 		#region Core ///////
 		
 	    setup:    function() {
@@ -11,7 +10,7 @@ function ___audio() {
 	        /// @return {struct} self
 	        ///
 	        if (!initialized) {
-				#region ----------------
+				#region __ /////////////
 		
 		        log("<AUDIO> setup()");
 				initialized = true;
@@ -33,17 +32,19 @@ function ___audio() {
 				queue = ds_queue_create();
 			
 				#endregion
-				#region Events /////////
+				#region Components /////
 		
-				eventer = new Eventable().setup();
-				eventer.register([
-					"played",
-					"stopped",
-					"all_stopped",
-					"pitch_assigned",
-					"emitter_gain_assigned",
-					"emitter_pitch_assigned",
-				]);
+				components = new ComponentSystem().setup();
+				components.create(Eventable)
+				components.get(Eventable)
+					.register([
+						"played",
+						"stopped",
+						"all_stopped",
+						"pitch_assigned",
+						"emitter_gain_assigned",
+						"emitter_pitch_assigned",
+					]);
 		
 				#endregion
 			}
@@ -68,7 +69,7 @@ function ___audio() {
 			/// @return {struct} self
 			///
 			if (initialized) {
-				#region ----------------
+				#region __ /////////////
 		
 		        log("<AUDIO> teardown()");
 				initialized = false;
@@ -89,31 +90,6 @@ function ___audio() {
 			}
 			return self;
 		},
-		
-		#endregion
-		#region Actions ////
-		
-		
-		
-		#endregion
-		#region Getters ////
-		
-		
-		
-		#endregion
-		#region Setters ////
-		
-		
-		
-		#endregion
-		#region Checkers ///
-		
-		
-		
-		#endregion
-		#region __Private //
-		
-		
 		
 		#endregion
 	};

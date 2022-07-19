@@ -11,20 +11,14 @@ function ___particle() {
 	        /// @return {struct} self
 	        ///
 	        if (!initialized) {
-				#region ----------------
+				#region __ /////////////
 		
 		        log("<PARTICLE> setup()");
 		        initialized = true;
 				
+				#endregion
+				
 				system = part_system_create();
-		
-				#endregion
-				#region Events /////////
-			
-				eventer = new Eventable().setup();
-				//eventer.register([]);
-			
-				#endregion
 			}
 			return self;
 	    },

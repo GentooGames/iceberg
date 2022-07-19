@@ -11,7 +11,7 @@ function ___transition() {
 	        /// @return {struct} self
 	        ///
 	        if (!initialized) {
-				#region --------------------
+				#region __ /////////////////
 		
 		        log("<FLOE> setup()");
 				initialized = true;
@@ -47,21 +47,24 @@ function ___transition() {
 				effect		   = undefined;
 		
 				#endregion
-				#region Events /////////////
+				#region Components /////////
 		
-				eventer = new Eventable().setup();
-				eventer.register([
-					"enter_started",
-					"enter_completed",
-					"change_started",
-					"change_completed",
-					"hold_started",
-					"hold_completed",
-					"exit_started",
-					"exit_completed",
-					"room_changed",
-					"room_restarted",
-				]);
+				components = new ComponentSystem().setup();
+				components.create(Eventable);
+				
+				components.get(Eventable)
+					.register([
+						"enter_started",
+						"enter_completed",
+						"change_started",
+						"change_completed",
+						"hold_started",
+						"hold_completed",
+						"exit_started",
+						"exit_completed",
+						"room_changed",
+						"room_restarted",
+					]);
 		
 				#endregion
 			}
@@ -223,21 +226,6 @@ function ___transition() {
 	        throw("<ERROR in TRANSITION.get_room_previous()>:room with index " + string(_previous_room) + " does not exist.");
 	    },
 			
-		#endregion
-		#region Setters ////////
-		
-		
-		
-		#endregion
-		#region Checkers ///////
-		
-		
-		
-		#endregion
-		#region __Private //////
-		
-		
-		
 		#endregion
 	};
 	#region Macros /////////

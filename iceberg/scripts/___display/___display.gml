@@ -11,17 +11,11 @@ function ___display() {
 	        /// @return {struct} self
 	        ///
 	        if (!initialized) {
-				#region ----------------
+				#region __ /////////////
 		
 		        log("<DISPLAY> setup()");
 		        initialized = true;
 		
-				#endregion
-				#region Events /////////
-			
-				eventer = new Eventable().setup();
-				//eventer.register([]);
-			
 				#endregion
 			}
 			return self;

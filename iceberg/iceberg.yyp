@@ -45,7 +45,6 @@
     {"id":{"name":"util_classes","path":"scripts/util_classes/util_classes.yy",},"order":13,},
     {"id":{"name":"WeeState","path":"scripts/WeeState/WeeState.yy",},"order":2,},
     {"id":{"name":"FloeEffect","path":"scripts/FloeEffect/FloeEffect.yy",},"order":5,},
-    {"id":{"name":"obj_test2","path":"objects/obj_test2/obj_test2.yy",},"order":3,},
     {"id":{"name":"states_controller_game","path":"scripts/states_controller_game/states_controller_game.yy",},"order":0,},
     {"id":{"name":"CONFIG","path":"scripts/CONFIG/CONFIG.yy",},"order":2,},
     {"id":{"name":"SETTINGS","path":"scripts/SETTINGS/SETTINGS.yy",},"order":4,},

@@ -36,12 +36,6 @@ function ___clock() {
 		        #macro CLOCK_TUTORIAL CLOCK.clock_tutorial
 			
 				#endregion
-				#region Events /////////
-			
-				eventer = new Eventable().setup();
-				//eventer.register([]);
-			
-				#endregion
 			}
 			return self;
 	    },

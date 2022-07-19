@@ -139,6 +139,88 @@ function ___input() {
 			#endregion
 	    },
 		
+		#region Private ////
+		
+		__update_mouse_events:	  function() {
+			/// @func	__update_mouse_events()
+			/// @return {struct} self
+			///
+			if (mouse.button(mb_any)) {
+				components.get(Eventable)
+					.broadcast("mouse_button", {
+						button: mouse_button,
+						x:		INPUT.mouse.get_x(),
+						y:		INPUT.mouse.get_y(),
+						x_gui:	INPUT.mouse.get_x_gui(),
+						y_gui:	INPUT.mouse.get_y_gui(),
+					});
+			}
+			if (mouse.button_pressed(mb_any)) {
+				components.get(Eventable)
+					.broadcast("mouse_button_pressed", {
+						button: mouse_button,
+						x:		INPUT.mouse.get_x(),
+						y:		INPUT.mouse.get_y(),
+						x_gui:	INPUT.mouse.get_x_gui(),
+						y_gui:	INPUT.mouse.get_y_gui(),
+					});
+			}
+	        if (mouse.button_released(mb_any)) {
+				components.get(Eventable)
+					.broadcast("mouse_button_released", {
+						button: mouse_button,
+						x:		INPUT.mouse.get_x(),
+						y:		INPUT.mouse.get_y(),
+						x_gui:	INPUT.mouse.get_x_gui(),
+						y_gui:	INPUT.mouse.get_y_gui(),
+					});	
+			}
+			if (mouse.wheel_up()) {
+				components.get(Eventable)
+					.broadcast("mouse_wheel_up", {
+						x:		INPUT.mouse.get_x(),
+						y:		INPUT.mouse.get_y(),
+						x_gui:	INPUT.mouse.get_x_gui(),
+						y_gui:	INPUT.mouse.get_y_gui(),	
+					});
+			}
+			if (mouse.wheel_down()) {
+				components.get(Eventable)
+					.broadcast("mouse_wheel_down", {
+						x:		INPUT.mouse.get_x(),
+						y:		INPUT.mouse.get_y(),
+						x_gui:	INPUT.mouse.get_x_gui(),
+						y_gui:	INPUT.mouse.get_y_gui(),	
+					});
+			}
+			return self;
+		},
+		__update_keyboard_events: function() {
+			/// @func	__update_keyboard_events()
+			/// @return {struct} self
+			///
+			if (keyboard.button(vk_anykey)) {
+				components.get(Eventable)
+					.broadcast("keyboard_button", {
+					button: keyboard_key,
+				});
+			}
+	        if (keyboard.button_pressed(vk_anykey)) {
+				components.get(Eventable)
+					.broadcast("keyboard_button_pressed", {
+					button: keyboard_key,
+				});
+			}
+	        if (keyboard.button_released(vk_anykey)) {
+				components.get(Eventable)
+					.broadcast("keyboard_button_released", {
+					button: keyboard_key,
+				});
+			}
+			return self;
+		},
+			
+		#endregion
 		#region Core ///////
 		
 	    setup:    function() {
@@ -146,7 +228,7 @@ function ___input() {
 	        /// @return {struct} self
 	        ///
 	        if (!initialized) {
-				#region ----------------
+				#region __ /////////////
 		
 		        log("<INPUT> setup()");
 		        initialized = true;
@@ -154,36 +236,39 @@ function ___input() {
 				#endregion
 				#region Events /////////
 		
-				eventer = new Eventable().setup();
-				eventer.disable_logging();
-				eventer.register([
-					/// mouse_button_pressed
-					"mouse_button_pressed",
-					"mouse_left_button_pressed",
-			        "mouse_right_button_pressed",
-			        "mouse_middle_button_pressed",  
+				components = new ComponentSystem().setup();
+				components.create(Eventable)
+					
+				components.get(Eventable)
+					.disable_logging()
+					.register([
+						/// mouse_button_pressed
+						"mouse_button_pressed",
+						"mouse_left_button_pressed",
+					    "mouse_right_button_pressed",
+					    "mouse_middle_button_pressed",  
 			
-					/// mouse_button
-					"mouse_button",
-					"mouse_left_button",
-			        "mouse_right_button",
-			        "mouse_middle_button",  
+						/// mouse_button
+						"mouse_button",
+						"mouse_left_button",
+					    "mouse_right_button",
+					    "mouse_middle_button",  
 			
-					/// mouse_button_released
-					"mouse_button_released",
-					"mouse_left_button_released",
-			        "mouse_right_button_released",
-			        "mouse_middle_button_released",  
+						/// mouse_button_released
+						"mouse_button_released",
+						"mouse_left_button_released",
+					    "mouse_right_button_released",
+					    "mouse_middle_button_released",  
 			
-					/// mouse_wheel
-					"mouse_wheel_up",
-					"mouse_wheel_down",
+						/// mouse_wheel
+						"mouse_wheel_up",
+						"mouse_wheel_down",
 			
-					/// keyboard_button_*
-					"keyboard_button_pressed",
-					"keyboard_button",
-					"keyboard_button_released",
-				]);
+						/// keyboard_button_*
+						"keyboard_button_pressed",
+						"keyboard_button",
+						"keyboard_button_released",
+					]);
 		
 				#endregion
 			}
@@ -214,100 +299,6 @@ function ___input() {
 			return self;
 		},
     
-		#endregion
-		#region Actions ////
-		
-		
-		
-		#endregion
-		#region Getters ////
-		
-		
-		
-		#endregion
-		#region Setters ////
-		
-		
-		
-		#endregion
-		#region Checkers ///
-		
-		
-		
-		#endregion
-		#region __Private //
-		
-		__update_mouse_events:	  function() {
-			/// @func	__update_mouse_events()
-			/// @return {struct} self
-			///
-			if (mouse.button(mb_any)) {
-				eventer.broadcast("mouse_button", {
-					button: mouse_button,
-					x:		INPUT.mouse.get_x(),
-					y:		INPUT.mouse.get_y(),
-					x_gui:	INPUT.mouse.get_x_gui(),
-					y_gui:	INPUT.mouse.get_y_gui(),
-				});
-			}
-			if (mouse.button_pressed(mb_any)) {
-				eventer.broadcast("mouse_button_pressed", {
-					button: mouse_button,
-					x:		INPUT.mouse.get_x(),
-					y:		INPUT.mouse.get_y(),
-					x_gui:	INPUT.mouse.get_x_gui(),
-					y_gui:	INPUT.mouse.get_y_gui(),
-				});
-			}
-	        if (mouse.button_released(mb_any)) {
-				eventer.broadcast("mouse_button_released", {
-					button: mouse_button,
-					x:		INPUT.mouse.get_x(),
-					y:		INPUT.mouse.get_y(),
-					x_gui:	INPUT.mouse.get_x_gui(),
-					y_gui:	INPUT.mouse.get_y_gui(),
-				});	
-			}
-			if (mouse.wheel_up()) {
-				eventer.broadcast("mouse_wheel_up", {
-					x:		INPUT.mouse.get_x(),
-					y:		INPUT.mouse.get_y(),
-					x_gui:	INPUT.mouse.get_x_gui(),
-					y_gui:	INPUT.mouse.get_y_gui(),	
-				});
-			}
-			if (mouse.wheel_down()) {
-				eventer.broadcast("mouse_wheel_down", {
-					x:		INPUT.mouse.get_x(),
-					y:		INPUT.mouse.get_y(),
-					x_gui:	INPUT.mouse.get_x_gui(),
-					y_gui:	INPUT.mouse.get_y_gui(),	
-				});
-			}
-			return self;
-		},
-		__update_keyboard_events: function() {
-			/// @func	__update_keyboard_events()
-			/// @return {struct} self
-			///
-			if (keyboard.button(vk_anykey)) {
-				eventer.broadcast("keyboard_button", {
-					button: keyboard_key,
-				});
-			}
-	        if (keyboard.button_pressed(vk_anykey)) {
-				eventer.broadcast("keyboard_button_pressed", {
-					button: keyboard_key,
-				});
-			}
-	        if (keyboard.button_released(vk_anykey)) {
-				eventer.broadcast("keyboard_button_released", {
-					button: keyboard_key,
-				});
-			}
-			return self;
-		},
-			
 		#endregion
 	};
 	#region Macros /////////
