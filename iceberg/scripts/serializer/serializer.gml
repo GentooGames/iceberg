@@ -95,25 +95,25 @@ function Serializer(_owner = other, _vars) constructor {
 		/// Check If Custom "Lookup" Has Been Defined For var_name
 		/// ...
 		
-		var _literal = undefined;
-		var _value	 = variable_owner_get()(owner, _var_name);
+		var _class = undefined;
+		var _value = variable_owner_get()(owner, _var_name);
 		
 		switch (typeof(_value)) {
-			case "number":	  _literal = SerializerTranslator_Number;	 break;
-			case "string":	  _literal = SerializerTranslator_String;	 break;
-			case "array":	  _literal = SerializerTranslator_Array;	 break;
-			case "bool":	  _literal = SerializerTranslator_Bool;	 break;
-			case "ptr":		  _literal = SerializerTranslator_Ptr;		 break;
-			case "undefined": _literal = SerializerTranslator_Undefined; break;
-			case "method":	  _literal = SerializerTranslator_Method;	 break;
-			case "struct":	  _literal = SerializerTranslator_Struct;	 break;
-			//case "int32":	  _literal = SerializerTranslator_Int32;	 break;
-			//case "int64":	  _literal = SerializerTranslator_Int64;	 break;
-			//case "null":	  _literal = SerializerTranslator_Null;		 break;
-			//case "vec3":	  _literal = SerializerTranslator_vec3;		 break;
-			//case "vec4":	  _literal = SerializerTranslator_vec4;		 break;
+			case "number":	  _class = SerializerTranslator_Number;	   break;
+			case "string":	  _class = SerializerTranslator_String;	   break;
+			case "array":	  _class = SerializerTranslator_Array;	   break;
+			case "bool":	  _class = SerializerTranslator_Bool;	   break;
+			case "ptr":		  _class = SerializerTranslator_Ptr;	   break;
+			case "undefined": _class = SerializerTranslator_Undefined; break;
+			case "method":	  _class = SerializerTranslator_Method;	   break;
+			case "struct":	  _class = SerializerTranslator_Struct;	   break;
+			//case "int32":	  _class = SerializerTranslator_Int32;	   break;
+			//case "int64":	  _class = SerializerTranslator_Int64;	   break;
+			//case "null":	  _class = SerializerTranslator_Null;	   break;
+			//case "vec3":	  _class = SerializerTranslator_vec3;	   break;
+			//case "vec4":	  _class = SerializerTranslator_vec4;	   break;
 		};
-		return new _literal(owner, _var_name);
+		return new _class(owner, _var_name);
 	};
 	static variable_owner_get = function() {
 		/// @func	variable_owner_get()

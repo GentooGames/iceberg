@@ -1,4 +1,5 @@
 iceberg:
+	- why is the save controller handling the first room exit?
 	- remove MoveSet() and implement with generic Set() 
 	- noramlize has() and/or exists() checker methods
 	- remove __this. nesting from FLOE
