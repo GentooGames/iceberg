@@ -103,7 +103,7 @@ function Component(_config = {}) : Class(_config) constructor {
 			
 			/// Add Self Component To ComponentSystem
 			if (has_system()) {
-				get_system().add_component(__name, self);
+				get_system().add_component(self);
 			}
 			
 			#endregion
@@ -230,6 +230,9 @@ function Component(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 };
+	
+#region Component System ///////////
+
 function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @func	ComponentSystem(config*)
 	/// @param	{struct}		  config
@@ -311,7 +314,7 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		/// @param	{string}	name
 		/// @return {Component} component
 		///
-		return __components.get_item(_name);
+		return __components_set.get_item(_name);
 	};
 	static has_components	= function() {
 		/// @func	has_components()
@@ -325,9 +328,18 @@ function component_system() {
 	/// @return {ComponentSystem} system
 	///
 	return self[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME];	
-	//return __component_system; // <-- can use more explicit accessor
+	//return __component_system;	// <-- can use more explicit accessor should be 
+									// the same as __COMPONENT_SYSTEM_AUTO_VAR_NAME
+};
+function component_system_setup() {
+	/// @func	component_system_setup()
+	/// @return {Component} system
+	///
+	self[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME] = undefined;
+	self[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME] = new ComponentSystem().setup();
 };
 
+#endregion
 #region Eventable //////////////////
 
 /// DECOUPLE RENDERING FROM EVENTABLE AND PUT INTO RENDERABLE()?

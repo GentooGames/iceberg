@@ -27,23 +27,24 @@ setup	 = method_inherit(,function() {
 		#endregion
 		#region Components /
 		
-		//components = new ComponentSystem().setup();
+		component_system_setup();
 		
 		#endregion
 		#region Events /////
 	
 		//components.new_component("eventer", Eventable);
 		//components.get_component("eventer")
-		eventer = new Eventable().setup();
-		eventer
-			.register([
-				"setup_completed",
-				"teardown_completed",
-				"rebuild_completed",
-				"activated",
-				"deactivated",
-				"destroyed",
-			]);
+		component_system()
+			.new_component("eventer", Eventable)
+			.get_component("eventer")
+				.register([
+					"setup_completed",
+					"teardown_completed",
+					"rebuild_completed",
+					"activated",
+					"deactivated",
+					"destroyed",
+				]);
 		
 		INPUT.eventer.listen("mouse_button_pressed",  on_mouse_button_pressed);
 		INPUT.eventer.listen("mouse_button",		  on_mouse_button);
