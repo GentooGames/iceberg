@@ -9,7 +9,7 @@ activate   = method_inherit(,function() {
 		instance_activate_object(self.id);
 	}
 	return self;
-},	activate_callback);
+},	callback_on_activate);
 deactivate = method_inherit(,function() {
 	/// @func	deactivate()
 	/// @return {struct} self
@@ -18,7 +18,7 @@ deactivate = method_inherit(,function() {
 		instance_deactivate_object(self.id);
 	}
 	return self;
-},	function() { deactivate_callback(); });
+},	callback_on_deactivate);
 destroy	   = method_inherit(,function() {
 	/// @func	destroy()
 	/// @return {struct} self
@@ -28,7 +28,7 @@ destroy	   = method_inherit(,function() {
 		teardown();
 	}
 	return self;
-},	function() { destroy_callback(); });
+},	callback_on_destroy);
 	
 /// Interactions
 mouse_touching = function() {	/// @OVERRIDE

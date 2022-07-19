@@ -14,7 +14,7 @@
 //		|	should be encapsulated into a component //
 //////////////////////////////////////////////////////
 
-#macro __COMPONENT_SYSTEM_AUTO_VAR_NAME	"__component_system"
+#macro __COMPONENT_SYSTEM_VAR_NAME "__component_system"
 
 function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
@@ -28,62 +28,18 @@ function Component(_config = {}) : Class(_config) constructor {
 	
 	#region Private ////////
 	
-	#region System /////////
-	
-	static __setup_owners_system	= function() {
-		///	@func	__setup_owners_system()
-		/// @return {Component} self
-		///
-		__set_owners_system(undefined);	// assign undefined first to avoid recursive loop 
-		__set_owners_system(__new_owners_system()); // <--------------------------------'
-		return self;
-	};
-	static __teardown_owners_system = function() {
-		/// @func	__teardown_owners_system()
-		/// @return {Component} self
-		///
-		variable_struct_remove(__owner, __COMPONENT_SYSTEM_AUTO_VAR_NAME);
-		return self;
-	};
-	static __new_owners_system		= function() {
-		/// @func	__new_owners_system()
-		/// @return {Component} self
-		///
-		return new ComponentSystem({ 
-			owner: get_owner(),
-		}).setup();
-	};
 	static __get_owners_system		= function() {
-		/// @func	__get_owners_system() 
-		/// @return {Component} system
+		/// @func	__get_owners_system()
+		/// @return {component} system
 		///
-		return __owner[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME];
-	};
-	static __set_owners_system		= function(_system) {
-		/// @func	__set_owners_system(system)
-		/// @param	{Component) system
-		/// @return {Component} self
-		///
-		__owner[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME] = _system;
-		return self;
+		return __owner[$ __COMPONENT_SYSTEM_VAR_NAME];
 	};
 	static __is_owners_system_setup	= function() {
 		/// @func	__is_owners_system_setup()
 		/// @return {bool} owner_has_system?
 		///
-		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_AUTO_VAR_NAME);
+		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
 	};
-	static __is_owners_system_empty = function() {
-		/// @func	__is_owners_system_empty()
-		/// @return {bool} is_empty?
-		///
-		if (__get_owners_system() == undefined) {
-			return false;
-		}
-		return !__get_owners_system().has_components();
-	};
-	
-	#endregion
 	
 	#endregion
 	#region Core ///////////
@@ -93,24 +49,25 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @return {Component} self
 		///
 		if (!is_initialized()) {
+			#region Props //////
+			
+			if (__config[$ "active"] != undefined) __active = __config[$ "active"];
+			if (__config[$ "system"] != undefined) __system = __config[$ "system"];
+			
+			#endregion
 			#region System /////
 			
-			/// Initialize Owner's Hidden ComponentSystem()
-			if (!__is_owners_system_setup()) {
-				__setup_owners_system();
+			/// Initialize Dynamic ComponentSystem() Var
+			if (__system == undefined) {
+				if (!__is_owners_system_setup()) {
+					component_system_setup(__owner);
+				}
+				__system = __get_owners_system(); // may still be undefined
 			}
-			__system = __get_owners_system();
 			
 			/// Add Self Component To ComponentSystem
 			if (has_system()) {
 				get_system().add_component(self);
-			}
-			
-			#endregion
-			#region Props //////
-			
-			if (__config[$ "active"] != undefined) {
-				__active = __config[$ "active"];
 			}
 			
 			#endregion
@@ -125,10 +82,12 @@ function Component(_config = {}) : Class(_config) constructor {
 		if (is_initialized()) {
 			#region System /////
 			
-			if (has_system()) {
+			if (__system != undefined) {
 				__system.remove_component(__name);
-				if (__is_owners_system_empty()) {
-					__teardown_owners_system();
+				
+				/// Destroy Dynamic ComponentSystem() Var If Empty
+				if (__system.is_empty()) {
+					component_system_teardown();
 				}
 				__system.teardown();	
 				__system = undefined;
@@ -192,6 +151,18 @@ function Component(_config = {}) : Class(_config) constructor {
 	};
 	
 	#endregion
+	#region Setters ////////
+	
+	static set_system = function(_system) {
+		/// @func	set_system(system)
+		/// @param	{Component} system
+		/// @return {Component} self
+		///
+		__system = _system;
+		return self;
+	};
+	
+	#endregion
 	#region Checkers ///////
 	
 	static is_initialized = function() {
@@ -238,10 +209,10 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}		  config
 	/// @return {ComponentSystem} self
 	///
-	__components_set	= new Set();
-	__components_family = new Family();
+	__components = new Set();
+	__categories = new Family();
 	
-	#region Core ///////
+	#region Core ///////////
 	
 	static __setup_component_system		= function() {
 		/// @func	__setup_component_system()
@@ -267,82 +238,160 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	
 	#endregion
 	
-	static new_component	= function(_name, _component_instanceof) {
-		/// @func	new_component(name, component_instanceof)
-		/// @param	{string}	name 
-		/// @param	{Component} component_instanceof
+	static get_size = function() {
+		/// @func	get_size()
+		/// @return {real} size
+		///
+		return __components.get_size();
+	};
+	static is_empty = function() {
+		/// @func	is_empty()
+		/// @return {bool} is_empty?
+		///
+		return get_size() <= 0;
+	};
+	static empty	= function() {
+		///	@func	empty()
 		/// @return {Component} self
 		///
-		return add_component(
-			new _component_instanceof({
-				owner: get_owner(),	
-				name: _name,
-			}).setup()
-		);
+		__components.empty();
+		__categories.empty();
+		return self;
 	};
-	static add_component	= function(_component) {
+	
+	/// Single Component
+	static add_component	 = function(_component) {
 		///	@func	add_component(component)
 		/// @param	{Component}	component
 		/// @return {Component} self
 		///
-		__components_set.add_item(_component.get_name(), _component);
-		__components_family.add_item(instanceof(_component), _component);
+		 _component.set_system(self);
+		__components.add_item(_component.get_name(), _component);
+		__categories.add_item(instanceof(_component), _component);
 		return self;
 	};
-	static remove_component = function(_name) {
-		///	@func	remove_component(name)
-		/// @param	{string}		  name
-		/// @return {ComponentSystem} self
+	static new_component	 = function(_component_name, _component_literal) {
+		/// @func	new_component(component_name, component_literal)
+		/// @param	{string}	component_name
+		/// @param	{literal}	component_literal
+		/// @return {Component} self
 		///
-		if (__components_set.has_item(_name)) {
-			var _component = __components_set.get_item(_name);
-			__components_set.remove_item(_name);
-			__components_family.remove_item(instanceof(_component), _component);
+		return add_component(new _component_literal({
+			owner:  get_owner(),	
+			name:  _component_name,
+		}).setup());
+	};
+	static has_component	 = function(_component_name) {
+		/// @func	has_component(component_name)
+		/// @param	{string}  component_name
+		/// @return {boolean} has_component?
+		///
+		return get_component(_component_name) != undefined;
+	};
+	static get_component	 = function(_component_name) {
+		///	@func	get_component(component_name)
+		/// @param	{string}	component_name
+		/// @return {Component} component
+		///
+		return __components.get_item(_component_name);
+	};
+	static remove_component  = function(_component_name) {
+		///	@func	remove_component(component_name)
+		/// @param	{string}	component_name
+		/// @return {Component} self
+		///
+		if (__components.has_item(_component_name)) {
+			var _component = __components.get_item(_component_name);
+			__components.remove_item(_component_name);
+			__categories.remove_item(instanceof(_component), _component);
 		}
 		return self;
 	};
-	static clear_components = function() {
-		///	@func	clear_components()
-		/// @return {ComponentSystem} self
+	static act_on_component	 = function(_component_name, _method, _data = undefined) {
+		/// @func	act_on_component(component_name, method, data*)
+		/// @param	{string}	component_name
+		/// @param	{method}	method
+		/// @param	{any}		data=undefined
+		/// @return {Component} self
 		///
-		__components_set.empty();
-		__components_family.empty();
+		if (has_component(_component_name)) {
+			var _component = get_component(_component_name);
+			with (_component) {
+				_method(_data);	
+			}
+		}
 		return self;
 	};
-	static get_component	= function(_name) {
-		///	@func	get_component(name)
-		/// @param	{string}	name
-		/// @return {Component} component
+	
+	/// Components
+	static has_components	 = function(_component_literal) {
+		/// @func	has_components(component_literal)
+		/// @param	{literal} component_literal
+		/// @return {boolean} has_components?
 		///
-		return __components_set.get_item(_name);
+		var _category   = script_get_name(_component_literal);
+		var _components = get_components(_category);
+		return array_length(_components) > 0;
 	};
-	static has_components	= function() {
-		/// @func	has_components()
-		/// @return {bool} has_components?
+	static get_components	 = function(_component_literal) {
+		/// @func	get_components(component_literal)
+		/// @param	{literal} component_literal
+		/// @return {array}   components
 		///
-		return !__components.empty();
+		var _category = script_get_name(_component_literal);
+		return __categories.get_items(_category);
 	};
+	static act_on_components = function(_category_name, _method, _data = undefined) {
+		/// @func	act_on_components(category_name, method, data*)
+		/// @param	{string}	category_name
+		/// @param	{method}	method
+		/// @param	{any}		data=undefined
+		/// @return {Component} self
+		///
+		if (has_components(_category_name)) {
+			var _components = get_components(_category_name);
+			for (var _i = 0, _len = array_length(_components); _i < _len; _i++) {
+				var _component = _components[_i];
+				with (_component) {
+					_method(_data);	
+				}
+			}
+		}
+		return self;
+	};
+		
+	/// since we cannot overload methods, and would love to have remove_component(component_instance)
+	/// instead have components be able to remove themselves with .remove()
 };
-function component_system() {
-	/// @func	component_system()
-	/// @return {ComponentSystem} system
+function component_system_setup(_owner = self) {
+	/// @func	component_system_setup(owner*)
+	/// @param	{struct}	owner=self
+	/// @return {component} system
 	///
-	return self[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME];	
-	//return __component_system;	// <-- can use more explicit accessor should be 
-									// the same as __COMPONENT_SYSTEM_AUTO_VAR_NAME
+	_owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;	// set to undefined in order to avoid recursive loop
+	_owner[$ __COMPONENT_SYSTEM_VAR_NAME] = new ComponentSystem({ owner: _owner }).setup();	// <-----------'
+	_owner[$ "component_system"]		  = method(_owner, function() {
+		/// @func	component_system()
+		/// @return {Component} system
+		///
+		return self[$ __COMPONENT_SYSTEM_VAR_NAME]; // <-- can use more explicit accessor should be
+	});
+	
+	return _owner[$ __COMPONENT_SYSTEM_VAR_NAME];
 };
-function component_system_setup() {
-	/// @func	component_system_setup()
-	/// @return {Component} system
+function component_system_teardown(_owner = self) {
+	/// @func	component_system_teardown(owner*)
+	/// @param	{struct}	owner=self
+	/// @return {component} system
 	///
-	self[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME] = undefined;
-	self[$ __COMPONENT_SYSTEM_AUTO_VAR_NAME] = new ComponentSystem().setup();
+	_owner.component_system().teardown();
+	_owner.variable_struct_remove(self, __COMPONENT_SYSTEM_VAR_NAME);
+	_owner.variable_struct_remove(self, "component_system");
+	return _owner;
 };
 
 #endregion
 #region Eventable //////////////////
-
-/// DECOUPLE RENDERING FROM EVENTABLE AND PUT INTO RENDERABLE()?
 
 function Eventable(_config = {}) : Component(_config) constructor {
 	/// @func	Eventable(config*)
@@ -796,6 +845,8 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 
 #endregion
 #region Actionable /////////////////
+
+/// DECOUPLE RENDERING FROM ACTIONABLE AND PUT INTO RENDERABLE()?
 
 function Actionable() : Component() constructor {
 	/// @func	Actionable()

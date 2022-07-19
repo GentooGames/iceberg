@@ -17,7 +17,7 @@ setup	 = method_inherit(,function() {
 	/// @return {struct} self
 	///
 	if (!initialized) {
-		#region __ /////////
+		#region __ /////////////
 	
 		updating  = true;
 		rendering = true;
@@ -25,17 +25,19 @@ setup	 = method_inherit(,function() {
 		destroyed = false;
 	
 		#endregion
-		#region Components /
+		#region Components /////
 		
 		component_system_setup();
+		component_system()
+			.new_component("eventer_1", Eventable)
+			.new_component("eventer_2", Eventable)
+		;
+		//show_message(component_system().get_components(Eventable));
 		
 		#endregion
-		#region Events /////
+		#region Events /////////
 	
-		//components.new_component("eventer", Eventable);
-		//components.get_component("eventer")
 		component_system()
-			.new_component("eventer", Eventable)
 			.get_component("eventer")
 				.register([
 					"setup_completed",
@@ -46,14 +48,14 @@ setup	 = method_inherit(,function() {
 					"destroyed",
 				]);
 		
-		INPUT.eventer.listen("mouse_button_pressed",  on_mouse_button_pressed);
-		INPUT.eventer.listen("mouse_button",		  on_mouse_button);
-		INPUT.eventer.listen("mouse_button_released", on_mouse_button_released);
+		//INPUT.eventer.listen("mouse_button_pressed",  on_mouse_button_pressed);
+		//INPUT.eventer.listen("mouse_button",		  on_mouse_button);
+		//INPUT.eventer.listen("mouse_button_released", on_mouse_button_released);
 		
 		#endregion
 	}
 	return self;	
-},	setup_callback);
+},	callback_on_setup);
 teardown = method_inherit(,function() {
 	/// @func	teardown()
 	/// @return {struct} self
@@ -64,14 +66,22 @@ teardown = method_inherit(,function() {
 		//clear_subscriptions();
 	
 		#endregion
-	
+		#region Components /////
+		
+		component_system_teardown();
+		
+		#endregion
+		#region __ /////////////
+		
 		updating  = true;
 		rendering = true;
 		active	  = true;
 		destroyed = false;
+		
+		#endregion
 	}
 	return self;
-},	teardown_callback);
+},	callback_on_teardown);
 rebuild  = method_inherit(,function() {
 	/// @func	rebuild()
 	/// @return {struct} self
@@ -81,7 +91,7 @@ rebuild  = method_inherit(,function() {
 		setup();
 	}
 	return self;
-},	rebuild_callback);
+},	callback_on_rebuild);
 update	 = method_inherit(,function() {
 	/// @func	update()
 	/// @return {struct} self

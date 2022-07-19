@@ -58,9 +58,6 @@ function Class(_config = {}) constructor {
 	
 	/// ANY CHANGES MADE TO CONFIG STRUCT SHOULD BE UPDATED IN CODE_SNIPPET
 };
-	
-#region Collections ////////////
-
 function Collection(_config = {}) : Class(_config) constructor {
 	/// @func	Collection(config*)
 	/// @param	{struct}	 config={}
@@ -101,6 +98,7 @@ function Collection(_config = {}) : Class(_config) constructor {
 	
 	////////////////////////////////////////
 	
+	/// @LOCAL
 	static __add_item_collection	= function(_item) {
 		/// @func	__add_item_collection(item)
 		/// @param	{any}		 item
@@ -271,6 +269,7 @@ function Family(_config = {}) : Set(_config) constructor {
 	static add_set		= add_item;
 	static has_set		= has_item;
 	static remove_set	= remove_item;
+	
 	static new_set		= function() {
 		/// @func	new_set()
 		/// @return {Collection} set
@@ -330,12 +329,12 @@ function Family(_config = {}) : Set(_config) constructor {
 	};
 };
 	
-#endregion
+////////////////////////////////////////////////////////////////
 	
 function Trigger(_config = {}) : Class(_config) constructor {
 	/// @func	Trigger(config*)
 	/// @param	{struct}  config={}
-	/// @return	{Trigger} self
+	/// @return {Trigger} self
 	///
 	__conditions = new Set();
 	
@@ -378,3 +377,4 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		return false;
 	};
 };
+

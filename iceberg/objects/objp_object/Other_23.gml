@@ -1,50 +1,163 @@
 /// @desc CALLBACKS
 
-setup_callback		= function() {
-	/// @func	setup_callback()
+/// Core
+callback_on_setup	 = function() {
+	/// @func	callback_on_setup()
 	/// @return {struct} self
 	///
+	component_system()
+		.get_component("eventer")
+			.broadcast("setup_completed");
+			
 	initialized = true;
-	eventer.broadcast("setup_completed");
 	return self;
 };
-teardown_callback	= function() {
-	/// @func	teardown_callback()
+callback_on_teardown = function() {
+	/// @func	callback_on_teardown()
 	/// @return {struct} self
 	///
+	component_system()
+		.get_component("eventer")
+			.broadcast("teardown_completed");
+		
 	initialized = false;
-	eventer.broadcast("teardown_completed");
 	return self;
 };
-rebuild_callback	= function() {
-	/// @func	rebuild_callback()
+callback_on_rebuild	 = function() {
+	/// @func	callback_on_rebuild()
 	/// @return {struct} self
 	///
-	eventer.broadcast("rebuild_completed");
+	component_system()
+		.get_component("eventer")
+			.broadcast("rebuild_completed");
+			
 	return self;
 };
-activate_callback	= function() {
-	/// @func	activate_callback()
+
+/// Methods
+callback_on_activate	= function() {
+	/// @func	callback_on_activate()
 	/// @return {struct} self
 	///
+	component_system()
+		.get_component("eventer")
+			.broadcast("activated");
+	
 	active = true;
-	eventer.broadcast("activated",,true);
 	return self;
 };
-deactivate_callback = function() {
-	/// @func	deactivate_callback
+callback_on_deactivate	= function() {
+	/// @func	callback_on_deactivate
 	/// @return {struct} self
 	///
+	component_system()
+		.get_component("eventer")
+			.broadcast("deactivated");
+	
 	active = false;
-	eventer.broadcast("deactivated",,true);
 	return self;
 };
-destroy_callback	= function() {
-	/// @func	destroy_callback()
+callback_on_destroy		= function() {
+	/// @func	callback_on_destroy()
 	/// @return {struct} self
-	///
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("destroyed");
+		
 	destroyed = true;
-	eventer.broadcast("destroyed",,true);
 	instance_destroy();
+	return self;
+};
+
+/// Events
+callback_on_mouse_left_button_pressed	 = function() {
+	/// @func	callback_on_mouse_left_button_pressed()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_left_button_pressed");
+			
+	return self;
+};
+callback_on_mouse_right_button_pressed	 = function() {
+	/// @func	callback_on_mouse_right_button_pressed()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_right_button_pressed");
+			
+	return self;
+};
+callback_on_mouse_middle_button_pressed  = function() {
+	/// @func	callback_on_mouse_middle_button_pressed()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_middle_button_pressed");
+			
+	return self;
+};
+callback_on_mouse_left_button			 = function() {
+	/// @func	callback_on_mouse_left_button()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_left_button");
+			
+	return self;
+};
+callback_on_mouse_right_button			 = function() {
+	/// @func	callback_on_mouse_right_button()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_right_button");
+			
+	return self;
+};
+callback_on_mouse_middle_button			 = function() {
+	/// @func	callback_on_mouse_middle_button()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_middle_button");
+			
+	return self;
+};
+callback_on_mouse_left_button_released   = function() {
+	/// @func	callback_on_mouse_left_button_released()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_left_button_released");
+			
+	return self;
+};
+callback_on_mouse_right_button_released  = function() {
+	/// @func	callback_on_mouse_right_button_released()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_right_button_released");
+			
+	return self;
+};
+callback_on_mouse_middle_button_released = function() {
+	/// @func	callback_on_mouse_middle_button_released()
+	/// @return {struct} self
+	///	
+	component_system()
+		.get_component("eventer")
+			.broadcast("mouse_middle_button_released");
+			
 	return self;
 };
