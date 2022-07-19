@@ -69,10 +69,16 @@ function ___audio() {
 			/// @return {struct} self
 			///
 			if (initialized) {
-				#region __ /////////////
-		
-		        log("<AUDIO> teardown()");
-				initialized = false;
+				#region Components /////
+				
+				components.teardown();
+				components = undefined;
+				
+				#endregion
+				#region Queues /////////
+			
+				ds_queue_destroy(queue);
+				queue = undefined;
 			
 				#endregion
 				#region Layers /////////
@@ -81,10 +87,10 @@ function ___audio() {
 				n_layers = 0;
 			
 				#endregion
-				#region Queues /////////
-			
-				ds_queue_destroy(queue);
-				queue = undefined;
+				#region __ /////////////
+		
+		        log("<AUDIO> teardown()");
+				initialized = false;
 			
 				#endregion
 			}

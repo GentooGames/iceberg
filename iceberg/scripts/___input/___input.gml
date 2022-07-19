@@ -238,9 +238,7 @@ function ___input() {
 		
 				components = new ComponentSystem().setup();
 				components.create(Eventable)
-					
 				components.get(Eventable)
-					.disable_logging()
 					.register([
 						/// mouse_button_pressed
 						"mouse_button_pressed",
@@ -295,7 +293,14 @@ function ___input() {
 			/// @func	teardown()
 			/// @return {struct} self
 			///
-			if (initialized) {};
+			if (initialized) {
+				#region Components /////
+				
+				components.teardown();
+				components = undefined;
+				
+				#endregion
+			};
 			return self;
 		},
     

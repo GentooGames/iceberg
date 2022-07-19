@@ -51,7 +51,6 @@ function ___transition() {
 		
 				components = new ComponentSystem().setup();
 				components.create(Eventable);
-				
 				components.get(Eventable)
 					.register([
 						"enter_started",
@@ -83,9 +82,7 @@ function ___transition() {
 		
 				if (keyboard_check_pressed(ord("R"))) {
 					TRANSITION.restart({
-						room_hold:  true,
-						//effect_in:  FloeEffectBorderTrees,
-						//effect_out: FloeEffectBorderTrees
+						room_hold: true,
 					});
 				}
 			}
@@ -104,7 +101,14 @@ function ___transition() {
 			/// @func	teardown()
 			/// @return {struct} self
 			///
-			if (initialized) {};
+			if (initialized) {
+				#region Components /////////
+				
+				components.teardown();
+				components = undefined;
+				
+				#endregion
+			};
 			return self;
 		},
 			

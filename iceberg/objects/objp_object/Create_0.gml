@@ -29,7 +29,6 @@ setup	 = method_inherit(,function() {
 		
 		components = new ComponentSystem().setup();
 		components.create(Eventable)
-		
 		components.get(Eventable)
 			.register([
 				"setup_completed",
@@ -54,14 +53,10 @@ teardown = method_inherit(,function() {
 	/// @return {struct} self
 	///
 	if (initialized) {
-		#region Events /////////
-	
-		//clear_subscriptions();
-	
-		#endregion
 		#region Components /////
 		
-		/// ...
+		components.teardown();
+		components = undefined;
 		
 		#endregion
 		#region __ /////////////

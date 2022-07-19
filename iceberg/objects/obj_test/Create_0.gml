@@ -46,7 +46,7 @@ update	 = method_inherit(update, function() {
 	if (INPUT.keyboard.button(vk_left))  x -= _speed;
 	if (INPUT.keyboard.button(vk_down))  y += _speed;
 	if (INPUT.keyboard.button(vk_up))    y -= _speed;
-	
+
 	//mover.update();
 	//log("moveset: {0}", mover.__moveset.__moveset.get_name());
 	//log("hspd: {0}, vspd: {1}, speed: {2}, accel: {3}, fric: {4}, mult: {5}",

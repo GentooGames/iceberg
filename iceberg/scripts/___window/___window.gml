@@ -21,7 +21,6 @@ function ___window() {
 			
 				components = new ComponentSystem().setup();
 				components.create(Eventable)
-				
 				components.get(Eventable)
 					.register([
 						"fullscreen_assigned",
@@ -50,7 +49,14 @@ function ___window() {
 			/// @func	teardown()
 			/// @return {struct} self
 			///
-			if (initialized) {};
+			if (initialized) {
+				#region Components /////
+				
+				components.teardown();
+				components = undefined;
+				
+				#endregion
+			};
 			return self;
 		},
 	

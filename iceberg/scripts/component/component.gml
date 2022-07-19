@@ -28,7 +28,7 @@ function Component(_config = {}) : Class(_config) constructor {
 	__initialized =  false;
 	__active	  =  true;
 	__system	  =  undefined;
-	__logging	  =  DEBUGGING && 1;
+	__logging	  =  DEBUGGING && 0;
 	
 	#region Private ////////
 	
@@ -53,10 +53,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		if (instanceof(self) == "ComponentSystem") {
 			return true;	
 		}
-		var _exists = variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
-		var _value  = variable_struct_get(__owner, __COMPONENT_SYSTEM_VAR_NAME);
-		log("self: {0}, value: {1}", instanceof(self), instanceof(_value));
-		return _exists;
+		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
 	};
 	
 	#endregion
@@ -99,7 +96,7 @@ function Component(_config = {}) : Class(_config) constructor {
 			
 			if (has_system()) {
 				get_system().remove(get_class());
-				set_system(undefined);
+				__system = undefined;
 			}
 			
 			#endregion
@@ -235,7 +232,7 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @return {ComponentSystem} self
 	///
 	__class		 = ComponentSystem;
-	__components = new Set();
+	__components = undefined;
 	
 	#region Core ///////////
 	
@@ -245,9 +242,14 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		if (!is_initialized()) {
 			__setup_component();
-			#region __ /////////
+			#region __ /////////////
 			
-			__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = self;
+			__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = self
+			
+			#endregion
+			#region Components /////
+			
+			__components = new Set();
 			
 			#endregion
 		}
@@ -265,6 +267,7 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 			for (var _i = 0, _len = array_length(_components); _i < _len; _i++) {
 				_components[_i].teardown();
 			}
+			__components = undefined;
 			
 			#endregion
 			#region __ /////////////
@@ -412,12 +415,18 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	#endregion
 	#region Checkers ///////
 	
-	static is_registered = function(_event_name) {
+	static is_registered   = function(_event_name) {
 		/// @func	is_registered(event_name)
 		/// @param	{string}  event_name
 		/// @return {boolean} is_registered?
 		///
 		return get_broadcaster().has_registered_channel(_event_name);
+	};
+	static has_broadcaster = function() {
+		/// @func	has_broadcaster()
+		/// @return {boolean} has_broadcaster?
+		///
+		return get_broadcaster() != undefined;
 	};
 		
 	#endregion
@@ -457,10 +466,14 @@ function Eventable(_config = {}) : Component(_config) constructor {
 				payload:   _payload,
 			}
 			get_broadcaster().publish(_event_name, _data);
-			get_broadcaster().publish("broadcasted", _data);
-
+			
+			/// Publish Event Above May Invoke .teardown() Setting __broadcaster To undefined
+			if (has_broadcaster()) {
+				get_broadcaster().publish("broadcasted", _data);
+			}
+		
 			if (__logging) {
-				log("<PUBLISHER> {0} \n\t event : {1} \n\t payload : {2}", instanceof(_owner), _event_name, _payload);
+				log("<EVENTABLE> {0} \n\t event : {1} \n\t payload : {2}", instanceof(_owner), _event_name, _payload);
 			}
 		}
 		return self;
