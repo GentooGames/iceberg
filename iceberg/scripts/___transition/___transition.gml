@@ -10,7 +10,7 @@ global.___system_transition = {
 	    if (!initialized) {
 			#region __ /////////////////
 		
-		    log("<FLOE> setup()");
+		    log("<__transition> setup()");
 			initialized = true;
 		
 			#endregion
@@ -104,6 +104,12 @@ global.___system_transition = {
 			components.teardown();
 			components = undefined;
 				
+			#endregion
+			#region __ /////////////////
+			
+			log("<__transition> teardown()");
+			initialized = false;
+			
 			#endregion
 		};
 		return self;

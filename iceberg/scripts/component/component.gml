@@ -28,7 +28,6 @@ function Component(_config = {}) : Class(_config) constructor {
 	__initialized =  false;
 	__active	  =  true;
 	__system	  =  undefined;
-	__logging	  =  DEBUGGING && 0;
 	
 	#region Private ////////
 	
@@ -467,10 +466,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 			if (has_broadcaster()) {
 				get_broadcaster().publish("broadcasted", _data);
 			}
-		
-			if (__logging) {
-				log("<EVENTABLE> {0} \n\t event : {1} \n\t payload : {2}", instanceof(_owner), _event_name, _payload);
-			}
+			log("<Eventable()> instance: {0} | event: \"{1}\" | payload: {2}", instanceof(_owner), _event_name, _payload);
 		}
 		return self;
 	};
@@ -495,20 +491,6 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		///
 		__publisher.clear_channel(_event_name);
 		broadcast("listeners_cleared", _event_name);
-		return self;
-	};
-	static enable_logging	= function() {
-		/// @func	enable_logging()
-		/// @return {Eventable} self
-		///
-		__logging = true;
-		return self;
-	};
-	static disable_logging	= function() {
-		/// @func	disable_logging()
-		/// @return {Eventable} self
-		///
-		__logging = false;
 		return self;
 	};
 	//static unsubscribe_subscriber = function(_subscriber, _force = false) {};
@@ -1301,7 +1283,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 				array_delete(TRUINST.deactivated,	     _index, 1);
 				array_delete(TRUINST.deactivated_data,   _index, 1);
 				array_find_delete(TRUINST.temp_activated, id);
-				if (TRUINST_LOGGING) { show_debug_message("<TRUINST>: object " + string(_inst) + " activated."); }
+				log("<Cullable()>: object {0} activated.", _inst);
 			}
 			instance_activate_object(id);
 			__truInst_active = true;
@@ -1322,7 +1304,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 			if (TRUINST_APPLY_CULLING) {
 				array_push(TRUINST.deactivated, id);
 				array_push(TRUINST.deactivated_data, { id: id, bbox: truInst_get_bbox() });	
-				if (TRUINST_LOGGING) { show_debug_message("<TRUINST>: object " + string(self.id) + " deactivated."); }
+				log("<Cullable()>: object {0} deactivated.", self.id);
 			}
 			instance_deactivate_object(id);
 			__truInst_active = false;
@@ -1335,7 +1317,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 			instance_destroy();	// replace with instance.destroy()?
 			
 			if (TRUINST_APPLY_CULLING) {
-				if (TRUINST_LOGGING) { show_debug_message("<TRUINST>: object " + string(self.id) + " destroyed."); }	
+				log("<Cullable()>: object {0} destroyed.", self.id);	
 			}
 			return __truInst_instance;
 		});

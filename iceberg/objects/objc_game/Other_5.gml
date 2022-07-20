@@ -1,0 +1,1 @@
+log("<objc_game> room_end {0}", room_get_name(room));

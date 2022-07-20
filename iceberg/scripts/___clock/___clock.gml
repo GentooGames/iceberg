@@ -13,7 +13,7 @@ global.___system_clock = {
 	    if (!initialized) {
 			#region __ /////////////
 		
-		    log("<CLOCK> setup()");
+		    log("<__clock> setup()");
 			initialized = true;
 		
 			#endregion
@@ -60,7 +60,14 @@ global.___system_clock = {
 		/// @func	teardown()
 		/// @return {struct} self
 		///
-		if (initialized) {};
+		if (initialized) {
+			#region __ /////////////
+		
+		    log("<__clock> setup()");
+			initialized = false;
+		
+			#endregion
+		};
 		return self;
 	},
 };

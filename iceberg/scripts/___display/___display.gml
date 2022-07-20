@@ -9,7 +9,7 @@ global.___system_display = {
 	    if (!initialized) {
 			#region __ /////////////
 		
-		    log("<DISPLAY> setup()");
+		    log("<__display> setup()");
 		    initialized = true;
 		
 			#endregion
@@ -34,7 +34,14 @@ global.___system_display = {
 		/// @func	teardown()
 		/// @return {struct} self
 		///
-		if (initialized) {};
+		if (initialized) {
+			#region __ /////////////////
+			
+			log("<__display> teardown()");
+			initialized = false;
+			
+			#endregion
+		};
 		return self;
 	},
 	

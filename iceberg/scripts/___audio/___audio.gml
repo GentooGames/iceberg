@@ -9,7 +9,7 @@ global.___system_audio = {
 	    if (!initialized) {
 			#region __ /////////////
 		
-		    log("<AUDIO> setup()");
+		    log("<__audio> setup()");
 			initialized = true;
 		
 			audio_falloff_set_model(audio_falloff_linear_distance);
@@ -86,7 +86,7 @@ global.___system_audio = {
 			#endregion
 			#region __ /////////////
 		
-		    log("<AUDIO> teardown()");
+		    log("<__audio> teardown()");
 			initialized = false;
 			
 			#endregion

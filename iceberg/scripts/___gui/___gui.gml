@@ -9,7 +9,7 @@ global.___system_gui = {
 	    if (!initialized) {
 			#region __ /////////////
 		
-		    log("<GUI> setup()");
+		    log("<__gui> setup()");
 		    initialized = true;
 			
 			#endregion
@@ -92,7 +92,14 @@ global.___system_gui = {
 		/// @func	teardown()
 		/// @return {struct} self
 		///
-		if (initialized) {};
+		if (initialized) {
+			#region __ /////////////////
+			
+			log("<__gui> teardown()");
+			initialized = false;
+			
+			#endregion
+		};
 		return self;
 	},
 	

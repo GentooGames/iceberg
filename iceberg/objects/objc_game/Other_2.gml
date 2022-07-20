@@ -1,15 +1,15 @@
-/// @desc Setup
+/// @desc INITIALIZE
 
 /// Log
 if (!LOGGING) show_debug_message("LOGGING Disabled. Good-bye...");
-log("<OBJC_GAME> initializing log...");
+log("<game_start> initializing log...");
 
 /// GameMaker
-log("<OBJC_GAME> randomizing seed...");
+log("<game_start> randomizing seed...");
 randomize();
 
 /// Global 
-log("<OBJC_GAME> initializing global...");
+log("<game_start> initializing global...");
 ___enums();
 ___macros();
 ___config();
@@ -17,7 +17,7 @@ ___control();
 ___user_settings();
 
 /// Systems
-log("<OBJC_GAME> initializing systems...");
+log("<game_start> initializing systems...");
 CLOCK.setup();
 INPUT.setup();
 AUDIO.setup();
@@ -30,14 +30,14 @@ TRUINST.setup();
 DEBUG.setup();
 
 /// Data Files
-log("<OBJC_GAME> initializing data files...");
+log("<game_start> initializing data files...");
 //global_..._data_init();
 
 /// Unit Tests
 UNIT_TEST.run_tests();
 			
 /// Controllers
-log("<OBJC_GAME> initializing controller instances...");
+log("<game_start> initializing controller instances...");
 GAME.setup();
 //camera_create_instance();
 //global._camera = new Camera(0, 0, 0, false);

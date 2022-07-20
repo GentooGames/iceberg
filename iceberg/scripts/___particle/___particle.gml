@@ -10,7 +10,7 @@ global.___system_particle = {
 	    if (!initialized) {
 			#region __ /////////////
 		
-		    log("<PARTICLE> setup()");
+		    log("<__particle> setup()");
 		    initialized = true;
 				
 			#endregion
@@ -37,7 +37,14 @@ global.___system_particle = {
 		/// @func	teardown()
 		/// @return {struct} self
 		///
-		if (initialized) {};
+		if (initialized) {
+			#region __ /////////////////
+			
+			log("<__particle> teardown()");
+			initialized = false;
+			
+			#endregion
+		};
 		return self;
 	},
 		

@@ -20,6 +20,7 @@ global.___system_truInst = {
 			temp_activated	 = [];
 			cache			 = {};	// holds arrays keyed by object_index
 			initialized		 = true;
+			log("<__truInst> setup()");
 		}
 		return self;
 	},
@@ -56,6 +57,7 @@ global.___system_truInst = {
 			temp_activated	 = [];
 			cache			 = {};
 			initialized		 = false;
+			log("<__truInst> teardown()");
 		}
 		return self;
 	},
@@ -119,7 +121,6 @@ global.___system_truInst = {
 };
 #macro TRUINST				 global.___system_truInst
 #macro TRUINST_APPLY_CULLING 1
-#macro TRUINST_LOGGING		 1
 ////////////////////////////////////////////////////////
 function instance_exists_tru(_id = id) {
 		/// @func	instance_exists_tru(id*)

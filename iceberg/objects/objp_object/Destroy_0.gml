@@ -1,2 +1,2 @@
 /// @desc objp_object
-log("<INSTANCE> destroyed " + string(object_get_name(object_index)) + ": " + string(self.id));
+log("<object> \"{0}\" destroyed with id: {1}", object_get_name(object_index), id);

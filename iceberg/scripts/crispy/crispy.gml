@@ -653,7 +653,7 @@ function TestSuite(_name) : BaseTestClass(_name) constructor {
 	 * @function run
 	 */
 	static run = function() {
-		log("<TEST_SUITE> " + name);
+		log("<crispy> " + name);
 		
 		/// Setup
 		log("setup() started.");
@@ -1068,7 +1068,7 @@ function TestCase(_name, _func) : BaseTestClass(_name) constructor {
 			var _msg = "<MEMORY_LEAK> in unit_test: " + name + ".\n" + 
 				string(_count_delta) + " " + _sign_string + " instance(s) of {" + object_get_name(_object_index) + "}\n" +
 				"Make sure to destroy instances in ut_*.teardown()";
-			if (LOGGING) show_message(_msg);
+			log("<crispy> " + _msg);
 			log(_msg);
 		}
 	}

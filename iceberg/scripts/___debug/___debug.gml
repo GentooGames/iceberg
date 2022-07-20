@@ -9,7 +9,7 @@ global.___system_debug = {
 	    if (DEBUGGING && !initialized) {
 			#region __ /////////////
 		
-		    log("<DEBUG> setup()");
+		    log("<__debug> setup()");
 			initialized = true;	
 			show_debug_overlay(true);
 		
@@ -49,7 +49,14 @@ global.___system_debug = {
 		/// @func	teardown()
 		/// @return {struct} self
 		///
-		if (initialized) {};
+		if (initialized) {
+			#region __ /////////////////
+			
+			log("<__debug> teardown()");
+			initialized = false;
+			
+			#endregion
+		};
 		return self;
 	},
 		
@@ -57,4 +64,4 @@ global.___system_debug = {
 };
 #macro DEBUG	 global.___system_debug
 #macro DEBUGGING 1
-#macro LOGGING   1
+#macro LOGGING   DEBUGGING && 1

@@ -8,17 +8,15 @@ iceberg:
 		- setup and rebuild should take data param
 		- teardowns should execute in opposite order of setup()
 	- make sure that callbacks dont try to handle params
-	- encapsulate eventer into getter() for better accessing
 	- rework pubsub events in Method(), Action(), Trigger() classes
-	- should every constructor be normalized to have setup, teardown, rebuild, update, render?
 	- if constructor does not utilize Core() but has an update, can that be replaced with a pubsub?
-	- IMPLEMENT EVENTABLE() EVERYWHERE!
 	- replace Action() iterating over all Triggers() and instead just wire a PubSub between them
 	- make sure the sub-classes of Class() are utilizing is_active()
 	- remove auto-binding from components and gentui
 	- normalize usage of custom array functions, thats why they exist and part of this project
 	- abstracted component management system
 	- replace all instance_destroy() with instance.destroy()
+	- have log print out to output text file for easier searching
 	- standardize FluidProperty method implementation
 		- make sure that spring setters are not just setting local value, but also spring's actual value
 	- re-evaluate publisher/subscriber weakref?

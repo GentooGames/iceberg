@@ -1,5 +1,5 @@
 /// @desc objp_object
-log("<INSTANCE> created " + string(object_get_name(object_index)) + ": " + string(self.id));
+log("<object> \"{0}\" created with id: {1}", object_get_name(object_index), id);
 /////////////////////////////////////////
 // .---. .---.     . .---- .---- ----- //
 // |   | r--<  .   | r--   |       |   //

@@ -78,7 +78,7 @@ function log_objects_number(_prefix_msg = "") {
 		if (_i != _len - 1) _substring += ",";
 		_output += " " + _substring;
 	}
-	log("<NUMBER_OF_OBJECTS> " + _prefix_msg + "- " + _output);
+	log("n_objects: {0} : {1}", _prefix_msg, _output);
 };
 
 #endregion

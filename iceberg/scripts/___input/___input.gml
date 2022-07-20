@@ -225,7 +225,7 @@ global.___system_input = {
 	    if (!initialized) {
 			#region __ /////////////
 		
-		    log("<INPUT> setup()");
+		    log("<__input> setup()");
 		    initialized = true;
 		
 			#endregion
@@ -294,6 +294,12 @@ global.___system_input = {
 			components.teardown();
 			components = undefined;
 				
+			#endregion
+			#region __ /////////////////
+			
+			log("<__input> teardown()");
+			initialized = false;
+			
 			#endregion
 		};
 		return self;

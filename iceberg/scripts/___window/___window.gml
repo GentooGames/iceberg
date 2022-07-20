@@ -10,7 +10,7 @@ global.___system_window = {
 	    if (!initialized) {
 			#region __ /////////////
 		
-		    log("<WINDOW> setup()");
+		    log("<__window> setup()");
 		    initialized = true;
 		
 			#endregion
@@ -52,6 +52,12 @@ global.___system_window = {
 			components.teardown();
 			components = undefined;
 				
+			#endregion
+			#region __ /////////////
+			
+			log("<__window> teardown()");
+			initialized = false;
+			
 			#endregion
 		};
 		return self;
