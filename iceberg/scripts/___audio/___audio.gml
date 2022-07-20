@@ -1,111 +1,103 @@
-function ___audio() {
-	/// @func ___audio()
-	///
-	global.___system_audio = {
-	    initialized: false,
-		#region Core ///////
+global.___system_audio = {
+	initialized: false,
+	#region Core ///////
 		
-	    setup:    function() {
-	        /// @func   setup()
-	        /// @return {struct} self
-	        ///
-	        if (!initialized) {
-				#region __ /////////////
+	setup:    function() {
+	    /// @func   setup()
+	    /// @return {struct} self
+	    ///
+	    if (!initialized) {
+			#region __ /////////////
 		
-		        log("<AUDIO> setup()");
-				initialized = true;
+		    log("<AUDIO> setup()");
+			initialized = true;
 		
-				audio_falloff_set_model(audio_falloff_linear_distance);
-		        audio_master_gain(0);
-		        audio_listener_orientation(0, 1, 0, 0, 0, 1);  
+			audio_falloff_set_model(audio_falloff_linear_distance);
+		    audio_master_gain(0);
+		    audio_listener_orientation(0, 1, 0, 0, 0, 1);  
 		
-				#endregion
-				#region Layers /////////
+			#endregion
+			#region Layers /////////
 			
-				layers		= {};
-				layer_names = [];
-				n_layers	= 0;
+			layers		= {};
+			layer_names = [];
+			n_layers	= 0;
 			
-				#endregion
-				#region Queues /////////
+			#endregion
+			#region Queues /////////
 			
-				queue = ds_queue_create();
+			queue = ds_queue_create();
 			
-				#endregion
-				#region Components /////
+			#endregion
+			#region Components /////
 		
-				components = new ComponentSystem().setup();
-				components.create(Eventable)
-				components.get(Eventable)
-					.register([
-						"played",
-						"stopped",
-						"all_stopped",
-						"pitch_assigned",
-						"emitter_gain_assigned",
-						"emitter_pitch_assigned",
-					]);
+			components = new ComponentSystem().setup();
+			components.create(Eventable)
+			components.get(Eventable)
+				.register([
+					"played",
+					"stopped",
+					"all_stopped",
+					"pitch_assigned",
+					"emitter_gain_assigned",
+					"emitter_pitch_assigned",
+				]);
 		
-				#endregion
-			}
-			return self;
-	    },
-		update:	  function() {
-			/// @func   update()
-	        /// @return {struct} self
-	        ///
-	        if (initialized) {};
-			return self;
-		},
-		render:	  function() {
-			/// @func	render()
-			/// @return {struct} self
-			///
-			if (initialized) {};
-			return self;
-		},
-		teardown: function() {
-			/// @func	teardown()
-			/// @return {struct} self
-			///
-			if (initialized) {
-				#region Components /////
+			#endregion
+		}
+		return self;
+	},
+	update:	  function() {
+		/// @func   update()
+	    /// @return {struct} self
+	    ///
+	    if (initialized) {};
+		return self;
+	},
+	render:	  function() {
+		/// @func	render()
+		/// @return {struct} self
+		///
+		if (initialized) {};
+		return self;
+	},
+	teardown: function() {
+		/// @func	teardown()
+		/// @return {struct} self
+		///
+		if (initialized) {
+			#region Components /////
 				
-				components.teardown();
-				components = undefined;
+			components.teardown();
+			components = undefined;
 				
-				#endregion
-				#region Queues /////////
+			#endregion
+			#region Queues /////////
 			
-				ds_queue_destroy(queue);
-				queue = undefined;
+			ds_queue_destroy(queue);
+			queue = undefined;
 			
-				#endregion
-				#region Layers /////////
+			#endregion
+			#region Layers /////////
 			
-				layers   = [];
-				n_layers = 0;
+			layers   = [];
+			n_layers = 0;
 			
-				#endregion
-				#region __ /////////////
+			#endregion
+			#region __ /////////////
 		
-		        log("<AUDIO> teardown()");
-				initialized = false;
+		    log("<AUDIO> teardown()");
+			initialized = false;
 			
-				#endregion
-			}
-			return self;
-		},
+			#endregion
+		}
+		return self;
+	},
 		
-		#endregion
-	};
-	#region Macros /////////
-	
-	#macro AUDIO global.___system_audio
-	
 	#endregion
-	AUDIO.setup();  /// <-- automatically invoke setup()
 };
+#macro AUDIO global.___system_audio
+////////////////////////////////////
 function AudioLayer() constructor {
 	/// @func	AudioLayer()
 	/// @return	{AudioLayer} self

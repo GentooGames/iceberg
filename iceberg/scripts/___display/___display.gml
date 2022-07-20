@@ -1,89 +1,59 @@
-function ___display() {
-	/// @func ___display()
-	///
-	global.___system_display = {
-	    initialized:  false,
+global.___system_display = {
+	initialized:  false,
+	#region Core ///////
 		
-		#region Core ///////
+	setup:    function() {
+	    /// @func   setup()
+	    /// @return {struct} self
+	    ///
+	    if (!initialized) {
+			#region __ /////////////
 		
-	    setup:    function() {
-	        /// @func   setup()
-	        /// @return {struct} self
-	        ///
-	        if (!initialized) {
-				#region __ /////////////
+		    log("<DISPLAY> setup()");
+		    initialized = true;
 		
-		        log("<DISPLAY> setup()");
-		        initialized = true;
-		
-				#endregion
-			}
-			return self;
-	    },
-		update:	  function() {
-			/// @func   update()
-	        /// @return {struct} self
-	        ///
-	        if (initialized) {}
-			return self;
-		},
-		render:	  function() {
-			/// @func	render()
-			/// @return {struct} self
-			///
-			if (initialized) {};
-			return self;
-		},
-		teardown: function() {
-			/// @func	teardown()
-			/// @return {struct} self
-			///
-			if (initialized) {};
-			return self;
-		},
-	
-		#endregion
-		#region Actions ////
-		
-		
-		
-		#endregion
-		#region Getters ////
-		
-	    get_width:  function() {
-	        /// @func   get_width()
-	        /// @return {real} width
-	        ///
-	        return display_get_width();
-	    },
-	    get_height: function() {
-	        /// @func   get_height()
-	        /// @return {real} height
-	        ///
-	        return display_get_height();
-	    },
-			
-		#endregion
-		#region Setters ////
-		
-		
-		
-		#endregion
-		#region Checkers ///
-		
-		
-		
-		#endregion
-		#region __Private //
-		
-		
-		
-		#endregion
-	};
-	#region Macros /////////
-	
-	#macro DISPLAY global.___system_display
+			#endregion
+		}
+		return self;
+	},
+	update:	  function() {
+		/// @func   update()
+	    /// @return {struct} self
+	    ///
+	    if (initialized) {}
+		return self;
+	},
+	render:	  function() {
+		/// @func	render()
+		/// @return {struct} self
+		///
+		if (initialized) {};
+		return self;
+	},
+	teardown: function() {
+		/// @func	teardown()
+		/// @return {struct} self
+		///
+		if (initialized) {};
+		return self;
+	},
 	
 	#endregion
-	DISPLAY.setup(); /// <-- automatically invoke setup()
+	#region Getters ////
+		
+	get_width:  function() {
+	    /// @func   get_width()
+	    /// @return {real} width
+	    ///
+	    return display_get_width();
+	},
+	get_height: function() {
+	    /// @func   get_height()
+	    /// @return {real} height
+	    ///
+	    return display_get_height();
+	},
+			
+	#endregion
 };
+#macro DISPLAY global.___system_display

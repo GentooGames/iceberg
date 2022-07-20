@@ -1,19 +1,14 @@
 /// @desc Setup
 
-#region Log ////////////
-
+/// Log
 if (!LOGGING) show_debug_message("LOGGING Disabled. Good-bye...");
 log("<OBJC_GAME> initializing log...");
 
-#endregion
-#region GameMaker //////
-
+/// GameMaker
 log("<OBJC_GAME> randomizing seed...");
 randomize();
 
-#endregion
-#region Global /////////
-
+/// Global 
 log("<OBJC_GAME> initializing global...");
 ___enums();
 ___macros();
@@ -21,31 +16,27 @@ ___config();
 ___control();
 ___user_settings();
 
-#endregion
-#region Systems ////////
-
+/// Systems
 log("<OBJC_GAME> initializing systems...");
-___clock();
-___input();
-___audio();
-___display();
-___window();
-___particle();
-___gui();
-___transition();
-___truInst();
-___unit_test();
-___debug();
-			
-#endregion
-#region Data Files /////
-			
+CLOCK.setup();
+INPUT.setup();
+AUDIO.setup();
+DISPLAY.setup();
+WINDOW.setup();
+PARTICLE.setup();
+GUI.setup();
+TRANSITION.setup();
+TRUINST.setup();
+DEBUG.setup();
+
+/// Data Files
 log("<OBJC_GAME> initializing data files...");
 //global_..._data_init();
+
+/// Unit Tests
+UNIT_TEST.run_tests();
 			
-#endregion
-#region Controllers ////
-			
+/// Controllers
 log("<OBJC_GAME> initializing controller instances...");
 GAME.setup();
 //camera_create_instance();
@@ -54,4 +45,3 @@ GAME.setup();
 //(instance_create_layer(0, 0, "Controllers", objc_world)).setup();
 (instance_create_layer(0, 0, "Controllers", objc_save)).setup();
 
-#endregion

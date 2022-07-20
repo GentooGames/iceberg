@@ -283,8 +283,56 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	static teardown = __teardown_component_system;
 	
 	#endregion
-	#region Util ///////////
 	
+	static create	= function(_component_class) {
+		/// @func	create(component_class)
+		/// @param	{class}		component_class
+		/// @return {Component} self
+		///
+		var _component = new _component_class({ owner: get_owner() }).setup();
+		return add(_component);
+	};
+	static add		= function(_component) {
+		///	@func	add(component)
+		/// @param	{Component}	component
+		/// @return {Component} self
+		///
+		 _component.set_system(self);
+		__components.add_item(instanceof(_component), _component);
+		return self;
+	};
+	static has		= function(_component_class) {
+		/// @func	has(component_class)
+		/// @param	{class}   component_class
+		/// @return {boolean} has_component?
+		///
+		return get(_component_class) != undefined;
+	};
+	static get		= function(_component_class) {
+		///	@func	get(component_class)
+		/// @param	{class}		component_class
+		/// @return {Component} component
+		///
+		var _class_name = script_get_name(_component_class);
+		return __components.get_item(_class_name);
+	};
+	static remove	= function(_component_class) {
+		///	@func	remove(component_class)
+		/// @param	{class}		component_class
+		/// @return {Component} self
+		///
+		if (has(_component_class)) {
+			__components.remove_item(script_get_name(_component_class));
+		}
+		return self;
+	};
+	static empty	= function() {
+		///	@func	empty()
+		/// @return {Component} self
+		///
+		__components.empty();
+		return self;
+	};
 	static get_size = function() {
 		/// @func	get_size()
 		/// @return {real} size
@@ -296,58 +344,6 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		/// @return {bool} is_empty?
 		///
 		return get_size() <= 0;
-	};
-	static empty	= function() {
-		///	@func	empty()
-		/// @return {Component} self
-		///
-		__components.empty();
-		return self;
-	};
-	
-	#endregion
-	
-	static create = function(_component_class) {
-		/// @func	create(component_class)
-		/// @param	{class}		component_class
-		/// @return {Component} self
-		///
-		var _component = new _component_class({ owner: get_owner() }).setup();
-		return add(_component);
-	};
-	static add	  = function(_component) {
-		///	@func	add(component)
-		/// @param	{Component}	component
-		/// @return {Component} self
-		///
-		 _component.set_system(self);
-		__components.add_item(instanceof(_component), _component);
-		return self;
-	};
-	static has	  = function(_component_class) {
-		/// @func	has(component_class)
-		/// @param	{class}   component_class
-		/// @return {boolean} has_component?
-		///
-		return get(_component_class) != undefined;
-	};
-	static get	  = function(_component_class) {
-		///	@func	get(component_class)
-		/// @param	{class}		component_class
-		/// @return {Component} component
-		///
-		var _class_name = script_get_name(_component_class);
-		return __components.get_item(_class_name);
-	};
-	static remove = function(_component_class) {
-		///	@func	remove(component_class)
-		/// @param	{class}		component_class
-		/// @return {Component} self
-		///
-		if (has(_component_class)) {
-			__components.remove_item(script_get_name(_component_class));
-		}
-		return self;
 	};
 };
 

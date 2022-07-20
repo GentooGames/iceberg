@@ -1,150 +1,126 @@
 /// REPLACE INSTANCE ID WITH APPROPRAITE SELF
 
-function ___truInst() {
-	/// @func ___truInst()
-	///
-	global.___system_truInst = {
-		initialized: false,
+global.___system_truInst = {
+	initialized: false,
+	#region Core ///////
 		
-		#region Core ///////
+	setup:	  function(_active = true) {
+		/// @func	setup(active?*)
+		/// @param	{boolean} active=true
+		/// @return {struct}  self
+		///
+		camera			= obj_camera;
+		parent_objects  = resource_tree_get_object_parents();
+		padding			= 0;
 		
-		setup:	  function(_active = true) {
-			/// @func	setup(active?*)
-			/// @param	{boolean} active=true
-			/// @return {struct}  self
-			///
-			camera			= obj_camera;
-			parent_objects  = resource_tree_get_object_parents();
-			padding			= 0;
-		
-			if (TRUINST_APPLY_CULLING && !initialized) {
-				active			 = _active;
-				deactivated		 = [];
-				deactivated_data = [];
-				temp_activated	 = [];
-				cache			 = {};	// holds arrays keyed by object_index
-				initialized		 = true;
-			}
-			return self;
-		},
-		update:	  function() {
-			/// @func	update()
-			/// @return {struct} self
-			///
-			if (TRUINST_APPLY_CULLING && initialized) {
-				for (var _i = array_length(deactivated_data) - 1; _i >= 0; _i--) {
-					var _data =  deactivated_data[_i];
-					var _inst = _data.id;
-					if (!is_offscreen(_inst)) {
-						_inst.truInst_activate(_i);
-					}
+		if (TRUINST_APPLY_CULLING && !initialized) {
+			active			 = _active;
+			deactivated		 = [];
+			deactivated_data = [];
+			temp_activated	 = [];
+			cache			 = {};	// holds arrays keyed by object_index
+			initialized		 = true;
+		}
+		return self;
+	},
+	update:	  function() {
+		/// @func	update()
+		/// @return {struct} self
+		///
+		if (TRUINST_APPLY_CULLING && initialized) {
+			for (var _i = array_length(deactivated_data) - 1; _i >= 0; _i--) {
+				var _data =  deactivated_data[_i];
+				var _inst = _data.id;
+				if (!is_offscreen(_inst)) {
+					_inst.truInst_activate(_i);
 				}
 			}
-			return self;
-		},
-		render:	  function() {
-			/// @func	render()
-			/// @return {struct} self
-			///
-			if (initialized) {};
-			return self;
-		},
-		teardown: function() {
-			/// @func	teardown()
-			/// @return {struct} self
-			///
-			if (TRUINST_APPLY_CULLING && initialized) {
-				active			 = false;
-				deactivated		 = [];
-				deactivated_data = [];
-				temp_activated	 = [];
-				cache			 = {};
-				initialized		 = false;
-			}
-			return self;
-		},
-	
-		#endregion
-		#region Actions ////
-		
-		clear_all:  function(_destroy_instances = true) {
-			/// @func	clear_all(destroy_instances?*)
-			/// @param	{boolean} destroy_instances=true
-			/// @return {struct}  self
-			///
-			if (TRUINST_APPLY_CULLING) {
-				for (var _i = 0, _len = array_length(deactivated); _i < _len; _i++) {
-					var _deactivated = deactivated[_i];
-					if (_destroy_instances) {
-						instance_destroy_tru(_deactivated);
-					}
-					else {
-						instance_activate_object(_deactivated);
-					}
-				}
-				deactivated		 = [];
-				deactivated_data = [];
-				temp_activated	 = [];
-				cache			 = {};
-			}
-			return self;
-		},
-		clear_temp: function() {
-			/// @func	clear_temp()
-			/// @return {struct} self
-			///
-			if (TRUINST_APPLY_CULLING) {
-				for (var _i = array_length(temp_activated) - 1; _i >= 0; _i--) {
-					var _deactivated = temp_activated[_i];
-					instance_deactivate_object(_deactivated);
-					array_delete(temp_activated, _i, 1);
-				}
-			}
-			return self;
-		},
-		
-		#endregion
-		#region Getters ////
-		
-		
-		
-		#endregion
-		#region Setters ////
-		
-		
-		
-		#endregion
-		#region Checkers ///
-		
-		is_offscreen: function(_id = self) {
-			/// @func	is_offscreen(id*)
-			/// @param	{self}	  id=self
-			/// @return {boolean} is_offscreen?
-			///
-			var _bbox = _id.truInst_get_bbox();
-			return ((_bbox.bbox_left   > camera.get_right()  + padding)
-				||	(_bbox.bbox_top    > camera.get_bottom() + padding)
-				||	(_bbox.bbox_right  < camera.get_left()   - padding) 
-				||	(_bbox.bbox_bottom < camera.get_top()	 - padding)
-			);
-		},
-			
-		#endregion
-		#region __Private //
-		
-		
-		
-		#endregion
-	};
-	#region Macros /////////
-	
-	#macro TRUINST				 global.___system_truInst
-	#macro TRUINST_APPLY_CULLING 1
-	#macro TRUINST_LOGGING		 1
+		}
+		return self;
+	},
+	render:	  function() {
+		/// @func	render()
+		/// @return {struct} self
+		///
+		if (initialized) {};
+		return self;
+	},
+	teardown: function() {
+		/// @func	teardown()
+		/// @return {struct} self
+		///
+		if (TRUINST_APPLY_CULLING && initialized) {
+			active			 = false;
+			deactivated		 = [];
+			deactivated_data = [];
+			temp_activated	 = [];
+			cache			 = {};
+			initialized		 = false;
+		}
+		return self;
+	},
 	
 	#endregion
-	TRUINST.setup(); /// <-- automatically invoke setup()
+	#region Actions ////
+		
+	clear_all:  function(_destroy_instances = true) {
+		/// @func	clear_all(destroy_instances?*)
+		/// @param	{boolean} destroy_instances=true
+		/// @return {struct}  self
+		///
+		if (TRUINST_APPLY_CULLING) {
+			for (var _i = 0, _len = array_length(deactivated); _i < _len; _i++) {
+				var _deactivated = deactivated[_i];
+				if (_destroy_instances) {
+					instance_destroy_tru(_deactivated);
+				}
+				else {
+					instance_activate_object(_deactivated);
+				}
+			}
+			deactivated		 = [];
+			deactivated_data = [];
+			temp_activated	 = [];
+			cache			 = {};
+		}
+		return self;
+	},
+	clear_temp: function() {
+		/// @func	clear_temp()
+		/// @return {struct} self
+		///
+		if (TRUINST_APPLY_CULLING) {
+			for (var _i = array_length(temp_activated) - 1; _i >= 0; _i--) {
+				var _deactivated = temp_activated[_i];
+				instance_deactivate_object(_deactivated);
+				array_delete(temp_activated, _i, 1);
+			}
+		}
+		return self;
+	},
+		
+	#endregion
+	#region Checkers ///
+		
+	is_offscreen: function(_id = self) {
+		/// @func	is_offscreen(id*)
+		/// @param	{self}	  id=self
+		/// @return {boolean} is_offscreen?
+		///
+		var _bbox = _id.truInst_get_bbox();
+		return ((_bbox.bbox_left   > camera.get_right()  + padding)
+			||	(_bbox.bbox_top    > camera.get_bottom() + padding)
+			||	(_bbox.bbox_right  < camera.get_left()   - padding) 
+			||	(_bbox.bbox_bottom < camera.get_top()	 - padding)
+		);
+	},
+			
+	#endregion
 };
+#macro TRUINST				 global.___system_truInst
+#macro TRUINST_APPLY_CULLING 1
+#macro TRUINST_LOGGING		 1
+////////////////////////////////////////////////////////
 function instance_exists_tru(_id = id) {
 		/// @func	instance_exists_tru(id*)
 		/// @param	{instance} instance=id

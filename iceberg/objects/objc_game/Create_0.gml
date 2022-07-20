@@ -25,7 +25,6 @@ setup	 = method_inherit(setup,	function() {
 		fsm.add(STATE_CONTROLLER_GAME_MAIN, state_controller_game_main())
 		;
 		fsm.change(state_start);
-		//TRANSITION.goto(rm_test2);
 	
 		#endregion
 	}
