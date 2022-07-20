@@ -16,7 +16,7 @@ global.___system_window = {
 			#endregion
 			#region Events /////////
 			
-			components = new ComponentSystem().setup();
+			component_system_setup();
 			components.create(Eventable)
 			components.get(Eventable)
 				.register([

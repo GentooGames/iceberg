@@ -18,10 +18,6 @@
 //		belongs to that same owner. this hidden system 	 //
 //		allows for consistency and normalization on how  //
 //		we access these components.						 //
-//	--- if an instance of ComponentSystem() already has	 //
-//		been created in the owner's instance, then the	 //
-//		"components" dynamic accessor will return 		 //
-//		that system instead of creating a new one.		 //
 ///////////////////////////////////////////////////////////
 #macro __COMPONENT_SYSTEM_VAR_NAME "components"			 //
 // this var will be accessible to all objects that 		 //
@@ -35,12 +31,16 @@
 // and always.											 //
 ///////////////////////////////////////////////////////////
 
+#region Component //////////////////
+
 function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
 	/// @param	{struct}    config={}
 	/// @return {Component} self
 	///
-	__class		  =  Component;
+	static __class	   = Component;
+	static __is_system = false; 
+	////////////////////////////
 	__config	  = _config;
 	__initialized =  false;
 	__active	  =  true;
@@ -53,8 +53,8 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @func	__setup_owners_system()
 		/// @return	{Component} self
 		///
-		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;											// set to undefined in order to avoid recursive loop
-		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = new ComponentSystem({ owner: __owner }).setup();	// <-----------------------------------------------'	
+		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
+		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = new ComponentSystem({ owner: __owner }).setup();	
 		return self;
 	};
 	static __get_owners_system		= function() {
@@ -67,9 +67,6 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @func	__is_owners_system_setup()
 		/// @return {bool} owner_has_system?
 		///
-		if (instanceof(self) == "ComponentSystem") {
-			return true;	
-		}
 		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
 	};
 	
@@ -95,15 +92,22 @@ function Component(_config = {}) : Class(_config) constructor {
 			#endregion
 			#region System /////
 			
-			/// Initialize Dynamic ComponentSystem() Var
-			if (!__is_owners_system_setup()) {
-				__setup_owners_system();
-			}
-			__system = __get_owners_system(); // may still be undefined
+			if (!__is_system) {
+				/// Initialize Dynamic ComponentSystem() Var
+				if (!__is_owners_system_setup()) {
+					__setup_owners_system();
+				}
 			
-			/// Add Self Component To ComponentSystem
-			if (__auto_insert && has_system()) {
-				get_system().add(self);
+				/// Establish System Association
+				__system = __get_owners_system();
+			
+				/// Add Component Self To ComponentSystem
+				if (__auto_insert && has_system()) {
+					get_system().add(self);
+				}
+			}
+			else {
+				__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = self;
 			}
 			
 			#endregion
@@ -251,7 +255,8 @@ function Component(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 };
-	
+
+#endregion
 #region Component System ///////////
 
 function ComponentSystem(_config = {}) : Component(_config) constructor {
@@ -259,7 +264,9 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}		  config
 	/// @return {ComponentSystem} self
 	///
-	__class		 = ComponentSystem;
+	static __class	   = ComponentSystem;
+	static __is_system = true;
+	////////////////////////////
 	__components = undefined;
 	
 	#region Core ///////////
@@ -270,11 +277,6 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		if (!is_initialized()) {
 			__setup_component();
-			#region __ /////////////
-			
-			__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = self
-			
-			#endregion
 			#region Components /////
 			
 			__components = new Set();
@@ -296,11 +298,6 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 				_components[_i].teardown();
 			}
 			__components = undefined;
-			
-			#endregion
-			#region __ /////////////
-			
-			__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
 			
 			#endregion
 		}
@@ -385,6 +382,26 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		return get_size() <= 0;
 	};
+		
+	__owner.new_component = method(self, function(_component_class) {
+		/// @func	new_component(component_class)
+		/// @param	{class}		component_class
+		/// @return {Component} self
+		///
+		return create(_component_class);
+	});
+	__owner.get_component = method(self, function(_component_class) {
+		return get(_component_class);
+	});
+};
+function component_system_setup(_owner = self) {
+	/// @func	component_system_setup(owner*)
+	/// @param	{struct}	owner=self
+	/// @return {Component} system
+	///
+	var _system = new ComponentSystem({ owner: _owner }).setup();
+	_owner[$ __COMPONENT_SYSTEM_VAR_NAME] = _system;
+	return _system;
 };
 
 #endregion
@@ -395,7 +412,8 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}	config={}
 	/// @return {Eventable} self
 	///
-	__class		  = Eventable;
+	static __class = Eventable;
+	////////////////////////////
 	__broadcaster = undefined;
 
 	#region Core ///////////
@@ -503,7 +521,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 			}
 			get_broadcaster().publish(_event_name, _data);
 			
-			/// Publish Event Above May Invoke .teardown() Setting __broadcaster To undefined
+			/// the event associated to the above broadcast may invoke Eventable().teardown(), which could __broadcaster to undefined
 			if (has_broadcaster()) {
 				get_broadcaster().publish("broadcasted", _data);
 			}
@@ -530,7 +548,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		/// @param	{string}	event_name
 		/// @return	{Eventable} self
 		///
-		__publisher.clear_channel(_event_name);
+		get_broadcaster().clear_channel(_event_name);
 		broadcast("listeners_cleared", _event_name);
 		return self;
 	};
@@ -545,7 +563,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}   config={}
 	/// @return	{Moveable} self
 	///
-	__class	  = Moveable;
+	static __class = Moveable;
+	////////////////////////////
 	__owner	  = other;
 	__hspd	  = 0;
 	__vspd	  = 0;
@@ -557,6 +576,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__movesets:	undefined,	// collection 
 		__default:	undefined,	// default
 		__moveset:	undefined,	// current
+		__triggers: undefined,
 	};
 	__path	  = {
 		__index:  undefined,
@@ -659,25 +679,19 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{string}  name
 		/// @return {MoveSet} moveset
 		///
-		with (__moveset) {
-			return __movesets.get_item(_name);
-		}
+		return __moveset.__movesets.get_item(_name);
 	};
 	static get_moveset_current = function() {
 		/// @func	get_moveset_current()
 		/// @return {MoveSet} moveset
 		///
-		with (__moveset) {
-			return __moveset;
-		}
+		return __moveset.__moveset;
 	};
 	static get_moveset_default = function() {
 		/// @func	get_moveset_default()
 		/// @return {MoveSet} moveset
 		///
-		with (__moveset) {
-			return __default;
-		}
+		return __moveset.__default;
 	};
 		
 	#endregion
@@ -700,9 +714,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		with (__moveset) {
-			__default = _moveset;
-		}
+		__moveset.__default = _moveset;
 		return self;
 	};
 	static set_moveset_default_data = function(_data) {		// condense this with moveset_apply?
@@ -722,9 +734,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{string}  name
 		/// @return {boolean} exists?
 		///
-		with (__moveset) {
-			return __movesets.has_item(_name);
-		}
+		return __moveset.__movesets.has_item(_name);
 	};
 	
 	#endregion
@@ -735,9 +745,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		with (__moveset) {
-			__movesets.add_item(_name, _moveset);
-		}
+		__moveset.__movesets.add_item(_name, _moveset);
 		return self;
 	};
 	static new_moveset	  = function(_name, _data) {
@@ -767,9 +775,9 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-	static apply_moveset  = function(_moveset = __get_moveset_current()) {
+	static apply_moveset  = function(_moveset = get_moveset_current()) {
 		/// @func	apply_moveset(moveset*)
-		/// @param	{MoveSet}  moveset=moveset_get_current
+		/// @param	{MoveSet}  moveset=get_moveset_current()
 		/// @return {Moveable} self
 		///
 		__speed = _moveset.__speed;
@@ -779,8 +787,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		set_moveset(_moveset, false);
 		return self;
 	};
-	
-	/// WIRE EVENT TO TRIGGER PUBSUB TO TRIGGER MOVESET CHANGE
 };
 function MoveableTopDown() : Moveable() constructor {
 	/// @func	MoveableTopDown()
@@ -832,8 +838,9 @@ function Actionable() : Component() constructor {
 	/// @func	Actionable()
 	/// @return {Component} self 
 	///
-	__class = Actionable;
-	__fsm	= undefined;
+	static __class = Actionable;
+	////////////////////////////
+	__fsm = undefined;
 	
 	#region Private ////////
 	
@@ -1379,3 +1386,4 @@ function Scriptable() : Component() constructor {
 };
 
 #endregion
+

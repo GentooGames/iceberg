@@ -46,7 +46,7 @@ global.___system_transition = {
 			#endregion
 			#region Components /////////
 		
-			components = new ComponentSystem().setup();
+			component_system_setup();
 			components.create(Eventable);
 			components.get(Eventable)
 				.register([

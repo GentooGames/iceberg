@@ -378,3 +378,18 @@ function Trigger(_config = {}) : Class(_config) constructor {
 	};
 };
 
+/* 
+ var _trigger_save = new Trigger();
+ _trigger_save.add_action("print", function() {
+	show_message("SAVED"); 
+ });
+ _trigger_save.add_action("save", function() {
+	// do save ... 
+ });
+ _trigger_save.add_condition("input", function() {
+	return keyboard_check(ord("S")); 
+ });
+ _trigger_save.add_region(TRIGGER_REGION.CIRCLE, 
+ _trigger_save.add_condition("enter_region", function() {
+	return collision_circle(x, y, 100, obj_player, false, false) != noone; 
+ });

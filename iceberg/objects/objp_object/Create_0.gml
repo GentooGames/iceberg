@@ -27,7 +27,7 @@ setup	 = method_inherit(,function() {
 		#endregion
 		#region Components /////
 		
-		components = new ComponentSystem().setup();
+		component_system_setup();
 		components.create(Eventable)
 		components.get(Eventable)
 			.register([
