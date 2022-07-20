@@ -31,6 +31,9 @@
 // and always.											 //
 ///////////////////////////////////////////////////////////
 
+//	give each component a defined "loop" logic behavior 
+//	establishing where to get processed in the component system
+
 #region Component //////////////////
 
 function Component(_config = {}) : Class(_config) constructor {
@@ -363,6 +366,7 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
+	
 	static empty	= function() {
 		///	@func	empty()
 		/// @return {Component} self
@@ -383,16 +387,40 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		return get_size() <= 0;
 	};
 		
-	throw("KEEP WORKING FROM HERE!!!");
-	__owner.new_component = method(self, function(_component_class) {
+	__owner.new_component	 = method(self, function(_component_class) {
 		/// @func	new_component(component_class)
 		/// @param	{class}		component_class
 		/// @return {Component} self
 		///
 		return create(_component_class);
 	});
-	__owner.get_component = method(self, function(_component_class) {
+	__owner.add_component	 = method(self, function(_component) {
+		/// @func	add_component(component)
+		/// @param	{Component} component
+		/// @return {Component} self
+		///
+		return add(_component);
+	});
+	__owner.has_component	 = method(self, function(_component_class) {
+		/// @func	has_component(component_class)
+		/// @param	{class}	  component_class
+		/// @return {boolean} has_component?
+		///
+		return has(_component_class);
+	});
+	__owner.get_component	 = method(self, function(_component_class) {
+		/// @func	get_component(component_class)
+		/// @param	{class}		component_class
+		/// @return {Component} component
+		///
 		return get(_component_class);
+	});
+	__owner.remove_component = method(self, function(_component_class) {
+		/// @func	remove_component(component_class)
+		/// @param	{class}		component_class
+		/// @return {Component} self
+		///
+		return remove(_component_class);
 	});
 };
 function component_system_setup(_owner = self) {

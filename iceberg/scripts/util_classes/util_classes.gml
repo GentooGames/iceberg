@@ -6,8 +6,8 @@ function Class(_config = {}) constructor {
 	/// @return {Class}  self
 	///
 	__config = _config;
-	__owner	 = _config[$ "owner" ] ?? other;
-	__name	 = _config[$ "name"  ] ?? __get_name_unique();
+	__owner	 = _config[$ "owner"] ?? other;
+	__name	 = _config[$ "name" ] ?? __get_name_unique();
 
 	#region Private ////////
 	

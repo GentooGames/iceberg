@@ -3,11 +3,7 @@ event_inherited();
 
 setup	 = method_inherit(setup,  function() {
 	/// @func setup()
-	///	
-	//mover = new Moveable().setup();
-	//show_message(mover.__system);
-	//show_message(component_system);
-	
+	///
 	//mover.set_moveset_default_data({
 	//		speed: 6.0,
 	//		accel: 1.0,
