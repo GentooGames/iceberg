@@ -24,42 +24,22 @@ iceberg:
 	- need to test object event methods inheritence?
 	- way for object to clear all subscriptions,
 		- should re-store into an array on event init
-	- add a did_transition flag for state transitions?
-		- similar to the did_destroy flag, this would allow us to check if a state transition has been registered in this frame?
 	- organize and abstract global._gui{} into a more modular system similar to global._transition{}
 		- create an array of borders that is iterated through and updated
 		- expose ways for new borders to be created and destroyed dynamically	
-	- remove callbacks and replace with pubsub?
-		- save controller
-		- etc.
-	- should object event methods, utilizing method_inherit, do their event_publish() in the callback?
-		- yes? i think this is already implemented
 	- update util functions documentation and blend with existing functions from totem and other projects
 	- try catch block when doing something that you dont know if it will work
 	- array optimizations
 		- initialize arrays to possible max size using array_create()
 		- setting an array reference to 0 will deallocate the memory associated for it
 		- my_array[@ 0] will access the array directly and not the array copy
-	- specify all methods with method()? this would add clarity and easy ability to change method binding later if needed?
-	
-__gui:
 	- have SURF_W & SURF_H get global._gui.surface.application.width
 		- and make sure this is updating whenever changes are made. (listen for surface_change event)
 	- once nearly finalized, replace __sfx_play_method to use AUDIO.play()
-	
-__input:
 	- checkout jujus new input system
-	
-__transition:
-	- add particle_emitters to FloeEffects
-		- ^ this here is probably not going to be achievable in a purly abstracted/dynamic way, so 
-			instead, expose ways to inject custom update methods that would make for easy particle plugin
-
-__unit_tests:
-	- WRITE UNIT TESTS FOR base ICEBERG functionality!!!!
-	
-__window: 
 	- rework screen resolution resizing and fullscreen
+	- add priority to GStat() stat processign order
+	- abstract FluidProperty() interpolation "algorithm" using Builder Design Pattern
 
 gentui:
 	- implement new Stash() and IStash() for actions, triggers, etc
@@ -74,12 +54,6 @@ gentui:
 orderly: 
 	- rework callback handling and normalize to standard
 	- update property naming convention to match new standard
-	
-gstat:
-	- add priority to stat processign order
-	
-FluidProperty:
-	- abstract interpolation "algorithm" using Builder Design Pattern
 		
 serializer:
 	- setup buffer_save_async_groups() that spit out save data to multiple files inside of a defined group folder
@@ -99,7 +73,3 @@ serializer:
 			with a more encapsulated implementation
 		- also allows us to methodically handle edge cases and error throwing through an implicit
 			type checker, etc.
-
-EXTRA EXTRA:
-	- procedurally generated dungeon generator
-	https://blueburn.cz/bbmod/
