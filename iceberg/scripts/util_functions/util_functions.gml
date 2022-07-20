@@ -1561,13 +1561,6 @@ function iso_xy_to_j(_iso_width, _iso_height, _x, _y) {
 #endregion
 #region method /////////////
 
-function method_get_name_dynamic(_method) {
-	/// @func	method_get_name_dynamic(method)
-	/// @param	{method} method
-	/// @return {string} name
-	///
-	return string(ptr(_method));
-};
 function method_inherit(_method_parent = undefined, _method_child = undefined, _callback = undefined) {
 	/// @func	method_inherit(method_parent*, method_child*, callback*)
 	/// @desc	rather than needing to setup complex method inheritance through initialization of extra
@@ -1582,9 +1575,8 @@ function method_inherit(_method_parent = undefined, _method_child = undefined, _
 	
 	#region Method Child ///////////
 	
-	var _method_child_owner = self;
 	if (_method_child != undefined) {
-		_method_child  = method(_method_child_owner, _method_child);
+		_method_child  = method(self, _method_child);
 	}
 	
 	#endregion
@@ -1620,6 +1612,7 @@ function method_inherit(_method_parent = undefined, _method_child = undefined, _
         method_child:  _method_child,
 		callbacks:	   _callbacks,
     };
+	
     return method(_bridge, function() {
 		if (method_parent != undefined) method_parent();
         if (method_child  != undefined) method_child();

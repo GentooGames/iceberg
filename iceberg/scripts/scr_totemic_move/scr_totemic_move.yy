@@ -3,7 +3,7 @@
   "isCompatibility": false,
   "parent": {
     "name": "scripts",
-    "path": "folders/__TEST__/scripts.yy",
+    "path": "folders/__test__/scripts.yy",
   },
   "resourceVersion": "1.0",
   "name": "scr_totemic_move",

@@ -27,7 +27,8 @@ function Component(_config = {}) : Class(_config) constructor {
 	__config	  = _config;
 	__initialized =  false;
 	__active	  =  true;
-	__system	  =  undefined;
+	__system	  =  undefined;	// component system association
+	__auto_insert =  true;		// auto insert into implied component system?
 	
 	#region Private ////////
 	
@@ -63,9 +64,15 @@ function Component(_config = {}) : Class(_config) constructor {
 		/// @return {Component} self
 		///
 		if (!is_initialized()) {
+			#region __ /////////
+			
+			log("<Component()> {0}.setup()", instanceof(self));
+			
+			#endregion
 			#region Props //////
 			
-			if (__config[$ "active"] != undefined) __active = __config[$ "active"];
+			if (__config[$ "active"]	  != undefined) __active	  = __config[$ "active"];
+			if (__config[$ "auto_insert"] != undefined) __auto_insert = __config[$ "auto_insert"];
 			
 			#endregion
 			#region System /////
@@ -77,7 +84,7 @@ function Component(_config = {}) : Class(_config) constructor {
 			__system = __get_owners_system(); // may still be undefined
 			
 			/// Add Self Component To ComponentSystem
-			if (has_system()) {
+			if (__auto_insert && has_system()) {
 				get_system().add(self);
 			}
 			
@@ -97,6 +104,11 @@ function Component(_config = {}) : Class(_config) constructor {
 				get_system().remove(get_class());
 				__system = undefined;
 			}
+			
+			#endregion
+			#region __ /////////
+			
+			log("<Component()> {0}.teardown()", instanceof(self));
 			
 			#endregion
 			__initialized = false;
@@ -288,7 +300,10 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		/// @param	{class}		component_class
 		/// @return {Component} self
 		///
-		var _component = new _component_class({ owner: get_owner() }).setup();
+		var _component = new _component_class({ 
+			owner:		 get_owner(),
+			auto_insert: false,
+		}).setup();
 		return add(_component);
 	};
 	static add		= function(_component) {
@@ -297,7 +312,16 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		/// @return {Component} self
 		///
 		 _component.set_system(self);
-		__components.add_item(instanceof(_component), _component);
+		 
+		 var _class_name = instanceof(_component);
+		 if (__components.has_item(_class_name)) {
+			 var _owner_name  = instanceof(get_owner());
+			 if (_owner_name == "instance") {
+				_owner_name   = object_get_name(get_owner().object_index);	 
+			 }
+			 log("<ComponentSystem()> WARNING : component of type {0} already exists in {1}'s system.", _class_name, _owner_name);
+		 }
+		__components.add_item(_class_name, _component);
 		return self;
 	};
 	static has		= function(_component_class) {

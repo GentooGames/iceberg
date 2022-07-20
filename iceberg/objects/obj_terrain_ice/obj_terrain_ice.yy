@@ -26,7 +26,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "objects",
-    "path": "folders/__TEST__/objects.yy",
+    "path": "folders/__test__/objects.yy",
   },
   "resourceVersion": "1.0",
   "name": "obj_terrain_ice",

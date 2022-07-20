@@ -70,7 +70,7 @@
   "nineSlice": null,
   "parent": {
     "name": "sprites",
-    "path": "folders/__TEST__/sprites.yy",
+    "path": "folders/__test__/sprites.yy",
   },
   "resourceVersion": "1.0",
   "name": "spr_terrain_ice",

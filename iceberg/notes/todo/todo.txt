@@ -1,7 +1,8 @@
 iceberg:
 	- why is the save controller handling the first room exit?
-	- should method_inherit() utilize weak method references? seeing some bloat in memory usage 
-	- remove MoveSet() and implement with generic Set() 
+	- should method_inherit() utilize weak method references? 
+		- seeing some bloat in memory usage. should optimize
+	- remove MoveSet() and implement with generic Set()
 	- noramlize has() and/or exists() checker methods
 	- remove __this. nesting from FLOE
 	- underscore object core private events to match components
