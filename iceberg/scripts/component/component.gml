@@ -321,7 +321,8 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 			owner:		 get_owner(),
 			auto_insert: false,
 		}).setup();
-		return add(_component);
+		add(_component);
+		return _component;
 	};
 	static add		= function(_component) {
 		///	@func	add(component)
@@ -608,20 +609,11 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	///
 	static __class = Moveable;
 	////////////////////////////
-	__owner	  = other;
-	__hspd	  = 0;
-	__vspd	  = 0;
-	__speed	  = 0;
-	__accel	  = 0;
-	__fric	  = 0;
-	__mult	  = 0;
-	__moveset = {
-		__movesets:	undefined,	// collection 
-		__default:	undefined,	// default
-		__moveset:	undefined,	// current
-		__triggers: undefined,
-	};
-	__path	  = {
+	__owner	   = other;
+	__hspd	   = 0;
+	__vspd	   = 0;
+	__movesets = undefined;
+	__path	   = {
 		__index:  undefined,
 		__smooth: true,
 		__closed: false,
@@ -644,30 +636,22 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			__setup_component();
 			#region Props //////
 			
-			if (__config[$ "speed"] != undefined) __speed = __config.speed;
-			if (__config[$ "accel"] != undefined) __accel = __config.accel;
-			if (__config[$ "fric" ] != undefined) __fric  = __config.fric;
-			if (__config[$ "mult" ] != undefined) __mult  = __config.mult;
+			if (__config[$ "path_index" ] != undefined) __path.__index  = __config.path_index;
+			if (__config[$ "path_smooth"] != undefined) __path.__smooth = __config.path_smooth;
+			if (__config[$ "path_closed"] != undefined) __path.__closed = __config.path_closed;
 			
 			#endregion
 			#region Moveset ////
 			
-			__moveset.__movesets = new Set();
-			set_moveset_default(new MoveSet({ 
-				name:  "__default__",
-				speed: __speed,
-				accel: __accel,
-				fric:  __fric,
-				mult:  __mult,
-			}));
-			add_moveset("__default__", get_moveset_default());
-			set_moveset(get_moveset_default());
+			__movesets = new Set();
 			
 			#endregion
 			#region Path ///////
 			
 			with (__path) {
-				__index = path_add();
+				if (__index == undefined) {	/// replace with has_path()
+					__index = path_add();
+				}
 				path_set_kind(__index, __smooth);
 				path_set_closed(__index, __closed);
 			}
@@ -691,9 +675,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			#endregion
 			#region Moveset ////
 			
-			__moveset.__movesets = undefined;
-			set_moveset_default(undefined);	/// should this be resetting back to default moveset instead? should config be considered here?
-			set_moveset(undefined, false);	/// should this be resetting back to default moveset instead? should config be considered here?
+			__movesets = undefined;
 			
 			#endregion
 			__teardown_component();
@@ -717,80 +699,33 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	#endregion
 	#region Getters ////////////
 	
-	static get_moveset		   = function(_name) {
+	static get_moveset = function(_name) {
 		/// @func	get_moveset(name)
 		/// @param	{string}  name
 		/// @return {MoveSet} moveset
 		///
-		return __moveset.__movesets.get_item(_name);
-	};
-	static get_moveset_current = function() {
-		/// @func	get_moveset_current()
-		/// @return {MoveSet} moveset
-		///
-		return __moveset.__moveset;
-	};
-	static get_moveset_default = function() {
-		/// @func	get_moveset_default()
-		/// @return {MoveSet} moveset
-		///
-		return __moveset.__default;
-	};
-		
-	#endregion
-	#region Setters ////////////
-	
-	static set_moveset				= function(_moveset, _apply = true) {
-		/// @func	set_moveset(moveset, apply?*)
-		/// @param	{MoveSet}  moveset
-		/// @param	{boolean}  apply=true
-		/// @return {Moveable} self
-		///
-		__moveset.__moveset = _moveset;
-		if (_apply) {
-			apply_moveset(_moveset);
-		}
-		return self;
-	};
-	static set_moveset_default		= function(_moveset) {
-		/// @func	set_moveset_default(moveset)
-		/// @param	{MoveSet}  moveset
-		/// @return {Moveable} self
-		///
-		__moveset.__default = _moveset;
-		return self;
-	};
-	static set_moveset_default_data = function(_data) {		// condense this with moveset_apply?
-		/// @func	set_moveset_default_data(data)
-		/// @param	{struct}   data
-		/// @return {Moveable} self
-		///
-		get_moveset_default().set_data(_data);
-		return self;
+		return __movesets.get_item(_name);
 	};
 		
 	#endregion
 	#region Checkers ///////////
 	
-	static has_moveset = function(_name) {
+	static has_moveset	= function(_name) {
 		/// @func	has_moveset(name)
 		/// @param	{string}  name
 		/// @return {boolean} exists?
 		///
-		return __moveset.__movesets.has_item(_name);
+		return get_moveset(_name) != undefined;
+	};
+	static has_movesets = function() {
+		/// @func	has_movesets()
+		/// @return {boolean} has_movesets?
+		///
+		return !__movesets.is_empty();
 	};
 	
 	#endregion
 	
-	static add_moveset	  = function(_name, _moveset) {
-		/// @func	add_moveset(name, moveset)
-		/// @param	{string}   name
-		/// @param	{MoveSet}  moveset
-		/// @return {Moveable} self
-		///
-		__moveset.__movesets.add_item(_name, _moveset);
-		return self;
-	};
 	static new_moveset	  = function(_name, _data) {
 		/// @func	new_moveset(name, data)
 		/// @param	{string}   name
@@ -799,14 +734,16 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		_data[$ "name"] = _name;	// append name onto data struct
 		var _moveset = new MoveSet(_data);
-		add_moveset(_name, _moveset);
+		add_moveset(_moveset);
 		return self;
 	};
-	static reset_moveset  = function() {
-		/// @func	reset_moveset()
+	static add_moveset	  = function(_moveset) {
+		/// @func	add_moveset(moveset)
+		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		return set_moveset(get_moveset_default());
+		__movesets.add_item(_moveset.get_name(), _moveset);
+		return self;
 	};
 	static change_moveset = function(_name) {
 		/// @func	change_moveset(name)
@@ -814,20 +751,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {Moveable} self
 		///
 		if (has_moveset(_name)) {
-			set_moveset(get_moveset(_name));
+			get_moveset(_name).apply();
 		}
-		return self;
-	};
-	static apply_moveset  = function(_moveset = get_moveset_current()) {
-		/// @func	apply_moveset(moveset*)
-		/// @param	{MoveSet}  moveset=get_moveset_current()
-		/// @return {Moveable} self
-		///
-		__speed = _moveset.__speed;
-		__accel = _moveset.__accel;
-		__fric  = _moveset.__fric;
-		__mult  = _moveset.__mult;
-		set_moveset(_moveset, false);
 		return self;
 	};
 };
@@ -854,8 +779,16 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 	__fric		= _config[$ "fric" ] ?? 0;
 	__mult		= _config[$ "mult" ] ?? 1;
 	
-	#region Setters ////////
-	
+	static apply	= function() {
+		/// @func	apply()
+		/// @return	{MoveSet} self
+		///
+		__moveable.__speed = __speed;
+		__moveable.__accel = __accel;
+		__moveable.__fric  = __fric;
+		__moveable.__mult  = __mult;
+		return self;
+	};
 	static set_data = function(_data) {
 		/// @func	set_data(data)
 		/// @param	{struct}  data
@@ -865,11 +798,8 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 		if (_data[$ "accel"] != undefined) __accel = _data.accel;
 		if (_data[$ "fric" ] != undefined) __fric  = _data.fric;
 		if (_data[$ "mult" ] != undefined) __mult  = _data.mult;
-		
 		return self;
 	};
-		
-	#endregion
 };
 
 #endregion

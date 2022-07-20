@@ -4,29 +4,26 @@ event_inherited();
 setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///
-	//mover.set_moveset_default_data({
-	//		speed: 6.0,
-	//		accel: 1.0,
-	//		fric:  0.0,
-	//		mult:  1.0,
-	//	})
-	//	.new_moveset("sand", {
-	//		speed: 4.0,
-	//		accel: 0.3,
-	//		fric:  0.2,
-	//		mult:  1.0,
-	//	})
-	//	.new_moveset("ice", {
-	//		speed: 8.0,
-	//		accel: 0.2,
-	//		fric:  0.1,
-	//		mult:  1.0,
-	//	})
-		
-	//component_system()
-	//	.get_component("Eventable")
-	//	.destroy()
-		
+	new_component(Moveable)
+		.new_moveset("default", {
+			speed: 6.0,
+			accel: 1.0,
+			fric:  0.0,
+			mult:  1.0,
+		})
+		.new_moveset("sand", {
+			speed: 4.0,
+			accel: 0.3,
+			fric:  0.2,
+			mult:  1.0,
+		})
+		.new_moveset("ice", {
+			speed: 8.0,
+			accel: 0.2,
+			fric:  0.1,
+			mult:  1.0,
+		})
+		.change_moveset("default")
 })();
 teardown = method_inherit(teardown, function() {
 	/// @func teardown()
