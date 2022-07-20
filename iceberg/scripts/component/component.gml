@@ -383,6 +383,7 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		return get_size() <= 0;
 	};
 		
+	throw("KEEP WORKING FROM HERE!!!");
 	__owner.new_component = method(self, function(_component_class) {
 		/// @func	new_component(component_class)
 		/// @param	{class}		component_class
