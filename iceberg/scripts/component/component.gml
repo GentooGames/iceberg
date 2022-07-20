@@ -1,22 +1,39 @@
-/// Insert Ascii Art Here***
-//////////////////////////////////////////////////////
-//	Components										//								
-//		--- components are class objects that 		//
-//		|	containerize reusable functionality.    //	
-//		--- components can be instantiated as stand //
-//		|	alone objects, or be tied into a 		//
-//		|	greater component system designed to 	//
-//		|	organize and provide structure to a 	//
-//		|	series of components.					//							
-//		--- any form of generalized logic that can 	//
-//		|	be shared across multiple objects 		//
-//		|	(regardless of object inheritence) 		//
-//		|	should be encapsulated into a component //
-//////////////////////////////////////////////////////
-
-/// MAKE SURE IMPLMENTATIONS OF COMP_SYSTEM ARE INVOKING TEARDOWN
-
-#macro __COMPONENT_SYSTEM_VAR_NAME "components"
+///////////////////////////////////////////////////////////
+// .---- .---. .   . .---. .---. .   . .---- .   . ----- //
+// |     |   | | V | r---J |   | | \ | r--   | \ |   |   //
+// L---- L---J |   | |     L---J |   V L---- |   V   |   //
+///////////////////////////////////////////////////////////
+//	Components											 //								
+//	--- components are class objects designed to contain //
+//		encapsulated and reusable game logic and/or		 //
+//		game functionality.								 //
+//	--- components can be instantiated alone or can be 	 //
+//		tied into a greater ComponentSystem(). These 	 //
+//		systems are designed to organize and provide 	 //
+//		structure to a series of components owned and 	 //
+//		shared by the same instance.					 //
+//	--- components that are instantiated alone (and not	 //
+//		through a component system) will automatically 	 //
+//		instantiate a hidden component system that 		 //
+//		belongs to that same owner. this hidden system 	 //
+//		allows for consistency and normalization on how  //
+//		we access these components.						 //
+//	--- if an instance of ComponentSystem() already has	 //
+//		been created in the owner's instance, then the	 //
+//		"components" dynamic accessor will return 		 //
+//		that system instead of creating a new one.		 //
+///////////////////////////////////////////////////////////
+#macro __COMPONENT_SYSTEM_VAR_NAME "components"			 //
+// this var will be accessible to all objects that 		 //
+// instantiate a Component() instance. invoking the code:// 
+// "<instance>.components" will give you access to a 	 //
+// component system that holds the component. this means //
+// that we can always expect "object.components" to 	 //
+// return a component system that will allow us to access// 
+// other component instances associated to that object,  //
+// and other component system functionality consistently //
+// and always.											 //
+///////////////////////////////////////////////////////////
 
 function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
@@ -27,8 +44,8 @@ function Component(_config = {}) : Class(_config) constructor {
 	__config	  = _config;
 	__initialized =  false;
 	__active	  =  true;
-	__system	  =  undefined;	// component system association
-	__auto_insert =  true;		// auto insert into implied component system?
+	__system	  =  undefined;	// ComponentSystem() association
+	__auto_insert =  true;		// auto insert into implied ComponentSystem()?
 	
 	#region Private ////////
 	
@@ -67,6 +84,7 @@ function Component(_config = {}) : Class(_config) constructor {
 			#region __ /////////
 			
 			log("<Component()> {0}.setup()", instanceof(self));
+			__initialized = true;
 			
 			#endregion
 			#region Props //////
@@ -89,7 +107,6 @@ function Component(_config = {}) : Class(_config) constructor {
 			}
 			
 			#endregion
-			__initialized = true;
 		}
 		return self;
 	}; 
@@ -109,9 +126,9 @@ function Component(_config = {}) : Class(_config) constructor {
 			#region __ /////////
 			
 			log("<Component()> {0}.teardown()", instanceof(self));
+			__initialized = false;
 			
 			#endregion
-			__initialized = false;
 		}
 		return self;
 	}; 
@@ -1362,5 +1379,3 @@ function Scriptable() : Component() constructor {
 };
 
 #endregion
-
-/// ADD EVENTABLE IMPLEMENTATION TO COMPONENTS
