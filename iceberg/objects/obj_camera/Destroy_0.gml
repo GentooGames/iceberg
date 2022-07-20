@@ -1,2 +1,2 @@
 camera_destroy(cam);
-components.teardown();
+teardown_components();

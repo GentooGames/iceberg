@@ -386,50 +386,64 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		return get_size() <= 0;
 	};
-		
-	__owner.new_component	 = method(self, function(_component_class) {
+	
+	__owner.new_component		= method(self, function(_component_class) {
 		/// @func	new_component(component_class)
 		/// @param	{class}		component_class
 		/// @return {Component} self
 		///
 		return create(_component_class);
 	});
-	__owner.add_component	 = method(self, function(_component) {
+	__owner.add_component		= method(self, function(_component) {
 		/// @func	add_component(component)
 		/// @param	{Component} component
 		/// @return {Component} self
 		///
 		return add(_component);
 	});
-	__owner.has_component	 = method(self, function(_component_class) {
+	__owner.has_component		= method(self, function(_component_class) {
 		/// @func	has_component(component_class)
 		/// @param	{class}	  component_class
 		/// @return {boolean} has_component?
 		///
 		return has(_component_class);
 	});
-	__owner.get_component	 = method(self, function(_component_class) {
+	__owner.get_component		= method(self, function(_component_class) {
 		/// @func	get_component(component_class)
 		/// @param	{class}		component_class
 		/// @return {Component} component
 		///
 		return get(_component_class);
 	});
-	__owner.remove_component = method(self, function(_component_class) {
+	__owner.remove_component	= method(self, function(_component_class) {
 		/// @func	remove_component(component_class)
 		/// @param	{class}		component_class
 		/// @return {Component} self
 		///
 		return remove(_component_class);
 	});
+	__owner.teardown_components = method(self, function() {
+		/// @func	teardown_components()
+		/// @return	{Component} self
+		///
+		self[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
+		return teardown();
+	});
 };
-function component_system_setup(_owner = self) {
-	/// @func	component_system_setup(owner*)
-	/// @param	{struct}	owner=self
+function component_system_setup() {
+	/// @func	component_system_setup(component1, ..., componentN)
+	/// @param	{Component}	component_1
+	/// @param	{Component}	...
+	/// @param	{Component}	component_n
 	/// @return {Component} system
 	///
+	var _owner  = self;
 	var _system = new ComponentSystem({ owner: _owner }).setup();
 	_owner[$ __COMPONENT_SYSTEM_VAR_NAME] = _system;
+	
+	for (var _i = 0; _i < argument_count; _i++) {
+		_system.create(argument[_i]);	
+	}
 	return _system;
 };
 

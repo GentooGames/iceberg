@@ -78,7 +78,7 @@ setup	 = method_inherit(setup,	function() {
 		#endregion
 		#region Events /////////
 	
-		TRANSITION.components.get(Eventable)
+		TRANSITION.get_component(Eventable)
 			.listen("hold_started", function(_data) {
 				save_game(,, function() {
 					TRANSITION.end_transition();

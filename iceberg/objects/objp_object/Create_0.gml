@@ -27,9 +27,10 @@ setup	 = method_inherit(,function() {
 		#endregion
 		#region Components /////
 		
-		component_system_setup();
-		components.create(Eventable)
-		components.get(Eventable)
+		component_system_setup(
+			Eventable,
+		);
+		get_component(Eventable)
 			.register([
 				"setup_completed",
 				"teardown_completed",
@@ -39,7 +40,7 @@ setup	 = method_inherit(,function() {
 				"destroyed",
 			])
 		
-		INPUT.components.get(Eventable)
+		INPUT.get_component(Eventable)
 			.listen("mouse_button_pressed",  on_mouse_button_pressed)
 			.listen("mouse_button",			 on_mouse_button)
 			.listen("mouse_button_released", on_mouse_button_released)
@@ -55,8 +56,7 @@ teardown = method_inherit(,function() {
 	if (initialized) {
 		#region Components /////
 		
-		components.teardown();
-		components = undefined;
+		teardown_components();
 		
 		#endregion
 		#region __ /////////////

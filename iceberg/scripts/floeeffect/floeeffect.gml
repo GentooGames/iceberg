@@ -114,9 +114,10 @@ function FloeEffect() constructor {
 		if (!is_initialized()) {
 			#region Components /////
 		
-			component_system_setup();
-			components.create(Eventable);
-			components.get(Eventable)
+			component_system_setup(
+				Eventable,
+			);
+			get_component(Eventable)
 				.register([
 					"enter_started",
 					"enter_completed",
@@ -143,8 +144,7 @@ function FloeEffect() constructor {
 		if (is_initialized()) {
 			#region Components /////
 		
-			components.teardown();
-			components = undefined;
+			teardown_components();
 		
 			#endregion
 			__this.__control.__initialized = false;
@@ -160,7 +160,7 @@ function FloeEffect() constructor {
 		
 			switch (get_state()) {
 				case __FLOE_STATE.ENTER_PREP: {
-					components.get(Eventable)
+					get_component(Eventable)
 						.broadcast("enter_started");
 						
 					set_running(true);
@@ -175,7 +175,7 @@ function FloeEffect() constructor {
 					if (abs(_progress - _target) <= get_threshold()) {
 						set_progress(_target);
 						
-						components.get(Eventable)
+						get_component(Eventable)
 							.broadcast("enter_completed");
 							
 						set_state(__FLOE_STATE.CHANGE_PREP);
@@ -183,7 +183,7 @@ function FloeEffect() constructor {
 					break;	
 				}
 				case __FLOE_STATE.CHANGE_PREP: {
-					components.get(Eventable)
+					get_component(Eventable)
 						.broadcast("change_started");
 						
 					set_state(__FLOE_STATE.CHANGE);
@@ -192,14 +192,14 @@ function FloeEffect() constructor {
 				case __FLOE_STATE.CHANGE: {
 					__this.__control.__hold_timer = get_hold_time();
 					
-					components.get(Eventable)
+					get_component(Eventable)
 						.broadcast("change_completed");
 						
 					set_state(__FLOE_STATE.HOLD_PREP);
 					break;	
 				}
 				case __FLOE_STATE.HOLD_PREP: {
-					components.get(Eventable)
+					get_component(Eventable)
 						.broadcast("hold_started");
 						
 					set_state(__FLOE_STATE.HOLD);
@@ -210,7 +210,7 @@ function FloeEffect() constructor {
 						__this.__control.__hold_timer--;
 					}
 					else {
-						components.get(Eventable)
+						get_component(Eventable)
 							.broadcast("hold_completed");
 							
 						set_state(__FLOE_STATE.LEAVE_PREP);
@@ -218,7 +218,7 @@ function FloeEffect() constructor {
 					break;	
 				}
 				case __FLOE_STATE.LEAVE_PREP: {
-					components.get(Eventable)
+					get_component(Eventable)
 						.broadcast("leave_started");
 						
 					set_state(__FLOE_STATE.LEAVE);
@@ -232,7 +232,7 @@ function FloeEffect() constructor {
 					if (abs(_progress - _target) <= get_threshold()) {
 						set_progress(_target);
 						
-						components.get(Eventable)
+						get_component(Eventable)
 							.broadcast("leave_completed");
 							
 						set_state(__FLOE_STATE.END);
@@ -240,7 +240,7 @@ function FloeEffect() constructor {
 					break;	
 				}
 				case __FLOE_STATE.END: {
-					components.get(Eventable)
+					get_component(Eventable)
 						.broadcast("ended");
 						
 					set_running(false);
@@ -535,7 +535,7 @@ function FloeEffect() constructor {
 			set_progress(_progress);
 		}
 			
-		components.get(Eventable)
+		get_component(Eventable)
 			.broadcast("reversed");
 			
 		return self;
@@ -548,7 +548,7 @@ function FloeEffect() constructor {
 		set_progress(0);
 		set_state(__FLOE_STATE.HIDDEN);
 		
-		components.get(Eventable)
+		get_component(Eventable)
 			.broadcast("reset_completed");
 			
 		return self;

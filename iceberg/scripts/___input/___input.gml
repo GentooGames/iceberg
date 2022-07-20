@@ -141,7 +141,7 @@ global.___system_input = {
 		/// @return {struct} self
 		///
 		if (mouse.button(mb_any)) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("mouse_button", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
@@ -151,7 +151,7 @@ global.___system_input = {
 				});
 		}
 		if (mouse.button_pressed(mb_any)) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("mouse_button_pressed", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
@@ -161,7 +161,7 @@ global.___system_input = {
 				});
 		}
 	    if (mouse.button_released(mb_any)) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("mouse_button_released", {
 					button: mouse_button,
 					x:		INPUT.mouse.get_x(),
@@ -171,7 +171,7 @@ global.___system_input = {
 				});	
 		}
 		if (mouse.wheel_up()) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("mouse_wheel_up", {
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -180,7 +180,7 @@ global.___system_input = {
 				});
 		}
 		if (mouse.wheel_down()) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("mouse_wheel_down", {
 					x:		INPUT.mouse.get_x(),
 					y:		INPUT.mouse.get_y(),
@@ -195,19 +195,19 @@ global.___system_input = {
 		/// @return {struct} self
 		///
 		if (keyboard.button(vk_anykey)) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("keyboard_button", {
 				button: keyboard_key,
 			});
 		}
 	    if (keyboard.button_pressed(vk_anykey)) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("keyboard_button_pressed", {
 				button: keyboard_key,
 			});
 		}
 	    if (keyboard.button_released(vk_anykey)) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("keyboard_button_released", {
 				button: keyboard_key,
 			});
@@ -231,9 +231,10 @@ global.___system_input = {
 			#endregion
 			#region Events /////////
 		
-			component_system_setup();
-			components.create(Eventable)
-			components.get(Eventable)
+			component_system_setup(
+				Eventable,
+			);
+			get_component(Eventable)
 				.register([
 					/// mouse_button_pressed
 					"mouse_button_pressed",
@@ -291,8 +292,7 @@ global.___system_input = {
 		if (initialized) {
 			#region Components /////
 				
-			components.teardown();
-			components = undefined;
+			teardown_components();
 				
 			#endregion
 			#region __ /////////////////

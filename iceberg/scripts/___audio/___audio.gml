@@ -31,9 +31,10 @@ global.___system_audio = {
 			#endregion
 			#region Components /////
 		
-			component_system_setup();
-			components.create(Eventable)
-			components.get(Eventable)
+			component_system_setup(
+				Eventable,
+			);
+			get_component(Eventable)
 				.register([
 					"played",
 					"stopped",
@@ -68,8 +69,7 @@ global.___system_audio = {
 		if (initialized) {
 			#region Components /////
 				
-			components.teardown();
-			components = undefined;
+			teardown_components();
 				
 			#endregion
 			#region Queues /////////

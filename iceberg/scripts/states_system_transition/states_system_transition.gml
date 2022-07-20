@@ -28,11 +28,11 @@ function state_system_transition_transitioning() {
 	///
 	return {
 		enter: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("enter_started");
 				
 			effect = new effect_in().setup();
-			effect.components.get(Eventable)
+			effect.get_component(Eventable)
 				.listen("enter_completed", function(_data) {
 					fsm.change(STATE_SYSTEM_TRANSITION_CHANGE);	
 				});
@@ -42,7 +42,7 @@ function state_system_transition_transitioning() {
 			effect.update();
 		},
 		leave: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("enter_completed");
 		},
 	};
@@ -53,7 +53,7 @@ function state_system_transition_change() {
 	///
 	return {
 		enter: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("change_started");
 			
 			/// Move To state.leave?
@@ -62,7 +62,7 @@ function state_system_transition_change() {
 				: "room_changed";
 			room_goto(room_target);		
 			
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast(_event_name, room_target);	
 			
 			fsm.change(STATE_SYSTEM_TRANSITION_HOLD);
@@ -71,7 +71,7 @@ function state_system_transition_change() {
 			effect.update();
 		},
 		leave: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("change_completed");
 		},
 	};
@@ -82,10 +82,10 @@ function state_system_transition_hold() {
 	///
 	return {
 		enter: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("hold_started");
 				
-			effect.components.get(Eventable)
+			effect.get_component(Eventable)
 				.listen("hold_completed", function(_data) {
 					room_to_release = true;
 					if (end_transition_is_ready()) {
@@ -99,7 +99,7 @@ function state_system_transition_hold() {
 			effect.update();
 		},
 		leave: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("hold_completed");
 				
 			effect.teardown();
@@ -113,11 +113,11 @@ function state_system_transition_ending() {
 	///
 	return {
 		enter: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("exit_started");
 				
 			effect = new effect_out().setup();
-			effect.components.get(Eventable)
+			effect.get_component(Eventable)
 				.listen("enter_completed", function(_data) {
 					fsm.change(STATE_SYSTEM_TRANSITION_IDLE);	
 				});
@@ -128,7 +128,7 @@ function state_system_transition_ending() {
 			effect.update();
 		},
 		leave: function() {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("exit_completed");
 				
 			effect.teardown();

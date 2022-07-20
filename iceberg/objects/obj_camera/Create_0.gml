@@ -89,9 +89,10 @@ CLOCK_STABLE.variable_interpolate("pos_y",	   "iota_pos_y");
 CLOCK_STABLE.variable_interpolate("zoom_draw", "iota_zoom" );
 
 // events
-components = new Component().setup();
-components.create(Eventable)
-components.get(Eventable)
+component_system_setup(
+	Eventable,
+);
+get_component(Eventable)
 	.register([
 		"zoom_completed",
 	]);

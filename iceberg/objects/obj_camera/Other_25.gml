@@ -95,7 +95,7 @@ _update_zoom   = function() {
 	/// @event: zoom complete
 	if (dist_thresh(zoom, zoom_to, 0.01, true)) {
 		if (!zoom_complete) {
-			components.get(Eventable)
+			get_component(Eventable)
 				.broadcast("zoom_completed");
 				
 			zoom_complete = true;

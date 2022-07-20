@@ -16,9 +16,10 @@ global.___system_window = {
 			#endregion
 			#region Events /////////
 			
-			component_system_setup();
-			components.create(Eventable)
-			components.get(Eventable)
+			component_system_setup(
+				Eventable,
+			);
+			get_component(Eventable)
 				.register([
 					"fullscreen_assigned",
 					"position_assigned",
@@ -49,8 +50,7 @@ global.___system_window = {
 		if (initialized) {
 			#region Components /////
 				
-			components.teardown();
-			components = undefined;
+			teardown_components();
 				
 			#endregion
 			#region __ /////////////
