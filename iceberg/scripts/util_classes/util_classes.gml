@@ -352,6 +352,8 @@ function Method(_config = {}) : Class(_config) constructor {
 	__method = _config[$ "method"] ?? undefined;
 	__data	 = _config[$ "data"  ] ?? undefined;
 	
+	#region Getters ////////
+	
 	static get_method = function() {
 		/// @func	get_method()
 		/// @return {method} method
@@ -365,7 +367,9 @@ function Method(_config = {}) : Class(_config) constructor {
 		return __data;
 	};
 
-	static execute	  = function() {
+	#endregion
+	
+	static execute = function() {
 		/// @func	execute()
 		/// @return {any} return
 		///
@@ -394,6 +398,8 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		.register("trigger_validated", "action_executed")
 		.listen  ("trigger_validated",  execute)
 	
+	#region Private ////////
+	
 	static __add_condition	= function(_condition) {
 		/// @func   __add_condition(condition)
 		/// @param  {Method}  condition
@@ -411,6 +417,9 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 	
+	#endregion
+	#region Getters	////////
+	
 	static get_condition	= function(_name) {
 		/// @func	get_condition(name)
 		/// @param	{string} name
@@ -420,6 +429,24 @@ function Trigger(_config = {}) : Class(_config) constructor {
 			return undefined;
 		}
 		return __conditions.get_item(_name).get_method();
+	};
+	static get_conditions	= function() {
+		/// @func   get_conditions()
+		/// @return {array} methods
+		///
+		if (!has_conditions()) {
+			return [];	
+		}
+		var _items   = __conditions.get_items();
+		var _names   = __conditions.get_names();
+		var _count	 = __conditions.get_size();
+		var _methods = array_create(_count);
+		
+		for (var _i = 0; _i < _count; _i++) {
+			var _item = _items[$ _names[_i]];
+			_methods[_i] = _item.get_method();	
+		}
+		return _methods;
 	};
 	static get_action		= function(_name) {
 		/// @func	get_action(name)
@@ -431,20 +458,57 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		}
 		return __actions.get_item(_name).get_method();
 	};
-	static has_condition	= function(_name) {
+	static get_actions		= function() {
+		/// @func   get_actions()
+		/// @return {array} methods
+		///
+		if (!has_actions()) {
+			return [];	
+		}
+		var _items   = __actions.get_items();
+		var _names   = __actions.get_names();
+		var _count	 = __actions.get_size();
+		var _methods = array_create(_count);
+		
+		for (var _i = 0; _i < _count; _i++) {
+			var _item = _items[$ _names[_i]];
+			_methods[_i] = _item.get_method();	
+		}
+		return _methods;
+	};
+	
+	#endregion
+	#region Checkers ///////
+	
+	static has_condition  = function(_name) {
 		/// @func   has_condition(name)
 		/// @param  {string } name
 		/// @return {boolean} has_condition?
 		///
-		return get_condition(_name) != undefined;
+		return __conditions.has_item(_name);
 	};
-	static has_action		= function(_name) {
+	static has_conditions = function() {
+		/// @func   has_conditions()
+		/// @return {bool} has_conditions?
+		///	
+		return !__conditions.is_empty();
+	};
+	static has_action	  = function(_name) {
 		/// @func   has_action(name)
 		/// @param  {string } name
 		/// @return {boolean} has_action?
 		///
-		return get_action(_name) != undefined;
+		return __actions.has_item(_name);
 	};
+	static has_actions	  = function() {
+		/// @func   has_actions()
+		/// @return {bool} has_actions?
+		///	
+		return !__actions.is_empty();
+	};
+	
+	#endregion
+	
 	static new_condition	= function(_name, _method, _data = undefined) {
 		/// @func	new_condition(name, method, data*)
 		/// @param	{string}  name
@@ -501,7 +565,6 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		__actions.empty();
 		return self;
 	};
-	
 	static check_activation = function() {
 		/// @func	check_activation()
 		/// @return {Trigger} self
@@ -545,46 +608,6 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

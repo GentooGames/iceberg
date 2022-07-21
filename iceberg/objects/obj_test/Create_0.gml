@@ -1,48 +1,46 @@
 /// @desc obj_test : Create
 event_inherited();
 
+/*	ToDo:
+	- entities weight
+	- terrain move scalar
+	- general multiplier
+	- default moveset that executes when all other triggers fail
+	- have component system process components
+		- if component system processing, do not check for is_active() within component, checkout from outside from system
+	- freezing/locking components?
+*/
+
 setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///
 	form = "human";
-	/*	ACCOUNT FOR:
-		- entities weight
-		- terrain move scalar
-		- general multiplier
-	*/
+	
 	new_component(Moveable);
 	
 	/// Speeds
 	get_component(Moveable)
-		.add_movespeed("walk",   4.0)
-		.add_movespeed("run",    8.0)
-		.add_movespeed("crouch", 2.0)
+		.new_movespeed("walk",   4.0)
+		.new_movespeed("run",    8.0)
+		.new_movespeed("crouch", 2.0)
 		.change_movespeed("walk")
 	
 	/// Movesets
 	get_component(Moveable)
-		.add_moveset("grass", MOVESETS[$ MOVESET.GRASS])
-		.add_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
-		.add_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
+		.new_moveset("grass", MOVESETS[$ MOVESET.GRASS])
+		.new_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
+		.new_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
 		.change_moveset("grass")
 		
 	/// Moveset Triggers
-	var _self = self;
-	get_component(Moveable)
-		.add_moveset_trigger("grass", "touching_grass", method(_self, function() {
-			
-		}))
-		
+	//get_component(Moveable)
+	//	.add_moveset_condition("sand", "touching_sand", method(self, function() {
+	//		return collision_point(x, y, obj_terrain_sand, false, true) != noone;
+	//	}))
+	//	.add_moveset_condition("ice", "touching_ice", method(self, function() {
+	//		return collision_point(x, y, obj_terrain_ice, false, true) != noone;
+	//	}))
 	
-		//.new_moveset_trigger("sand", "touching_sand", function() { 
-		//	return (collision_point(x, y, obj_terrain_sand, false, true) != noone);
-		//})
-		//.new_moveset_trigger("sand", "pangolin_form", function() { 
-		//	return (form == "pangolin");
-		//})
-		//.new_moveset_trigger("ice",  "", function() { /* condition 1 ... */ })
-		//.new_moveset_trigger("dirt", "", function() { /* condition 1 ... */ })
-			
 })();
 teardown = method_inherit(teardown, function() {
 	/// @func teardown()

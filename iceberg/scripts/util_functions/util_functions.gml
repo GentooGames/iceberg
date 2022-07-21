@@ -1130,6 +1130,50 @@ function log(_format) {
 	var _output = script_execute_ext(string_build, _params);
 	show_debug_message("[" + string(current_time) + "]: " + _output);
 };
+function log_loud(_format) {
+	/// @func	log_loud(_format, params, ...)
+	/// @desc	Logs to console using string format and arguments (allows 19 different arguments)
+	/// @param	{string} format The string format.
+	/// @param	{*...} params The values to append
+	/// @return NA
+	/// @tested false
+	/// @usage
+	/*
+	log("{0} this is my {1}", "Hello", "World");
+	log("Print numbers: {0} and strings '{1}'", 124, "World");
+	log("Arrays {0} and structs {1}", [1, 2, 3], { hello: "world" });
+	*/
+	if (!LOGGING) return;
+	///
+	var _params = array_create(argument_count);
+	for (var i = 0; i < argument_count; i++) {
+		_params[i] = argument[i];
+	}
+	var _output = script_execute_ext(string_build, _params);
+	show_message("[" + string(current_time) + "]: " + _output);
+};
+function log_error(_format) {
+	/// @func	log_loud(_format, params, ...)
+	/// @desc	Logs to console using string format and arguments (allows 19 different arguments)
+	/// @param	{string} format The string format.
+	/// @param	{*...} params The values to append
+	/// @return NA
+	/// @tested false
+	/// @usage
+	/*
+	log("{0} this is my {1}", "Hello", "World");
+	log("Print numbers: {0} and strings '{1}'", 124, "World");
+	log("Arrays {0} and structs {1}", [1, 2, 3], { hello: "world" });
+	*/
+	if (!LOGGING) return;
+	///
+	var _params = array_create(argument_count);
+	for (var i = 0; i < argument_count; i++) {
+		_params[i] = argument[i];
+	}
+	var _output = script_execute_ext(string_build, _params);
+	show_error("[" + string(current_time) + "]: " + _output, true);
+};
 function string_build(_format) {
 	/// @func	string_build(_format, params, ...)
 	/// @desc	Builds a string using string format and arguments (allows 19 different arguments)
