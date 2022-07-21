@@ -1,5 +1,5 @@
 enum MOVESET {
-	DIRT,
+	GRASS,
 	SAND,
 	ICE,
 };
@@ -10,17 +10,17 @@ function global_moveset_data() {
 	global.__movesets = {}; 
 	////////////////////////
 	with (global.__movesets) {
-		self[$ MOVESET.DIRT] = { 
+		self[$ MOVESET.GRASS] = { 
 			speed_mult: 1.0,
 			accel:		0.8,
 			fric:		0.3,
 		};
-		self[$ MOVESET.SAND] = { 
+		self[$ MOVESET.SAND]  = { 
 			speed_mult: 0.6,
 			accel:		0.3,
 			fric:		0.2,
 		};
-		self[$ MOVESET.ICE]  = { 
+		self[$ MOVESET.ICE]   = { 
 			speed_mult: 1.2,
 			accel:		0.2,
 			fric:		0.1,

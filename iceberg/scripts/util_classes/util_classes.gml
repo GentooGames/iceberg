@@ -381,6 +381,51 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		.register("trigger_validated", "action_executed")
 		.listen  ("trigger_validated",  execute)
 	
+	static __add_condition	= function(_condition) {
+		/// @func   __add_condition(condition)
+		/// @param  {Method}  condition
+		/// @return {Trigger} self
+		///
+		__conditions.add_item(_condition.get_name(), _condition);
+		return self;
+	};
+	static __add_action		= function(_action) {
+		/// @func   __add_action(action)
+		/// @param  {Method}  action
+		/// @return {Trigger} self
+		///
+		__actions.add_item(_action.get_name(), _action);
+		return self;
+	};
+	
+	static get_condition	= function(_name) {
+		/// @func	get_condition(name)
+		/// @param	{string} name
+		/// @return {Method} condition
+		///
+		return __conditions.get_item(_name);
+	};
+	static get_action		= function(_name) {
+		/// @func	get_action(name)
+		/// @param	{string} name
+		/// @return {Method} action
+		///
+		return __actions.get_item(_name);
+	};
+	static has_condition	= function(_name) {
+		/// @func   has_condition(name)
+		/// @param  {string } name
+		/// @return {boolean} has_condition?
+		///
+		return get_condition(_name) != undefined;
+	};
+	static has_action		= function(_name) {
+		/// @func   has_action(name)
+		/// @param  {string } name
+		/// @return {boolean} has_action?
+		///
+		return get_action(_name) != undefined;
+	};
 	static new_condition	= function(_name, _method, _data = undefined) {
 		/// @func	new_condition(name, method, data*)
 		/// @param	{string}  name
@@ -388,12 +433,11 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		/// @param	{any}	  data=undefined
 		/// @return {Trigger} self
 		///
-		__conditions.add_item(_name, new Method({
+		return __add_condition(new Method({
 			name:   _name,
 			method: _method,
 			data:   _data,
 		}));
-		return self;
 	};
 	static new_action		= function(_name, _method, _data = undefined) {
 		/// @func	new_action(name, method, data*)
@@ -402,12 +446,11 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		/// @param	{any}	  data=undefined
 		/// @return {Trigger} self
 		///
-		__actions.add_item(_name, new Method({
+		return __add_action(new Method({
 			name:   _name,
 			method: _method,
 			data:   _data,
 		}));
-		return self;
 	};
 	static remove_condition = function(_name) {
 		/// @func	remove_condition(name, method)
@@ -483,5 +526,46 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
