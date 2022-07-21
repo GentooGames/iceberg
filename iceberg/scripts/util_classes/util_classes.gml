@@ -235,6 +235,9 @@ function Set(_config = {}) : Collection(_config) constructor {
 			__add_item_collection(_item);
 			__add_item_set(_name, _item);
 		}
+		else {
+			log("<{0}()> WARNING in add_item() item with name {1} already exists. item not added", instanceof(self), _name);
+		}
 		return self
 	};
 	static remove_item = function(_name) {
@@ -245,6 +248,9 @@ function Set(_config = {}) : Collection(_config) constructor {
 		if (has_item(_name)) {
 			__remove_item_collection(_name);
 			__remove_item_set(_name);
+		}
+		else {
+			log("<{0}()> WARNING in remove_item() item with name {1} does not exist.", instanceof(self), _name);
 		}
 		return self
 	};
@@ -287,6 +293,9 @@ function Family(_config = {}) : Set(_config) constructor {
 		if (has_set(_set_name)) {
 			get_set(_set_name).empty();
 		}
+		else {
+			log("<{0}()> WARNING in empty_set() set with name {1} does not exist.", instanceof(self), _set_name);	
+		}
 		return self;
 	};
 	static get_items	= function(_set_name) {
@@ -296,6 +305,9 @@ function Family(_config = {}) : Set(_config) constructor {
 		///
 		if (has_set(_set_name)) {
 			return get_set(_set_name).get_items();
+		}
+		else {
+			log("<{0}()> WARNING in get_items() set with name {1} does not exist.", instanceof(self), _set_name);		
 		}
 		return [];
 	};
@@ -325,26 +337,76 @@ function Family(_config = {}) : Set(_config) constructor {
 				remove_set(_set_name);
 			};
 		}
+		else {
+			log("<{0}()> WARNING in remove_item() set with name {1} does not exist.", instanceof(self), _set_name);		
+		}
 		return self;
 	};
 };
-	
 ////////////////////////////////////////////////////////////////
+function Method(_config = {}) : Class(_config) constructor {
+	/// @func	Method(config*)
+	/// @param	{struct} config={}
+	/// @return {Method} self
+	///	
+	__method = _config[$ "method"] ?? undefined;
+	__data	 = _config[$ "data"  ] ?? undefined;
 	
+	static execute = function() {
+		/// @func	execute()
+		/// @return {any} return
+		///
+		return __method(__data);
+	};
+};
 function Trigger(_config = {}) : Class(_config) constructor {
 	/// @func	Trigger(config*)
 	/// @param	{struct}  config={}
 	/// @return {Trigger} self
+	/// @desc	a Trigger() can contain any number of conditions, and any
+	///			number of actions. Both "conditions" and "actions" are 
+	///			encapsulated in a Method() class. if any one of the 
+	///			conditions is validated, then all of the actions will be 
+	///			executed. the data associated to the condition validation
+	///			and action execution is broadcasted over the Eventable
+	///			broadcast event, so that other objects can listen to it
+	///			and parse the relevant data appropriately.
 	///
 	__conditions = new Set();
+	__actions	 = new Set();
 	
-	static add_condition	= function(_name, _method) {
-		/// @func	add_condition(name, method)
+	/// Establish Ability To Broadcast Events
+	component_system_setup(Eventable);
+	__eventable = get_component(Eventable)
+		.register("trigger_validated", "action_executed")
+		.listen  ("trigger_validated",  execute)
+	
+	static new_condition	= function(_name, _method, _data = undefined) {
+		/// @func	new_condition(name, method, data*)
 		/// @param	{string}  name
 		/// @param	{method}  method
+		/// @param	{any}	  data=undefined
 		/// @return {Trigger} self
 		///
-		__conditions.add_item(_name, _method);
+		__conditions.add_item(_name, new Method({
+			name:   _name,
+			method: _method,
+			data:   _data,
+		}));
+		return self;
+	};
+	static new_action		= function(_name, _method, _data = undefined) {
+		/// @func	new_action(name, method, data*)
+		/// @param	{srting}  name
+		/// @param	{method}  method
+		/// @param	{any}	  data=undefined
+		/// @return {Trigger} self
+		///
+		__actions.add_item(_name, new Method({
+			name:   _name,
+			method: _method,
+			data:   _data,
+		}));
 		return self;
 	};
 	static remove_condition = function(_name) {
@@ -355,6 +417,14 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		__conditions.remove_item(_name);
 		return self;
 	};
+	static remove_action	= function(_name) {
+		/// @func	remove_action(name, method)
+		/// @param	{string}  name
+		/// @return {Trigger} self
+		///
+		__actions.remove_item(_name);
+		return self;
+	};
 	static clear_conditions = function() {
 		/// @func	clear_conditions()
 		/// @return {Trigger} self
@@ -362,34 +432,56 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		__conditions.empty();
 		return self;
 	};
+	static clear_actions	= function() {
+		/// @func	clear_actions()
+		/// @return {Trigger} self
+		///
+		__actions.empty();
+		return self;
+	};
+	
 	static check_activation = function() {
 		/// @func	check_activation()
 		/// @return {Trigger} self
 		///
-		var _names = __conditions.get_names();
-		var _count = __conditions.get_size();
-		for (var _i = 0; _i < _count; _i++) {
-			var _condition = __conditions.get_item(_names[_i]);
-			if (_condition()) {
-				return true;	
+		if (!__conditions.is_empty()) {
+			var _names = __conditions.get_names();
+			var _count = __conditions.get_size();
+			for (var _i = 0; _i < _count; _i++) {
+				var _condition = __conditions.get_item(_names[_i]);
+				if (_condition()) {
+					__eventable.broadcast("trigger_validated", { 
+						trigger:    self, 
+						condition: _condition,
+					});
+					return true;	
+				}
 			}
 		}
 		return false;
 	};
+	static execute			= function(_data) {
+		/// @func	execute(data)
+		/// @param	{struct}  data
+		/// @return {Trigger} self
+		///
+		/// Execute All Actions
+		if (!__actions.is_empty()) {
+			var _actions   = __actions.get_items();
+			var _n_actions = __actions.get_size();
+			for (var _i = 0; _i < _n_actions; _i++) {
+				var _action = _actions[_i];
+				var _result = _action.execute();
+				__eventable.broadcast("action_executed", { 
+					trigger:    self, 
+					condition: _data.payload.condition,
+					action:	   _action,
+					result:    _result,
+				});
+			}
+		}
+		return self;
+	};
 };
 
-/* 
- var _trigger_save = new Trigger();
- _trigger_save.add_action("print", function() {
-	show_message("SAVED"); 
- });
- _trigger_save.add_action("save", function() {
-	// do save ... 
- });
- _trigger_save.add_condition("input", function() {
-	return keyboard_check(ord("S")); 
- });
- _trigger_save.add_region(TRIGGER_REGION.CIRCLE, 
- _trigger_save.add_condition("enter_region", function() {
-	return collision_circle(x, y, 100, obj_player, false, false) != noone; 
- });
+

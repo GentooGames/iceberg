@@ -27,6 +27,9 @@ setup	 = method_inherit(setup,	function() {
 		fsm.change(state_start);
 	
 		#endregion
+		room_goto(rm_test);	// replace with better implementation, and figure
+							// out what to do with save controller object and 
+							// how that interacts with room transitions
 	}
 	return self;
 });

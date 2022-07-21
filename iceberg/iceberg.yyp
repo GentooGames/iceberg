@@ -54,6 +54,7 @@
     {"id":{"name":"___input","path":"scripts/___input/___input.yy",},"order":6,},
     {"id":{"name":"states_player","path":"scripts/states_player/states_player.yy",},"order":3,},
     {"id":{"name":"shdr_pulse_color","path":"shaders/shdr_pulse_color/shdr_pulse_color.yy",},"order":3,},
+    {"id":{"name":"global_moveset_data","path":"scripts/global_moveset_data/global_moveset_data.yy",},"order":1,},
     {"id":{"name":"MACROS","path":"scripts/MACROS/MACROS.yy",},"order":1,},
     {"id":{"name":"___unit_test","path":"scripts/___unit_test/___unit_test.yy",},"order":10,},
     {"id":{"name":"__spr_transition_black_circle","path":"sprites/__spr_transition_black_circle/__spr_transition_black_circle.yy",},"order":0,},

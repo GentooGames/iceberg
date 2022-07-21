@@ -19,7 +19,7 @@
 //		allows for consistency and normalization on how  //
 //		we access these components.						 //
 ///////////////////////////////////////////////////////////
-#macro __COMPONENT_SYSTEM_VAR_NAME "components"			 //
+#macro __COMPONENT_SYSTEM_VAR_NAME "__component_system"	 //
 // this var will be accessible to all objects that 		 //
 // instantiate a Component() instance. invoking the code:// 
 // "<instance>.components" will give you access to a 	 //
@@ -31,8 +31,8 @@
 // and always.											 //
 ///////////////////////////////////////////////////////////
 
-//	give each component a defined "loop" logic behavior 
-//	establishing where to get processed in the component system
+// give each component a defined "loop" logic behavior 
+// establishing where to get processed in the component system
 
 #region Component //////////////////
 
@@ -43,7 +43,7 @@ function Component(_config = {}) : Class(_config) constructor {
 	///
 	static __class	   = Component;
 	static __is_system = false; 
-	////////////////////////////
+	////////////////////////
 	__config	  = _config;
 	__initialized =  false;
 	__active	  =  true;
@@ -269,7 +269,7 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	///
 	static __class	   = ComponentSystem;
 	static __is_system = true;
-	////////////////////////////
+	////////////////////////
 	__components = undefined;
 	
 	#region Core ///////////
@@ -447,6 +447,13 @@ function component_system_setup() {
 	}
 	return _system;
 };
+function component_system_exists(_owner = self) {
+	/// @func	component_system_exists(owner*)
+	/// @param	{struct}  owner=self
+	/// @return {boolean} exists?
+	///
+	return variable_struct_exists(_owner, __COMPONENT_SYSTEM_VAR_NAME);
+};
 
 #endregion
 #region Eventable //////////////////
@@ -457,9 +464,9 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @return {Eventable} self
 	///
 	static __class = Eventable;
-	////////////////////////////
+	////////////////////////
 	__broadcaster = undefined;
-
+	
 	#region Core ///////////
 	
 	static __setup_eventable    = function() {
@@ -535,11 +542,11 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		/// @return	{Eventable} self
 		///
 		if (!is_array(_events)) {
-				_events = [_events];	
-			}
+			_events = [_events];	
+		}
 		for (var _i = 0, _len = array_length(_events); _i < _len; _i++) {
-				get_broadcaster().register_channel(_events[_i]);
-			}
+			get_broadcaster().register_channel(_events[_i]);
+		}
 		broadcast("registered", _events);
 		return self;
 	};
@@ -608,24 +615,33 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	/// @return	{Moveable} self
 	///
 	static __class = Moveable;
-	////////////////////////////
-	__owner	   = other;
-	__hspd	   = 0;
-	__vspd	   = 0;
-	__movesets = undefined;
-	__path	   = {
+	////////////////////////
+	__owner		= other;
+	__hspd		= 0.0;
+	__vspd		= 0.0;
+	__props		= {
+		__weight:	  1.0,	// set manually
+		__speed:	  0.0,	// set manually
+		__speed_mult: 1.0,	// get from moveset
+		__accel:	  1.0,	// get from moveset
+		__fric:		  0.0,	// get from moveset
+	};
+	__movespeed = {
+		__current:    undefined,
+		__movespeeds: undefined,
+		__triggers:   undefined,
+	};
+	__moveset	= {
+		__current:	undefined,
+		__movesets:	undefined,
+		__triggers: undefined,
+	};
+	__path		= {
 		__index:  undefined,
 		__smooth: true,
 		__closed: false,
 	};
 	
-	//action_change_moveset = new Action({ 
-	//	method: method(self, function(_moveset_name) {
-	//		change_moveset("test");
-	//	})
-	//});
-	//static add_moveset_trigger = function(_moveset_name, _trigger_method) {};
-
 	#region Core ///////////////
 	
 	static __setup_moveable	   = function() {
@@ -634,19 +650,30 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		if (!is_initialized()) {
 			__setup_component();
-			#region Props //////
+			#region Props //////////
 			
-			if (__config[$ "path_index" ] != undefined) __path.__index  = __config.path_index;
-			if (__config[$ "path_smooth"] != undefined) __path.__smooth = __config.path_smooth;
-			if (__config[$ "path_closed"] != undefined) __path.__closed = __config.path_closed;
-			
-			#endregion
-			#region Moveset ////
-			
-			__movesets = new Set();
+			//if (__config[$ "path_index" ] != undefined) __path.__index  = __config.path_index;
+			//if (__config[$ "path_smooth"] != undefined) __path.__smooth = __config.path_smooth;
+			//if (__config[$ "path_closed"] != undefined) __path.__closed = __config.path_closed;
 			
 			#endregion
-			#region Path ///////
+			#region MoveSpeed //////
+			
+			with (__movespeed) {
+				__movespeeds = new Set();
+				__triggers	 = new Set();
+			}
+			
+			#endregion
+			#region MoveSet ////////
+			
+			with (__moveset) {
+				__movesets = new Set();
+				__triggers = new Set();
+			}
+			
+			#endregion
+			#region Path ///////////
 			
 			with (__path) {
 				if (__index == undefined) {	/// replace with has_path()
@@ -665,7 +692,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @return {Moveable} self
 		///
 		if (is_initialized()) {
-			#region Path ///////
+			#region Path ///////////
 			
 			with (__path) {
 				path_delete(__index);
@@ -673,9 +700,22 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			}
 			
 			#endregion
-			#region Moveset ////
+			#region MoveSet ////////
 			
-			__movesets = undefined;
+			with (__moveset) {
+				__current  = undefined;
+				__movesets = undefined;
+				__triggers = undefined;
+			}
+			
+			#endregion
+			#region MoveSpeed //////
+			
+			with (__movespeed) {
+				__current    = undefined;
+				__movespeeds = undefined;
+				__triggers	 = undefined;
+			}
 			
 			#endregion
 			__teardown_component();
@@ -699,108 +739,270 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	#endregion
 	#region Getters ////////////
 	
-	static get_moveset = function(_name) {
+	static get_movespeed		 = function(_name) {
+		/// @func	get_movespeed(name)
+		/// @param	{string}	name
+		/// @return {MoveSpeed} movespeed
+		///
+		with (__movespeed) {
+			return __movespeeds.get_item(_name);
+		}
+	};
+	static get_movespeed_current = function() {
+		/// @func	get_movespeed_current()
+		/// @return {real} speed
+		///
+		with (__movespeed) {
+			return __current;
+		}
+	};
+	static get_moveset			 = function(_name) {
 		/// @func	get_moveset(name)
 		/// @param	{string}  name
 		/// @return {MoveSet} moveset
 		///
-		return __movesets.get_item(_name);
+		with (__moveset) {
+			return __movesets.get_item(_name);
+		}
+	};
+	static get_moveset_current	 = function() {
+		/// @func	get_moveset_current()
+		/// @return {MoveSet} current
+		///
+		with (__moveset) {
+			return __current;
+		}
 	};
 		
 	#endregion
+	#region Setters ////////////
+	
+	static set_movespeed = function(_name) {
+		/// @func	set_movespeed(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (has_movespeed(_name)) {
+			__movespeed.__current = get_movespeed(_name);
+			__movespeed.__current.apply();
+		}
+		return self;
+	};
+	static set_moveset	 = function(_name) {
+		/// @func	set_moveset(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (has_moveset(_name)) {
+			__moveset.__current = get_moveset(_name);
+			__moveset.__current.apply();
+		}
+		return self;
+	};
+	
+	#endregion
 	#region Checkers ///////////
 	
-	static has_moveset	= function(_name) {
+	static has_movespeed		 = function(_name) {
+		/// @func	has_movespeed(name)
+		/// @param	{string } name
+		/// @return {boolean} has_movespeed?
+		///
+		return get_movespeed(_name) != undefined;
+	};
+	static has_movespeed_current = function() {
+		/// @func	has_movespeed_current()
+		/// @return {boolean} has_current?
+		///
+		return get_movespeed_current() != undefined;
+	};
+	static is_movespeed_current	 = function(_name) {
+		/// @func	is_movespeed_current(name)
+		/// @param	{string}  name
+		/// @return {boolean} is_current?
+		///
+		if (!has_movespeed_current()) {
+			return false;	
+		}
+		return get_movespeed_current().get_name() == _name;
+	};
+	static has_moveset			 = function(_name) {
 		/// @func	has_moveset(name)
 		/// @param	{string}  name
 		/// @return {boolean} exists?
 		///
 		return get_moveset(_name) != undefined;
 	};
-	static has_movesets = function() {
-		/// @func	has_movesets()
-		/// @return {boolean} has_movesets?
+	static has_moveset_current	 = function() {
+		/// @func	has_moveset_current()
+		/// @return {boolean} has_current?
 		///
-		return !__movesets.is_empty();
+		return get_moveset_current() != undefined;
+	};
+	static is_moveset_current	 = function(_name) {
+		/// @func	is_moveset_current(name)
+		/// @param	{string}  name
+		/// @return {boolean} is_current?
+		///
+		if (!has_moveset_current()) {
+			return false;	
+		}
+		return get_moveset_current().get_name() == _name;
 	};
 	
 	#endregion
 	
-	static new_moveset	  = function(_name, _data) {
+	static new_movespeed		= function(_name, _speed) {
+		/// @func	new_movespeed(name, speed)
+		/// @param	{string}   name
+		/// @param	{real}     speed
+		/// @return {Moveable} self
+		///
+		/// Already Has MoveSpeed - Update It
+		if (has_movespeed(_name)) {
+			var _movespeed = get_movespeed(_name);
+			_movespeed.set_speed(_speed);
+		}
+		/// Does Not Have MoveSpeed - Create It
+		else {
+			var _movespeed = new MoveSpeed({ 
+				name:  _name, 
+				speed: _speed,
+			});
+			add_movespeed(_movespeed);
+		}
+		return self;
+	};
+	static add_movespeed		= function(_movespeed) {
+		/// @func	add_movespeed(movespeed)
+		/// @param	{MoveSpeed} movespeed
+		/// @return {Moveable}	self
+		///
+		with (__movespeed) {
+			__movespeeds.add_item(_movespeed.get_name(), _movespeed);	
+		}
+		return self;
+	};
+	static new_moveset			= function(_name, _data) {
 		/// @func	new_moveset(name, data)
 		/// @param	{string}   name
 		/// @param	{struct}   data
 		/// @return {Moveable} self
 		///
-		_data[$ "name"] = _name;	// append name onto data struct
-		var _moveset = new MoveSet(_data);
-		add_moveset(_moveset);
+		/// Already Has MoveSet - Update It
+		if (has_moveset(_name)) {
+			var _moveset = get_moveset(_name);
+			_moveset.set_data(_data);
+		}
+		/// Does Not Have MoveSet - Create It
+		else {
+			var _moveset = new MoveSet(_data);
+			_moveset.set_name(_name);
+			add_moveset(_moveset);
+		}
 		return self;
 	};
-	static add_moveset	  = function(_moveset) {
+	static add_moveset			= function(_moveset) {
 		/// @func	add_moveset(moveset)
 		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		__movesets.add_item(_moveset.get_name(), _moveset);
-		return self;
-	};
-	static change_moveset = function(_name) {
-		/// @func	change_moveset(name)
-		/// @param	{string}   name
-		/// @return {Moveable} self
-		///
-		if (has_moveset(_name)) {
-			get_moveset(_name).apply();
+		with (__moveset) {
+			__movesets.add_item(_moveset.get_name(), _moveset);	
 		}
 		return self;
 	};
-};
-function MoveableTopDown() : Moveable() constructor {
-	/// @func	MoveableTopDown()
-	/// @return {Moveable} self
-	///
-};
-function MoveablePlatformer() : Moveable() constructor {
-	/// @func	MoveablePlatformer()
-	/// @return {Moveable} self
-	///
+	static new_moveset_trigger	= function(_moveset_name, _condition_name, _condition) {
+		///
+		var _moveable = self;
+		with (__moveset) {
+			/// Trigger Does Not Exist - Create New Trigger()
+			if (!__triggers.has_item(_moveset_name)) {
+				var _trigger = new Trigger({ name: _moveset_name })		
+					.new_action("change_moveset", 
+						method(_moveable, function(_moveset_name) {
+							change_moveset(_moveset_name);	
+						}),
+						_moveset_name,
+					);
+				__triggers.add_item(_moveset_name, _trigger);
+			}
+			/// Trigger Already Exists
+			else {
+				var _trigger = __triggers.get_item(_moveset_name);					
+			}
+			
+			/// Insert New Condition
+			_trigger.new_condition(_condition_name, _condition)
+		}
+		return self;
+	};
 };
 function MoveSet(_config = {}) : Class(_config) constructor {
 	/// @func	MoveSet(config*)
 	/// @param	{struct}  config={}
 	/// @return {MoveSet} self
 	///
-	__moveable	= other;
-	__owner		= __moveable.get_owner();
-	__config	= _config;
-	__speed		= _config[$ "speed"] ?? 0;
-	__accel		= _config[$ "accel"] ?? 0;
-	__fric		= _config[$ "fric" ] ?? 0;
-	__mult		= _config[$ "mult" ] ?? 1;
+	__moveable	 = other;
+	__owner		 = __moveable.get_owner();
+	__accel		 = _config[$ "accel"	 ] ?? 0;
+	__fric		 = _config[$ "fric"		 ] ?? 0;
+	__speed_mult = _config[$ "speed_mult"] ?? 1;
 	
-	static apply	= function() {
-		/// @func	apply()
-		/// @return	{MoveSet} self
-		///
-		__moveable.__speed = __speed;
-		__moveable.__accel = __accel;
-		__moveable.__fric  = __fric;
-		__moveable.__mult  = __mult;
-		return self;
-	};
 	static set_data = function(_data) {
 		/// @func	set_data(data)
 		/// @param	{struct}  data
 		/// @return {MoveSet} self
 		///
-		if (_data[$ "speed"] != undefined) __speed = _data.speed;
-		if (_data[$ "accel"] != undefined) __accel = _data.accel;
-		if (_data[$ "fric" ] != undefined) __fric  = _data.fric;
-		if (_data[$ "mult" ] != undefined) __mult  = _data.mult;
+		if (_data[$ "accel"		] != undefined) __accel		 = _data.accel;
+		if (_data[$ "fric"		] != undefined) __fric		 = _data.fric;
+		if (_data[$ "speed_mult"] != undefined) __speed_mult = _data.speed_mult;
+		return self;
+	};
+	static apply	= function() {
+		/// @func	apply()
+		/// @return	{MoveSet} self
+		///
+		var _moveset = self;
+		with (__moveable.__props) {
+			__accel		 = _moveset.__accel;
+			__fric		 = _moveset.__fric;
+			__speed_mult = _moveset.__speed_mult;
+		}
 		return self;
 	};
 };
+function MoveSpeed(_config = {}) : Class(_config) constructor {
+	/// @func	MoveSpeed(config*)
+	/// @param	{struct}	config={}
+	/// @return {MoveSpeed} self
+	///
+	__moveable	= other;
+	__owner		= __moveable.get_owner();
+	__speed		= _config[$ "speed"] ?? 0;
+	
+	static set_speed = function(_speed) {
+		/// @func	set_speed(speed)
+		/// @param	{real}		speed
+		/// @return {MoveSpeed} self
+		///
+		__speed = _speed;
+		return self;
+	};
+	static apply	 = function() {
+		/// @func	apply()
+		/// @return {MoveSpeed} self
+		///
+		var _movespeed = self;
+		with (__moveable.__props) {
+			__speed = _movespeed.__speed;
+		}
+		return self;
+	};
+};
+
+//function MoveableTopDown() : Moveable() constructor {};
+//function MoveablePlatformer() : Moveable() constructor {};
 
 #endregion
 #region Actionable /////////////////
@@ -812,7 +1014,7 @@ function Actionable() : Component() constructor {
 	/// @return {Component} self 
 	///
 	static __class = Actionable;
-	////////////////////////////
+	////////////////////////
 	__fsm = undefined;
 	
 	#region Private ////////
@@ -1359,4 +1561,21 @@ function Scriptable() : Component() constructor {
 };
 
 #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

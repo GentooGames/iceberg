@@ -1,4 +1,5 @@
 iceberg:
+	- make sure that components are utilizng the is_active() flag for process handling
 	- why is the save controller handling the first room exit?
 	- should method_inherit() utilize weak method references? 
 		- seeing some bloat in memory usage. should optimize
@@ -8,6 +9,7 @@ iceberg:
 	- underscore object core private events to match components
 		- setup and rebuild should take data param
 		- teardowns should execute in opposite order of setup()
+	- make sure that wherever we call setup() on config props, that those props are also getting reset in teardown()
 	- make sure that callbacks dont try to handle params
 	- rework pubsub events in Method(), Action(), Trigger() classes
 	- if constructor does not utilize Core() but has an update, can that be replaced with a pubsub?

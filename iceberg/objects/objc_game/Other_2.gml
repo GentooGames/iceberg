@@ -31,7 +31,8 @@ DEBUG.setup();
 
 /// Data Files
 log("<game_start> initializing data files...");
-//global_..._data_init();
+//global_test_data();
+global_moveset_data();
 
 /// Unit Tests
 UNIT_TEST.run_tests();
@@ -43,5 +44,5 @@ GAME.setup();
 //global._camera = new Camera(0, 0, 0, false);
 //#macro CAMERA global._camera
 //(instance_create_layer(0, 0, "Controllers", objc_world)).setup();
-(instance_create_layer(0, 0, "Controllers", objc_save)).setup();
+//(instance_create_layer(0, 0, "Controllers", objc_save)).setup();
 

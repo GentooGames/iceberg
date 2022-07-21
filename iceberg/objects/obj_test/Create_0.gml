@@ -4,32 +4,39 @@ event_inherited();
 setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///
-	new_component(Moveable)
-		.new_moveset("default", {
-			speed: 6.0,
-			accel: 1.0,
-			fric:  0.0,
-			mult:  1.0,
-		})
-		.new_moveset("sand", {
-			speed: 4.0,
-			accel: 0.3,
-			fric:  0.2,
-			mult:  1.0,
-		})
-		.new_moveset("ice", {
-			speed: 8.0,
-			accel: 0.2,
-			fric:  0.1,
-			mult:  1.0,
-		})
-		.change_moveset("default")
+	/*	ACCOUNT FOR:
+		- entities weight
+		- terrain move scalar
+		
+		- general multiplier
+		- trigger conditions still need name
+	*/
+	new_component(Moveable);
+	
+	/// Speed
+	get_component(Moveable)
+		.new_movespeed("walk", 4.0)
+		.new_movespeed("run",  8.0)
+		.set_movespeed("walk")
+	
+	/// Moveset
+	get_component(Moveable)
+		.new_moveset("dirt", MOVESETS[$ MOVESET.DIRT])
+		.new_moveset("sand", MOVESETS[$ MOVESET.SAND])
+		.new_moveset("ice",  MOVESETS[$ MOVESET.ICE ])
+		.set_moveset("dirt")
+		
+	/// Moveset Trigger
+	get_component(Moveable)
+		.new_moveset_trigger("sand", "", function() { /* condition 1 ... */ })
+		.new_moveset_trigger("sand", "", function() { /* condition 2 ... */ })
+		.new_moveset_trigger("ice",  "", function() { /* condition 1 ... */ })
+		.new_moveset_trigger("dirt", "", function() { /* condition 1 ... */ })
+			
 })();
 teardown = method_inherit(teardown, function() {
 	/// @func teardown()
 	///
-	//mover.teardown();
-	//mover = undefined;
 });
 update	 = method_inherit(update, function() {
 	/// @func update()
@@ -39,11 +46,6 @@ update	 = method_inherit(update, function() {
 	if (INPUT.keyboard.button(vk_left))  x -= _speed;
 	if (INPUT.keyboard.button(vk_down))  y += _speed;
 	if (INPUT.keyboard.button(vk_up))    y -= _speed;
-
-	//mover.update();
-	//log("moveset: {0}", mover.__moveset.__moveset.get_name());
-	//log("hspd: {0}, vspd: {1}, speed: {2}, accel: {3}, fric: {4}, mult: {5}",
-	//	mover.__hspd, mover.__vspd, mover.__speed, mover.__accel, mover.__fric, mover.__mult);
 });
 render	 = method_inherit(render, function() {
 	/// @func render()
