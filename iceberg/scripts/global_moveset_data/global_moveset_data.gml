@@ -11,19 +11,19 @@ function global_moveset_data() {
 	////////////////////////
 	with (global.__movesets) {
 		self[$ MOVESET.DIRT] = { 
+			speed_mult: 1.0,
 			accel:		0.8,
 			fric:		0.3,
-			speed_mult: 1.0,
 		};
 		self[$ MOVESET.SAND] = { 
+			speed_mult: 0.6,
 			accel:		0.3,
 			fric:		0.2,
-			speed_mult: 0.6,
 		};
 		self[$ MOVESET.ICE]  = { 
+			speed_mult: 1.2,
 			accel:		0.2,
 			fric:		0.1,
-			speed_mult: 1.2,
 		};
 	};
 	////////////////////////

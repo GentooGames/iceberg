@@ -617,14 +617,14 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	static __class = Moveable;
 	////////////////////////
 	__owner		= other;
-	__hspd		= 0.0;
-	__vspd		= 0.0;
 	__props		= {
-		__weight:	  1.0,	// set manually
-		__speed:	  0.0,	// set manually
-		__speed_mult: 1.0,	// get from moveset
-		__accel:	  1.0,	// get from moveset
-		__fric:		  0.0,	// get from moveset
+		__speed:	  1.0,
+		__speed_mult: 1.0,
+		__weight:	  1.0,
+		__accel:	  0.0,
+		__fric:		  0.0,
+		__hspd:		  0.0,
+		__vspd:		  0.0,
 	};
 	__movespeed = {
 		__current:    undefined,
@@ -642,7 +642,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__closed: false,
 	};
 	
-	#region Core ///////////////
+	#region Core ///////////
 	
 	static __setup_moveable	   = function() {
 		/// @func	__setup_moveable()
@@ -737,117 +737,199 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	static update	= __update_moveable;
 	
 	#endregion
-	#region Getters ////////////
+	#region Getters ////////
 	
-	static get_movespeed		 = function(_name) {
-		/// @func	get_movespeed(name)
-		/// @param	{string}	name
+	static get_movespeed  = function(_name = undefined) {
+		/// @func	get_movespeed(name*)
+		/// @param	{string}	name=undefined
 		/// @return {MoveSpeed} movespeed
 		///
 		with (__movespeed) {
-			return __movespeeds.get_item(_name);
-		}
-	};
-	static get_movespeed_current = function() {
-		/// @func	get_movespeed_current()
-		/// @return {real} speed
-		///
-		with (__movespeed) {
+			if (_name != undefined) {
+				return __movespeeds.get_item(_name);
+			}
 			return __current;
 		}
 	};
-	static get_moveset			 = function(_name) {
-		/// @func	get_moveset(name)
-		/// @param	{string}  name
+	static get_moveset	  = function(_name = undefined) {
+		/// @func	get_moveset(name*)
+		/// @param	{string}  name=undefined
 		/// @return {MoveSet} moveset
 		///
 		with (__moveset) {
-			return __movesets.get_item(_name);
-		}
-	};
-	static get_moveset_current	 = function() {
-		/// @func	get_moveset_current()
-		/// @return {MoveSet} current
-		///
-		with (__moveset) {
+			if (_name != undefined) {
+				return __movesets.get_item(_name);
+			}
 			return __current;
 		}
 	};
-		
-	#endregion
-	#region Setters ////////////
-	
-	static set_movespeed = function(_name) {
-		/// @func	set_movespeed(name)
-		/// @param	{string}   name
-		/// @return {Moveable} self
+	static get_speed	  = function() {
+		/// @func	get_speed()
+		/// @return {real} speed
 		///
-		if (has_movespeed(_name)) {
-			__movespeed.__current = get_movespeed(_name);
-			__movespeed.__current.apply();
+		with (__props) {
+			return __speed;	
+		}
+	};
+	static get_speed_mult = function() {
+		/// @func	get_speed_mult()
+		/// @return {real} speed_mult
+		///
+		with (__props) {
+			return __speed_mult;	
+		}
+	};
+	static get_weight	  = function() {
+		/// @func	get_weight()
+		/// @return {real} weight
+		///
+		with (__props) {
+			return __weight;	
+		}
+	};
+	static get_accel	  = function() {
+		/// @func	get_accel()
+		/// @return {real} accel
+		///
+		with (__props) {
+			return __accel;	
+		}
+	};
+	static get_fric		  = function() {
+		/// @func	get_fric()
+		/// @return {real} fric
+		///
+		with (__props) {
+			return __fric;	
+		}
+	};
+	static get_hspd		  = function() {
+		/// @func	get_hspd()
+		/// @return {real} hspd
+		///
+		with (__props) {
+			return __hspd;	
+		}
+	};
+	static get_vspd		  = function() {
+		/// @func	get_vspd()
+		/// @return {real} vspd
+		///
+		with (__props) {
+			return __vspd;	
+		}
+	};
+	
+	#endregion
+	#region Setters ////////
+	
+	static set_movespeed  = function(_movespeed) {
+		/// @func	set_movespeed(movespeed)
+		/// @param	{MoveSpeed} movespeed
+		/// @return {Moveable}  self
+		///
+		with (__movespeed) {
+			__current = _movespeed;	
 		}
 		return self;
 	};
-	static set_moveset	 = function(_name) {
-		/// @func	set_moveset(name)
-		/// @param	{string}   name
+	static set_moveset	  = function(_moveset) {
+		/// @func	set_moveset(moveset)
+		/// @param	{MoveSet}  moveset
 		/// @return {Moveable} self
 		///
-		if (has_moveset(_name)) {
-			__moveset.__current = get_moveset(_name);
-			__moveset.__current.apply();
+		with (__moveset) {
+			__current = _moveset;	
+		}
+		return self;
+	};
+	static set_speed	  = function(_speed) {
+		/// @func	set_speed(speed)
+		/// @param	{real}	   speed
+		/// @return {Moveable} self
+		///
+		with (__props) {
+			__speed = _speed;
+		}
+		return self;
+	};
+	static set_speed_mult = function(_mult) {
+		/// @func	set_speed_mult(mult)
+		/// @param	{real}	   mult
+		/// @return {Moveable} self
+		///
+		with (__props) {
+			__speed_mult = _mult;
+		}
+		return self;
+	};
+	static set_weight	  = function(_weight) {
+		/// @func	set_weight(weight)
+		/// @param	{real}	   weight
+		/// @return {Moveable} self
+		///
+		with (__props) {
+			__weight = _weight;
+		}
+		return self;
+	};
+	static set_accel	  = function(_accel) {
+		/// @func	set_accel(accel)
+		/// @param	{real}	   accel
+		/// @return {Moveable} self
+		///
+		with (__props) {
+			__accel = _accel;
+		}
+		return self;
+	};
+	static set_fric		  = function(_fric) {
+		/// @func	set_fric(fric)
+		/// @param	{real}	   fric
+		/// @return {Moveable} self
+		///
+		with (__props) {
+			__fric = _fric;
+		}
+		return self;
+	};
+	static set_hspd		  = function(_hspd) {
+		/// @func	set_hspd(hspd)
+		/// @param	{real}	   hspd
+		/// @return {Moveable} self
+		///
+		with (__props) {
+			__hspd = _hspd;
+		}
+		return self;
+	};
+	static set_vspd		  = function(_vspd) {
+		/// @func	set_vspd(vspd)
+		/// @param	{real}	   vspd
+		/// @return {Moveable} self
+		///
+		with (__props) {
+			__vspd = _vspd;
 		}
 		return self;
 	};
 	
 	#endregion
-	#region Checkers ///////////
+	#region Checkers ///////
 	
-	static has_movespeed		 = function(_name) {
-		/// @func	has_movespeed(name)
-		/// @param	{string } name
+	static has_movespeed  = function(_name = undefined) {
+		/// @func	has_movespeed(name*)
+		/// @param	{string } name=undefined
 		/// @return {boolean} has_movespeed?
 		///
 		return get_movespeed(_name) != undefined;
 	};
-	static has_movespeed_current = function() {
-		/// @func	has_movespeed_current()
-		/// @return {boolean} has_current?
-		///
-		return get_movespeed_current() != undefined;
-	};
-	static is_movespeed_current	 = function(_name) {
-		/// @func	is_movespeed_current(name)
-		/// @param	{string}  name
-		/// @return {boolean} is_current?
-		///
-		if (!has_movespeed_current()) {
-			return false;	
-		}
-		return get_movespeed_current().get_name() == _name;
-	};
-	static has_moveset			 = function(_name) {
-		/// @func	has_moveset(name)
-		/// @param	{string}  name
-		/// @return {boolean} exists?
+	static has_moveset	  = function(_name = undefined) {
+		/// @func	has_moveset(name*)
+		/// @param	{string}  name=undefined
+		/// @return {boolean} has_moveset?
 		///
 		return get_moveset(_name) != undefined;
-	};
-	static has_moveset_current	 = function() {
-		/// @func	has_moveset_current()
-		/// @return {boolean} has_current?
-		///
-		return get_moveset_current() != undefined;
-	};
-	static is_moveset_current	 = function(_name) {
-		/// @func	is_moveset_current(name)
-		/// @param	{string}  name
-		/// @return {boolean} is_current?
-		///
-		if (!has_moveset_current()) {
-			return false;	
-		}
-		return get_moveset_current().get_name() == _name;
 	};
 	
 	#endregion
@@ -873,16 +955,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-	static add_movespeed		= function(_movespeed) {
-		/// @func	add_movespeed(movespeed)
-		/// @param	{MoveSpeed} movespeed
-		/// @return {Moveable}	self
-		///
-		with (__movespeed) {
-			__movespeeds.add_item(_movespeed.get_name(), _movespeed);	
-		}
-		return self;
-	};
 	static new_moveset			= function(_name, _data) {
 		/// @func	new_moveset(name, data)
 		/// @param	{string}   name
@@ -899,16 +971,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			var _moveset = new MoveSet(_data);
 			_moveset.set_name(_name);
 			add_moveset(_moveset);
-		}
-		return self;
-	};
-	static add_moveset			= function(_moveset) {
-		/// @func	add_moveset(moveset)
-		/// @param	{MoveSet}  moveset
-		/// @return {Moveable} self
-		///
-		with (__moveset) {
-			__movesets.add_item(_moveset.get_name(), _moveset);	
 		}
 		return self;
 	};
@@ -937,38 +999,64 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-};
-function MoveSet(_config = {}) : Class(_config) constructor {
-	/// @func	MoveSet(config*)
-	/// @param	{struct}  config={}
-	/// @return {MoveSet} self
-	///
-	__moveable	 = other;
-	__owner		 = __moveable.get_owner();
-	__accel		 = _config[$ "accel"	 ] ?? 0;
-	__fric		 = _config[$ "fric"		 ] ?? 0;
-	__speed_mult = _config[$ "speed_mult"] ?? 1;
-	
-	static set_data = function(_data) {
-		/// @func	set_data(data)
-		/// @param	{struct}  data
-		/// @return {MoveSet} self
+	static add_movespeed		= function(_movespeed) {
+		/// @func	add_movespeed(movespeed)
+		/// @param	{MoveSpeed} movespeed
+		/// @return {Moveable}	self
 		///
-		if (_data[$ "accel"		] != undefined) __accel		 = _data.accel;
-		if (_data[$ "fric"		] != undefined) __fric		 = _data.fric;
-		if (_data[$ "speed_mult"] != undefined) __speed_mult = _data.speed_mult;
+		with (__movespeed) {
+			__movespeeds.add_item(_movespeed.get_name(), _movespeed);	
+		}
 		return self;
 	};
-	static apply	= function() {
-		/// @func	apply()
-		/// @return	{MoveSet} self
+	static add_moveset			= function(_moveset) {
+		/// @func	add_moveset(moveset)
+		/// @param	{MoveSet}  moveset
+		/// @return {Moveable} self
 		///
-		var _moveset = self;
-		with (__moveable.__props) {
-			__accel		 = _moveset.__accel;
-			__fric		 = _moveset.__fric;
-			__speed_mult = _moveset.__speed_mult;
+		with (__moveset) {
+			__movesets.add_item(_moveset.get_name(), _moveset);	
 		}
+		return self;
+	};
+	static change_movespeed		= function(_name) {
+		/// @func	change_movespeed(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (has_movespeed(_name)) {
+			set_movespeed(get_movespeed(_name));
+			apply_movespeed();
+		}
+		return self;
+	};
+	static change_moveset		= function(_name) {
+		/// @func	change_moveset(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (has_moveset(_name)) {
+			set_moveset(get_moveset(_name));
+			apply_moveset();
+		}
+		return self;
+	};
+	static apply_movespeed		= function() {
+		/// @func	apply_movespeed()
+		/// @return {Moveable} self
+		///
+		var _speed = get_movespeed();
+		set_speed(_speed.get_speed());
+		return self;
+	};
+	static apply_moveset		= function() {
+		/// @func	apply_moveset()
+		/// @return	{Moveable} self
+		///
+		var _set = get_moveset();
+		set_speed_mult(_set.get_speed_mult());
+		set_accel(_set.get_accel());
+		set_fric(_set.get_fric());
 		return self;
 	};
 };
@@ -981,6 +1069,12 @@ function MoveSpeed(_config = {}) : Class(_config) constructor {
 	__owner		= __moveable.get_owner();
 	__speed		= _config[$ "speed"] ?? 0;
 	
+	static get_speed = function() {
+		/// @func	get_speed()
+		/// @return {real} speed
+		///
+		return __speed;
+	};
 	static set_speed = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real}		speed
@@ -989,14 +1083,69 @@ function MoveSpeed(_config = {}) : Class(_config) constructor {
 		__speed = _speed;
 		return self;
 	};
-	static apply	 = function() {
-		/// @func	apply()
-		/// @return {MoveSpeed} self
+};
+function MoveSet(_config = {}) : Class(_config) constructor {
+	/// @func	MoveSet(config*)
+	/// @param	{struct}  config={}
+	/// @return {MoveSet} self
+	///
+	__moveable	 = other;
+	__owner		 = __moveable.get_owner();
+	__speed_mult = _config[$ "speed_mult"] ?? 1;
+	__accel		 = _config[$ "accel"	 ] ?? 0;
+	__fric		 = _config[$ "fric"		 ] ?? 0;
+	
+	static get_speed_mult = function() {
+		/// @func	get_speed_mult()
+		/// @return {real} mult
 		///
-		var _movespeed = self;
-		with (__moveable.__props) {
-			__speed = _movespeed.__speed;
-		}
+		return __speed_mult;
+	};
+	static get_accel	  = function() {
+		/// @func	get_accel()
+		/// @return {real} accel
+		///
+		return __accel;
+	};
+	static get_fric		  = function() {
+		/// @func	get_fric()
+		/// @return {real} fric
+		///
+		return __fric;
+	};
+	
+	static set_data		  = function(_data) {
+		/// @func	set_data(data)
+		/// @param	{struct}  data
+		/// @return {MoveSet} self
+		///
+		if (_data[$ "speed_mult"] != undefined) set_speed_mult(_data.speed_mult);
+		if (_data[$ "accel"		] != undefined) set_accel(_data.accel);
+		if (_data[$ "fric"		] != undefined) set_fric(_data.fric);
+		return self;
+	};
+	static set_speed_mult = function(_mult) {
+		/// @func	set_speed_mult(mult)
+		/// @param	{real}	  mult
+		/// @return {MoveSet} self
+		///
+		__speed_mult = _mult;
+		return self;
+	};
+	static set_accel	  = function(_accel) {
+		/// @func	set_accel(accel)
+		/// @param	{real}	  accel
+		/// @return {MoveSet} self
+		///
+		__accel = _accel;
+		return self;
+	};
+	static set_fric		  = function(_fric) {
+		/// @func	set_fric(fric)
+		/// @param	{real}	  fric
+		/// @return {MoveSet} self
+		///
+		__fric = _fric;
 		return self;
 	};
 };

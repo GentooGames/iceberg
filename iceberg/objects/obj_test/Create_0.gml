@@ -13,25 +13,26 @@ setup	 = method_inherit(setup,  function() {
 	*/
 	new_component(Moveable);
 	
-	/// Speed
+	/// Speeds
 	get_component(Moveable)
-		.new_movespeed("walk", 4.0)
-		.new_movespeed("run",  8.0)
-		.set_movespeed("walk")
+		.new_movespeed("walk",   4.0)
+		.new_movespeed("run",    8.0)
+		.new_movespeed("crocuh", 2.0)
+		.change_movespeed("walk")
 	
-	/// Moveset
+	/// Movesets
 	get_component(Moveable)
 		.new_moveset("dirt", MOVESETS[$ MOVESET.DIRT])
 		.new_moveset("sand", MOVESETS[$ MOVESET.SAND])
 		.new_moveset("ice",  MOVESETS[$ MOVESET.ICE ])
-		.set_moveset("dirt")
+		.change_moveset("dirt")
 		
-	/// Moveset Trigger
-	get_component(Moveable)
-		.new_moveset_trigger("sand", "", function() { /* condition 1 ... */ })
-		.new_moveset_trigger("sand", "", function() { /* condition 2 ... */ })
-		.new_moveset_trigger("ice",  "", function() { /* condition 1 ... */ })
-		.new_moveset_trigger("dirt", "", function() { /* condition 1 ... */ })
+	/// Moveset Triggers
+	//get_component(Moveable)
+	//	.new_moveset_trigger("sand", "", function() { /* condition 1 ... */ })
+	//	.new_moveset_trigger("sand", "", function() { /* condition 2 ... */ })
+	//	.new_moveset_trigger("ice",  "", function() { /* condition 1 ... */ })
+	//	.new_moveset_trigger("dirt", "", function() { /* condition 1 ... */ })
 			
 })();
 teardown = method_inherit(teardown, function() {
