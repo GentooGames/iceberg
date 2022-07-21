@@ -14,23 +14,26 @@ setup	 = method_inherit(setup,  function() {
 	
 	/// Speeds
 	get_component(Moveable)
-		.new_movespeed("walk",   4.0)
-		.new_movespeed("run",    8.0)
-		.new_movespeed("crouch", 2.0)
+		.add_movespeed("walk",   4.0)
+		.add_movespeed("run",    8.0)
+		.add_movespeed("crouch", 2.0)
 		.change_movespeed("walk")
 	
 	/// Movesets
 	get_component(Moveable)
-		.new_moveset("grass", MOVESETS[$ MOVESET.GRASS])
-		.new_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
-		.new_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
-		.change_moveset("dirt")
+		.add_moveset("grass", MOVESETS[$ MOVESET.GRASS])
+		.add_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
+		.add_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
+		.change_moveset("grass")
 		
 	/// Moveset Triggers
+	var _self = self;
 	get_component(Moveable)
-		.add_moveset_trigger("grass", "touching_grass", function() {
+		.add_moveset_trigger("grass", "touching_grass", method(_self, function() {
 			
-		})
+		}))
+		
+	
 		//.new_moveset_trigger("sand", "touching_sand", function() { 
 		//	return (collision_point(x, y, obj_terrain_sand, false, true) != noone);
 		//})

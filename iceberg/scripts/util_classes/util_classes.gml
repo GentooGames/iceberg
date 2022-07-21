@@ -352,7 +352,20 @@ function Method(_config = {}) : Class(_config) constructor {
 	__method = _config[$ "method"] ?? undefined;
 	__data	 = _config[$ "data"  ] ?? undefined;
 	
-	static execute = function() {
+	static get_method = function() {
+		/// @func	get_method()
+		/// @return {method} method
+		///
+		return __method;
+	};
+	static get_data   = function() {
+		/// @func	get_data()
+		/// @return {any} data
+		///
+		return __data;
+	};
+
+	static execute	  = function() {
 		/// @func	execute()
 		/// @return {any} return
 		///
@@ -403,14 +416,20 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		/// @param	{string} name
 		/// @return {Method} condition
 		///
-		return __conditions.get_item(_name);
+		if (!__conditions.has_item(_name)) {
+			return undefined;
+		}
+		return __conditions.get_item(_name).get_method();
 	};
 	static get_action		= function(_name) {
 		/// @func	get_action(name)
 		/// @param	{string} name
 		/// @return {Method} action
 		///
-		return __actions.get_item(_name);
+		if (!__actions.has_item(_name)) {
+			return undefined;
+		}
+		return __actions.get_item(_name).get_method();
 	};
 	static has_condition	= function(_name) {
 		/// @func   has_condition(name)
