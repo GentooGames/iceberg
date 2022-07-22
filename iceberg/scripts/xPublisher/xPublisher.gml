@@ -7,6 +7,7 @@ function Publisher() constructor {
 	__channels = {};
 	__lookup = {};
 	__autoRegister = true;
+	__autoRemoveSubscriberOnTrigger = true; 
 	
 	#endregion
 	#region Private Methods
@@ -58,10 +59,23 @@ function Publisher() constructor {
 		repeat(_it) {
 			_subscriber = _subscribers[--_it];
 		
-			if (_subscriber.remove || _subscriber.trigger(_params)) { // if callback returns true, remove self from lookup table
+			////////////////////////////////////////////////////////////////////
+			// check for automatic Subscriber removal 
+			var _remove = false;
+			if (_subscriber.remove) {
+				_remove = true;	
+			}
+			// if callback returns true boolean, remove self from lookup table
+			else if (__autoRemoveSubscriberOnTrigger) {
+				var _result = _subscriber.trigger(_params);	
+				if (is_bool(_result) && _result) { 
+					_remove = true;
+				}
+			}
+			if (_remove) {
 				array_delete(_subscribers, _it, 1);
 				variable_struct_remove(__lookup, _subscriber.uid);
-				continue;
+				continue;	
 			}
 		}	
 	}

@@ -1,5 +1,7 @@
 /// Insert Ascii Art Here***
 
+#region General ////////////
+
 function Class(_config = {}) constructor {
 	/// @func	Class(config*)
 	/// @param	{struct} config={}
@@ -58,6 +60,42 @@ function Class(_config = {}) constructor {
 	
 	/// ANY CHANGES MADE TO CONFIG STRUCT SHOULD BE UPDATED IN CODE_SNIPPET
 };
+function Method(_config = {}) : Class(_config) constructor {
+	/// @func	Method(config*)
+	/// @param	{struct} config={}
+	/// @return {Method} self
+	///	
+	__method = _config[$ "method"] ?? undefined;
+	__data	 = _config[$ "data"  ] ?? undefined;
+	
+	#region Getters ////////
+	
+	static get_method = function() {
+		/// @func	get_method()
+		/// @return {method} method
+		///
+		return __method;
+	};
+	static get_data   = function() {
+		/// @func	get_data()
+		/// @return {any} data
+		///
+		return __data;
+	};
+
+	#endregion
+	
+	static execute = function() {
+		/// @func	execute()
+		/// @return {any} return
+		///
+		return __method(__data);
+	};
+};
+
+#endregion
+#region Collections ////////
+
 function Collection(_config = {}) : Class(_config) constructor {
 	/// @func	Collection(config*)
 	/// @param	{struct}	 config={}
@@ -343,45 +381,154 @@ function Family(_config = {}) : Set(_config) constructor {
 		return self;
 	};
 };
-////////////////////////////////////////////////////////////////
-function Method(_config = {}) : Class(_config) constructor {
-	/// @func	Method(config*)
-	/// @param	{struct} config={}
-	/// @return {Method} self
-	///	
-	__method = _config[$ "method"] ?? undefined;
-	__data	 = _config[$ "data"  ] ?? undefined;
-	
-	#region Getters ////////
-	
-	static get_method = function() {
-		/// @func	get_method()
-		/// @return {method} method
-		///
-		return __method;
-	};
-	static get_data   = function() {
-		/// @func	get_data()
-		/// @return {any} data
-		///
-		return __data;
-	};
 
-	#endregion
-	
-	static execute = function() {
-		/// @func	execute()
-		/// @return {any} return
-		///
-		return __method(__data);
-	};
-};
+#endregion
+#region Triggers ///////////
+
 function Trigger(_config = {}) : Class(_config) constructor {
 	/// @func	Trigger(config*)
 	/// @param	{struct}  config={}
 	/// @return {Trigger} self
-	/// @desc	a Trigger() can contain any number of conditions, and any
-	///			number of actions. Both "conditions" and "actions" are 
+	/// @desc	a Trigger() contains ONE condition and ONE action.
+	///			if the condition is validated, then the action will
+	///			will be executed. the data associated to the condition
+	///			validation and action execution is broadcasted over the
+	///			Eventable broadcast event, so that other objects can 
+	///			listen to it and parse the relevant data appropriately.
+	///
+	__condition = undefined;
+	__action	= undefined;
+	
+	/// Establish Ability To Broadcast Events
+	component_system_setup(Eventable);
+	__eventable = get_component(Eventable)
+		.register("trigger_validated", "action_executed")
+		.listen  ("trigger_validated",  method(self, execute))
+	
+	#region Getters	////////
+	
+	static get_condition = function() {
+		/// @func	get_condition()
+		/// @return {Method} condition
+		///
+		if (__condition == undefined) {
+			return undefined;	
+		}
+		return __condition.get_method();
+	};
+	static get_action	 = function() {
+		/// @func	get_action()
+		/// @return {Method} action
+		///
+		if (__action == undefined) {
+			return undefined;	
+		}
+		return __action.get_method();
+	};
+	
+	#endregion
+	#region Setters ////////
+	
+	static set_condition = function(_method, _data = undefined) {
+		/// @func	set_condition(method, data*)
+		/// @param	{method} method
+		/// @param	{any}	 data=undefined
+		/// @return {struct} self
+		///
+		__condition = new Method({
+			method: _method,
+			data:   _data,
+		});
+		return self;
+	};
+	static set_action	 = function(_method, _data = undefined) {
+		/// @func	set_action(method, data*)
+		/// @param	{method} method
+		/// @param	{any}	 data=undefined
+		/// @return {struct} self
+		///
+		__action = new Method({
+			method: _method,
+			data:   _data,
+		});
+		return self;
+	};
+	
+	#endregion
+	#region Checkers ///////
+	
+	static has_condition = function() {
+		/// @func   has_condition()
+		/// @return {boolean} has_condition?
+		///
+		return get_condition() != undefined;
+	};
+	static has_action	 = function() {
+		/// @func   has_action()
+		/// @return {boolean} has_action?
+		///
+		return get_action() != undefined;
+	};
+	
+	#endregion
+	
+	static remove_condition = function() {
+		/// @func	remove_condition()
+		/// @return {Trigger} self
+		///
+		__condition = undefined;
+		return self;
+	};
+	static remove_action	= function(_name) {
+		/// @func	remove_action(name, method)
+		/// @param	{string}  name
+		/// @return {Trigger} self
+		///
+		__action = undefined;
+		return self;
+	};
+	static check_activation = function() {
+		/// @func	check_activation()
+		/// @return {boolean} activated?
+		///
+		if (has_condition()) {
+			if (__condition.execute()) {
+				__eventable.broadcast("trigger_validated", { 
+					trigger:    self, 
+					condition: __condition,
+				});
+				return true;	
+			}
+		}
+		return false;
+	};
+	static execute			= function(_data) {
+		/// @func	execute(data)
+		/// @param	{struct} data
+		/// @return {struct} self
+		///
+		/// execute() gets run from the Pub/Sub. if this returns a 
+		/// true boolean, with the current implementation, then the 
+		/// Subscriber will automatically be removed from Pub/Sub
+		///
+		if (has_action()) {
+			var _result = __action.execute();
+			__eventable.broadcast("action_executed", { 
+				trigger:    self, 
+				condition: _data.payload.condition,
+				action:	   __action,
+				result:    _result,
+			});
+		}
+		return self;
+	};
+};
+function TriggerExt(_config = {}) : Class(_config) constructor {
+	/// @func	TriggerExt(config*)
+	/// @param	{struct}  config={}
+	/// @return {Trigger} self
+	/// @desc	a TriggerExt() can contain ANY number of conditions, and 
+	///			ANY number of actions. Both "conditions" and "actions" are 
 	///			encapsulated in a Method() class. if any one of the 
 	///			conditions is validated, then all of the actions will be 
 	///			executed. the data associated to the condition validation
@@ -396,9 +543,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 	component_system_setup(Eventable);
 	__eventable = get_component(Eventable)
 		.register("trigger_validated", "action_executed")
-		.listen  ("trigger_validated",  method(self, function(_data) {
-			execute(_data);	
-		}));
+		.listen  ("trigger_validated",  method(self, execute))
 	
 	#region Private ////////
 	
@@ -538,7 +683,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		}));
 	};
 	static remove_condition = function(_name) {
-		/// @func	remove_condition(name, method)
+		/// @func	remove_condition(name)
 		/// @param	{string}  name
 		/// @return {Trigger} self
 		///
@@ -546,7 +691,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		return self;
 	};
 	static remove_action	= function(_name) {
-		/// @func	remove_action(name, method)
+		/// @func	remove_action(name)
 		/// @param	{string}  name
 		/// @return {Trigger} self
 		///
@@ -567,10 +712,9 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		__actions.empty();
 		return self;
 	};
-	
 	static check_activation = function() {
 		/// @func	check_activation()
-		/// @return {Trigger} self
+		/// @return {boolean} activated?
 		///
 		if (!__conditions.is_empty()) {
 			var _names = __conditions.get_names();
@@ -590,10 +734,13 @@ function Trigger(_config = {}) : Class(_config) constructor {
 	};
 	static execute			= function(_data) {
 		/// @func	execute(data)
-		/// @param	{struct}  data
-		/// @return {Trigger} self
+		/// @param	{struct} data
+		/// @return {struct} self
 		///
-		/// Execute All Actions
+		/// execute() gets run from the Pub/Sub. if this returns a 
+		/// true boolean, with the current implementation, then the 
+		/// Subscriber will automatically be removed from Pub/Sub
+		///
 		if (!__actions.is_empty()) {
 			var _action_names = __actions.get_names();
 			var _actions	  = __actions.get_items();
@@ -614,5 +761,6 @@ function Trigger(_config = {}) : Class(_config) constructor {
 	};
 };
 
+#endregion
 
 

@@ -636,7 +636,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	///
 	static __class = Moveable;
 	////////////////////////
-	__owner		= other;
 	__props		= {
 		__speed:	  1.0,
 		__speed_mult: 1.0,
@@ -661,8 +660,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__smooth: true,
 		__closed: false,
 	};
-	
-	#region Core ///////////
 	
 	static __setup_moveable	   = function() {
 		/// @func	__setup_moveable()
@@ -745,12 +742,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			for (var _i = 0, _len = __moveset.__triggers.get_size(); _i < _len; _i++) {
 				var _trigger_name =  _trigger_names[_i];
 				if (_trigger_name == _moveset_current) {
-					log("same trigger, continuing...");
 					continue;	
 				}
 				var _trigger = _triggers[$ _trigger_name];
 				if (_trigger.check_activation()) {
-					log("trigger activated");
 					break;	
 				}
 			}
@@ -759,64 +754,13 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-	
 	static setup	= __setup_moveable;
-	static teardown = __teardown_moveable;
+	static teardown	= __teardown_moveable;
 	static update	= __update_moveable;
 	
-	#endregion
-	#region Getters ////////
+	#region Properties /////
 	
-	static get_movespeed	      = function(_name = undefined) {
-		/// @func	get_movespeed(name*)
-		/// @param	{string}	name=undefined
-		/// @return {MoveSpeed} movespeed
-		///
-		if (_name == undefined) {
-			return __movespeed.__current;	
-		}
-		return __movespeed.__movespeeds.get_item(_name);
-	};
-	static get_moveset		      = function(_name = undefined) {
-		/// @func	get_moveset(name*)
-		/// @param	{string}  name=undefined
-		/// @return {MoveSet} moveset
-		///
-		if (_name == undefined) {
-			return __movespeed.__current;
-		}	
-		return __moveset.__movesets.get_item(_name);
-	};
-	static get_moveset_trigger    = function(_moveset_name) {
-		/// @func	get_moveset_trigger(moveset_name)
-		/// @param	{string}  moveset_name
-		/// @return {Trigger} trigger
-		///
-		return __moveset.__triggers.get_item(_moveset_name);
-	};
-	static get_moveset_condition  = function(_moveset_name, _condition_name) {
-		/// @func	get_moveset_condition(moveset_name, condition_name)
-		/// @param	{string} moveset_name
-		/// @param	{string} condition_name
-		/// @return {method} trigger_method
-		///
-		var _trigger  = get_moveset_trigger(_moveset_name);
-		if (_trigger == undefined) {
-			return undefined;	
-		}
-		return _trigger.get_condition(_condition_name);
-	};
-	static get_moveset_conditions = function(_moveset_name) {
-		/// @func   get_moveset_conditions()
-		/// @return {array} methods
-		///
-		var _trigger  = get_moveset_trigger(_moveset_name);
-		if (_trigger == undefined) {
-			return undefined;
-		}
-		return _trigger.get_conditions();
-	};
-	
+	/// Get
 	static get_speed	  = function() {
 		/// @func	get_speed()
 		/// @return {real} speed
@@ -861,37 +805,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		return __props.__vspd;	
 	};
-	
-	#endregion
-	#region Setters ////////
-	
-	static set_movespeed  = function(_name, _speed) {
-		/// @func	set_movespeed(name, speed)
-		/// @param	{string}   name
-		/// @param	{real}     speed
-		/// @return {Moveable} self
-		///
-		var _movespeed  = get_movespeed(_name);
-		if (_movespeed == undefined) {
-			show_error("movespeed " + _name + " does not exist.", true);
-		}
-		_movespeed.set_speed(_speed);
-		return self;
-	};
-	static set_moveset	  = function(_name, _data) {
-		/// @func	set_moveset(name, speed)
-		/// @param	{string}   name
-		/// @param	{struct}   data
-		/// @return {Moveable} self
-		///
-		var _moveset  = get_moveset(_name);
-		if (_moveset == undefined) {
-			show_error("moveset " + _name + " does not exist.", true);
-		}
-		_moveset.set_data(_data);
-		return self;
-	};
-	
+		
+	/// Set
 	static set_speed	  = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real}	   speed
@@ -950,256 +865,303 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	};
 	
 	#endregion
-	#region Checkers ///////
+	#region MoveSpeed //////
+
+	static __new_movespeed   = function(_name) {
+		/// @func	__new_movespeed(name)
+		/// @param	{string}    name
+		/// @return {MoveSpeed} movespeed
+		///		
+		var _movespeed = new MoveSpeed({ name: _name });
+		__add_movespeed(_movespeed);
+		return _movespeed;
+	};
+	static __add_movespeed   = function(_movespeed) {
+		/// @func   __add_movespeed(movespeed)
+		/// @param  {MoveSpeed} movespeed
+		/// @return {Moveable}  self
+		///
+		var _name = _movespeed.get_name();
+		if (has_movespeed(_name)) {
+			show_error("movespeed " + _name + " already exists. unable to add duplicate movespeed", true);
+		}
+		__movespeed.__movespeeds.add_item(_name, _movespeed);	
+		return self;
+	};
+	static __apply_movespeed = function(_name = undefined) {
+		/// @func	__apply_movespeed(name*)
+		/// @param	{string}   name=undefined
+		/// @return {Moveable} self
+		///
+		var _movespeed = get_movespeed(_name);
+		set_speed(_movespeed.get_speed());
+		return self;
+	};
 	
-	static has_movespeed		  = function(_name = undefined) {
+	static get_movespeed	 = function(_name = undefined) {
+		/// @func	get_movespeed(name*)
+		/// @param	{string}	name=undefined
+		/// @return {MoveSpeed} movespeed
+		///
+		if (_name == undefined) {
+			return __movespeed.__current;	
+		}
+		return __movespeed.__movespeeds.get_item(_name);
+	};
+	static set_movespeed	 = function(_name, _speed) {
+		/// @func	set_movespeed(name, speed)
+		/// @param	{string}   name
+		/// @param	{real}     speed
+		/// @return {Moveable} self
+		///
+		var _movespeed = has_movespeed(_name)
+			?   get_movespeed(_name)
+			: __new_movespeed(_name);
+		_movespeed.set_speed(_speed);
+		return self;
+	};
+	static has_movespeed	 = function(_name = undefined) {
 		/// @func	has_movespeed(name*)
 		/// @param	{string } name=undefined
 		/// @return {boolean} has_movespeed?
 		///
 		return get_movespeed(_name) != undefined;
 	};
-	static has_movespeeds		  = function() {
+	static has_movespeeds	 = function() {
 		/// @func   has_movespeed()
 		/// @return {bool} has_movespeeds?
 		///	
 		return !__movespeed.__movespeeds.is_empty();
 	};
-	static has_moveset			  = function(_name = undefined) {
+	static change_movespeed  = function(_name) {
+		/// @func	change_movespeed(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (!has_movespeed(_name)) {
+			show_error("movespeed " + _name + " does not exist. unable to change movespeed", true);	
+		}
+		var _movespeed = get_movespeed(_name);
+		__movespeed.__current = _movespeed;
+		__apply_movespeed(_name);
+		return self;
+	};
+	static remove_movespeed	 = function(_name) {
+		/// @func	remove_movespeed(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		__movespeed.__movespeeds.remove_item(_name);
+		return self;
+	};
+	
+	#endregion
+	#region MoveSet ////////
+	
+	/// Private
+	static __new_moveset			= function(_name) {
+		/// @func	__new_moveset(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		var _moveset = new MoveSet({ name: _name });
+		__add_moveset(_moveset);
+		return _moveset;
+	};
+	static __add_moveset			= function(_moveset) {
+		/// @func   __add_moveset(moveset)
+		/// @param  {MoveSet}  moveset
+		/// @return {Moveable} self
+		///
+		var _name = _moveset.get_name();
+		if (has_moveset(_name)) {
+			show_error("moveset " + _name + " already exists. unable to add duplicate moveset", true);
+		}
+		__moveset.__movesets.add_item(_name, _moveset);	
+		return self;
+	};
+	static __apply_moveset			= function(_name = undefined) {
+		/// @func	__apply_moveset(name*)
+		/// @param	{string}   name=undefined
+		/// @return	{Moveable} self
+		///
+		var _moveset = get_moveset(_name);
+		set_speed_mult(_moveset.get_speed_mult());
+		set_accel(_moveset.get_accel());
+		set_fric(_moveset.get_fric());
+		return self;
+	};
+	
+	static __get_moveset_trigger	= function(_name) {
+		/// @func	__get_moveset_trigger(name)
+		/// @param	{string}  name
+		/// @return {Trigger} trigger
+		///
+		return __moveset.__triggers.get_item(_name);
+	};
+	static __has_moveset_trigger	= function(_name) {
+		/// @func	__has_moveset_trigger(name)
+		/// @param	{string}  name
+		/// @return {boolean} has_moveset_trigger?
+		///
+		return __moveset.__triggers.has_item(_name);
+	};
+	static __new_moveset_trigger	= function(_name) {
+		/// @func	__new_moveset_trigger(name)
+		/// @param	{string}   moveset_name
+		/// @return	{Moveable} self
+		///
+		var _trigger = new Trigger({ name: _name })
+			.set_action(
+				function(_name) {
+					change_moveset(_name);
+				},
+				_name,
+			);
+		__add_moveset_trigger(_trigger);
+		return _trigger;
+	};
+	static __add_moveset_trigger	= function(_trigger) {
+		/// @func	__add_moveset_trigger(trigger)
+		/// @param	{Trigger}  trigger
+		/// @return {Moveable} self
+		///
+		var _name = _trigger.get_name();
+		if (__has_moveset_trigger(_name)) {
+			show_error("trigger " + _name + " already exists. unable to add duplicate trigger", true);	
+		}
+		__moveset.__triggers.add_item(_name, _trigger);
+		return self;
+	};
+	static __remove_moveset_trigger	= function(_name) {
+		/// @func	__remove_moveset_trigger(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		__moveset.__triggers.remove_item(_name);	
+		return self;
+	};
+	
+	static get_moveset				= function(_name = undefined) {
+		/// @func	get_moveset(name*)
+		/// @param	{string}  name=undefined
+		/// @return {MoveSet} moveset
+		///
+		if (_name == undefined) {
+			return __movespeed.__current;
+		}	
+		return __moveset.__movesets.get_item(_name);
+	};
+	static get_moveset_condition	= function(_name) {
+		/// @func	get_moveset_condition(name)
+		/// @param	{string} name
+		/// @return {method} trigger_method
+		///
+		var _trigger  = __get_moveset_trigger(_name);
+		if (_trigger == undefined) {
+			return undefined;	
+		}
+		return _trigger.get_condition();
+	};
+	static set_moveset				= function(_name, _data) {
+		/// @func	set_moveset(name, speed)
+		/// @param	{string}   name
+		/// @param	{struct}   data
+		/// @return {Moveable} self
+		///
+		var _moveset = has_moveset(_name)
+			?   get_moveset(_name)
+			: __new_moveset(_name);
+		_moveset.set_data(_data);
+		return self;
+	};
+	static set_moveset_condition	= function(_name, _condition) {
+		/// @func   set_moveset_condition(name, condition)
+		/// @param  {string}   name
+		/// @param  {method}   condition
+		/// @return {Moveable} self 
+		///
+		var _trigger = __has_moveset_trigger(_name)
+			? __get_moveset_trigger(_name)
+			: __new_moveset_trigger(_name);
+		_trigger.set_condition(_condition);
+		return self;
+	};
+	static has_moveset				= function(_name = undefined) {
 		/// @func	has_moveset(name*)
 		/// @param	{string}  name=undefined
 		/// @return {boolean} has_moveset?
 		///
 		return get_moveset(_name) != undefined;
 	};
-	static has_movesets			  = function() {
+	static has_movesets				= function() {
 		/// @func   has_movesets()
 		/// @return {bool} has_movesets?
 		///	
 		return !__moveset.__movesets.is_empty();
 	};
-	static has_moveset_trigger	  = function(_moveset_name) {
-		/// @func	has_moveset_trigger(moveset_name)
-		/// @param	{string}  moveset_name
-		/// @return {boolean} has_moveset_trigger?
-		///
-		return __moveset.__triggers.has_item(_moveset_name);
-	};
-	static has_moveset_condition  = function(_moveset_name, _condition_name) {
-		/// @func	has_moveset_condition(moveset_name, condition_name)
-		/// @param	{string}  moveset_name
-		/// @param	{string}  condition_name
+	static has_moveset_condition	= function(_name) {
+		/// @func	has_moveset_condition(name)
+		/// @param	{string}  name
 		/// @return {boolean} has_moveset_condition?
 		///
-		if (!has_moveset_trigger(_moveset_name)) {
+		if (!__has_moveset_trigger(_name)) {
 			return false;	
 		}
-		var _trigger = __moveset.__triggers.get_item(_moveset_name);
-		return _trigger.has_condition(_condition_name);
+		var _trigger = __moveset.__triggers.get_item(_name);
+		return _trigger.has_condition();
 	};
-	static has_moveset_conditions = function(_moveset_name) {
-		/// @func	has_moveset_conditions(moveset_name)
-		/// @param	{string}  moveset_name
-		/// @param	{string}  condition_name
-		/// @return {boolean} has_moveset_condition?
+	static change_moveset			= function(_name) {
+		/// @func	change_moveset(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
 		///
-		if (!has_moveset_trigger(_moveset_name)) {
-			return false;	
+		if (!has_moveset(_name)) {
+			show_error("moveset " + _name + " does not exist. unable to change moveset", true);	
 		}
-		var _trigger = __moveset.__triggers.get_item(_moveset_name);
-		return _trigger.has_conditions();
+		var _moveset = get_moveset(_name);
+		__moveset.__current = _moveset;
+		__apply_moveset(_name);
+		return self;
+	};
+	static remove_moveset			= function(_name) {
+		/// @func	remove_moveset(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		__moveset.__movesets.remove_item(_name);
+		return self;
+	};
+	static remove_moveset_condition = function(_name) {
+		/// @func	remove_moveset_condition(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (!__has_moveset_trigger(_name)) {
+			show_error("moveset trigger " + _name + " does not exist. unable to remove condition", true);	
+		}
+		__get_moveset_trigger(_name).remove_condition();	
+		return self;
 	};
 	
 	#endregion
-	
-	static new_movespeed			= function(_movespeed_name, _speed) {
-		/// @func	new_movespeed(movespeed_name, speed)
-		/// @param	{string}   movespeed_name
-		/// @param	{real}     speed
-		/// @return {Moveable} self
-		///		
-		var _movespeed = new MoveSpeed({ 
-			name:  _movespeed_name, 
-			speed: _speed,
-		});
-		add_movespeed(_movespeed);
-		return self;
-	};
-	static new_moveset				= function(_moveset_name, _data) {
-		/// @func	new_moveset(moveset_name, data)
-		/// @param	{string}   moveset_name
-		/// @param	{struct}   data
-		/// @return {Moveable} self
-		///
-		var _moveset = new MoveSet(_data).set_name(_moveset_name);
-		add_moveset(_moveset);
-		return self;
-	};
-	static new_moveset_trigger		= function(_moveset_name) {
-		/// @func	new_moveset_trigger(moveset_name)
-		/// @param	{string}   moveset_name
-		/// @return	{Moveable} self
-		///
-		var _trigger = new Trigger({ name: _moveset_name })
-			.new_action(
-				"change_moveset", 
-				function(_moveset_name) {
-					change_moveset(_moveset_name);
-				},
-				_moveset_name,
-			);
-		add_moveset_trigger(_trigger);
-		return self;
-	};
-	static add_movespeed			= function(_movespeed) {
-		/// @func   add_movespeed(movespeed)
-		/// @param  {MoveSpeed} movespeed
-		/// @return {Moveable}  self
-		///
-		var _movespeed_name = _movespeed.get_name();
-		if (has_movespeed(_movespeed_name)) {
-			show_error("movespeed " + _movespeed_name + " already exists. unable to add duplicate movespeed", true);
-		}
-		__movespeed.__movespeeds.add_item(_movespeed_name, _movespeed);	
-		return self;
-	};
-	static add_moveset				= function(_moveset) {
-		/// @func   add_moveset(moveset)
-		/// @param  {MoveSet}  moveset
-		/// @return {Moveable} self
-		///
-		var _moveset_name = _moveset.get_name();
-		if (has_moveset(_moveset_name)) {
-			show_error("moveset " + _moveset_name + " already exists. unable to add duplicate moveset", true);
-		}
-		__moveset.__movesets.add_item(_moveset_name, _moveset);	
-		return self;
-	};
-	static add_moveset_trigger		= function(_trigger) {
-		/// @func	add_moveset_trigger(trigger)
-		/// @param	{Trigger}  trigger
-		/// @return {Moveable} self
-		///
-		var _trigger_name = _trigger.get_name();
-		if (has_moveset_trigger(_trigger_name)) {
-			show_error("trigger " + _trigger_name + " already exists. unable to add duplicate trigger", true);	
-		}
-		__moveset.__triggers.add_item(_trigger_name, _trigger);
-		return self;
-	};
-	static add_moveset_condition	= function(_moveset_name, _condition_name, _condition) {
-		/// @func   add_moveset_condition(moveset_name, condition_name, condition)
-		/// @param  {string}   moveset_name
-		/// @param  {string}   condition_name
-		/// @param  {method}   condition
-		/// @return {Moveable} self 
-		///
-		if (!has_moveset_trigger(_moveset_name)) {
-			new_moveset_trigger(_moveset_name);
-		}
-		var _trigger = get_moveset_trigger(_moveset_name);
-		if (_trigger.has_condition(_condition_name)) {
-			show_error("trigger_" + _trigger.get_name() + "'s condition " + _condition_name + " already exists. unable to add trigger condition.", true);
-		}
-		_trigger.new_condition(_condition_name, _condition);
-		return self;
-	};
-	static apply_movespeed			= function(_movespeed = get_movespeed()) {
-		/// @func	apply_movespeed(movespeed*)
-		/// @param	{MoveSpeed} movespeed=get_movespeed()
-		/// @return {Moveable}  self
-		///
-		set_speed(_movespeed.get_speed());
-		return self;
-	};
-	static apply_moveset			= function(_moveset = get_moveset()) {
-		/// @func	apply_moveset(moveset*)
-		/// @param	{MoveSet}  moveset=get_moveset()
-		/// @return	{Moveable} self
-		///
-		set_speed_mult(_moveset.get_speed_mult());
-		set_accel(_moveset.get_accel());
-		set_fric(_moveset.get_fric());
-		return self;
-	};
-	static change_movespeed			= function(_movespeed_name) {
-		/// @func	change_movespeed(movespeed_name)
-		/// @param	{string}   movespeed_name
-		/// @return {Moveable} self
-		///
-		if (!has_movespeed(_movespeed_name)) {
-			show_error("movespeed " + _movespeed_name + " does not exist. unable to change movespeed", true);	
-		}
-		var _movespeed = get_movespeed(_movespeed_name);
-		__movespeed.__current = _movespeed;
-		apply_movespeed(_movespeed);
-		return self;
-	};
-	static change_moveset			= function(_moveset_name) {
-		/// @func	change_moveset(moveset_name)
-		/// @param	{string}   moveset_name
-		/// @return {Moveable} self
-		///
-		if (!has_moveset(_moveset_name)) {
-			show_error("moveset " + _moveset_name + " does not exist. unable to change moveset", true);	
-		}
-		var _moveset = get_moveset(_moveset_name);
-		__moveset.__current = _moveset;
-		apply_moveset(_moveset);
-		return self;
-	};
-	static remove_movespeed			= function(_movespeed_name) {
-		/// @func	remove_movespeed(movespeed_name)
-		/// @param	{string}   movespeed_name
-		/// @return {Moveable} self
-		///
-		__movespeed.__movespeeds.remove_item(_movespeed_name);
-		return self;
-	};
-	static remove_moveset			= function(_moveset_name) {
-		/// @func	remove_moveset(moveset_name)
-		/// @param	{string}   moveset_name
-		/// @return {Moveable} self
-		///
-		__moveset.__movesets.remove_item(_moveset_name);
-		return self;
-	};
-	static remove_moveset_trigger	= function(_moveset_name) {
-		/// @func	remove_moveset_trigger(moveset_name)
-		/// @param	{string}   moveset_name
-		/// @return {Moveable} self
-		///
-		__moveset.__triggers.remove_item(_moveset_name);	
-		return self;
-	};
-	static remove_moveset_condition = function(_moveset_name, _condition_name) {
-		/// @func	remove_moveset_condition(moveset_name, condition_name)
-		/// @param	{string}   moveset_name
-		/// @param	{string}   condition_name
-		/// @return {Moveable} self
-		///
-		if (!has_moveset_trigger(_moveset_name)) {
-			show_error("moveset trigger " + _moveset_name + " does not exist. unable to remove trigger's condition " + _condition_name, true);	
-		}
-		get_moveset_trigger(_moveset_name).remove_condition(_condition_name);	
-		return self;
-	};
 };
 function MoveSpeed(_config = {}) : Class(_config) constructor {
 	/// @func	MoveSpeed(config*)
 	/// @param	{struct}	config={}
 	/// @return {MoveSpeed} self
 	///
-	__moveable	= other;
-	__owner		= __moveable.get_owner();
-	__speed		= _config[$ "speed"] ?? 0;
+	__speed	= _config[$ "speed"] ?? 0;
 	
+	/// Get
 	static get_speed = function() {
 		/// @func	get_speed()
 		/// @return {real} speed
 		///
 		return __speed;
 	};
+	
+	/// Set
 	static set_speed = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real}		speed
@@ -1214,12 +1176,11 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 	/// @param	{struct}  config={}
 	/// @return {MoveSet} self
 	///
-	__moveable	 = other;
-	__owner		 = __moveable.get_owner();
 	__speed_mult = _config[$ "speed_mult"] ?? 1;
 	__accel		 = _config[$ "accel"	 ] ?? 0;
 	__fric		 = _config[$ "fric"		 ] ?? 0;
 	
+	/// Get
 	static get_speed_mult = function() {
 		/// @func	get_speed_mult()
 		/// @return {real} mult
@@ -1239,6 +1200,7 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 		return __fric;
 	};
 	
+	/// Set
 	static set_data		  = function(_data) {
 		/// @func	set_data(data)
 		/// @param	{struct}  data

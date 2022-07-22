@@ -11,6 +11,7 @@ event_inherited();
 				-	if component system processing, do not check for is_active() within component, 
 					checkout from outside from system
 		-	freezing/locking components?
+		-	move MoveSet trigger into MoveSet
 */
 
 setup	 = method_inherit(setup,  function() {
@@ -21,30 +22,30 @@ setup	 = method_inherit(setup,  function() {
 	
 	/// Speeds
 	get_component(Moveable)
-		.new_movespeed("walk",   4.0)
-		.new_movespeed("run",    8.0)
-		.new_movespeed("crouch", 2.0)
+		.set_movespeed("walk",   4.0)
+		.set_movespeed("run",    8.0)
+		.set_movespeed("crouch", 2.0)
 		.change_movespeed("walk")
 	
 	/// Movesets
 	get_component(Moveable)
-		.new_moveset("dirt",  MOVESETS[$ MOVESET.DIRT ])
-		.new_moveset("grass", MOVESETS[$ MOVESET.GRASS])
-		.new_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
-		.new_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
+		.set_moveset("dirt",  MOVESETS[$ MOVESET.DIRT ])
+		.set_moveset("grass", MOVESETS[$ MOVESET.GRASS])
+		.set_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
+		.set_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
 		.change_moveset("dirt")
 		
 	/// Moveset Triggers
 	get_component(Moveable)
-		.add_moveset_condition("grass", "touching_grass", method(self, function() {
+		.set_moveset_condition("grass", function() {
 			return collision_point(x, y, obj_terrain_grass, false, true) != noone;
-		}))
-		.add_moveset_condition("sand", "touching_sand", method(self, function() {
+		})
+		.set_moveset_condition("sand",  function() {
 			return collision_point(x, y, obj_terrain_sand, false, true) != noone;
-		}))
-		.add_moveset_condition("ice", "touching_ice", method(self, function() {
+		})
+		.set_moveset_condition("ice",   function() {
 			return collision_point(x, y, obj_terrain_ice, false, true) != noone;
-		}))
+		})
 	
 })();
 teardown = method_inherit(teardown, function() {
