@@ -235,7 +235,7 @@ global.___system_input = {
 				Eventable,
 			);
 			get_component(Eventable)
-				.register([
+				.register(
 					/// mouse_button_pressed
 					"mouse_button_pressed",
 					"mouse_left_button_pressed",
@@ -262,7 +262,7 @@ global.___system_input = {
 					"keyboard_button_pressed",
 					"keyboard_button",
 					"keyboard_button_released",
-				]);
+				);
 		
 			#endregion
 		}

@@ -118,7 +118,7 @@ function FloeEffect() constructor {
 				Eventable,
 			);
 			get_component(Eventable)
-				.register([
+				.register(
 					"enter_started",
 					"enter_completed",
 					"change_started",
@@ -130,7 +130,7 @@ function FloeEffect() constructor {
 					"reversed",
 					"ended",
 					"reset_completed",
-				]);
+				);
 		
 			#endregion
 			__this.__control.__initialized = true;

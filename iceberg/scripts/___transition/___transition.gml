@@ -50,7 +50,7 @@ global.___system_transition = {
 				Eventable,
 			);
 			get_component(Eventable)
-				.register([
+				.register(
 					"enter_started",
 					"enter_completed",
 					"change_started",
@@ -61,7 +61,7 @@ global.___system_transition = {
 					"exit_completed",
 					"room_changed",
 					"room_restarted",
-				]);
+				);
 		
 			#endregion
 		}

@@ -35,14 +35,14 @@ global.___system_audio = {
 				Eventable,
 			);
 			get_component(Eventable)
-				.register([
+				.register(
 					"played",
 					"stopped",
 					"all_stopped",
 					"pitch_assigned",
 					"emitter_gain_assigned",
 					"emitter_pitch_assigned",
-				]);
+				);
 		
 			#endregion
 		}

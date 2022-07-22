@@ -20,10 +20,10 @@ global.___system_window = {
 				Eventable,
 			);
 			get_component(Eventable)
-				.register([
+				.register(
 					"fullscreen_assigned",
 					"position_assigned",
-				])
+				)
 			
 			#endregion
 		}

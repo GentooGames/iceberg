@@ -475,6 +475,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @return {Eventable} self
 	///
 	static __class = Eventable;
+	static __log   = 0;
 	////////////////////////
 	__broadcaster = undefined;
 	
@@ -489,12 +490,12 @@ function Eventable(_config = {}) : Component(_config) constructor {
 			#region Broadcaster
 			
 			__broadcaster = new Publisher();
-			register([
+			register(
 				"registered",
 				"broadcasted",
 				"listened",
 				"listeners_cleared",
-			]);
+			);
 			
 			#endregion
 		}
@@ -550,18 +551,20 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		
 	#endregion
 	
-	static register			= function(_events) {
-		/// @func	register(events)
-		/// @param	{array}		events
+	static register			= function() {
+		/// @func	register(event_1, ..., event_n)
+		/// @param	{string}	event_1
+		/// @param	{string}	...
+		/// @param	{string}	event_n
 		/// @return	{Eventable} self
 		///
-		if (!is_array(_events)) {
-			_events = [_events];	
+		/// Register ALL Channels First!!!
+		for (var _i = 0; _i < argument_count; _i++) {
+			get_broadcaster().register_channel(argument[_i]);
 		}
-		for (var _i = 0, _len = array_length(_events); _i < _len; _i++) {
-			get_broadcaster().register_channel(_events[_i]);
+		for (var _i = 0; _i < argument_count; _i++) {
+			broadcast("registered", argument[_i]);
 		}
-		broadcast("registered", _events);
 		return self;
 	};
 	static broadcast		= function(_event_name, _payload = undefined) {
@@ -590,7 +593,10 @@ function Eventable(_config = {}) : Component(_config) constructor {
 			if (has_broadcaster()) {
 				get_broadcaster().publish("broadcasted", _data);
 			}
-			log("<Eventable()> instance: {0} | event: \"{1}\" | payload: {2}", instanceof(_owner), _event_name, _payload);
+			if (__log) {
+				log("<Eventable()> instance: {0} | event: \"{1}\"", instanceof(_owner), _event_name);
+				/// ^ logging payload can sometimes log a recursive struct, freezing the log and/or GameMaker
+			}
 		}
 		return self;
 	};
@@ -673,29 +679,23 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			#endregion
 			#region MoveSpeed //////
 			
-			with (__movespeed) {
-				__movespeeds = new Set();
-				__triggers	 = new Set();
-			}
+			__movespeed.__movespeeds = new Set();
+			__movespeed.__triggers	 = new Set();
 			
 			#endregion
 			#region MoveSet ////////
 			
-			with (__moveset) {
-				__movesets = new Set();
-				__triggers = new Set();
-			}
+			__moveset.__movesets = new Set();
+			__moveset.__triggers = new Set();
 			
 			#endregion
 			#region Path ///////////
 			
-			with (__path) {
-				if (__index == undefined) {	/// replace with has_path()
-					__index = path_add();
-				}
-				path_set_kind(__index, __smooth);
-				path_set_closed(__index, __closed);
+			if (__path.__index == undefined) {	/// replace with has_path()
+				__path.__index  = path_add();
 			}
+			path_set_kind(__path.__index, __path.__smooth);
+			path_set_closed(__path.__index, __path.__closed);
 			
 			#endregion
 		}
@@ -708,28 +708,22 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		if (is_initialized()) {
 			#region Path ///////////
 			
-			with (__path) {
-				path_delete(__index);
-				__index = undefined;
-			}
+			path_delete(__path.__index);
+			__path.__index = undefined;
 			
 			#endregion
 			#region MoveSet ////////
 			
-			with (__moveset) {
-				__current  = undefined;
-				__movesets = undefined;
-				__triggers = undefined;
-			}
+			__moveset.__current  = undefined;
+			__moveset.__movesets = undefined;
+			__moveset.__triggers = undefined;
 			
 			#endregion
 			#region MoveSpeed //////
 			
-			with (__movespeed) {
-				__current    = undefined;
-				__movespeeds = undefined;
-				__triggers	 = undefined;
-			}
+			__movespeed.__current    = undefined;
+			__movespeed.__movespeeds = undefined;
+			__movespeed.__triggers	 = undefined;
 			
 			#endregion
 			__teardown_component();
@@ -742,10 +736,22 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		if (is_initialized() && is_active()) {
 			__update_component();
-			#region Movesets ///////
+			#region MoveSet Triggers ///
 			
-			if (has_moveset_triggers()) {
-				
+			var _trigger_names	 = __moveset.__triggers.get_names();
+			var _triggers		 = __moveset.__triggers.get_items();
+			var _moveset_current = __moveset.__current.get_name();
+			
+			for (var _i = 0, _len = __moveset.__triggers.get_size(); _i < _len; _i++) {
+				var _trigger_name =  _trigger_names[_i];
+				if (_trigger_name == _moveset_current) {
+					continue;	
+				}
+				var _trigger = _triggers[$ _trigger_name];
+				if (_trigger.check_activation()) {
+					log("moveset_current: {0}", __moveset.__current.get_name());
+					break;	
+				}
 			}
 			
 			#endregion
@@ -1036,9 +1042,9 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		var _trigger = new Trigger({ name: _moveset_name })
 			.new_action(
 				"change_moveset", 
-				method(self, function(_moveset_name) {
+				function(_moveset_name) {
 					change_moveset(_moveset_name);
-				}),
+				},
 				_moveset_name,
 			);
 		add_moveset_trigger(_trigger);

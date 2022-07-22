@@ -461,13 +461,13 @@ function GentuiAction (_config = {}) : GentuiMethod(_config) constructor {
 		}));
 		
 		var _component = get_owner();
-		_component.eventer.register(["trigger_executed_" + _name]);
+		_component.eventer.register("trigger_executed_" + _name);
 		_component.eventer.listen("trigger_executed_" + _name, method(self, execute));
 		
 		return self;
 	};
 	
-	get_owner().eventer.register(["action_executed_" + get_name()]);
+	get_owner().eventer.register("action_executed_" + get_name());
 };
 function GentuiTrigger(_config = {}) : GentuiMethod(_config) constructor {
 	/// @func	GentuiTrigger(config*)
@@ -2564,7 +2564,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 	#region Events /////////////////
 	
 	eventer = new Eventable().setup();
-	eventer.register([
+	eventer.register(
 		"activated", 
 		"deactivated",
 		"show_toggled",
@@ -2574,7 +2574,7 @@ function Gentui(_config_name = __GENTUI_DEFAULT_CONFIG_NAME_START, _config = {})
 		"pin_parent_assigned",
 		"action_executed",
 		"trigger_triggered",
-	]);
+	);
 	
 	#endregion
 };

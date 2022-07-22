@@ -396,7 +396,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 	component_system_setup(Eventable);
 	__eventable = get_component(Eventable)
 		.register("trigger_validated", "action_executed")
-		.listen  ("trigger_validated",  execute)
+		.listen  ("trigger_validated",  method(self, execute));
 	
 	#region Private ////////
 	
@@ -565,6 +565,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		__actions.empty();
 		return self;
 	};
+	
 	static check_activation = function() {
 		/// @func	check_activation()
 		/// @return {Trigger} self
@@ -574,7 +575,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 			var _count = __conditions.get_size();
 			for (var _i = 0; _i < _count; _i++) {
 				var _condition = __conditions.get_item(_names[_i]);
-				if (_condition()) {
+				if (_condition.execute()) {
 					__eventable.broadcast("trigger_validated", { 
 						trigger:    self, 
 						condition: _condition,
@@ -592,11 +593,13 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		///
 		/// Execute All Actions
 		if (!__actions.is_empty()) {
-			var _actions   = __actions.get_items();
-			var _n_actions = __actions.get_size();
+			var _action_names = __actions.get_names();
+			var _actions	  = __actions.get_items();
+			var _n_actions	  = __actions.get_size();
 			for (var _i = 0; _i < _n_actions; _i++) {
-				var _action = _actions[_i];
-				var _result = _action.execute();
+				var _action_name = _action_names[_i];
+				var _action		 = _actions[$ _action_name];
+				var _result		 = _action.execute();
 				__eventable.broadcast("action_executed", { 
 					trigger:    self, 
 					condition: _data.payload.condition,

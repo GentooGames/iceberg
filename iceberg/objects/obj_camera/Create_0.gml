@@ -93,7 +93,5 @@ component_system_setup(
 	Eventable,
 );
 get_component(Eventable)
-	.register([
-		"zoom_completed",
-	]);
+	.register("zoom_completed");
 

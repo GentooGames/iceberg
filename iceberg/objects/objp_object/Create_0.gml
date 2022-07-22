@@ -31,14 +31,14 @@ setup	 = method_inherit(,function() {
 			Eventable,
 		);
 		get_component(Eventable)
-			.register([
+			.register(
 				"setup_completed",
 				"teardown_completed",
 				"rebuild_completed",
 				"activated",
 				"deactivated",
 				"destroyed",
-			])
+			)
 		
 		INPUT.get_component(Eventable)
 			.listen("mouse_button_pressed",  on_mouse_button_pressed)
