@@ -20,6 +20,7 @@
     {"instances":[
         {"properties":[],"isDnd":false,"objectId":{"name":"obj_terrain_ice","path":"objects/obj_terrain_ice/obj_terrain_ice.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":6.0,"scaleY":3.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":704.0,"y":256.0,"resourceVersion":"1.0","name":"inst_6AE79326","tags":[],"resourceType":"GMRInstance",},
         {"properties":[],"isDnd":false,"objectId":{"name":"obj_terrain_sand","path":"objects/obj_terrain_sand/obj_terrain_sand.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":3.0,"scaleY":3.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":288.0,"y":512.0,"resourceVersion":"1.0","name":"inst_6D0FF1E5","tags":[],"resourceType":"GMRInstance",},
+        {"properties":[],"isDnd":false,"objectId":{"name":"obj_terrain_grass","path":"objects/obj_terrain_grass/obj_terrain_grass.yy",},"inheritCode":false,"hasCreationCode":false,"colour":4294967295,"rotation":0.0,"scaleX":5.5,"scaleY":4.0,"imageIndex":0,"imageSpeed":1.0,"inheritedItemId":null,"frozen":false,"ignore":false,"inheritItemSettings":false,"x":224.0,"y":192.0,"resourceVersion":"1.0","name":"inst_F812EC7","tags":[],"resourceType":"GMRInstance",},
       ],"visible":true,"depth":200,"userdefinedDepth":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"gridX":32,"gridY":32,"layers":[],"hierarchyFrozen":false,"effectEnabled":true,"effectType":null,"properties":[],"resourceVersion":"1.0","name":"Terrain","tags":[],"resourceType":"GMRInstanceLayer",},
     {"instances":[],"visible":true,"depth":300,"userdefinedDepth":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"gridX":32,"gridY":32,"layers":[],"hierarchyFrozen":false,"effectEnabled":true,"effectType":null,"properties":[],"resourceVersion":"1.0","name":"Controllers","tags":[],"resourceType":"GMRInstanceLayer",},
     {"spriteId":null,"colour":4281216048,"x":0,"y":0,"htiled":true,"vtiled":true,"hspeed":0.0,"vspeed":0.0,"stretch":false,"animationFPS":30.0,"animationSpeedType":0,"userdefinedAnimFPS":false,"visible":true,"depth":400,"userdefinedDepth":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"gridX":32,"gridY":32,"layers":[],"hierarchyFrozen":false,"effectEnabled":true,"effectType":null,"properties":[],"resourceVersion":"1.0","name":"Background","tags":[],"resourceType":"GMRBackgroundLayer",},
@@ -31,6 +32,7 @@
     {"name":"inst_6AE79326","path":"rooms/rm_test/rm_test.yy",},
     {"name":"inst_6D0FF1E5","path":"rooms/rm_test/rm_test.yy",},
     {"name":"inst_71F8EAF0","path":"rooms/rm_test/rm_test.yy",},
+    {"name":"inst_F812EC7","path":"rooms/rm_test/rm_test.yy",},
   ],
   "inheritCreationOrder": false,
   "sequenceId": null,

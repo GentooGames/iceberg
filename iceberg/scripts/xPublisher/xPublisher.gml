@@ -58,7 +58,7 @@ function Publisher() constructor {
 		repeat(_it) {
 			_subscriber = _subscribers[--_it];
 		
-			if (_subscriber.remove || _subscriber.trigger(_params)) {
+			if (_subscriber.remove || _subscriber.trigger(_params)) { // if callback returns true, remove self from lookup table
 				array_delete(_subscribers, _it, 1);
 				variable_struct_remove(__lookup, _subscriber.uid);
 				continue;

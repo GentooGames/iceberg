@@ -28,13 +28,17 @@ setup	 = method_inherit(setup,  function() {
 	
 	/// Movesets
 	get_component(Moveable)
+		.new_moveset("dirt",  MOVESETS[$ MOVESET.DIRT ])
 		.new_moveset("grass", MOVESETS[$ MOVESET.GRASS])
 		.new_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
 		.new_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
-		.change_moveset("grass")
+		.change_moveset("dirt")
 		
 	/// Moveset Triggers
 	get_component(Moveable)
+		.add_moveset_condition("grass", "touching_grass", method(self, function() {
+			return collision_point(x, y, obj_terrain_grass, false, true) != noone;
+		}))
 		.add_moveset_condition("sand", "touching_sand", method(self, function() {
 			return collision_point(x, y, obj_terrain_sand, false, true) != noone;
 		}))

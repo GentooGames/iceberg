@@ -396,7 +396,9 @@ function Trigger(_config = {}) : Class(_config) constructor {
 	component_system_setup(Eventable);
 	__eventable = get_component(Eventable)
 		.register("trigger_validated", "action_executed")
-		.listen  ("trigger_validated",  method(self, execute));
+		.listen  ("trigger_validated",  method(self, function(_data) {
+			execute(_data);	
+		}));
 	
 	#region Private ////////
 	

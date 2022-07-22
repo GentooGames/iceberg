@@ -745,11 +745,12 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			for (var _i = 0, _len = __moveset.__triggers.get_size(); _i < _len; _i++) {
 				var _trigger_name =  _trigger_names[_i];
 				if (_trigger_name == _moveset_current) {
+					log("same trigger, continuing...");
 					continue;	
 				}
 				var _trigger = _triggers[$ _trigger_name];
 				if (_trigger.check_activation()) {
-					log("moveset_current: {0}", __moveset.__current.get_name());
+					log("trigger activated");
 					break;	
 				}
 			}
