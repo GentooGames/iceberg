@@ -11,7 +11,6 @@ event_inherited();
 				-	if component system processing, do not check for is_active() within component, 
 					checkout from outside from system
 		-	freezing/locking components?
-		-	move MoveSet trigger into MoveSet
 */
 
 setup	 = method_inherit(setup,  function() {

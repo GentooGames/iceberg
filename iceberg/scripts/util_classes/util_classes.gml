@@ -405,9 +405,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		.register("trigger_validated", "action_executed")
 		.listen  ("trigger_validated",  method(self, execute))
 	
-	#region Getters	////////
-	
-	static get_condition = function() {
+	static get_condition	= function() {
 		/// @func	get_condition()
 		/// @return {Method} condition
 		///
@@ -416,7 +414,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		}
 		return __condition.get_method();
 	};
-	static get_action	 = function() {
+	static get_action		= function() {
 		/// @func	get_action()
 		/// @return {Method} action
 		///
@@ -425,11 +423,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		}
 		return __action.get_method();
 	};
-	
-	#endregion
-	#region Setters ////////
-	
-	static set_condition = function(_method, _data = undefined) {
+	static set_condition	= function(_method, _data = undefined) {
 		/// @func	set_condition(method, data*)
 		/// @param	{method} method
 		/// @param	{any}	 data=undefined
@@ -441,7 +435,7 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		});
 		return self;
 	};
-	static set_action	 = function(_method, _data = undefined) {
+	static set_action		= function(_method, _data = undefined) {
 		/// @func	set_action(method, data*)
 		/// @param	{method} method
 		/// @param	{any}	 data=undefined
@@ -453,25 +447,18 @@ function Trigger(_config = {}) : Class(_config) constructor {
 		});
 		return self;
 	};
-	
-	#endregion
-	#region Checkers ///////
-	
-	static has_condition = function() {
+	static has_condition	= function() {
 		/// @func   has_condition()
 		/// @return {boolean} has_condition?
 		///
 		return get_condition() != undefined;
 	};
-	static has_action	 = function() {
+	static has_action		= function() {
 		/// @func   has_action()
 		/// @return {boolean} has_action?
 		///
 		return get_action() != undefined;
 	};
-	
-	#endregion
-	
 	static remove_condition = function() {
 		/// @func	remove_condition()
 		/// @return {Trigger} self

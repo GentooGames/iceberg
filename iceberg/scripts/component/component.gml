@@ -53,32 +53,6 @@ function Component(_config = {}) : Class(_config) constructor {
 	__system	  =  undefined;	// ComponentSystem() association
 	__auto_insert =  true;		// auto insert into implied ComponentSystem()?
 	
-	#region Private ////////
-	
-	static __setup_owners_system	= function() {
-		/// @func	__setup_owners_system()
-		/// @return	{Component} self
-		///
-		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
-		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = new ComponentSystem({ owner: __owner }).setup();	
-		return self;
-	};
-	static __get_owners_system		= function() {
-		/// @func	__get_owners_system()
-		/// @return {component} system
-		///
-		return __owner[$ __COMPONENT_SYSTEM_VAR_NAME];
-	};
-	static __is_owners_system_setup	= function() {
-		/// @func	__is_owners_system_setup()
-		/// @return {bool} owner_has_system?
-		///
-		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
-	};
-	
-	#endregion
-	#region Core ///////////
-	
 	static __setup_component    = function() {
 		/// @func	__setup_component()
 		/// @return {Component} self
@@ -178,32 +152,51 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};	
-		
+	
+	#region Core @OVERRIDE /////
+	
 	static setup	= __setup_component;	/// @OVERRIDE
 	static teardown	= __teardown_component;	/// @OVERRIDE
 	static update	= __update_component;	/// @OVERRIDE
 	static render	= __render_component;	/// @OVERRIDE
 	
 	#endregion
-	#region Getters ////////
+	#region Properties /////////
 	
-	static get_class  = function() {
+	static __setup_owners_system	= function() {
+		/// @func	__setup_owners_system()
+		/// @return	{Component} self
+		///
+		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
+		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = new ComponentSystem({ owner: __owner }).setup();	
+		return self;
+	};
+	static __get_owners_system		= function() {
+		/// @func	__get_owners_system()
+		/// @return {component} system
+		///
+		return __owner[$ __COMPONENT_SYSTEM_VAR_NAME];
+	};
+	static __is_owners_system_setup	= function() {
+		/// @func	__is_owners_system_setup()
+		/// @return {bool} owner_has_system?
+		///
+		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
+	};
+		
+	static get_class	  = function() {
 		/// @func	get_class()
 		/// @return {class} class
 		///
 		return __class;
 	};
-	static get_system = function() {
+	static get_system	  = function() {
 		/// @func	get_system()
 		/// @return {Component} system
 		///
 		return __system;
 	};
-	
-	#endregion
-	#region Setters ////////
-	
-	static set_system = function(_system) {
+	static set_system	  = function(_system) {
 		/// @func	set_system(system)
 		/// @param	{Component} system
 		/// @return {Component} self
@@ -211,10 +204,12 @@ function Component(_config = {}) : Class(_config) constructor {
 		__system = _system;
 		return self;
 	};
-	
-	#endregion
-	#region Checkers ///////
-	
+	static has_system	  = function() {
+		/// @func	has_system()
+		/// @return {bool} has_system?
+		///
+		return __system != undefined;
+	};
 	static is_initialized = function() {
 		/// @func	is_initialized()
 		/// @return {bool} initialized?
@@ -227,13 +222,7 @@ function Component(_config = {}) : Class(_config) constructor {
 		///
 		return __active;
 	};
-	static has_system	  = function() {
-		/// @func	has_system()
-		/// @return {bool} has_system?
-		///
-		return __system != undefined;
-	};
-		
+	
 	#endregion
 	
 	static activate	  = function() {
@@ -275,8 +264,6 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	////////////////////////
 	__components = undefined;
 	
-	#region Core ///////////
-	
 	static __setup_component_system		= function() {
 		/// @func	__setup_component_system()
 		/// @return	{Component} self
@@ -310,11 +297,13 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		return self;
 	};
 	
+	#region Core @OVERRIDE /////
+	
 	static setup	= __setup_component_system;
 	static teardown = __teardown_component_system;
 	
 	#endregion
-	#region Getters ////////
+	#region Components /////////
 	
 	static get		= function(_component_class) {
 		///	@func	get(component_class)
@@ -330,10 +319,6 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		return __components.get_size();
 	};
-	
-	#endregion
-	#region Checkers ///////
-	
 	static has		= function(_component_class) {
 		/// @func	has(component_class)
 		/// @param	{class}   component_class
@@ -348,8 +333,6 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		///
 		return __components.is_empty();
 	};
-	
-	#endregion
 	
 	static create = function(_component_class) {
 		/// @func	create(component_class)
@@ -398,6 +381,9 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		__components.empty();
 		return self;
 	};
+		
+	#endregion
+	#region Owner Methods //////
 	
 	__owner.new_component		= method(self, function(_component_class) {
 		/// @func	new_component(component_class)
@@ -441,6 +427,8 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 		self[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
 		return teardown();
 	});
+		
+	#endregion
 };
 function component_system_setup() {
 	/// @func	component_system_setup(component1, ..., componentN)
@@ -479,8 +467,6 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	////////////////////////
 	__broadcaster = undefined;
 	
-	#region Core ///////////
-	
 	static __setup_eventable    = function() {
 		/// @func	__setup_eventable()
 		/// @return {Eventable} self
@@ -515,12 +501,14 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
-		
+	
+	#region Core @OVERRIDE /////
+	
 	static setup	= __setup_eventable;
 	static teardown = __teardown_eventable;
 	
 	#endregion
-	#region Getters ////////
+	#region Properties /////////
 	
 	static get_broadcaster = function() {
 		/// @func	get_broadcaster()
@@ -528,10 +516,12 @@ function Eventable(_config = {}) : Component(_config) constructor {
 		///
 		return __broadcaster;
 	};
-	
-	#endregion
-	#region Checkers ///////
-	
+	static has_broadcaster = function() {
+		/// @func	has_broadcaster()
+		/// @return {boolean} has_broadcaster?
+		///
+		return __broadcaster != undefined;
+	};
 	static is_registered   = function(_event_name) {
 		/// @func	is_registered(event_name)
 		/// @param	{string}  event_name
@@ -541,12 +531,6 @@ function Eventable(_config = {}) : Component(_config) constructor {
 			return false;	
 		}
 		return get_broadcaster().has_registered_channel(_event_name);
-	};
-	static has_broadcaster = function() {
-		/// @func	has_broadcaster()
-		/// @return {boolean} has_broadcaster?
-		///
-		return __broadcaster != undefined;
 	};
 		
 	#endregion
@@ -653,7 +637,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	__moveset	= {
 		__current:	undefined,
 		__movesets:	undefined,
-		__triggers: undefined,
 	};
 	__path		= {
 		__index:  undefined,
@@ -733,34 +716,33 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		if (is_initialized() && is_active()) {
 			__update_component();
-			#region MoveSet Triggers ///
+			#region MoveSet ////////
 			
-			var _trigger_names	 = __moveset.__triggers.get_names();
-			var _triggers		 = __moveset.__triggers.get_items();
-			var _moveset_current = __moveset.__current.get_name();
-			
-			for (var _i = 0, _len = __moveset.__triggers.get_size(); _i < _len; _i++) {
-				var _trigger_name =  _trigger_names[_i];
-				if (_trigger_name == _moveset_current) {
+			/// Check For Trigger Fires
+			var _moveset_current  = __moveset.__current.get_name();
+			var _moveset_names	  = __moveset.__movesets.get_names();
+			for (var _i = 0, _len = array_length(_moveset_names); _i < _len; _i++) {
+				var _moveset_name =  _moveset_names[_i];
+				if (_moveset_name == _moveset_current) {
 					continue;	
 				}
-				var _trigger = _triggers[$ _trigger_name];
-				if (_trigger.check_activation()) {
-					break;	
-				}
+				get_moveset(_moveset_name).get_trigger().check_activation();
 			}
 			
 			#endregion
 		}
 		return self;
 	};
+		
+	#region Core @OVERRIDE /////
+	
 	static setup	= __setup_moveable;
 	static teardown	= __teardown_moveable;
 	static update	= __update_moveable;
 	
-	#region Properties /////
+	#endregion
+	#region Properties /////////
 	
-	/// Get
 	static get_speed	  = function() {
 		/// @func	get_speed()
 		/// @return {real} speed
@@ -805,8 +787,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		///
 		return __props.__vspd;	
 	};
-		
-	/// Set
+	
 	static set_speed	  = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real}	   speed
@@ -865,7 +846,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	};
 	
 	#endregion
-	#region MoveSpeed //////
+	#region MoveSpeed //////////
 
 	static __new_movespeed   = function(_name) {
 		/// @func	__new_movespeed(name)
@@ -956,9 +937,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	};
 	
 	#endregion
-	#region MoveSet ////////
+	#region MoveSet ////////////
 	
-	/// Private
 	static __new_moveset			= function(_name) {
 		/// @func	__new_moveset(name)
 		/// @param	{string}   name
@@ -992,56 +972,6 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		return self;
 	};
 	
-	static __get_moveset_trigger	= function(_name) {
-		/// @func	__get_moveset_trigger(name)
-		/// @param	{string}  name
-		/// @return {Trigger} trigger
-		///
-		return __moveset.__triggers.get_item(_name);
-	};
-	static __has_moveset_trigger	= function(_name) {
-		/// @func	__has_moveset_trigger(name)
-		/// @param	{string}  name
-		/// @return {boolean} has_moveset_trigger?
-		///
-		return __moveset.__triggers.has_item(_name);
-	};
-	static __new_moveset_trigger	= function(_name) {
-		/// @func	__new_moveset_trigger(name)
-		/// @param	{string}   moveset_name
-		/// @return	{Moveable} self
-		///
-		var _trigger = new Trigger({ name: _name })
-			.set_action(
-				function(_name) {
-					change_moveset(_name);
-				},
-				_name,
-			);
-		__add_moveset_trigger(_trigger);
-		return _trigger;
-	};
-	static __add_moveset_trigger	= function(_trigger) {
-		/// @func	__add_moveset_trigger(trigger)
-		/// @param	{Trigger}  trigger
-		/// @return {Moveable} self
-		///
-		var _name = _trigger.get_name();
-		if (__has_moveset_trigger(_name)) {
-			show_error("trigger " + _name + " already exists. unable to add duplicate trigger", true);	
-		}
-		__moveset.__triggers.add_item(_name, _trigger);
-		return self;
-	};
-	static __remove_moveset_trigger	= function(_name) {
-		/// @func	__remove_moveset_trigger(name)
-		/// @param	{string}   name
-		/// @return {Moveable} self
-		///
-		__moveset.__triggers.remove_item(_name);	
-		return self;
-	};
-	
 	static get_moveset				= function(_name = undefined) {
 		/// @func	get_moveset(name*)
 		/// @param	{string}  name=undefined
@@ -1057,11 +987,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{string} name
 		/// @return {method} trigger_method
 		///
-		var _trigger  = __get_moveset_trigger(_name);
-		if (_trigger == undefined) {
-			return undefined;	
+		if (!has_moveset(_name)) {
+			return undefined;
 		}
-		return _trigger.get_condition();
+		return get_moveset(_name).get_condition();
 	};
 	static set_moveset				= function(_name, _data) {
 		/// @func	set_moveset(name, speed)
@@ -1081,10 +1010,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param  {method}   condition
 		/// @return {Moveable} self 
 		///
-		var _trigger = __has_moveset_trigger(_name)
-			? __get_moveset_trigger(_name)
-			: __new_moveset_trigger(_name);
-		_trigger.set_condition(_condition);
+		if (!has_moveset(_name)) {
+			show_error("moveset " + _name + " does not exist. cannot set condition.", true);	
+		}
+		get_moveset(_name).set_condition(_condition);
 		return self;
 	};
 	static has_moveset				= function(_name = undefined) {
@@ -1105,11 +1034,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{string}  name
 		/// @return {boolean} has_moveset_condition?
 		///
-		if (!__has_moveset_trigger(_name)) {
+		if (!has_moveset(_name)) {
 			return false;	
 		}
-		var _trigger = __moveset.__triggers.get_item(_name);
-		return _trigger.has_condition();
+		return get_moveset(_name).has_condition();
 	};
 	static change_moveset			= function(_name) {
 		/// @func	change_moveset(name)
@@ -1137,10 +1065,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @param	{string}   name
 		/// @return {Moveable} self
 		///
-		if (!__has_moveset_trigger(_name)) {
-			show_error("moveset trigger " + _name + " does not exist. unable to remove condition", true);	
+		if (!has_moveset(_name)) {
+			show_error("moveset " + _name + " does not exist. unable to remove condition", true);	
 		}
-		__get_moveset_trigger(_name).remove_condition();	
+		get_moveset(_name).remove_condition();	
 		return self;
 	};
 	
@@ -1153,15 +1081,12 @@ function MoveSpeed(_config = {}) : Class(_config) constructor {
 	///
 	__speed	= _config[$ "speed"] ?? 0;
 	
-	/// Get
 	static get_speed = function() {
 		/// @func	get_speed()
 		/// @return {real} speed
 		///
 		return __speed;
 	};
-	
-	/// Set
 	static set_speed = function(_speed) {
 		/// @func	set_speed(speed)
 		/// @param	{real}		speed
@@ -1179,8 +1104,29 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 	__speed_mult = _config[$ "speed_mult"] ?? 1;
 	__accel		 = _config[$ "accel"	 ] ?? 0;
 	__fric		 = _config[$ "fric"		 ] ?? 0;
+	__trigger	 =  new Trigger({ name: get_name() });
+	__trigger.set_action(
+		method(get_owner(), function(_name) {
+			change_moveset(_name);
+		}), 
+		get_name(),
+	);
 	
-	/// Get
+	static get_trigger	  = function() {
+		/// @func	get_trigger()
+		/// @return {Trigger} trigger
+		///
+		return __trigger;
+	};
+	static get_condition  = function() {
+		/// @func	get_condition()
+		/// @return {method} condition
+		///
+		if (!__trigger.has_condition()) {
+			return undefined;
+		}
+		return __trigger.get_condition().get_method();
+	};
 	static get_speed_mult = function() {
 		/// @func	get_speed_mult()
 		/// @return {real} mult
@@ -1200,7 +1146,15 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 		return __fric;
 	};
 	
-	/// Set
+	static set_condition  = function(_method, _data = undefined) {
+		/// @func	set_condition(method, data*)
+		/// @param	{method}  method
+		/// @param	{any}	  data=undefined
+		/// @return {MoveSet} self
+		///
+		__trigger.set_condition(_method, _data);
+		return self;
+	};
 	static set_data		  = function(_data) {
 		/// @func	set_data(data)
 		/// @param	{struct}  data
@@ -1234,6 +1188,13 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 		///
 		__fric = _fric;
 		return self;
+	};
+	
+	static has_condition  = function() {
+		/// @func	has_condition()
+		/// @return {bool} has_condition?
+		///
+		return get_condition() != undefined;
 	};
 };
 
