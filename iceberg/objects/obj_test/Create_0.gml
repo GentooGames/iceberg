@@ -10,6 +10,11 @@ event_inherited();
 		-	have component system process components
 				-	if component system processing, do not check for is_active() within component, 
 					checkout from outside from system
+						// give each component a defined "loop" logic behavior 
+						// establishing where to get processed in the component system
+						// static __cycle	 = LIFE_CYCLE.STEP_BEGIN;
+						// static __priority = 1;	
+						// -- cycle defines where, priority defines when 
 		-	freezing/locking components?
 */
 
@@ -18,16 +23,17 @@ setup	 = method_inherit(setup,  function() {
 	///
 	form = "human";
 	new_component(Moveable);
+	moveable = get_component(Moveable);
 	
 	/// Speeds
-	get_component(Moveable)
+	moveable
 		.set_movespeed("walk",   4.0)
 		.set_movespeed("run",    8.0)
 		.set_movespeed("crouch", 2.0)
 		.change_movespeed("walk")
 	
 	/// Movesets
-	get_component(Moveable)
+	moveable
 		.set_moveset("dirt",  MOVESETS[$ MOVESET.DIRT ])
 		.set_moveset("grass", MOVESETS[$ MOVESET.GRASS])
 		.set_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
@@ -35,7 +41,7 @@ setup	 = method_inherit(setup,  function() {
 		.change_moveset("dirt")
 		
 	/// Moveset Triggers
-	get_component(Moveable)
+	moveable
 		.set_moveset_condition("grass", function() {
 			return collision_point(x, y, obj_terrain_grass, false, true) != noone;
 		})
@@ -60,12 +66,13 @@ update	 = method_inherit(update, function() {
 	if (INPUT.keyboard.button(vk_down))  y += _speed;
 	if (INPUT.keyboard.button(vk_up))    y -= _speed;
 	
-	get_component(Moveable).update();
+	moveable.update();
 });
 render	 = method_inherit(render, function() {
 	/// @func render()
 	///
 	draw_circle_color(x, y, 20, c_red, c_red, false);
-	draw_text(x, y, get_component(Moveable).__moveset.__current.get_name());
+	draw_text_transformed(x, y,		 "moveset: " + string(moveable.__moveset.__current.get_name()),   0.8, 0.8, 0);
+	draw_text_transformed(x, y + 15, "speed: "   + string(moveable.__movespeed.__current.get_name()), 0.8, 0.8, 0);
 });
 	

@@ -31,69 +31,73 @@
 // and always.											 //
 ///////////////////////////////////////////////////////////
 
-// give each component a defined "loop" logic behavior 
-// establishing where to get processed in the component system
-// static __cycle	 = LIFE_CYCLE.STEP_BEGIN;
-// static __priority = 1;	
-// -- cycle defines where, priority defines when 
-
-#region Component //////////////////
+#region - Component : /////////////////////////////////////
 
 function Component(_config = {}) : Class(_config) constructor {
 	/// @func	Component(config*)
 	/// @param	{struct}    config={}
 	/// @return {Component} self
 	///
+	/// Static /////////////
 	static __class	   = Component;
 	static __is_system = false; 
-	////////////////////////
+	
+	/// Properties /////////
 	__config	  = _config;
 	__initialized =  false;
 	__active	  =  true;
 	__system	  =  undefined;	// ComponentSystem() association
 	__auto_insert =  true;		// auto insert into implied ComponentSystem()?
 	
+	/// Setup //////////////
 	static __setup_component    = function() {
 		/// @func	__setup_component()
 		/// @return {Component} self
 		///
 		if (!is_initialized()) {
-			#region __ /////////
-			
 			log("<Component()> {0}.setup()", instanceof(self));
+			
+			__setup_properties();
+			__setup_system();
+			
 			__initialized = true;
-			
-			#endregion
-			#region Props //////
-			
-			if (__config[$ "active"]	  != undefined) __active	  = __config[$ "active"];
-			if (__config[$ "auto_insert"] != undefined) __auto_insert = __config[$ "auto_insert"];
-			
-			#endregion
-			#region System /////
-			
-			if (!__is_system) {
-				/// Initialize Dynamic ComponentSystem() Var
-				if (!__is_owners_system_setup()) {
-					__setup_owners_system();
-				}
-			
-				/// Establish System Association
-				__system = __get_owners_system();
-			
-				/// Add Component Self To ComponentSystem
-				if (__auto_insert && has_system()) {
-					get_system().add(self);
-				}
-			}
-			else {
-				__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = self;
-			}
-			
-			#endregion
 		}
 		return self;
 	}; 
+	static __setup_properties	= function() {
+		/// @func	__setup_properties()
+		/// @return {Component} self
+		///
+		if (__config[$ "active"]	  != undefined) __active	  = __config[$ "active"];
+		if (__config[$ "auto_insert"] != undefined) __auto_insert = __config[$ "auto_insert"];
+		
+		return self;
+	};
+	static __setup_system	   = function() {
+		/// @func	__setup_system()
+		/// @return {Component} self
+		///
+		if (!__is_system) {
+			/// Initialize Dynamic ComponentSystem() Var
+			if (!__is_owners_system_setup()) {
+				__setup_owners_system();
+			}
+			
+			/// Establish System Association
+			__system = __get_owners_system();
+			
+			/// Add Component Self To ComponentSystem
+			if (__auto_insert && has_system()) {
+				get_system().add(self);
+			}
+		}
+		else {
+			__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = self;
+		}	
+		return self;
+	};
+	
+	/// ... ////////////////
 	static __teardown_component = function() {
 		/// @func	__teardown_component()
 		/// @return {Component} self
@@ -252,7 +256,7 @@ function Component(_config = {}) : Class(_config) constructor {
 };
 
 #endregion
-#region Component System ///////////
+#region - Component System : //////////////////////////////
 
 function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @func	ComponentSystem(config*)
@@ -455,7 +459,7 @@ function component_system_exists(_owner = self) {
 };
 
 #endregion
-#region Eventable //////////////////
+#region - Eventable : /////////////////////////////////////
 
 function Eventable(_config = {}) : Component(_config) constructor {
 	/// @func	Eventable(config*)
@@ -611,7 +615,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 };
 
 #endregion
-#region Moveable ///////////////////
+#region - Moveable : //////////////////////////////////////
 
 function Moveable(_config = {}) : Component(_config) constructor {
 	/// @func	Moveable(config*)
@@ -1106,10 +1110,10 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 	__fric		 = _config[$ "fric"		 ] ?? 0;
 	__trigger	 =  new Trigger({ name: get_name() });
 	__trigger.set_action(
-		method(get_owner(), function(_name) {
+		method(__owner, function(_name) {
 			change_moveset(_name);
 		}), 
-		get_name(),
+		__name,
 	);
 	
 	static get_trigger	  = function() {
@@ -1202,7 +1206,7 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 //function MoveablePlatformer() : Moveable() constructor {};
 
 #endregion
-#region Actionable /////////////////
+#region - Actionable : ////////////////////////////////////
 
 /// DECOUPLE RENDERING FROM ACTIONABLE AND PUT INTO RENDERABLE()?
 
@@ -1376,8 +1380,7 @@ function Actionable() : Component() constructor {
 };
 
 #endregion
-////////////////////////////////////
-#region Collidable /////////////////
+#region - Collidable : ////////////////////////////////////
 
 function Collidable() : Component() constructor {
 	/// @func	Collidable()
@@ -1421,7 +1424,7 @@ function Collidable() : Component() constructor {
 };
 
 #endregion
-#region Saveable ///////////////////
+#region - Saveable : //////////////////////////////////////
 
 function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) constructor {
 	/// @func  SaveObject(save_id*, save_vars, on_init*)
@@ -1543,7 +1546,7 @@ function SaveObject(_save_id = undefined, _save_vars, _on_init = undefined) cons
 };
 
 #endregion
-#region Cullable ///////////////////
+#region - Cullable : //////////////////////////////////////
 
 function truInst_setup(_truInst_instance = self, _active = true) {
 	
@@ -1748,8 +1751,7 @@ function truInst_setup(_truInst_instance = self, _active = true) {
 };
 
 #endregion
-////////////////////////////////////
-#region Scriptable /////////////////
+#region - Scriptable : ////////////////////////////////////
 
 function Scriptable() : Component() constructor {
 	/// @func	Scriptable()
@@ -1758,32 +1760,4 @@ function Scriptable() : Component() constructor {
 };
 
 #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
