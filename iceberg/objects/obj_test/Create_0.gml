@@ -29,12 +29,10 @@ setup	 = method_inherit(setup,  function() {
 	/// MoveSpeeds
 	moveable
 		.set_movespeed("walk",   4.0)
-		.set_movespeed("run",    8.0)
-		.set_movespeed("crouch", 2.0)
-		.set_movespeed_condition("run",	   function() {
+		.set_movespeed("run",    8.0, function() {
 			return keyboard_check(vk_enter);
 		})
-		.set_movespeed_condition("crouch", function() {
+		.set_movespeed("crouch", 2.0, function() {
 			return keyboard_check(vk_tab);
 		})
 		.set_movespeed_default("walk")
@@ -43,16 +41,13 @@ setup	 = method_inherit(setup,  function() {
 	/// MoveSets
 	moveable
 		.set_moveset("dirt",  MOVESETS[$ MOVESET.DIRT ])
-		.set_moveset("grass", MOVESETS[$ MOVESET.GRASS])
-		.set_moveset("sand",  MOVESETS[$ MOVESET.SAND ])
-		.set_moveset("ice",   MOVESETS[$ MOVESET.ICE  ])
-		.set_moveset_condition("grass", function() {
+		.set_moveset("grass", MOVESETS[$ MOVESET.GRASS], function() {
 			return collision_point(x, y, obj_terrain_grass, false, true) != noone;
 		})
-		.set_moveset_condition("sand",  function() {
+		.set_moveset("sand",  MOVESETS[$ MOVESET.SAND ], function() {
 			return collision_point(x, y, obj_terrain_sand, false, true) != noone;
 		})
-		.set_moveset_condition("ice",   function() {
+		.set_moveset("ice",   MOVESETS[$ MOVESET.ICE  ], function() {
 			return collision_point(x, y, obj_terrain_ice, false, true) != noone;
 		})
 		.set_moveset_default("dirt")

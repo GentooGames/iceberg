@@ -1007,16 +1007,21 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return get_movespeed(_name).get_condition();
 	};
-	static set_movespeed			   = function(_name, _speed) {
-		/// @func	set_movespeed(name, speed)
+	static set_movespeed			   = function(_name, _speed, _condition = undefined) {
+		/// @func	set_movespeed(name, speed, condition*)
 		/// @param	{string}   name
 		/// @param	{real}     speed
+		/// @param  {method}   condition=undefined
 		/// @return {Moveable} self
 		///
 		var _movespeed = has_movespeed(_name)
 			?   get_movespeed(_name)
 			: __new_movespeed(_name);
 		_movespeed.set_speed(_speed);
+		
+		if (_condition != undefined) {
+			_movespeed.set_condition(_condition);	
+		}
 		return self;
 	};
 	static set_movespeed_default	   = function(_name) {
@@ -1224,7 +1229,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return get_moveset(_name).get_condition();
 	};
-	static set_moveset				 = function(_name, _data) {
+	static set_moveset				 = function(_name, _data, _condition = undefined) {
 		/// @func	set_moveset(name, speed)
 		/// @param	{string}   name
 		/// @param	{struct}   data
@@ -1234,6 +1239,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			?   get_moveset(_name)
 			: __new_moveset(_name);
 		_moveset.set_data(_data);
+		
+		if (_condition != undefined) {
+			_moveset.set_condition(_condition);
+		}
 		return self;
 	};
 	static set_moveset_default		 = function(_name) {
