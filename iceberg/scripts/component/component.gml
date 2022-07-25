@@ -783,11 +783,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		var _moveset_current  = __moveset.__current.get_name();
 		var _moveset_names	  = __moveset.__movesets.get_names();
 		for (var _i = 0, _len = array_length(_moveset_names); _i < _len; _i++) {
-			var _moveset_name =  _moveset_names[_i];
-			if (_moveset_name == _moveset_current) {
+			if (_moveset_names[_i] == _moveset_current) {
 				continue;	
 			}
-			get_moveset(_moveset_name).get_trigger().check_activation();
+			get_moveset(_moveset_names[_i]).get_trigger().check_activation();
 		}
 		return self;
 	};
@@ -1130,46 +1129,13 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	#region Path ///////////
 	#endregion
 };
-function MoveSpeed(_config = {}) : Class(_config) constructor {
-	/// @func	MoveSpeed(config*)
-	/// @param	{struct}	config={}
-	/// @return {MoveSpeed} self
+///////////////////////////////////////////////////////////
+function MoveableUtil(_config = {}) : Class(_config) constructor {
+	/// @func	MoveableUtil(config*)
+	/// @param	{struct}	   config={}
+	/// @return {MoveableUtil} self
 	///
-	/// Properties /////////
-	__speed	= _config[$ "speed"] ?? 0;
-	
-	static get_speed = function() {
-		/// @func	get_speed()
-		/// @return {real} speed
-		///
-		return __speed;
-	};
-	static set_speed = function(_speed) {
-		/// @func	set_speed(speed)
-		/// @param	{real}		speed
-		/// @return {MoveSpeed} self
-		///
-		__speed = _speed;
-		return self;
-	};
-};
-function MoveSet(_config = {}) : Class(_config) constructor {
-	/// @func	MoveSet(config*)
-	/// @param	{struct}  config={}
-	/// @return {MoveSet} self
-	///
-	/// Properties /////////
-	__speed_mult = _config[$ "speed_mult"] ?? 1;
-	__accel		 = _config[$ "accel"	 ] ?? 0;
-	__fric		 = _config[$ "fric"		 ] ?? 0;
-	__trigger	 =  new Trigger({ name: get_name() });
-	__trigger.set_action(
-		method(__owner, function(_name) {
-			change_moveset(_name);
-		}), 
-		__name,
-	);
-	#region Trigger ////////
+	__trigger = new Trigger({ name: get_name() });
 	
 	static get_trigger	  = function() {
 		/// @func	get_trigger()
@@ -1201,8 +1167,45 @@ function MoveSet(_config = {}) : Class(_config) constructor {
 		///
 		return get_condition() != undefined;
 	};
+};
+function MoveSpeed(_config = {}) : MoveableUtil(_config) constructor {
+	/// @func	MoveSpeed(config*)
+	/// @param	{struct}	config={}
+	/// @return {MoveSpeed} self
+	///
+	/// Properties /////////
+	__speed	= _config[$ "speed"] ?? 0.0;
+	__trigger.set_action(method(get_owner(), function(_name) {
+		change_movespeed(_name);
+	}), get_name());
 	
-	#endregion
+	static get_speed = function() {
+		/// @func	get_speed()
+		/// @return {real} speed
+		///
+		return __speed;
+	};
+	static set_speed = function(_speed) {
+		/// @func	set_speed(speed)
+		/// @param	{real}		speed
+		/// @return {MoveSpeed} self
+		///
+		__speed = _speed;
+		return self;
+	};
+};
+function MoveSet(_config = {}) : MoveableUtil(_config) constructor {
+	/// @func	MoveSet(config*)
+	/// @param	{struct}  config={}
+	/// @return {MoveSet} self
+	///
+	/// Properties /////////
+	__speed_mult = _config[$ "speed_mult"] ?? 1.0;
+	__accel		 = _config[$ "accel"	 ] ?? 0.0;
+	__fric		 = _config[$ "fric"		 ] ?? 0.0;
+	__trigger.set_action(method(get_owner(), function(_name) {
+		change_moveset(_name);
+	}), get_name());
 	
 	static get_speed_mult = function() {
 		/// @func	get_speed_mult()
