@@ -654,11 +654,12 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	__movespeed = {
 		__current:    undefined,
 		__movespeeds: undefined,
-		__triggers:   undefined,
+		__default:    undefined,
 	};
 	__moveset	= {
 		__current:	undefined,
 		__movesets:	undefined,
+		__default:  undefined,
 	};
 	__path		= {
 		__index:  undefined,
@@ -765,32 +766,74 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	#endregion
 	#region Update /////////
 	
-	static __update_moveable = function() {
+	static __update_moveable  = function() {
 		/// @func	__update_moveable()
 		/// @return {Moveable} self
 		///
 		if (is_initialized() && is_active()) {
 			__update_component();
 			__update_moveset();
+			__update_movespeed();
 		}
 		return self;
 	};
-	static __update_moveset  = function() {
+	static __update_movespeed = function() {
+		/// @func	__update_movespeed()
+		/// @return {Moveable} self
+		///
+		var _target = undefined;
+		
+		/// Check For MoveSpeed Trigger Activations
+		var _names  = __movespeed.__movespeeds.get_names();
+		for (var _i = 0, _len = array_length(_names); _i < _len; _i++) {
+			var _movespeed = get_movespeed(_names[_i]);
+			if (_movespeed.check_trigger_activation()) {
+				_target = _movespeed;
+				break;	
+			}
+		}
+		/// Default MoveSpeed
+		if (_target == undefined) {
+			_target  = get_movespeed_default();	
+		}
+		/// Set MoveSpeed If Not Current
+		if (_target != undefined) {
+			var _target_name = _target.get_name();
+			if (!is_movespeed_current(_target_name)) {
+				change_movespeed(_target_name);
+			}
+		}
+		return self;
+	};
+	static __update_moveset   = function() {
 		/// @func	__update_moveset()
 		/// @return {Moveable} self
 		///
-		/// Check For Trigger Fires
-		var _moveset_current  = __moveset.__current.get_name();
-		var _moveset_names	  = __moveset.__movesets.get_names();
-		for (var _i = 0, _len = array_length(_moveset_names); _i < _len; _i++) {
-			if (_moveset_names[_i] == _moveset_current) {
-				continue;	
+		var _target = undefined;
+		
+		/// Check For MoveSet Trigger Activations
+		var _names  = __moveset.__movesets.get_names();
+		for (var _i = 0, _len = array_length(_names); _i < _len; _i++) {
+			var _moveset = get_moveset(_names[_i]);
+			if (_moveset.check_trigger_activation()) {
+				_target = _moveset;
+				break;	
 			}
-			get_moveset(_moveset_names[_i]).get_trigger().check_activation();
+		}
+		/// Default MoveSet
+		if (_target == undefined) {
+			_target  = get_moveset_default();	
+		}
+		/// Set MoveSet If Not Current
+		if (_target != undefined) {
+			var _target_name = _target.get_name();
+			if (!is_moveset_current(_target_name)) {
+				change_moveset(_target_name);
+			}
 		}
 		return self;
 	};
-	static   update			 = __update_moveable;
+	static   update			  = __update_moveable;
 	
 	#endregion
 	////////////////////////
@@ -901,7 +944,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	#endregion
 	#region MoveSpeed //////
 
-	static __new_movespeed   = function(_name) {
+	static __new_movespeed			   = function(_name) {
 		/// @func	__new_movespeed(name)
 		/// @param	{string}    name
 		/// @return {MoveSpeed} movespeed
@@ -910,7 +953,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__add_movespeed(_movespeed);
 		return _movespeed;
 	};
-	static __add_movespeed   = function(_movespeed) {
+	static __add_movespeed			   = function(_movespeed) {
 		/// @func   __add_movespeed(movespeed)
 		/// @param  {MoveSpeed} movespeed
 		/// @return {Moveable}  self
@@ -922,7 +965,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__movespeed.__movespeeds.add_item(_name, _movespeed);	
 		return self;
 	};
-	static __apply_movespeed = function(_name = undefined) {
+	static __apply_movespeed		   = function(_name = undefined) {
 		/// @func	__apply_movespeed(name*)
 		/// @param	{string}   name=undefined
 		/// @return {Moveable} self
@@ -932,17 +975,39 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		return self;
 	};
 	
-	static get_movespeed	 = function(_name = undefined) {
+	static get_movespeed			   = function(_name = undefined) {
 		/// @func	get_movespeed(name*)
 		/// @param	{string}	name=undefined
 		/// @return {MoveSpeed} movespeed
 		///
 		if (_name == undefined) {
-			return __movespeed.__current;	
+			return get_movespeed_current();	
 		}
 		return __movespeed.__movespeeds.get_item(_name);
 	};
-	static set_movespeed	 = function(_name, _speed) {
+	static get_movespeed_current	   = function() {
+		/// @func	get_movespeed_current()
+		/// @return {MoveSpeed} current
+		///
+		return __movespeed.__current;
+	};
+	static get_movespeed_default	   = function() {
+		/// @func	get_movespeed_default()
+		/// @return {MoveSpeed} default
+		///
+		return __movespeed.__default;
+	};
+	static get_movespeed_condition	   = function(_name) {
+		/// @func	get_movespeed_condition(name)
+		/// @param	{string}	name
+		/// @return {MoveSpeed} movespeed
+		///
+		if (!has_movespeed(_name)) {
+			return undefined;
+		}
+		return get_movespeed(_name).get_condition();
+	};
+	static set_movespeed			   = function(_name, _speed) {
 		/// @func	set_movespeed(name, speed)
 		/// @param	{string}   name
 		/// @param	{real}     speed
@@ -954,20 +1019,88 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		_movespeed.set_speed(_speed);
 		return self;
 	};
-	static has_movespeed	 = function(_name = undefined) {
+	static set_movespeed_default	   = function(_name) {
+		/// @func	set_movespeed_default(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (!has_movespeed(_name)) {
+			show_error("movespeed " + _name + " does not exist. cannot set as default.", true);	
+		}
+		__movespeed.__default = get_movespeed(_name);
+		return self;
+	};
+	static set_movespeed_condition	   = function(_name, _condition) {
+		/// @func   set_movespeed_condition(name, condition)
+		/// @param  {string}   name
+		/// @param  {method}   condition
+		/// @return {Moveable} self 
+		///
+		if (!has_movespeed(_name)) {
+			show_error("movespeed " + _name + " does not exist. cannot set condition.", true);	
+		}
+		get_movespeed(_name).set_condition(_condition);
+		return self;
+	};
+	static is_movespeed_current		   = function(_name) {
+		/// @func	is_movespeed_current(name)
+		/// @param	{string}  name
+		/// @return {boolean} is_current?
+		///
+		if (!has_movespeed_current()) {
+			return false;	
+		}
+		return get_movespeed_current().get_name() == _name;
+	};
+	static is_movespeed_default		   = function(_name = undefined) {
+		/// @func	is_movespeed_default(name*)
+		/// @param	{string}  name=undefined
+		/// @return {boolean} is_default?
+		///
+		if (!has_movespeed_default()) {
+			return false;	
+		}
+		if (_name == undefined) {
+			_name  = get_movespeed_current().get_name();	
+		}
+		return get_movespeed_default().get_name() == _name;
+	};
+	static has_movespeed			   = function(_name = undefined) {
 		/// @func	has_movespeed(name*)
 		/// @param	{string } name=undefined
 		/// @return {boolean} has_movespeed?
 		///
 		return get_movespeed(_name) != undefined;
 	};
-	static has_movespeeds	 = function() {
+	static has_movespeed_current	   = function() {
+		/// @func	has_movespeed_current()
+		/// @return {boolean} has_current?
+		///
+		return get_movespeed_current() != undefined;
+	};
+	static has_movespeed_default	   = function() {
+		/// @func	has_movespeed_default()
+		/// @return {boolean} has_default?
+		///
+		return get_movespeed_default() != undefined;
+	};
+	static has_movespeed_condition	   = function(_name) {
+		/// @func	has_movespeed_condition(name)
+		/// @param	{string}  name
+		/// @return {boolean} has_moveset_condition?
+		///
+		if (!has_movespeed(_name)) {
+			return false;	
+		}
+		return get_movespeed(_name).has_condition();
+	};
+	static has_movespeeds			   = function() {
 		/// @func   has_movespeed()
 		/// @return {bool} has_movespeeds?
 		///	
 		return !__movespeed.__movespeeds.is_empty();
 	};
-	static change_movespeed  = function(_name) {
+	static change_movespeed			   = function(_name) {
 		/// @func	change_movespeed(name)
 		/// @param	{string}   name
 		/// @return {Moveable} self
@@ -975,12 +1108,21 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		if (!has_movespeed(_name)) {
 			show_error("movespeed " + _name + " does not exist. unable to change movespeed", true);	
 		}
-		var _movespeed = get_movespeed(_name);
-		__movespeed.__current = _movespeed;
+		__movespeed.__current  = get_movespeed(_name);
 		__apply_movespeed(_name);
 		return self;
 	};
-	static remove_movespeed	 = function(_name) {
+	static change_movespeed_to_default = function() {
+		/// @func	change_movespeed_to_default()
+		/// @return {Moveable} self
+		///
+		if (!has_movespeed_default()) {
+			show_error("movespeed default has not been set. cannot change movespeed.", true);	
+		}
+		change_movespeed(get_movespeed_default().get_name());
+		return self;
+	};
+	static remove_movespeed			   = function(_name) {
 		/// @func	remove_movespeed(name)
 		/// @param	{string}   name
 		/// @return {Moveable} self
@@ -988,11 +1130,36 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__movespeed.__movespeeds.remove_item(_name);
 		return self;
 	};
+	static remove_movespeed_current	   = function() {
+		/// @func	remove_movespeed_current()
+		/// @return {Moveable} self
+		///
+		__movespeed.__current = undefined;
+		return self;
+	};
+	static remove_movespeed_default	   = function() {
+		/// @func	remove_movespeed_default()
+		/// @return {Moveable} self
+		///
+		__movespeed.__default = undefined;
+		return self;
+	};
+	static remove_movespeed_condition  = function(_name) {
+		/// @func	remove_movespeed_condition(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (!has_movespeed(_name)) {
+			show_error("moveset " + _name + " does not exist. unable to remove condition", true);	
+		}
+		get_movespeed(_name).remove_condition();	
+		return self;
+	};
 	
 	#endregion
 	#region MoveSet ////////
 	
-	static __new_moveset			= function(_name) {
+	static __new_moveset			 = function(_name) {
 		/// @func	__new_moveset(name)
 		/// @param	{string}   name
 		/// @return {Moveable} self
@@ -1001,7 +1168,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__add_moveset(_moveset);
 		return _moveset;
 	};
-	static __add_moveset			= function(_moveset) {
+	static __add_moveset			 = function(_moveset) {
 		/// @func   __add_moveset(moveset)
 		/// @param  {MoveSet}  moveset
 		/// @return {Moveable} self
@@ -1013,7 +1180,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__moveset.__movesets.add_item(_name, _moveset);	
 		return self;
 	};
-	static __apply_moveset			= function(_name = undefined) {
+	static __apply_moveset			 = function(_name = undefined) {
 		/// @func	__apply_moveset(name*)
 		/// @param	{string}   name=undefined
 		/// @return	{Moveable} self
@@ -1025,17 +1192,29 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		return self;
 	};
 	
-	static get_moveset				= function(_name = undefined) {
+	static get_moveset				 = function(_name = undefined) {
 		/// @func	get_moveset(name*)
 		/// @param	{string}  name=undefined
 		/// @return {MoveSet} moveset
 		///
 		if (_name == undefined) {
-			return __movespeed.__current;
-		}	
+			return get_moveset_current();	
+		}
 		return __moveset.__movesets.get_item(_name);
 	};
-	static get_moveset_condition	= function(_name) {
+	static get_moveset_current		 = function() {
+		/// @func	get_moveset_current()
+		/// @return {MoveSet} moveset
+		///
+		return __moveset.__current;
+	};
+	static get_moveset_default		 = function() {
+		/// @func	get_moveset_default()
+		/// @return {MoveSet} default
+		///
+		return __moveset.__default;
+	};
+	static get_moveset_condition	 = function(_name) {
 		/// @func	get_moveset_condition(name)
 		/// @param	{string} name
 		/// @return {method} trigger_method
@@ -1045,7 +1224,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return get_moveset(_name).get_condition();
 	};
-	static set_moveset				= function(_name, _data) {
+	static set_moveset				 = function(_name, _data) {
 		/// @func	set_moveset(name, speed)
 		/// @param	{string}   name
 		/// @param	{struct}   data
@@ -1057,7 +1236,18 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		_moveset.set_data(_data);
 		return self;
 	};
-	static set_moveset_condition	= function(_name, _condition) {
+	static set_moveset_default		 = function(_name) {
+		/// @func	set_moveset_default(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (!has_moveset(_name)) {
+			show_error("moveset " + _name + " does not exist, cannot set as default.", true);
+		}
+		__moveset.__default = get_moveset(_name);
+		return self;
+	};
+	static set_moveset_condition	 = function(_name, _condition) {
 		/// @func   set_moveset_condition(name, condition)
 		/// @param  {string}   name
 		/// @param  {method}   condition
@@ -1069,20 +1259,49 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		get_moveset(_name).set_condition(_condition);
 		return self;
 	};
-	static has_moveset				= function(_name = undefined) {
+	static is_moveset_current		 = function(_name) {
+		/// @func	is_moveset_current(name)
+		/// @param	{string}  name
+		/// @return {boolean} is_current?
+		///
+		if (!has_moveset_current()) {
+			return false;	
+		}
+		return get_moveset_current().get_name() == _name;
+	};
+	static is_moveset_default		 = function(_name = undefined) {
+		/// @func	is_moveset_default(name*)
+		/// @param	{string}  name=undefined
+		/// @return {boolean} is_default?
+		///
+		if (!has_moveset_default()) {
+			return false;	
+		}
+		if (_name == undefined) {
+			_name  = get_moveset_current().get_name();	
+		}
+		return get_moveset_default().get_name() == _name;
+	};
+	static has_moveset				 = function(_name = undefined) {
 		/// @func	has_moveset(name*)
 		/// @param	{string}  name=undefined
 		/// @return {boolean} has_moveset?
 		///
 		return get_moveset(_name) != undefined;
 	};
-	static has_movesets				= function() {
-		/// @func   has_movesets()
-		/// @return {bool} has_movesets?
-		///	
-		return !__moveset.__movesets.is_empty();
+	static has_moveset_current		 = function() {
+		/// @func	has_moveset_current()
+		/// @return {boolean} has_moveset_current?
+		///
+		return get_moveset_current() != undefined;
 	};
-	static has_moveset_condition	= function(_name) {
+	static has_moveset_default		 = function() {
+		/// @func	has_moveset_default()
+		/// @return {boolean} has_moveset_default?
+		///
+		return get_moveset_default() != undefined;
+	};
+	static has_moveset_condition	 = function(_name) {
 		/// @func	has_moveset_condition(name)
 		/// @param	{string}  name
 		/// @return {boolean} has_moveset_condition?
@@ -1092,7 +1311,13 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return get_moveset(_name).has_condition();
 	};
-	static change_moveset			= function(_name) {
+	static has_movesets				 = function() {
+		/// @func   has_movesets()
+		/// @return {bool} has_movesets?
+		///	
+		return !__moveset.__movesets.is_empty();
+	};
+	static change_moveset			 = function(_name) {
 		/// @func	change_moveset(name)
 		/// @param	{string}   name
 		/// @return {Moveable} self
@@ -1100,12 +1325,22 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		if (!has_moveset(_name)) {
 			show_error("moveset " + _name + " does not exist. unable to change moveset", true);	
 		}
-		var _moveset = get_moveset(_name);
-		__moveset.__current = _moveset;
+		__moveset.__current  = get_moveset(_name);
 		__apply_moveset(_name);
 		return self;
 	};
-	static remove_moveset			= function(_name) {
+	static change_moveset_to_default = function() {
+		/// @func	change_moveset_to_default(name)
+		/// @param	{string}   name
+		/// @return {Moveable} self
+		///
+		if (!has_moveset_default()) {
+			show_error("moveset default has not been set. cannot change moveset.", true);	
+		}
+		change_moveset(get_moveset_default().get_name());
+		return self;
+	};
+	static remove_moveset			 = function(_name) {
 		/// @func	remove_moveset(name)
 		/// @param	{string}   name
 		/// @return {Moveable} self
@@ -1113,7 +1348,21 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__moveset.__movesets.remove_item(_name);
 		return self;
 	};
-	static remove_moveset_condition = function(_name) {
+	static remove_moveset_current	 = function() {
+		/// @func	remove_moveset_current()
+		/// @return {Moveable} self
+		///
+		__moveset.__current = undefined;
+		return self;
+	};
+	static remove_moveset_default	 = function() {
+		/// @func	remove_moveset_default()
+		/// @return {Moveable} self
+		///
+		__moveset.__default = undefined;
+		return self;
+	};
+	static remove_moveset_condition  = function(_name) {
 		/// @func	remove_moveset_condition(name)
 		/// @param	{string}   name
 		/// @return {Moveable} self
@@ -1137,13 +1386,13 @@ function MoveableUtil(_config = {}) : Class(_config) constructor {
 	///
 	__trigger = new Trigger({ name: get_name() });
 	
-	static get_trigger	  = function() {
+	static get_trigger	 = function() {
 		/// @func	get_trigger()
 		/// @return {Trigger} trigger
 		///
 		return __trigger;
 	};
-	static get_condition  = function() {
+	static get_condition = function() {
 		/// @func	get_condition()
 		/// @return {method} condition
 		///
@@ -1152,7 +1401,7 @@ function MoveableUtil(_config = {}) : Class(_config) constructor {
 		}
 		return __trigger.get_condition().get_method();
 	};
-	static set_condition  = function(_method, _data = undefined) {
+	static set_condition = function(_method, _data = undefined) {
 		/// @func	set_condition(method, data*)
 		/// @param	{method}  method
 		/// @param	{any}	  data=undefined
@@ -1161,11 +1410,18 @@ function MoveableUtil(_config = {}) : Class(_config) constructor {
 		__trigger.set_condition(_method, _data);
 		return self;
 	};
-	static has_condition  = function() {
+	static has_condition = function() {
 		/// @func	has_condition()
 		/// @return {bool} has_condition?
 		///
 		return get_condition() != undefined;
+	};
+	
+	static check_trigger_activation = function() {
+		/// @func	check_trigger_activation()
+		/// @return {boolean} trigger_activated?
+		///
+		return __trigger.check_activation();
 	};
 };
 function MoveSpeed(_config = {}) : MoveableUtil(_config) constructor {
