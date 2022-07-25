@@ -39,8 +39,8 @@ function Component(_config = {}) : Class(_config) constructor {
 	/// @return {Component} self
 	///
 	/// Static /////////////
-	static __class	   = Component;
-	static __is_system = false; 
+	static __CLASS	   = Component;
+	static __IS_SYSTEM = false; 
 	
 	/// Properties /////////
 	__config	  = _config;
@@ -49,22 +49,10 @@ function Component(_config = {}) : Class(_config) constructor {
 	__system	  =  undefined;	// ComponentSystem() association
 	__auto_insert =  true;		// auto insert into implied ComponentSystem()?
 	
+	#region Core ///////////
+	
 	/// Setup //////////////
-	static __setup_component    = function() {
-		/// @func	__setup_component()
-		/// @return {Component} self
-		///
-		if (!is_initialized()) {
-			log("<Component()> {0}.setup()", instanceof(self));
-			
-			__setup_properties();
-			__setup_system();
-			
-			__initialized = true;
-		}
-		return self;
-	}; 
-	static __setup_properties	= function() {
+	static __setup_properties = function() {
 		/// @func	__setup_properties()
 		/// @return {Component} self
 		///
@@ -73,18 +61,19 @@ function Component(_config = {}) : Class(_config) constructor {
 		
 		return self;
 	};
-	static __setup_system	   = function() {
+	static __setup_system	  = function() {
 		/// @func	__setup_system()
 		/// @return {Component} self
 		///
-		if (!__is_system) {
-			/// Initialize Dynamic ComponentSystem() Var
-			if (!__is_owners_system_setup()) {
-				__setup_owners_system();
+		if (!__IS_SYSTEM) {
+			/// is __owners_system_setup()
+			if (!variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME)) {
+				__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
+				__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = new ComponentSystem({ owner: __owner }).setup();	
 			}
 			
-			/// Establish System Association
-			__system = __get_owners_system();
+			/// __get_owners_system()
+			__system = __owner[$ __COMPONENT_SYSTEM_VAR_NAME];
 			
 			/// Add Component Self To ComponentSystem
 			if (__auto_insert && has_system()) {
@@ -96,30 +85,59 @@ function Component(_config = {}) : Class(_config) constructor {
 		}	
 		return self;
 	};
+	static __setup_component  = function() {
+		/// @func	__setup_component()
+		/// @return {Component} self
+		///
+		if (!is_initialized()) {
+			log("<Component()> {0}.setup()", instanceof(self));
+			////////////////////
+			__setup_properties();
+			__setup_system();
+			////////////////////
+			__initialized = true;
+		}
+		return self;
+	}; 
+	static setup			  = __setup_component;
 	
-	/// ... ////////////////
+	/// Teardown ///////////
+	static __teardown_system	= function() {
+		/// @func	__teardown_system()
+		/// @return {Component} self
+		///
+		if (has_system()) {
+			get_system().remove(get_class());
+			__system = undefined;
+		}
+		return self;
+	};
 	static __teardown_component = function() {
 		/// @func	__teardown_component()
 		/// @return {Component} self
 		///
 		if (is_initialized()) {
-			#region System /////
-			
-			if (has_system()) {
-				get_system().remove(get_class());
-				__system = undefined;
-			}
-			
-			#endregion
-			#region __ /////////
-			
 			log("<Component()> {0}.teardown()", instanceof(self));
+			////////////////////
+			__teardown_system();
+			////////////////////
 			__initialized = false;
-			
-			#endregion
 		}
 		return self;
 	}; 
+	static teardown				= __teardown_component;
+	
+	/// Rebuild ////////////
+	static __rebuild_properties = function(_config = undefined) {
+		/// @func	__rebuild_properties(config*)
+		/// @param	{struct}	config=undefined
+		/// @return {Component} self
+		///
+		if (_config != undefined) {
+			__config = _config;	
+		}
+		return self;
+	};
 	static __rebuild_component  = function(_config = undefined) {
 		/// @func	__rebuild_component(config*)
 		/// @param	{struct}	config=undefined
@@ -127,18 +145,17 @@ function Component(_config = {}) : Class(_config) constructor {
 		///
 		if (is_initialized()) {
 			teardown();
-			#region Props //////
-			
-			if (_config != undefined) {
-				__config = _config;	
-			}
-			
-			#endregion
+			////////////////////
+			__rebuild_properties(_config);
+			////////////////////
 			setup();
 		}
 		return self;
 	}; 
-	static __update_component   = function() {
+	static rebuild				= __rebuild_component;
+	
+	/// Update /////////////
+	static __update_component = function() {
 		/// @func	__update_component()
 		/// @return {Component} self
 		///
@@ -147,7 +164,10 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};	
-	static __render_component   = function() {
+	static update			  = __update_component;
+	
+	/// Render /////////////
+	static __render_component = function() {
 		/// @func	__render_component()
 		/// @return {Component} self
 		///
@@ -156,43 +176,16 @@ function Component(_config = {}) : Class(_config) constructor {
 		}
 		return self;
 	};	
-	
-	#region Core @OVERRIDE /////
-	
-	static setup	= __setup_component;	/// @OVERRIDE
-	static teardown	= __teardown_component;	/// @OVERRIDE
-	static update	= __update_component;	/// @OVERRIDE
-	static render	= __render_component;	/// @OVERRIDE
+	static render			  = __render_component;
 	
 	#endregion
-	#region Properties /////////
-	
-	static __setup_owners_system	= function() {
-		/// @func	__setup_owners_system()
-		/// @return	{Component} self
-		///
-		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = undefined;
-		__owner[$ __COMPONENT_SYSTEM_VAR_NAME] = new ComponentSystem({ owner: __owner }).setup();	
-		return self;
-	};
-	static __get_owners_system		= function() {
-		/// @func	__get_owners_system()
-		/// @return {component} system
-		///
-		return __owner[$ __COMPONENT_SYSTEM_VAR_NAME];
-	};
-	static __is_owners_system_setup	= function() {
-		/// @func	__is_owners_system_setup()
-		/// @return {bool} owner_has_system?
-		///
-		return variable_struct_exists(__owner, __COMPONENT_SYSTEM_VAR_NAME);
-	};
+	#region Properties /////
 		
 	static get_class	  = function() {
 		/// @func	get_class()
 		/// @return {class} class
 		///
-		return __class;
+		return __CLASS;
 	};
 	static get_system	  = function() {
 		/// @func	get_system()
@@ -263,8 +256,8 @@ function ComponentSystem(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}		  config
 	/// @return {ComponentSystem} self
 	///
-	static __class	   = ComponentSystem;
-	static __is_system = true;
+	static __CLASS	   = ComponentSystem;
+	static __IS_SYSTEM = true;
 	////////////////////////
 	__components = undefined;
 	
@@ -466,7 +459,7 @@ function Eventable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}	config={}
 	/// @return {Eventable} self
 	///
-	static __class = Eventable;
+	static __CLASS = Eventable;
 	static __log   = 0;
 	////////////////////////
 	__broadcaster = undefined;
@@ -622,7 +615,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	/// @param	{struct}   config={}
 	/// @return	{Moveable} self
 	///
-	static __class = Moveable;
+	static __CLASS = Moveable;
 	////////////////////////
 	__props		= {
 		__speed:	  1.0,
@@ -1214,7 +1207,7 @@ function Actionable() : Component() constructor {
 	/// @func	Actionable()
 	/// @return {Component} self 
 	///
-	static __class = Actionable;
+	static __CLASS = Actionable;
 	////////////////////////
 	__fsm = undefined;
 	
@@ -1386,7 +1379,8 @@ function Collidable() : Component() constructor {
 	/// @func	Collidable()
 	/// @return {Component} self
 	///
-	__class		 = Collidable;
+	static __CLASS = Collidable;
+	////////////////////
 	__owner		 = other;
 	__collisions = undefined;
 	
