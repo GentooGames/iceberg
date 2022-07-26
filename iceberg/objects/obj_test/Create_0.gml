@@ -3,6 +3,7 @@ event_inherited();
 
 /*	
 	ToDo:
+		-	test that move multiplier is limiting movement speet appropriately
 		-	snap-to : way to define other Moveables to have hspd & vspd get values from
 		-	entities weight
 		-	general multiplier
@@ -23,8 +24,8 @@ setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///
 	form = "human";
-	new_component(Moveable);
-	moveable = get_component(Moveable);
+	new_component(MoveableTopDown);
+	moveable = get_component(MoveableTopDown);
 	
 	/// MoveSpeeds
 	moveable
