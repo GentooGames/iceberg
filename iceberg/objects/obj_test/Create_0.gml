@@ -4,7 +4,6 @@ event_inherited();
 /*	
 	ToDo:
 		-	entities weight
-		-	terrain move scalar
 		-	general multiplier
 		-	have component system process components
 				-	if component system processing, do not check for is_active() within component, 

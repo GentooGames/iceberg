@@ -833,6 +833,13 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		}
 		return self;
 	};
+	static __update_hspd_vspd = function() {
+		/// @func	__update_hspd_vspd()
+		/// @return {Moveable} self
+		///
+		
+		return self;
+	};
 	static   update			  = __update_moveable;
 	
 	#endregion
