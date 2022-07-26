@@ -633,6 +633,18 @@ function Eventable(_config = {}) : Component(_config) constructor {
 #endregion
 #region - Moveable : //////////////////////////////////////
 
+/*	ToDo:
+	-	replace literal movement with vector implementation
+		-	expose way to add new spring adjustments, including inverse spring adjusters
+	-	test that move multiplier is limiting movement speed appropriately
+	-	add moving platform support : way to define other Moveables to have hspd & vspd get values from
+	-	has snap to implementation
+	-	entities weight and impact on accel and iverse proportional impact on fric
+	-	additional multipliers
+	-	how to handle conflicting MoveSet/MoveSpeed triggers happening at the same time?
+		-	if MoveSpeed run is bound to vk_enter, and crouch is bound to vk_control, what happens when both are pressed?
+*/
+
 function Moveable(_config = {}) : Component(_config) constructor {
 	/// @func	Moveable(config*)
 	/// @param	{struct}   config={}
@@ -665,6 +677,7 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		__index:  undefined,
 		__smooth: true,
 		__closed: false,
+		__speed:  0.0,	// do NOT use path_speed, will not work with IOTA
 	};
 	
 	#region Setup //////////
@@ -1385,6 +1398,15 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	
 	#endregion
 	#region Path ///////////
+	
+	static get_path			= function() {};
+	static get_path_speed	= function() {};
+	static set_path_speed	= function(_speed) {};
+	static set_path_smooth	= function(_smooth) {};
+	static set_path_closed	= function(_closed) {};
+	static is_path_smooth	= function() {};
+	static is_path_cloased	= function() {};
+	
 	#endregion
 	#region Movement ///////
 	

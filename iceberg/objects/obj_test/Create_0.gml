@@ -1,29 +1,20 @@
 /// @desc obj_test : Create
 event_inherited();
 
-/*	
-	ToDo:
-		-	test that move multiplier is limiting movement speet appropriately
-		-	snap-to : way to define other Moveables to have hspd & vspd get values from
-		-	entities weight
-		-	general multiplier
-		-	have component system process components
-				-	if component system processing, do not check for is_active() within component, 
-					checkout from outside from system
-						// give each component a defined "loop" logic behavior 
-						// establishing where to get processed in the component system
-						// static __cycle	 = LIFE_CYCLE.STEP_BEGIN;
-						// static __priority = 1;	
-						// -- cycle defines where, priority defines when 
-		-	freezing/locking components?
-		-	how to handle conflicting MoveSet/MoveSpeed triggers happening at the same time?
-			-	if MoveSpeed run is bound to vk_enter, and crouch is bound to vk_control, what happens when both are pressed?
+/*	ToDo:
+	-	have component system process components
+		-	if component system processing, do not check for is_active() within component, checkout from outside from system
+				// give each component a defined "loop" logic behavior 
+				// establishing where to get processed in the component system
+				// static __cycle	 = LIFE_CYCLE.STEP_BEGIN;
+				// static __priority = 1;	
+				// -- cycle defines where, priority defines when 
+	-	make sure that components are utilizng the is_active() flag for process handling
 */
 
 setup	 = method_inherit(setup,  function() {
 	/// @func setup()
 	///
-	form = "human";
 	new_component(MoveableTopDown);
 	moveable = get_component(MoveableTopDown);
 	
@@ -62,12 +53,6 @@ teardown = method_inherit(teardown, function() {
 update	 = method_inherit(update, function() {
 	/// @func update()
 	///
-	static _speed = 5;
-	if (INPUT.keyboard.button(vk_right)) x += _speed;
-	if (INPUT.keyboard.button(vk_left))  x -= _speed;
-	if (INPUT.keyboard.button(vk_down))  y += _speed;
-	if (INPUT.keyboard.button(vk_up))    y -= _speed;
-	
 	moveable.update();
 });
 render	 = method_inherit(render, function() {

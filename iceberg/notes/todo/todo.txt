@@ -1,5 +1,4 @@
 iceberg:
-	- make sure that components are utilizng the is_active() flag for process handling
 	- why is the save controller handling the first room exit?
 	- should method_inherit() utilize weak method references? 
 		- seeing some bloat in memory usage. should optimize
