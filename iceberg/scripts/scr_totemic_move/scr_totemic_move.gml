@@ -337,7 +337,7 @@ function scr_input_get_v(_invert = false) {
 // Move & Collide Abstractions
 function scr_move_and_collide_with_input(_invert = false) {
 
-	scr_move_with_input(_invert);
+	scr_move_with_input(_invert);	// scr_move_update_hspd_vspd_with_input()
 	scr_ramp_adjust();
 	scr_moving_platform_adjust();	// needs to come after friction
 	scr_collisions();

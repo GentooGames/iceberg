@@ -1282,6 +1282,20 @@ function surface_catch(_surf, _w, _h, _cb = function() {}, _cb_data) {
 #endregion
 #region maths //////////////
 
+function approach(_start, _end, _shift) {
+	/// @func	approach(start, end, shift)
+	/// @param	{real} start
+	/// @param	{real} end
+	/// @param	{real} shift
+	/// @return {real} start_shifted
+	///
+	if (_start < _end) {
+	    return min(_start + _shift, _end); 
+	}
+	else {
+	    return max(_start - _shift, _end);	
+	}
+};
 function percent(_percent) {
 	/// @func   percent(percent)
 	/// @param  percent -> {real}
@@ -1596,11 +1610,6 @@ function iso_xy_to_j(_iso_width, _iso_height, _x, _y) {
 	///
 	return floor(((_y / (_iso_height * 0.5) - (_x / (_iso_width  * 0.5))) * 0.5) + 0.5);
 };
-
-#endregion
-#region constructors ///////
-
-
 
 #endregion
 #region method /////////////

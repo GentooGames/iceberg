@@ -3,6 +3,7 @@ event_inherited();
 
 /*	
 	ToDo:
+		-	snap-to : way to define other Moveables to have hspd & vspd get values from
 		-	entities weight
 		-	general multiplier
 		-	have component system process components

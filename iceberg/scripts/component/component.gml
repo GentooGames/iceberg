@@ -774,6 +774,8 @@ function Moveable(_config = {}) : Component(_config) constructor {
 			__update_component();
 			__update_moveset();
 			__update_movespeed();
+			__update_hspd_vspd();
+			__update_xy();
 		}
 		return self;
 	};
@@ -837,7 +839,35 @@ function Moveable(_config = {}) : Component(_config) constructor {
 		/// @func	__update_hspd_vspd()
 		/// @return {Moveable} self
 		///
+		var _input_h =  keyboard_check(ord("D")) - keyboard_check(ord("A"));
+		var _input_v =  keyboard_check(ord("S")) - keyboard_check(ord("W"));
+		var _speed_h =  get_hspd();
+		var _speed_v =  get_vspd();
+		var _speed   =  get_speed();
+		var _max_h   = _speed * _input_h;
+		var _max_v   = _speed * _input_v;
+		var _min_h	 =  0;
+		var _min_v	 =  0;
 		
+		/// Apply Acceleration
+		_speed_h = approach(_speed_h, _max_h, get_accel());
+		_speed_v = approach(_speed_v, _max_v, get_accel());
+		
+		/// Apply Friction
+		if (_input_h == 0) _speed_h = approach(_speed_h, _min_h, get_fric());
+		if (_input_v == 0) _speed_v = approach(_speed_v, _min_v, get_fric());
+		
+		/// Apply hspd & vspd
+		set_hspd(_speed_h);
+		set_vspd(_speed_v);
+		return self;
+	};
+	static __update_xy		  = function() {
+		/// @func	__update_xy()
+		/// @return {Moveable} self
+		///
+		get_owner().x += get_hspd();
+		get_owner().y += get_vspd();
 		return self;
 	};
 	static   update			  = __update_moveable;
@@ -1392,6 +1422,10 @@ function Moveable(_config = {}) : Component(_config) constructor {
 	
 	#endregion
 	#region Path ///////////
+	#endregion
+	#region Movement ///////
+	
+	
 	#endregion
 };
 ///////////////////////////////////////////////////////////
