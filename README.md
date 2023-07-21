@@ -10,5 +10,5 @@ version: 0.0.0 (pre-alpha)
 
 features  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-IB_Base base constructor class template
-IB_Object_Base gamemaker object template
+- IB_Base base constructor class template
+- IB_Object_Base gamemaker object template
