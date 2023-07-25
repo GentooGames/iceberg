@@ -12,3 +12,7 @@ features  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 - IB_Base base constructor class template
 - IB_Object_Base gamemaker object template
+
+libraries  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
+
+- Crispy Unit Testing: https://github.com/bfrymire/crispy
