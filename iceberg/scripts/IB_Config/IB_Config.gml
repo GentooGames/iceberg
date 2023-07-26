@@ -11,10 +11,8 @@
 		meta: {
 			version: "0.0.0",
 		},
-		debug: {
-			tests: {
-				run: true,	
-			},
+		tests: {
+			run: true,	
 		},
 	};
 
