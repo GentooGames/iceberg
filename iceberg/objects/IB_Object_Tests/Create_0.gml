@@ -8,21 +8,31 @@
 	//                                              //
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 	// IB_Object_Tests.create //
+	var _self = self;
 
+	// private
+	__ = {};
+	with (__) {
+		new_suite = method(_self, function(_suite_function, _suite_string_prefix) {
+			var _suite = _suite_function();
+			__.runner.addTestSuite(_suite);
+			__.runner.discover(_suite, _suite_string_prefix);
+			return _suite;
+		});
+		runner	  = undefined;
+	};
+
+	// auto-init
 	if (IB_CONFIG.tests.run) {
 		
-		// test suites
-		test_suite_IB_Base = new TestSuite("IB_Base");
+		__.runner = new TestRunner("runner");
 		
-		// test runner
-		test_runner = new TestRunner("runner");
+		__.new_suite(__IB_TestSuite_IB_Base, "__IB_TestCase_IB_Base_");
 		
-		test_runner.addTestSuite(test_suite_IB_Base);
-		
-		test_runner.discover(test_suite_IB_Base, "Test_IB_Base_");
-	
-		test_runner.run();
+		__.runner.run();
 	}
+	
+	////////////////////
 
 	room_goto_next();
 	

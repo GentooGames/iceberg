@@ -7,8 +7,22 @@
 	//   \/_____/ \/_/\/_/ \/_____/ \/_____/ //
 	//                                       //
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
-	function Test_IB_Base_1() {
+	function __IB_TestSuite_IB_Base() {
+		var _test_suite = new TestSuite("IB_Base");	
+		_test_suite.setUp(function() {
+		
+		});
+		_test_suite.tearDown(function() {
+		
+		});
+		return _test_suite;
+	};
+	///////////////////////////////////////////
+	function __IB_TestCase_IB_Base_1() {
 		var _sum = 2 + 3;
 		assertEqual(_sum, 5);
 	};
-	function Test_IB_Base() {};
+	function __IB_TestCase_IB_Base_On_Initialize_Initialized_Is_True() {
+		
+	};
+	
