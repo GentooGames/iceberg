@@ -11,4 +11,4 @@
 		var _sum = 2 + 3;
 		assertEqual(_sum, 5);
 	};
-	
+	function Test_IB_Base() {};

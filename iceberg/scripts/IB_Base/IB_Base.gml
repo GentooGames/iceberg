@@ -11,14 +11,11 @@
 	
 		var _self  = self;
 		var _owner = other;
-							      
-		static activate		   = function(_active = true) {
-			if (is_initialized()) {
-				if (_active) {
-					__.base.activation.active = true;
-					__on_activate();
-				}
-				else deactivate();
+		
+		static initialize	   = function() {
+			if (!is_initialized()) {
+				__.base.initialization.initialized = true;
+				__on_initialize();
 			}
 			return self;
 		};
@@ -29,13 +26,6 @@
 			}
 			return self;
 		};
-		static deactivate	   = function() {
-			if (is_initialized()) {
-				__.base.activation.active = false;
-				__on_deactivate();
-			}
-			return self;
-		};
 		static destroy		   = function() {
 			if (is_initialized() && !is_destroyed()) {
 				__.base.destruction.destroyed = true;
@@ -43,29 +33,20 @@
 			}
 			return self;
 		};
-		static hide			   = function() {
+		static activate		   = function(_active = true) {
 			if (is_initialized()) {
-				__.base.visibility.visible = false;
-				__on_hide();
+				if (_active) {
+					__.base.activation.active = true;
+					__on_activate();
+				}
+				else deactivate();
 			}
 			return self;
 		};
-		static initialize	   = function() {
-			if (!is_initialized()) {
-				__.base.initialization.initialized = true;
-				__on_initialize();
-			}
-			return self;
-		};
-		static render		   = function(_visible = is_visible()) {
-			if (is_initialized() && _visible) {
-				__on_render();
-			}
-			return self;
-		};
-		static render_gui	   = function(_visible = is_visible()) {
-			if (is_initialized() && _visible) {
-				__on_render_gui();
+		static deactivate	   = function() {
+			if (is_initialized()) {
+				__.base.activation.active = false;
+				__on_deactivate();
 			}
 			return self;
 		};
@@ -76,6 +57,13 @@
 					__on_show();
 				}
 				else hide();
+			}
+			return self;
+		};
+		static hide			   = function() {
+			if (is_initialized()) {
+				__.base.visibility.visible = false;
+				__on_hide();
 			}
 			return self;
 		};
@@ -97,24 +85,29 @@
 			}
 			return self;
 		};
+		static render		   = function(_visible = is_visible()) {
+			if (is_initialized() && _visible) {
+				__on_render();
+			}
+			return self;
+		};
+		static render_gui	   = function(_visible = is_visible()) {
+			if (is_initialized() && _visible) {
+				__on_render_gui();
+			}
+			return self;
+		};
 		
-		static on_activate	   = function(_callback, _data = undefined) {
-			array_push(__.base.activation.on_activation, {
+		static on_initialize   = function(_callback, _data = undefined) {
+			array_push(__.base.initialization.on_initialization, {
 				callback: _callback, 
-				data:	  _data,
+				data: _data,
 			});
 			return self;
 		};
 		static on_cleanup	   = function(_callback, _data = undefined) {
 			array_push(__.base.cleanup.on_cleanup, {
 				callback: _callback,
-				data:	  _data,
-			});
-			return self;
-		};
-		static on_deactivate   = function(_callback, _data = undefined) {
-			array_push(__.base.activation.on_deactivation, {
-				callback: _callback, 
 				data:	  _data,
 			});
 			return self;
@@ -126,36 +119,29 @@
 			});
 			return self;
 		};
-		static on_hide		   = function(_callback, _data = undefined) {
-			array_push(__.base.visibility.on_hide, {
-				callback: _callback,
+		static on_activate	   = function(_callback, _data = undefined) {
+			array_push(__.base.activation.on_activation, {
+				callback: _callback, 
 				data:	  _data,
 			});
 			return self;
 		};
-		static on_initialize   = function(_callback, _data = undefined) {
-			array_push(__.base.initialization.on_initialization, {
+		static on_deactivate   = function(_callback, _data = undefined) {
+			array_push(__.base.activation.on_deactivation, {
 				callback: _callback, 
-				data: _data,
-			});
-			return self;
-		};
-		static on_render	   = function(_callback, _data = undefined) {
-			array_push(__.base.render.on_render, {
-				callback: _callback, 
-				data: _data,
-			});
-			return self;
-		};
-		static on_render_gui   = function(_callback, _data = undefined) {
-			array_push(__.base.render.on_render_gui, {
-				callback: _callback, 
-				data: _data,
+				data:	  _data,
 			});
 			return self;
 		};
 		static on_show		   = function(_callback, _data = undefined) {
 			array_push(__.base.visibility.on_show, {
+				callback: _callback,
+				data:	  _data,
+			});
+			return self;
+		};
+		static on_hide		   = function(_callback, _data = undefined) {
+			array_push(__.base.visibility.on_hide, {
 				callback: _callback,
 				data:	  _data,
 			});
@@ -177,6 +163,20 @@
 		};
 		static on_update_end   = function(_callback, _data = undefined) {
 			array_push(__.base.update.on_end, {
+				callback: _callback, 
+				data: _data,
+			});
+			return self;
+		};
+		static on_render	   = function(_callback, _data = undefined) {
+			array_push(__.base.render.on_render, {
+				callback: _callback, 
+				data: _data,
+			});
+			return self;
+		};
+		static on_render_gui   = function(_callback, _data = undefined) {
+			array_push(__.base.render.on_render_gui, {
 				callback: _callback, 
 				data: _data,
 			});
@@ -211,14 +211,14 @@
 		static is_initialized  = function() {
 			return __.base.initialization.initialized;	
 		};
-		static is_active	   = function() {
-			return __.base.activation.active;	
-		};
 		static is_cleaned_up   = function() {
 			return __.base.cleanup.cleaned_up;	
 		};
 		static is_destroyed	   = function() {
 			return __.base.destruction.destroyed;	
+		};
+		static is_active	   = function() {
+			return __.base.activation.active;	
 		};
 		static is_visible	   = function() {
 			return __.base.visibility.visible;
