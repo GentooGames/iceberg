@@ -12,6 +12,7 @@
 		var _self  = self;
 		var _owner = other;
 		
+		// public 
 		static initialize	   = function() {
 			if (!is_initialized()) {
 				__.base.initialization.initialized = true;
@@ -224,6 +225,7 @@
 			return __.base.visibility.visible;
 		};
 		
+		// private
 		__ = {};
 		with (__) {
 			static __on_activate	 = function() {

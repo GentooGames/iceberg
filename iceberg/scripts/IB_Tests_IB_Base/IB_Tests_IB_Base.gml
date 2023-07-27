@@ -10,10 +10,11 @@
 	function __IB_TestSuite_IB_Base() {
 		var _test_suite = new TestSuite("IB_Base");	
 		_test_suite.setUp(function() {
-		
+			base = new IB_Base();
 		});
 		_test_suite.tearDown(function() {
-		
+			base.cleanup();
+			delete base;
 		});
 		return _test_suite;
 	};
