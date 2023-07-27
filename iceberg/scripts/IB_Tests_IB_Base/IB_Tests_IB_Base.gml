@@ -20,6 +20,7 @@
 	};
 	///////////////////////////////////////////
 	function __IB_TestCase_IB_Base_On_Initialize_Initialized_Is_True() {
-		
+		parent.base.initialize();
+		assertTrue(parent.base.is_initialized(), "base.is_initialized() should return true");
 	};
 	
