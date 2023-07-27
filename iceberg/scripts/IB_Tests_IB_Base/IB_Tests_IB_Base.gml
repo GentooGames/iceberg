@@ -19,10 +19,6 @@
 		return _test_suite;
 	};
 	///////////////////////////////////////////
-	function __IB_TestCase_IB_Base_1() {
-		var _sum = 2 + 3;
-		assertEqual(_sum, 5);
-	};
 	function __IB_TestCase_IB_Base_On_Initialize_Initialized_Is_True() {
 		
 	};
