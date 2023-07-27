@@ -11,31 +11,6 @@
 	
 		var _self  = self;
 		var _owner = other;
-		
-		static get_guid		   = function() {
-			return __.meta.guid;	
-		};
-		static get_name		   = function() {
-			return __.meta.name;
-		};
-		static get_owner	   = function() {
-			return __.owner;	
-		};
-		static get_uid		   = function() {
-			return __.meta.uid;
-		};
-		static set_name		   = function(_name) {
-			__.meta.name = _name;
-			return self;
-		};
-		static set_owner	   = function(_owner) {
-			__.owner = _owner;
-			return self;
-		};
-		static set_uid		   = function(_uid) {
-			__.meta.uid = _uid;
-			return self;
-		};
 							      
 		static activate		   = function(_active = true) {
 			if (is_initialized()) {
@@ -122,23 +97,7 @@
 			}
 			return self;
 		};
-							    
-		static is_initialized  = function() {
-			return __.base.initialization.initialized;	
-		};
-		static is_active	   = function() {
-			return __.base.activation.active;	
-		};
-		static is_cleaned_up   = function() {
-			return __.base.cleanup.cleaned_up;	
-		};
-		static is_destroyed	   = function() {
-			return __.base.destruction.destroyed;	
-		};
-		static is_visible	   = function() {
-			return __.base.visibility.visible;
-		};
-							   						    
+		
 		static on_activate	   = function(_callback, _data = undefined) {
 			array_push(__.base.activation.on_activation, {
 				callback: _callback, 
@@ -222,6 +181,47 @@
 				data: _data,
 			});
 			return self;
+		};
+		
+		static get_guid		   = function() {
+			return __.meta.guid;	
+		};
+		static get_name		   = function() {
+			return __.meta.name;
+		};
+		static get_owner	   = function() {
+			return __.owner;	
+		};
+		static get_uid		   = function() {
+			return __.meta.uid;
+		};
+		static set_name		   = function(_name) {
+			__.meta.name = _name;
+			return self;
+		};
+		static set_owner	   = function(_owner) {
+			__.owner = _owner;
+			return self;
+		};
+		static set_uid		   = function(_uid) {
+			__.meta.uid = _uid;
+			return self;
+		};
+		
+		static is_initialized  = function() {
+			return __.base.initialization.initialized;	
+		};
+		static is_active	   = function() {
+			return __.base.activation.active;	
+		};
+		static is_cleaned_up   = function() {
+			return __.base.cleanup.cleaned_up;	
+		};
+		static is_destroyed	   = function() {
+			return __.base.destruction.destroyed;	
+		};
+		static is_visible	   = function() {
+			return __.base.visibility.visible;
 		};
 		
 		__ = {};
