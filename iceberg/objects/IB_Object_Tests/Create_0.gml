@@ -13,10 +13,10 @@
 	// private
 	__ = {};
 	with (__) {
-		new_suite = method(_self, function(_suite_function, _suite_string_prefix) {
+		new_suite = method(_self, function(_suite_function, _test_cases_string_prefix) {
 			var _suite = _suite_function();
 			__.runner.addTestSuite(_suite);
-			__.runner.discover(_suite, _suite_string_prefix);
+			__.runner.discover(_suite, _test_cases_string_prefix);
 			return _suite;
 		});
 		runner	  = undefined;
