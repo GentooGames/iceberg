@@ -5,7 +5,7 @@ about ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 version: 0.0.0 (pre-alpha)
 - iceberg is a comprehensive GameMaker library designed to increase development efficiency and simplify tedious tasks within the GameMaker ecosystem.
 - iceberg accomplishes this through a series of components, classes, and utility functions; with a strong focus on clean, reusable, and understandable code designed using various different programming design patterns.
-- iceberg is still very much a work-in-progress. using iceberg prior to a stable release may result in errors and crashes. please report any errors on the GitHub page: https://github.com/GentooGames/iceberg
+- iceberg is still very much a work-in-progress. using iceberg prior to a stable release may result in errors and crashes. please report any errors on the GitHub issues page: https://github.com/GentooGames/iceberg/issues
 - consider supporting the project on itch: https://gentoogames.itch.io/iceberg
 - public trello board: https://trello.com/b/kX34iYVA/iceberg
 - iceberg cover art created by: https://twitter.com/JstFredrik
