@@ -8,6 +8,7 @@ version: 0.0.0 (pre-alpha)
 - iceberg is still very much a work-in-progress. using iceberg prior to a stable release may result in errors and crashes. please report any errors on the GitHub page: https://github.com/GentooGames/iceberg
 - consider supporting the project on itch: https://gentoogames.itch.io/iceberg
 - public trello board: https://trello.com/b/kX34iYVA/iceberg
+- iceberg cover art created by: https://twitter.com/JstFredrik
 
 features  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
@@ -16,4 +17,4 @@ features  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 libraries  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-- Crispy Unit Testing: https://github.com/bfrymire/crispy
+- Crispy Unit Test: https://github.com/bfrymire/crispy
