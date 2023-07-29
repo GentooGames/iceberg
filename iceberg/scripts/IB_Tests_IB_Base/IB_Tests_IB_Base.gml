@@ -79,10 +79,65 @@
 	};
 	
 	// cleanup()
-	function __IB_TestCase_IB_Base_On_Cleanup_CleanedUp_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Execute_If_Initialized_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Do_Not_Execute_If_CleanedUp_Is_True() {};
+	function __IB_TestCase_IB_Base_On_Cleanup_CleanedUp_Is_True() {
+		
+		// initialize object first
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.cleanup();
+		
+		// check for execution
+		assertTrue(parent.base.is_cleaned_up(), "base.is_cleaned_up() should return true");
+	};
+	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Execute_If_Initialized_Is_True() {
+	
+		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		parent.base.on_cleanup(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object first
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.cleanup();
+		
+		// check for execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.cleanup() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+	
+		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		parent.base.on_cleanup(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// trigger event
+		parent.base.cleanup();
+		
+		// check for execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.cleanup() should not execute stored callbacks if not initialize() first");
+	};
+	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Do_Not_Execute_If_CleanedUp_Is_True() {
+		
+		// cleanup first
+		parent.base.cleanup();
+		
+		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		parent.base.on_cleanup(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// trigger event
+		parent.base.cleanup();
+		
+		// check for execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.cleanup() should not execute stored callbacks if not already cleaned up");
+	};
 	
 	// destroy()
 	function __IB_TestCase_IB_Base_On_Destroy_Destroyed_Is_True() {};
