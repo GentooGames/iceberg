@@ -10,8 +10,8 @@
 	function IB_Base(_config = {}) constructor {
 	
 		var _self  = self;
-		var _owner = other;
-		
+		var _owner = other; // default to <other>,
+							// may be overwritten
 		// public 
 		static initialize	   = function() {
 			if (!is_initialized()) {

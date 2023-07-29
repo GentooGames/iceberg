@@ -8,7 +8,7 @@
 	//                                       //
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 	
-	// tags
+	// search tags
 	// ---- @IB_Docs.IB_Base
 	// ---- @IB_Docs.Base
 	// ---- @IB_Docs.Base_Constructor
@@ -35,6 +35,11 @@
 	// setters
 	#region set_name(name);
 	/*
+		search tags
+		--- @IB_Docs.IB_Base.set_name()
+		--- @IB_Docs.Base.set_name()
+		--- @IB_Docs.set_name()
+	
 		this method assigns a given name string to
 		the constructor class instance. this name
 		can be used for any desired functionality,
@@ -60,6 +65,11 @@
 	#endregion
 	#region set_owner(owner);
 	/*
+		search tags
+		--- @IB_Docs.IB_Base.set_owner()
+		--- @IB_Docs.Base.set_owner()
+		--- @IB_Docs.set_owner()
+		
 		this method assigns a given owner reference
 		to the constructor class instance. this owner
 		reference is typically used for tracking 

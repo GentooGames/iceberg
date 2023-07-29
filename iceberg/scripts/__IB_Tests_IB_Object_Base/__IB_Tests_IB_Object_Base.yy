@@ -6,6 +6,6 @@
   "isCompatibility": false,
   "parent": {
     "name": "objects",
-    "path": "folders/>iceberg</tests/public/templates/objects.yy",
+    "path": "folders/>iceberg</tests/test cases/public/templates/objects.yy",
   },
 }
