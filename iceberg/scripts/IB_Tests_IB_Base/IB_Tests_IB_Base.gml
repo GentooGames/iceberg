@@ -12,9 +12,7 @@
 		var _test_suite = new TestSuite("IB_Base");	
 		
 		// setup
-		_test_suite.setUp(function() {
-		
-		});
+		_test_suite.setUp(function() {});
 		
 		// run begin
 		_test_suite.onRunBegin(function() {
@@ -28,9 +26,7 @@
 		});
 		
 		// teardown
-		_test_suite.tearDown(function() {
-		
-		});
+		_test_suite.tearDown(function() {});
 		
 		return _test_suite;
 	};
@@ -43,12 +39,12 @@
 		// trigger event
 		parent.base.initialize();
 		
-		// check for execution
+		// validate execution
 		assertTrue(parent.base.is_initialized(), "base.is_initialized() should return true");
 	};
 	function __IB_TestCase_IB_Base_On_Initialize_Callbacks_Execute_If_Initialized_Is_False() {
 		
-		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		// store a simple callback that we can validate later
 		parent.base.on_initialize(function() {
 			parent.base[$ "test_var"] = 1;
 		});
@@ -56,7 +52,7 @@
 		// trigger event
 		parent.base.initialize();
 		
-		// check for execution
+		// validate execution
 		var _did_execute = parent.base[$ "test_var"] != undefined;
 		assertTrue(_did_execute, "base.initialize() should execute stored callbacks");
 	};
@@ -65,7 +61,7 @@
 		// trigger event
 		parent.base.initialize();
 		
-		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		// store a simple callback that we can validate later
 		parent.base.on_initialize(function() {
 			parent.base[$ "test_var"] = 1;
 		});
@@ -73,7 +69,7 @@
 		// try to retrigger the event, since this event was already triggered, callbacks should not run
 		parent.base.initialize();
 		
-		// check for execution
+		// validate execution
 		var _did_execute = parent.base[$ "test_var"] != undefined;
 		assertFalse(_did_execute, "base.initialize() should not execute stored callbacks if already initialized");
 	};
@@ -81,52 +77,57 @@
 	// cleanup()
 	function __IB_TestCase_IB_Base_On_Cleanup_CleanedUp_Is_True() {
 		
-		// initialize object first
+		// initialize object
 		parent.base.initialize();
 		
 		// trigger event
 		parent.base.cleanup();
 		
-		// check for execution
+		// validate execution
 		assertTrue(parent.base.is_cleaned_up(), "base.is_cleaned_up() should return true");
 	};
 	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Execute_If_Initialized_Is_True() {
 	
-		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		// store a simple callback that we can validate later
 		parent.base.on_cleanup(function() {
 			parent.base[$ "test_var"] = 1;
 		});
 		
-		// initialize object first
+		// initialize object
 		parent.base.initialize();
 		
 		// trigger event
 		parent.base.cleanup();
 		
-		// check for execution
+		// validate execution
 		var _did_execute = parent.base[$ "test_var"] != undefined;
 		assertTrue(_did_execute, "base.cleanup() should execute stored callbacks");
 	};
 	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
 	
-		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		// store a simple callback that we can validate later
 		parent.base.on_cleanup(function() {
 			parent.base[$ "test_var"] = 1;
 		});
-		
+	
+		// do not initialize object
+	
 		// trigger event
 		parent.base.cleanup();
 		
-		// check for execution
+		// validate execution
 		var _did_execute = parent.base[$ "test_var"] != undefined;
-		assertFalse(_did_execute, "base.cleanup() should not execute stored callbacks if not initialize() first");
+		assertFalse(_did_execute, "base.cleanup() should not execute stored callbacks if not initialized first");
 	};
 	function __IB_TestCase_IB_Base_On_Cleanup_Callbacks_Do_Not_Execute_If_CleanedUp_Is_True() {
 		
-		// cleanup first
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
 		parent.base.cleanup();
 		
-		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		// store a simple callback that we can validate later
 		parent.base.on_cleanup(function() {
 			parent.base[$ "test_var"] = 1;
 		});
@@ -134,16 +135,76 @@
 		// trigger event
 		parent.base.cleanup();
 		
-		// check for execution
+		// validate execution
 		var _did_execute = parent.base[$ "test_var"] != undefined;
 		assertFalse(_did_execute, "base.cleanup() should not execute stored callbacks if not already cleaned up");
 	};
 	
 	// destroy()
-	function __IB_TestCase_IB_Base_On_Destroy_Destroyed_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Destroy_Callbacks_Execute_If_Initialized_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Destroy_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_Destroy_Callbacks_Do_Not_Execute_If_Destroyed_Is_True() {};
+	function __IB_TestCase_IB_Base_On_Destroy_Destroyed_Is_True() {
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.destroy();
+		
+		// validate execution
+		assertTrue(parent.base.is_destroyed(), "base.is_destroyed() should return true");
+	};
+	function __IB_TestCase_IB_Base_On_Destroy_Callbacks_Execute_If_Initialized_Is_True() {
+		
+		// store a simple callback that we can validate later
+		parent.base.on_destroy(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.destroy();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.destroy() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_Destroy_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_destroy(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// do not initialize object
+		
+		// trigger event
+		parent.base.destroy();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.destroy() should not execute stored callbacks if not initialized first");
+	};
+	function __IB_TestCase_IB_Base_On_Destroy_Callbacks_Do_Not_Execute_If_Destroyed_Is_True() {
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.destroy();
+		
+		// store a simple callback that we can validate later
+		parent.base.on_destroy(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// trigger event
+		parent.base.destroy();
+		
+		// validate executaion
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.destroy() should not execute stored callbacks if already destroyed");
+	};
 	
 	// activate()
 	function __IB_TestCase_IB_Base_On_Activate_Activated_Is_True_If_Param_Is_True() {};
