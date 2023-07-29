@@ -39,11 +39,44 @@
 	
 	// initialize()
 	function __IB_TestCase_IB_Base_On_Initialize_Initialized_Is_True() {
+		
+		// trigger event
 		parent.base.initialize();
+		
+		// check for execution
 		assertTrue(parent.base.is_initialized(), "base.is_initialized() should return true");
 	};
-	function __IB_TestCase_IB_Base_On_Initialize_Callbacks_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_Initialize_Callbacks_Do_Not_Execute_If_Initialized_Is_True() {};
+	function __IB_TestCase_IB_Base_On_Initialize_Callbacks_Execute_If_Initialized_Is_False() {
+		
+		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		parent.base.on_initialize(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// trigger event
+		parent.base.initialize();
+		
+		// check for execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.initialize() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_Initialize_Callbacks_Do_Not_Execute_If_Initialized_Is_True() {
+		
+		// trigger event
+		parent.base.initialize();
+		
+		// store a simple callback that we can use to ensure that it is ran when the event triggers
+		parent.base.on_initialize(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// try to retrigger the event, since this event was already triggered, callbacks should not run
+		parent.base.initialize();
+		
+		// check for execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.initialize() should not execute stored callbacks if already initialized");
+	};
 	
 	// cleanup()
 	function __IB_TestCase_IB_Base_On_Cleanup_CleanedUp_Is_True() {};
