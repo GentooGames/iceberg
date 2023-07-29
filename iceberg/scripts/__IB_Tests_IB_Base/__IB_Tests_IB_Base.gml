@@ -31,7 +31,7 @@
 		return _test_suite;
 	};
 	
-	////////////////////////////////////
+	///////////////////////////////////////////
 	
 	// initialize()
 	function __IB_TestCase_IB_Base_On_Initialize_Initialized_Is_True() {
@@ -207,10 +207,75 @@
 	};
 	
 	// activate()
-	function __IB_TestCase_IB_Base_On_Activate_Activated_Is_True_If_Param_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Activate_Activated_Is_False_If_Param_Is_False() {};
-	function __IB_TestCase_IB_Base_On_Activate_Callbacks_Execute_If_Initialized_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Activate_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
+	function __IB_TestCase_IB_Base_On_Activate_Activated_Is_True_If_No_Param() {
+	
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.activate();
+		
+		// validate execution
+		assertTrue(parent.base.is_active(), "base.is_active() should return true");
+	};
+	function __IB_TestCase_IB_Base_On_Activate_Activated_Is_True_If_Param_Is_True() {
+	
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.activate(true);
+		
+		// validate execution
+		assertTrue(parent.base.is_active(), "base.is_active() should return true");
+	};
+	function __IB_TestCase_IB_Base_On_Activate_Activated_Is_False_If_Param_Is_False() {
+	
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.activate(true);
+		
+		// trigger event
+		parent.base.activate(false);
+		
+		// validate execution
+		assertFalse(parent.base.is_active(), "base.is_active() should return false");
+	};
+	function __IB_TestCase_IB_Base_On_Activate_Callbacks_Execute_If_Initialized_Is_True() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_activate(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+	
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		parent.base.activate();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.activate() should execute stored callbacks");	
+	};
+	function __IB_TestCase_IB_Base_On_Activate_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_activate(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+	
+		// do not initialize object
+		
+		// trigger event
+		parent.base.activate();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.activate() should not execute stored callbacks if not initialized first");	
+	};
 	
 	// deactivate()
 	function __IB_TestCase_IB_Base_On_Deactivate_Activated_Is_False() {};
@@ -218,6 +283,7 @@
 	function __IB_TestCase_IB_Base_On_Deactivate_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
 	
 	// show()
+	function __IB_TestCast_IB_Base_On_Show_Visible_Is_True_If_No_Param() {};
 	function __IB_TestCase_IB_Base_On_Show_Visible_Is_True_If_Param_Is_True() {};
 	function __IB_TestCase_IB_Base_On_Show_Visible_Is_False_If_Param_Is_False() {};
 	function __IB_TestCase_IB_Base_On_Show_Callbacks_Execute_If_Initialized_Is_True() {};

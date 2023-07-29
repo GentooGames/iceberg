@@ -229,7 +229,7 @@
 		__ = {};
 		with (__) {
 			static __on_activate	 = function() {
-				var _callbacks = __.base.activate.on_activation;
+				var _callbacks = __.base.activation.on_activation;
 				for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 					var _callback = _callbacks[_i];
 					_callback.callback(_callback.data);

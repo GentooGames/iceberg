@@ -13,16 +13,14 @@
 	// ---- @IB_Docs.Base
 	// ---- @IB_Docs.Base_Constructor
 		
-	/*
-		config = {
-			owner:	 <ref>    default=other,
-			guid:	 <string> default=generate_guid(),
-			name:	 <string> default=generate_name(),
-			uid:	 <string> default=generate_uid(),
-			active:  <bool>	  default=true,
-			visible: <bool>	  default=true,
-		};
-	*/
+	//	config = {
+	//		owner:	 <ref>    default=other,
+	//		guid:	 <string> default=generate_guid(),
+	//		name:	 <string> default=generate_name(),
+	//		uid:	 <string> default=generate_uid(),
+	//		active:  <bool>	  default=true,
+	//		visible: <bool>	  default=true,
+	//	};
 		
 	// getters
 	#region get_guid();
@@ -61,6 +59,28 @@
 	*/
 	#endregion
 	#region set_owner(owner);
+	/*
+		this method assigns a given owner reference
+		to the constructor class instance. this owner
+		reference is typically used for tracking 
+		inheritance and association relationships, 
+		and to delegate ownership.
+			
+		param:	owner
+		type:	reference
+		desc:	owner reference to assign to this
+				class instance. if owner was not 
+				set in the config struct, the the
+				owner will be automatically assigned
+				to the object that instantiated this
+				class instance:
+					owner = other;
+							
+		example:
+			var _frame = new GuiFrame();
+			var _panel = new GuiPanel();
+			_panel.set_owner(_frame);
+	*/
 	#endregion
 	#region set_uid(uid);
 	#endregion
@@ -91,30 +111,4 @@
 	#region update_end(active);
 	#endregion
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	

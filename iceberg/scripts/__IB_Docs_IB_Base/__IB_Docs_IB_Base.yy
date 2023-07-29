@@ -1,7 +1,7 @@
 {
   "resourceType": "GMScript",
   "resourceVersion": "1.0",
-  "name": "IB_Doc_IB_Base",
+  "name": "__IB_Docs_IB_Base",
   "isDnD": false,
   "isCompatibility": false,
   "parent": {
