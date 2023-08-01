@@ -27,7 +27,7 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "util",
-    "path": "folders/>iceberg</tests/util.yy",
+    "name": "tests",
+    "path": "folders/>iceberg</tests.yy",
   },
 }
