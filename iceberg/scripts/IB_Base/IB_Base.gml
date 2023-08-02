@@ -102,7 +102,7 @@
 		static on_initialize   = function(_callback, _data = undefined) {
 			array_push(__.base.initialization.on_initialization, {
 				callback: _callback, 
-				data: _data,
+				data:	  _data,
 			});
 			return self;
 		};
@@ -226,7 +226,7 @@
 		};
 		
 		// private
-		__ = {};
+		self[$ "__"] ??= {};
 		with (__) {
 			static __on_activate	 = function() {
 				var _callbacks = __.base.activation.on_activation;

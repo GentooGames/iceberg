@@ -228,92 +228,92 @@
 		return self;
 	};
 
-	__ = {};
+	self[$ "__"] ??= {};
 	with (__) {
-		on_activate		= function() {
-			var _callbacks = __.base.activate.on_activation;
+		on_activate		= method(_self, function() {
+			var _callbacks = __.base.activation.on_activation;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_cleanup		= function() {
+		});
+		on_cleanup		= method(_self, function() {
 			var _callbacks = __.base.cleanup.on_cleanup;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_deactivate	= function() {
+		});
+		on_deactivate	= method(_self, function() {
 			var _callbacks = __.base.activation.on_deactivation;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_destruction	= function() {
+		});
+		on_destruction	= method(_self, function() {
 			var _callbacks = __.base.destruction.on_destruction;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_hide			= function() {
+		});
+		on_hide			= method(_self, function() {
 			var _callbacks = __.base.visibility.on_hide;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_initialize	= function() {
+		});
+		on_initialize	= method(_self, function() {
 			var _callbacks = __.base.initialization.on_initialization;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_render		= function() {
+		});
+		on_render		= method(_self, function() {
 			var _callbacks = __.base.render.on_render;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_render_gui	= function() {
+		});
+		on_render_gui	= method(_self, function() {
 			var _callbacks = __.base.render.on_render_gui;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_show			= function() {
+		});
+		on_show			= method(_self, function() {
 			var _callbacks = __.base.visibility.on_show;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_update_begin = function() {
+		});
+		on_update_begin = method(_self, function() {
 			var _callbacks = __.base.update.on_begin;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_update		= function() {
+		});
+		on_update		= method(_self, function() {
 			var _callbacks = __.base.update.on_update;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
-		on_update_end	= function() {
+		});
+		on_update_end	= method(_self, function() {
 			var _callbacks = __.base.update.on_end;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
 				_callback.callback(_callback.data);
 			};
-		};
+		});
 		
 		root  = _self;
 		owner = _config[$ "owner"];
