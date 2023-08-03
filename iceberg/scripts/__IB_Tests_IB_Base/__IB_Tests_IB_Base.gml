@@ -466,48 +466,183 @@
 	function __IB_TestCase_IB_Base_On_RenderGui_Callbacks_Do_Not_Execute_If_Visible_Is_False() {};
 	
 	// on_initialize()
-	function __IB_TestCase_IB_Base_On_OnInitialize_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnInitialize_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_initialize(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.initialization.on_initialization;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_initialize callbacks should be of size 1");
+	};
 	
 	// on_cleanup()
-	function __IB_TestCase_IB_Base_On_OnCleanup_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnCleanup_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_cleanup(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.cleanup.on_cleanup;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_cleanup callbacks should be of size 1");
+	};
 	
 	// on_destroy()
-	function __IB_TestCase_IB_Base_On_OnDestroy_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnDestroy_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_destroy(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.destruction.on_destruction;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_destroy callbacks should be of size 1");
+	};
 	
 	// on_activate()
-	function __IB_TestCase_IB_Base_On_OnActivate_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnActivate_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_activate(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.activation.on_activation;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_activate callbacks should be of size 1");
+	};
 	
 	// on_deactivate()
-	function __IB_TestCase_IB_Base_On_OnDeactivate_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnDeactivate_Callback_Is_Stored_In_Array() {
+		
+		// store callback
+		parent.base.on_deactivate(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.activation.on_deactivation;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_deactivate callbacks should be of size 1");
+	};
 	
 	// on_show()
-	function __IB_TestCase_IB_Base_On_OnShow_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnShow_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_show(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.visibility.on_show;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_show callbacks should be of size 1");
+	};
 	
 	// on_hide()
-	function __IB_TestCase_IB_Base_On_OnHide_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnHide_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_hide(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.visibility.on_hide;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_hide callbacks should be of size 1");
+	};
 	
 	// on_update_begin()
-	function __IB_TestCase_IB_Base_On_OnUpdateBegin_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnUpdateBegin_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_update_begin(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.update.on_begin;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_update_begin callbacks should be of size 1");
+	};
 	
 	// on_update()
-	function __IB_TestCase_IB_Base_On_OnUpdate_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnUpdate_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_update(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.update.on_update;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_update callbacks should be of size 1");
+	};
 	
 	// on_update_end()
-	function __IB_TestCase_IB_Base_On_OnUpdateEnd_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnUpdateEnd_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_update_end(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.update.on_end;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_update_end callbacks should be of size 1");
+	};
 	
 	// on_render()
-	function __IB_TestCase_IB_Base_On_OnRender_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnRender_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_render(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.render.on_render;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_render callbacks should be of size 1");
+	};
 	
 	// on_render_gui()
-	function __IB_TestCase_IB_Base_On_OnRenderGui_Callback_Is_Stored_In_Array() {};
+	function __IB_TestCase_IB_Base_On_OnRenderGui_Callback_Is_Stored_In_Array() {
+	
+		// store callback
+		parent.base.on_render_gui(function() {});
+		
+		// validate 
+		var _callbacks_array = parent.base.__.base.render.on_render_gui;
+		var _callbacks_count = array_length(_callbacks_array);
+		assertEqual(_callbacks_count, 1, "on_render_gui callbacks should be of size 1");
+	};
 	
 	// set_name()
-	function __IB_TestCase_IB_Base_On_SetName_Name_Property_Is_Set() {};
+	function __IB_TestCase_IB_Base_On_SetName_Name_Property_Is_Set() {
+	
+		static _name = "gentoo";
+	
+		// set name member
+		parent.base.set_name(_name);
+		
+		// validate 
+		assertEqual(parent.base.get_name(), _name, "set_name should set name member");
+	};
 	
 	// set_owner()
-	function __IB_TestCase_IB_Base_On_SetName_Owner_Property_Is_Set() {};
+	function __IB_TestCase_IB_Base_On_SetName_Owner_Property_Is_Set() {
+	
+		static _owner = "gentoo";
+	
+		// set owner reference
+		parent.base.set_owner(_owner);
+		
+		// validate 
+		assertEqual(parent.base.get_owner(), _owner, "set_owner should set owner reference");
+	};
 	
 	// set_uid()
-	function __IB_TestCase_IB_Base_On_SetName_Uid_Property_Is_Set() {};
+	function __IB_TestCase_IB_Base_On_SetName_Uid_Property_Is_Set() {
+	
+		static _uid = "gentoo";
+	
+		// set owner reference
+		parent.base.set_uid(_uid);
+		
+		// validate 
+		assertEqual(parent.base.get_uid(), _uid, "set_uid should set uid member");
+	};
 	
 	
