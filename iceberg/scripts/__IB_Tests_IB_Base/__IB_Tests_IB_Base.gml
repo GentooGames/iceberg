@@ -147,7 +147,7 @@
 		parent.base.initialize();
 		
 		// trigger event
-		parent.base.destroy();
+		parent.base.destroy(false);
 		
 		// validate execution
 		assertTrue(parent.base.is_destroyed(), "base.is_destroyed() should return true");
@@ -163,7 +163,7 @@
 		parent.base.initialize();
 		
 		// trigger event
-		parent.base.destroy();
+		parent.base.destroy(false);
 		
 		// validate execution
 		var _did_execute = parent.base[$ "test_var"] != undefined;
@@ -179,7 +179,7 @@
 		// do not initialize object
 		
 		// trigger event
-		parent.base.destroy();
+		parent.base.destroy(false);
 		
 		// validate execution
 		var _did_execute = parent.base[$ "test_var"] != undefined;
@@ -191,7 +191,7 @@
 		parent.base.initialize();
 		
 		// trigger event
-		parent.base.destroy();
+		parent.base.destroy(false);
 		
 		// store a simple callback that we can validate later
 		parent.base.on_destroy(function() {
@@ -199,7 +199,7 @@
 		});
 		
 		// trigger event
-		parent.base.destroy();
+		parent.base.destroy(false);
 		
 		// validate executaion
 		var _did_execute = parent.base[$ "test_var"] != undefined;
@@ -326,7 +326,7 @@
 	};
 	
 	// show()
-	function __IB_TestCast_IB_Base_On_Show_Visible_Is_True_If_No_Param() {
+	function __IB_TestCase_IB_Base_On_Show_Visible_Is_True_If_No_Param() {
 		
 		// initialize object
 		parent.base.initialize();

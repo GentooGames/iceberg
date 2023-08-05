@@ -51,6 +51,13 @@
 			}
 			return self;
 		};
+		static destroy		   = function(_immediate = true) {
+			if (is_initialized()) {
+				__.base.destruction.destroyed = true;
+				__on_destroy();
+			}
+			return self;
+		};
 		static show			   = function(_visible = true) {
 			if (is_initialized()) {
 				if (_visible) {
@@ -249,7 +256,7 @@
 					_callback.callback(_callback.data);
 				};
 			};
-			static __on_destruction	 = function() {
+			static __on_destroy		 = function() {
 				var _callbacks = __.base.destruction.on_destruction;
 				for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 					var _callback = _callbacks[_i];

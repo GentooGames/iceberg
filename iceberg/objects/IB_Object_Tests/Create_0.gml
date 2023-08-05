@@ -27,7 +27,8 @@
 		
 		__.runner = new TestRunner("runner");
 		
-		__.new_suite(__IB_TestSuite_IB_Base, "__IB_TestCase_IB_Base_");
+		__.new_suite(__IB_TestSuite_IB_Base,		"__IB_TestCase_IB_Base_");
+		__.new_suite(__IB_TestSuite_IB_Object_Base, "__IB_TestCase_IB_Object_Base_");
 		
 		__.runner.run();
 	}

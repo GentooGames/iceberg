@@ -62,11 +62,13 @@
 		}
 		return self;
 	};
-	destroy			= function() {
+	destroy			= function(_immediate = true) {
 		if (is_initialized() && !is_destroyed()) {
 			__.base.destruction.destroyed = true;
 			__.on_destroy();
-			instance_destroy();
+			if (_immediate) {
+				instance_destroy();
+			}
 		}
 		return self;
 	};
@@ -251,7 +253,7 @@
 				_callback.callback(_callback.data);
 			};
 		});
-		on_destruction	= method(_self, function() {
+		on_destroy		= method(_self, function() {
 			var _callbacks = __.base.destruction.on_destruction;
 			for (var _i = 0, _len = array_length(_callbacks); _i < _len; _i++) {
 				var _callback = _callbacks[_i];
