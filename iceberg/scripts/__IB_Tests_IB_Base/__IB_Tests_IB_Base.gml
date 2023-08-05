@@ -441,19 +441,166 @@
 	};
 	
 	// update_begin()
-	function __IB_TestCase_IB_Base_On_UpdateBegin_Callbacks_Execute_If_Initialized_Is_True_And_Active_Is_True() {};
-	function __IB_TestCase_IB_Base_On_UpdateBegin_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_UpdateBegin_Callbacks_Do_Not_Execute_If_Active_Is_False() {};
+	function __IB_TestCase_IB_Base_On_UpdateBegin_Callbacks_Execute_If_Initialized_Is_True_And_Active_Is_True() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_update_begin(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _active = true;
+		parent.base.update_begin(_active);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.update_begin() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_UpdateBegin_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_update_begin(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// do not initialize object
+		
+		// trigger event
+		parent.base.update_begin();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.update_begin() should not execute stored callbacks if not initialized first");
+	};
+	function __IB_TestCase_IB_Base_On_UpdateBegin_Callbacks_Do_Not_Execute_If_Active_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_update_begin(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _active = false;
+		parent.base.update_begin(_active);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.update_begin() should not execute stored callbacks if not activated first");
+	};
 	
 	// update()
-	function __IB_TestCase_IB_Base_On_Update_Callbacks_Execute_If_Initialized_Is_True_And_Active_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Update_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_Update_Callbacks_Do_Not_Execute_If_Active_Is_False() {};
+	function __IB_TestCase_IB_Base_On_Update_Callbacks_Execute_If_Initialized_Is_True_And_Active_Is_True() {
+		
+		// store a simple callback that we can validate later
+		parent.base.on_update(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _active = true;
+		parent.base.update(_active);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.update() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_Update_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_update(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// do not initialize object
+		
+		// trigger event
+		parent.base.update();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.update() should not execute stored callbacks if not initialized first");
+	};
+	function __IB_TestCase_IB_Base_On_Update_Callbacks_Do_Not_Execute_If_Active_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_update(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _active = false;
+		parent.base.update(_active);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.update() should not execute stored callbacks if not activated first");
+	};
 	
 	// update_end()
-	function __IB_TestCase_IB_Base_On_UpdateEnd_Callbacks_Execute_If_Initialized_Is_True_And_Active_Is_True() {};
-	function __IB_TestCase_IB_Base_On_UpdateEnd_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_UpdateEnd_Callbacks_Do_Not_Execute_If_Active_Is_False() {};
+	function __IB_TestCase_IB_Base_On_UpdateEnd_Callbacks_Execute_If_Initialized_Is_True_And_Active_Is_True() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_update_end(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _active = true;
+		parent.base.update_end(_active);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.update_end() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_UpdateEnd_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+		
+		// store a simple callback that we can validate later
+		parent.base.on_update_end(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// do not initialize object
+		
+		// trigger event
+		parent.base.on_update_end();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.on_update_end() should not execute stored callbacks if not initialized first");
+	};
+	function __IB_TestCase_IB_Base_On_UpdateEnd_Callbacks_Do_Not_Execute_If_Active_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_update_end(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _active = false;
+		parent.base.update_end(_active);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.update_end() should not execute stored callbacks if not activated first");
+	};
 	
 	// render()
 	function __IB_TestCase_IB_Base_On_Render_Callbacks_Execute_If_Initialized_Is_True_And_Visible_Is_True() {};
