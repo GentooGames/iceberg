@@ -235,10 +235,12 @@
 		parent.base.initialize();
 		
 		// trigger event
-		parent.base.activate(true);
+		var _active = true;
+		parent.base.activate(_active);
 		
 		// trigger event
-		parent.base.activate(false);
+		var _active = false;
+		parent.base.activate(_active);
 		
 		// validate execution
 		assertFalse(parent.base.is_active(), "base.is_active() should return false");
@@ -341,7 +343,8 @@
 		parent.base.initialize();
 		
 		// trigger event
-		parent.base.show(true);
+		var _visible = true;
+		parent.base.show(_visible);
 		
 		// validate execution
 		assertTrue(parent.base.is_visible(), "base.is_visible() should be true");
@@ -352,10 +355,12 @@
 		parent.base.initialize();
 		
 		// trigger event
-		parent.base.show(true);
+		var _visible = true;
+		parent.base.show(_visible);
 		
 		// trigger event
-		parent.base.show(false);
+		var _visible = false;
+		parent.base.show(_visible);
 		
 		// validate execution
 		assertFalse(parent.base.is_visible(), "base.is_visible() should be false");
