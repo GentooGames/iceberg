@@ -608,14 +608,112 @@
 	};
 	
 	// render()
-	function __IB_TestCase_IB_Base_On_Render_Callbacks_Execute_If_Initialized_Is_True_And_Visible_Is_True() {};
-	function __IB_TestCase_IB_Base_On_Render_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_Render_Callbacks_Do_Not_Execute_If_Visible_Is_False() {};
+	function __IB_TestCase_IB_Base_On_Render_Callbacks_Execute_If_Initialized_Is_True_And_Visible_Is_True() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_render(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _visible = true;
+		parent.base.render(_visible);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.render() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_Render_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+		
+		// store a simple callback that we can validate later
+		parent.base.on_render(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// do not initialize object
+		
+		// trigger event
+		parent.base.on_render();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.on_render() should not execute stored callbacks if not initialized first");
+	};
+	function __IB_TestCase_IB_Base_On_Render_Callbacks_Do_Not_Execute_If_Visible_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_render(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _visible = false;
+		parent.base.on_render(_visible);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.on_render() should not execute stored callbacks if not activated first");
+	};
 	
 	// render_gui()
-	function __IB_TestCase_IB_Base_On_RenderGui_Callbacks_Execute_If_Initialized_Is_True_And_Visible_Is_True() {};
-	function __IB_TestCase_IB_Base_On_RenderGui_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {};
-	function __IB_TestCase_IB_Base_On_RenderGui_Callbacks_Do_Not_Execute_If_Visible_Is_False() {};
+	function __IB_TestCase_IB_Base_On_RenderGui_Callbacks_Execute_If_Initialized_Is_True_And_Visible_Is_True() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_render_gui(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _visible = true;
+		parent.base.render_gui(_visible);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertTrue(_did_execute, "base.render_gui() should execute stored callbacks");
+	};
+	function __IB_TestCase_IB_Base_On_RenderGui_Callbacks_Do_Not_Execute_If_Initialized_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_render_gui(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// do not initialize object
+		
+		// trigger event
+		parent.base.render_gui();
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.render_gui() should not execute stored callbacks if not initialized first");
+	};
+	function __IB_TestCase_IB_Base_On_RenderGui_Callbacks_Do_Not_Execute_If_Visible_Is_False() {
+	
+		// store a simple callback that we can validate later
+		parent.base.on_render_gui(function() {
+			parent.base[$ "test_var"] = 1;
+		});
+		
+		// initialize object
+		parent.base.initialize();
+		
+		// trigger event
+		var _visible = false;
+		parent.base.render_gui(_visible);
+		
+		// validate execution
+		var _did_execute = parent.base[$ "test_var"] != undefined;
+		assertFalse(_did_execute, "base.render_gui() should not execute stored callbacks if not activated first");
+	};
 	
 	// on_initialize()
 	function __IB_TestCase_IB_Base_On_OnInitialize_Callback_Is_Stored_In_Array() {
