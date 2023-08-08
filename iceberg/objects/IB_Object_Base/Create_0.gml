@@ -12,39 +12,11 @@
 	
 	var _self	= self;
 	var _config = self[$ "config"] ?? self;
-	
-	get_guid		= function() {
-		return __.meta.guid;	
-	};
-	get_name		= function() {
-		return __.meta.name;
-	};
-	get_owner		= function() {
-		return __.owner;	
-	};
-	get_uid			= function() {
-		return __.meta.uid;
-	};
-	set_name		= function(_name) {
-		__.meta.name = _name;
-		return self;
-	};
-	set_owner		= function(_owner) {
-		__.owner = _owner;
-		return self;
-	};
-	set_uid			= function(_uid) {
-		__.meta.uid = _uid;
-		return self;
-	};
-	
-	activate		= function(_active = true) {
-		if (is_initialized() && !is_active()) {
-			if (_active) {
-				__.base.activation.active = true;
-				__.on_activate();
-			}
-			else deactivate();
+		
+	initialize		= function() {
+		if (!is_initialized()) {
+			__.base.initialization.initialized = true;
+			__.on_initialize();
 		}
 		return self;
 	};
@@ -52,13 +24,6 @@
 		if (is_initialized() && !is_cleaned_up()) {
 			__.base.cleanup.cleaned_up = true;
 			__.on_cleanup();
-		}
-		return self;
-	};
-	deactivate		= function() {
-		if (is_initialized()) {
-			__.base.activation.active = false;
-			__.on_deactivate();
 		}
 		return self;
 	};
@@ -72,30 +37,20 @@
 		}
 		return self;
 	};
-	hide			= function() {
+	activate		= function(_active = true) {
 		if (is_initialized()) {
-			__.base.visibility.visible = false;
-							   visible = false;
-			__.on_hide();
+			if (_active) {
+				__.base.activation.active = true;
+				__.on_activate();
+			}
+			else deactivate();
 		}
 		return self;
 	};
-	initialize		= function() {
-		if (!is_initialized()) {
-			__.base.initialization.initialized = true;
-			__.on_initialize();
-		}
-		return self;
-	};
-	render			= function(_visible = is_visible()) {
-		if (is_initialized() && _visible) {
-			__.on_render();
-		}
-		return self;
-	};
-	render_gui		= function(_visible = is_visible()) {
-		if (is_initialized() && _visible) {
-			__.on_render_gui();
+	deactivate		= function() {
+		if (is_initialized()) {
+			__.base.activation.active = false;
+			__.on_deactivate();
 		}
 		return self;
 	};
@@ -107,6 +62,14 @@
 				__.on_show();
 			}
 			else hide();
+		}
+		return self;
+	};
+	hide			= function() {
+		if (is_initialized()) {
+			__.base.visibility.visible = false;
+							   visible = false;
+			__.on_hide();
 		}
 		return self;
 	};
@@ -128,40 +91,29 @@
 		}
 		return self;
 	};
-
-	is_initialized	= function() {
-		return __.base.initialization.initialized;	
+	render			= function(_visible = is_visible()) {
+		if (is_initialized() && _visible) {
+			__.on_render();
+		}
+		return self;
 	};
-	is_active		= function() {
-		return __.base.activation.active;	
+	render_gui		= function(_visible = is_visible()) {
+		if (is_initialized() && _visible) {
+			__.on_render_gui();
+		}
+		return self;
 	};
-	is_cleaned_up	= function() {
-		return __.base.cleanup.cleaned_up;
-	};
-	is_destroyed	= function() {
-		return __.base.destruction.destroyed;	
-	};
-	is_visible		= function() {
-		return __.base.visibility.visible;
-	};
-
-	on_activate		= function(_callback, _data = undefined) {
-		array_push(__.base.activation.on_activation, {
+	
+	on_initialize	= function(_callback, _data = undefined) {
+		array_push(__.base.initialization.on_initialization, {
 			callback: _callback, 
-			data:	  _data,
+			data: _data,
 		});
 		return self;
 	};
 	on_cleanup		= function(_callback, _data = undefined) {
 		array_push(__.base.cleanup.on_cleanup, {
 			callback: _callback,
-			data:	  _data,
-		});
-		return self;
-	};
-	on_deactivate	= function(_callback, _data = undefined) {
-		array_push(__.base.activation.on_deactivation, {
-			callback: _callback, 
 			data:	  _data,
 		});
 		return self;
@@ -173,36 +125,29 @@
 		});
 		return self;
 	};
-	on_hide			= function(_callback, _data = undefined) {
-		array_push(__.base.visibility.on_hide, {
-			callback: _callback,
+	on_activate		= function(_callback, _data = undefined) {
+		array_push(__.base.activation.on_activation, {
+			callback: _callback, 
 			data:	  _data,
 		});
 		return self;
 	};
-	on_initialize	= function(_callback, _data = undefined) {
-		array_push(__.base.initialization.on_initialization, {
+	on_deactivate	= function(_callback, _data = undefined) {
+		array_push(__.base.activation.on_deactivation, {
 			callback: _callback, 
-			data: _data,
-		});
-		return self;
-	};
-	on_render		= function(_callback, _data = undefined) {
-		array_push(__.base.render.on_render, {
-			callback: _callback, 
-			data: _data,
-		});
-		return self;
-	};
-	on_render_gui	= function(_callback, _data = undefined) {
-		array_push(__.base.render.on_render_gui, {
-			callback: _callback, 
-			data: _data,
+			data:	  _data,
 		});
 		return self;
 	};
 	on_show			= function(_callback, _data = undefined) {
 		array_push(__.base.visibility.on_show, {
+			callback: _callback,
+			data:	  _data,
+		});
+		return self;
+	};
+	on_hide			= function(_callback, _data = undefined) {
+		array_push(__.base.visibility.on_hide, {
 			callback: _callback,
 			data:	  _data,
 		});
@@ -229,6 +174,62 @@
 		});
 		return self;
 	};
+	on_render		= function(_callback, _data = undefined) {
+		array_push(__.base.render.on_render, {
+			callback: _callback, 
+			data: _data,
+		});
+		return self;
+	};
+	on_render_gui	= function(_callback, _data = undefined) {
+		array_push(__.base.render.on_render_gui, {
+			callback: _callback, 
+			data: _data,
+		});
+		return self;
+	};
+	
+	get_guid		= function() {
+		return __.meta.guid;	
+	};
+	get_name		= function() {
+		return __.meta.name;
+	};
+	get_owner		= function() {
+		return __.owner;	
+	};
+	get_uid			= function() {
+		return __.meta.uid;
+	};
+	set_name		= function(_name) {
+		__.meta.name = _name;
+		return self;
+	};
+	set_owner		= function(_owner) {
+		__.owner = _owner;
+		return self;
+	};
+	set_uid			= function(_uid) {
+		__.meta.uid = _uid;
+		return self;
+	};
+
+	is_initialized	= function() {
+		return __.base.initialization.initialized;	
+	};
+	is_cleaned_up	= function() {
+		return __.base.cleanup.cleaned_up;
+	};
+	is_destroyed	= function() {
+		return __.base.destruction.destroyed;	
+	};
+	is_active		= function() {
+		return __.base.activation.active;	
+	};
+	is_visible		= function() {
+		return __.base.visibility.visible;
+	};
+	
 
 	self[$ "__"] ??= {};
 	with (__) {
@@ -401,4 +402,10 @@
 		variable_struct_remove(_self, "uid"   );
 		variable_struct_remove(_self, "active");
 	};
+	
+	
+	
+	
+	
+	
 	

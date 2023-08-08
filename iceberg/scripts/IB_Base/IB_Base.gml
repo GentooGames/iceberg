@@ -27,10 +27,13 @@
 			}
 			return self;
 		};
-		static destroy		   = function() {
+		static destroy		   = function(_immediate = true) {
 			if (is_initialized() && !is_destroyed()) {
 				__.base.destruction.destroyed = true;
-				__on_destruction();
+				__on_destroy();
+				if (_immediate) { 
+					// ...	
+				}
 			}
 			return self;
 		};
@@ -48,13 +51,6 @@
 			if (is_initialized()) {
 				__.base.activation.active = false;
 				__on_deactivate();
-			}
-			return self;
-		};
-		static destroy		   = function(_immediate = true) {
-			if (is_initialized()) {
-				__.base.destruction.destroyed = true;
-				__on_destroy();
 			}
 			return self;
 		};
